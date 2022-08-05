@@ -1,0 +1,47 @@
+name: Deploy forms-api to GOV.UK PaaS Staging environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    env:
+      CF_API: "https://api.london.cloud.service.gov.uk"
+      CF_ORG: "gds-govuk-forms"
+      CF_SPACE: "forms-api-staging"
+
+    steps:
+      - name: Checkout forms-api
+        uses: actions/checkout@v2
+        with:
+          repository: alphagov/forms-api
+
+      - name: Install cloudfoundry
+        shell: bash
+        id: install-cf-cli
+        run: |
+          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+          echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+          sudo apt-get update
+          sudo apt-get install cf8-cli
+
+      - name: Authenticate
+        env:
+          CF_USERNAME: ${{ secrets.CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        run: |
+          echo "Logging into $CF_ORG/$CF_SPACE..."
+          cf api "${CF_API}"
+          cf auth
+          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+          
+      - name: Deploy to GOV.UK PaaS
+        id: deploy-to-paas
+        shell: bash
+        run: |
+          cf push --strategy rolling \
+            --var SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          cf logout
