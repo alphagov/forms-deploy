@@ -43,5 +43,5 @@ jobs:
         shell: bash
         run: |
           cf push --strategy rolling \
-            --var SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+            --var SENTRY_DSN=${{ secrets.API_SENTRY_DSN }}
           cf logout
