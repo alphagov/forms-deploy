@@ -1,0 +1,58 @@
+name: Deploy forms-runner to GOV.UK PaaS Staging environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    env:
+      CF_API: "https://api.london.cloud.service.gov.uk"
+      CF_ORG: "gds-govuk-forms"
+      CF_SPACE: "forms-runner-staging"
+
+    steps:
+      - name: Checkout forms-runner
+        uses: actions/checkout@v2
+        with:
+          repository: alphagov/forms-runner
+
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@2b019609e2b0f1ea1a2bc8ca11cb82ab46ada124 # ruby 3.1.1
+        with:
+          bundler-cache: true
+
+      - name: Precompile assets
+        run: bundle exec rake assets:precompile
+
+      - name: Install cloudfoundry
+        shell: bash
+        id: install-cf-cli
+        run: |
+          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+          echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+          sudo apt-get update
+          sudo apt-get install cf8-cli
+
+      - name: Authenticate
+        env:
+          CF_USERNAME: ${{ secrets.STAGING_CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.STAGING_CF_PASSWORD }}
+        run: |
+          echo "Logging into $CF_ORG/$CF_SPACE..."
+          cf api "${CF_API}"
+          cf auth
+          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+          
+      - name: Deploy to GOV.UK PaaS
+        id: deploy-to-paas
+        shell: bash
+        run: |
+          cf push --strategy rolling \
+            --var PAAS_ENVIRONMENT=staging \
+            --var SENTRY_DSN=${{ secrets.API_SENTRY_DSN }}
+            --var API_BASE=https://forms-api-staging.london.cloudapps.digital \
+            --var NOTIFY_API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
+          cf logout
