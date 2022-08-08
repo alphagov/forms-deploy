@@ -43,5 +43,6 @@ jobs:
         shell: bash
         run: |
           cf push --strategy rolling \
+            --var PAAS_ENVIRONMENT=staging \
             --var SENTRY_DSN=${{ secrets.API_SENTRY_DSN }}
           cf logout
