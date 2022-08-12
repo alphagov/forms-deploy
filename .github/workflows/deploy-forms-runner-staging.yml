@@ -19,14 +19,6 @@ jobs:
         with:
           repository: alphagov/forms-runner
 
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@2b019609e2b0f1ea1a2bc8ca11cb82ab46ada124 # ruby 3.1.1
-        with:
-          bundler-cache: true
-
-      - name: Precompile assets
-        run: bundle exec rake assets:precompile
-
       - name: Install cloudfoundry
         shell: bash
         id: install-cf-cli
