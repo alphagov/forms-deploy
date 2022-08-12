@@ -19,6 +19,37 @@ Currently, the latest code in the main branch is deployed.
 
 **TODO** allow / restrict to deploying from a specific SHA or tag.
 
+```mermaid
+stateDiagram-v2
+direction LR
+state "forms-api" as forms_api
+state "forms-runner" as forms_runner
+state "forms-admin" as forms_admin
+DEVELOPER --> forms_api : commits
+DEVELOPER --> forms_runner : commits
+DEVELOPER --> forms_admin : commits
+
+DEVELOPER --> forms_deploy : Run workflow
+
+forms_api --> DEV_API_PAAS : auto ci deploy
+forms_runner --> DEV_RUNNER_PAAS : auto ci deploy
+forms_admin --> DEV_ADMIN_PAAS : auto ci deploy
+
+
+forms_api --> forms_deploy : actions/checkout
+forms_runner --> forms_deploy : actions/checkout
+forms_admin --> forms_deploy : actions/checkout
+
+state "forms-deploy\nprivate repo" as forms_deploy
+
+forms_deploy --> PRODUCTION_API_PAAS : deploy
+forms_deploy --> PRODUCTION_RUNNER_PAAS : deploy
+forms_deploy --> PRODUCTION_ADMIN_PAAS : deploy
+forms_deploy --> STAGING_API_PAAS : deploy
+forms_deploy --> STAGING_RUNNER_PAAS : deploy
+forms_deploy --> STAGING_ADMIN_PAAS : deploy
+```
+
 ## Secrets
 
 Secrets (e.g. PaaS deployment account credentials, Notify API keys) are stored as [GitHub Secrets](https://github.com/alphagov/forms-deploy/settings/secrets/actions) in the relevant environment.
