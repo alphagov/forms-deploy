@@ -1,0 +1,50 @@
+name: Deploy forms-runner to Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      CF_API: "https://api.london.cloud.service.gov.uk"
+      CF_ORG: "gds-govuk-forms"
+      CF_SPACE: "forms-runner-production"
+
+    steps:
+      - name: Checkout forms-runner
+        uses: actions/checkout@v2
+        with:
+          repository: alphagov/forms-runner
+          
+      - name: Install cloudfoundry
+        shell: bash
+        id: install-cf-cli
+        run: |
+          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+          echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+          sudo apt-get update
+          sudo apt-get install cf8-cli
+
+      - name: Authenticate
+        env:
+          CF_USERNAME: ${{ secrets.CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        run: |
+          echo "Logging into $CF_ORG/$CF_SPACE..."
+          cf api "${CF_API}"
+          cf auth
+          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+          
+      - name: Deploy to GOV.UK PaaS
+        id: deploy-to-paas
+        shell: bash
+        run: |
+          cf push --strategy rolling \
+            --var PAAS_ENVIRONMENT=production \
+            --var SENTRY_DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
+            --var API_BASE=https://forms-api-production.london.cloudapps.digital \
+            --var NOTIFY_API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
+          cf logout
