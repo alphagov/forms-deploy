@@ -1,4 +1,4 @@
-name: Deploy forms-api to GOV.UK PaaS Staging environment
+name: Deploy forms-api to Staging environment
 
 on:
   workflow_dispatch:

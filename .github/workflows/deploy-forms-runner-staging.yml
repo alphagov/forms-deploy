@@ -1,4 +1,4 @@
-name: Deploy forms-runner to GOV.UK PaaS Staging environment
+name: Deploy forms-runner to Staging environment
 
 on:
   workflow_dispatch:
