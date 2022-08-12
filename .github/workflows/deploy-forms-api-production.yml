@@ -1,4 +1,4 @@
-name: Deploy forms-api to GOV.UK PaaS Production environment
+name: Deploy forms-api to Production
 
 on:
   workflow_dispatch:
