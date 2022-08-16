@@ -49,5 +49,6 @@ jobs:
             --var GDS_SSO_OAUTH_SECRET=${{ secrets.GDS_SSO_OAUTH_SECRET }} \
             --var GOVUK_APP_DOMAIN=staging.publishing.service.gov.uk \
             --var API_BASE=https://forms-api-staging.london.cloudapps.digital \
+            --var API_KEY=${{ secrets.STAGING_FORMS_API_KEY }} \
             --var RUNNER_BASE=https://submit.staging.forms.service.gov.uk
           cf logout
