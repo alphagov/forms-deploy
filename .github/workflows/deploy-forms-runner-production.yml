@@ -46,5 +46,6 @@ jobs:
             --var PAAS_ENVIRONMENT=production \
             --var SENTRY_DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
             --var API_BASE=https://forms-api-production.london.cloudapps.digital \
+            --var API_KEY=${{ secrets.FORMS_API_KEY }} \
             --var NOTIFY_API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
           cf logout
