@@ -44,5 +44,6 @@ jobs:
         run: |
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=production \
-            --var SENTRY_DSN=${{ secrets.API_SENTRY_DSN }}
+            --var SENTRY_DSN=${{ secrets.API_SENTRY_DSN }} \
+            --var API_KEY=${{ secrets.FORMS_API_KEY }}
           cf logout
