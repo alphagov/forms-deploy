@@ -26,6 +26,11 @@ jobs:
           repository: alphagov/forms-product-page
           ref: ${{ inputs.ref_to_deploy }}
 
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby
+        with:
+          bundler-cache: true
+
       - name: Build static site
         run: |
           bundle install
