@@ -11,7 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: staging
+    environment: production
 
     env:
       CF_API: "https://api.london.cloud.service.gov.uk"
@@ -48,8 +48,8 @@ jobs:
 
       - name: Authenticate
         env:
-          CF_USERNAME: ${{ secrets.STAGING_CF_USERNAME }}
-          CF_PASSWORD: ${{ secrets.STAGING_CF_PASSWORD }}
+          CF_USERNAME: ${{ secrets.CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
         run: |
           echo "Logging into $CF_ORG/$CF_SPACE..."
           cf api "${CF_API}"
