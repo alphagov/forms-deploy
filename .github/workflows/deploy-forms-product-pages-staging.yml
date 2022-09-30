@@ -61,5 +61,5 @@ jobs:
         shell: bash
         run: |
           cd build
-          cf push "${CF_APP}" --strategy rolling
+          cf push "${CF_APP}-staging" --strategy rolling
           cf logout
