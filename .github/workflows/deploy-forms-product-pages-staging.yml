@@ -1,0 +1,65 @@
+name: Deploy forms-product-pages to Staging environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref_to_deploy:
+        description: "Ref to deploy (branch name, tag name, or SHA)"
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    env:
+      CF_API: "https://api.london.cloud.service.gov.uk"
+      CF_ORG: "gds-govuk-forms"
+      CF_SPACE: "forms-product-pages-staging"
+      CF_APP: "forms-product-pages"
+
+    steps:
+      - name: Checkout forms-product-page
+        uses: actions/checkout@v2
+        with:
+          repository: alphagov/forms-product-page
+          ref: ${{ inputs.ref_to_deploy }}
+
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Build static site
+        run: |
+          bundle install
+          yarn
+          yarn run build
+
+      - name: Install cloudfoundry
+        shell: bash
+        id: install-cf-cli
+        run: |
+          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+          echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+          sudo apt-get update
+          sudo apt-get install cf8-cli
+
+      - name: Authenticate
+        env:
+          CF_USERNAME: ${{ secrets.CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        run: |
+          echo "Logging into $CF_ORG/$CF_SPACE..."
+          cf api "${CF_API}"
+          cf auth
+          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
+      - name: Deploy to GOV.UK PaaS
+        id: deploy-to-paas
+        shell: bash
+        run: |
+          cd build
+          cf push "${CF_APP}" --strategy rolling
+          cf logout
