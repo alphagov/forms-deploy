@@ -20,6 +20,7 @@ services:
       - RAILS_LOG_TO_STDOUT=1
       - RAILS_SERVE_STATIC_FILES=1
       - SECRET_KEY_BASE=assets
+      - RUNNER_BASE=http://localhost:3001
     volumes:
       - "../../forms-admin:/app:cached"
     depends_on:
