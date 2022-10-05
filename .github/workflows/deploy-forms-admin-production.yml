@@ -7,16 +7,21 @@ on:
         description: "Ref to deploy (branch name, tag name, or SHA)"
         required: true
         type: string
+      environment:
+        description: "Deploy to"
+        type: environment
+        required: true
+
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ inputs.environment }}
 
     env:
       CF_API: "https://api.london.cloud.service.gov.uk"
       CF_ORG: "gds-govuk-forms"
-      CF_SPACE: "forms-admin-production"
+      CF_SPACE: "forms-admin-${{ inputs.environment }}"
 
     steps:
       - name: Checkout forms-admin
@@ -49,7 +54,7 @@ jobs:
         shell: bash
         run: |
           cf push --strategy rolling \
-            --var PAAS_ENVIRONMENT=production \
+            --var PAAS_ENVIRONMENT=${{ inputs.environment }} \
             --var SENTRY_DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
             --var GDS_SSO_OAUTH_ID=${{ secrets.GDS_SSO_OAUTH_ID }} \
             --var GDS_SSO_OAUTH_SECRET=${{ secrets.GDS_SSO_OAUTH_SECRET }} \
