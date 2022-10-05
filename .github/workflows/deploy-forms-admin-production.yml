@@ -50,7 +50,7 @@ jobs:
         run: |
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=production \
-            --var INSTANCES=1 \
+            --var INSTANCES=2 \
             --var SENTRY_DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
             --var GDS_SSO_OAUTH_ID=${{ secrets.GDS_SSO_OAUTH_ID }} \
             --var GDS_SSO_OAUTH_SECRET=${{ secrets.GDS_SSO_OAUTH_SECRET }} \
