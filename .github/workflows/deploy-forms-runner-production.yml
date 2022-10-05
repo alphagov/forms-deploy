@@ -50,6 +50,7 @@ jobs:
         run: |
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=production \
+            --var INSTANCES=1 \
             --var SENTRY_DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
             --var API_BASE=https://forms-api-production.london.cloudapps.digital \
             --var API_KEY=${{ secrets.FORMS_API_KEY }} \
