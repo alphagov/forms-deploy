@@ -1,0 +1,7 @@
+{
+  "name": "forms-deploy",
+  "private": "true",
+  "devDependencies": {
+    "cypress": "^10.10.0"
+  }
+}
