@@ -1,0 +1,28 @@
+name: Deploy forms-runner to Staging environment
+
+on: workflow_dispatch
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout cypress tests
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          browser: chrome
+          env: form_url=https://submit.staging.forms.service.gov.uk/form/1
+          spec: cypress/e2e/form_filler.cy.js
+
+      - name: Archive cypress artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress
+          path: |
+            cypress/videos
+            cypress/screenshots

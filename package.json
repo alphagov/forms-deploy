@@ -3,5 +3,9 @@
   "private": "true",
   "devDependencies": {
     "cypress": "^10.10.0"
+  },
+  "scripts": {
+    "cypress:run": "cypress run --spec 'cypress/e2e/form_filler.cy.js' --env form_url=https://submit.staging.forms.service.gov.uk/form/1",
+    "cypress:open": "cypress open --env form_url=https://submit.staging.forms.service.gov.uk/form/1"
   }
 }

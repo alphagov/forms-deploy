@@ -11,7 +11,7 @@ describe('user fills in a form', () => {
 })
 
 const loadExampleForm = () => {
-  cy.visit('https://submit.staging.forms.service.gov.uk/form/1')
+  cy.visit(Cypress.env('form_url'))
 }
 
 const fillInHowLongPage = () => {
@@ -31,5 +31,6 @@ const fillInWhatWillYouCatchPage = () => {
 }
 
 const submitForm = () => {
-  cy.contains('Submit').click()
+  // Don't actually submit the form here because it'll spam the inbox
+  cy.contains('Submit')
 }
