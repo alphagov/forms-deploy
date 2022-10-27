@@ -7,6 +7,11 @@ on:
 
   workflow_dispatch:
 
+  workflow_run:
+    workflows: [Deploy forms-runner to Staging environment]
+    types:
+      - completed
+
 jobs:
   cypress:
     runs-on: ubuntu-latest
