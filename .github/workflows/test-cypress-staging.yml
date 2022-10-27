@@ -1,6 +1,10 @@
-name: Deploy forms-runner to Staging environment
+name: Run end-to-end tests in Staging
 
-on: workflow_dispatch
+on:
+  workflow_run:
+    workflows: [Deploy forms-runner to Staging environment]
+    types:
+      - completed
 
 jobs:
   cypress:
