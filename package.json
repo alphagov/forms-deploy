@@ -2,7 +2,8 @@
   "name": "forms-deploy",
   "private": "true",
   "devDependencies": {
-    "cypress": "^10.10.0"
+    "cypress": "^10.11.0",
+    "totp-generator": "^0.0.14"
   },
   "scripts": {
     "cypress:run": "cypress run --spec 'cypress/e2e/form_filler.cy.js' --env form_url=https://submit.staging.forms.service.gov.uk/form/1",
