@@ -23,8 +23,8 @@ Cypress.Commands.add('enterEmailAndPassword', () => {
         },
         body: {
           authenticity_token: csrf,
-          'user[email]': Cypress.env('SIGNON_INTEGRATION_EMAIL'),
-          'user[password]': Cypress.env('SIGNON_INTEGRATION_PASSWORD')
+          'user[email]': Cypress.env('SIGNON_EMAIL'),
+          'user[password]': Cypress.env('SIGNON_PASSWORD')
         },
         form: true
       })
@@ -39,7 +39,7 @@ Cypress.Commands.add('twoFactor', () => {
     .then(body => {
       const $html = Cypress.$(body)
       const csrf = $html.find('input[name=authenticity_token]').val()
-      const code = totp(Cypress.env('SIGNON_INTEGRATION_2FA_SECRET'))
+      const code = totp(Cypress.env('SIGNON_2FA_SECRET'))
 
       const requestBody = {
         authenticity_token: csrf,
