@@ -1,12 +1,12 @@
 # From https://github.com/nbulaj/ruby-chromedriver
-FROM ruby:3.1.1
+FROM ruby:3.1.1-slim-bullseye
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV CHROMIUM_DRIVER_VERSION 107.0.5304.18
-ENV CHROME_VERSION 107.0.5304.68-1
+ENV CHROME_VERSION 107.0.5304.87-1
 
 # Install dependencies & Chrome
-RUN apt-get update && apt-get -y --no-install-recommends install zlib1g-dev liblzma-dev wget xvfb unzip libgconf-2-4 libnss3 nodejs \
+RUN apt-get update && apt-get -y --no-install-recommends install gnupg1 zlib1g-dev liblzma-dev wget xvfb unzip libgconf-2-4 libnss3 nodejs \
  && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -  \
  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
  && apt-get update && apt-get -y --no-install-recommends install google-chrome-stable=$CHROME_VERSION \
@@ -19,8 +19,9 @@ RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/$CH
     && chmod ugo+rx /usr/bin/chromedriver \
     && apt-mark hold google-chrome-stable
 
-RUN useradd -ms /bin/bash ruby
+# RUN mkdir /app && chown ruby:ruby -R /app
 
-ADD docker-entrypoint.sh /
-USER ruby
-ENTRYPOINT ["/docker-entrypoint.sh"]
+RUN gem install bundler -v 2.3.20
+
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
