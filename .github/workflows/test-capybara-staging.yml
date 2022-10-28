@@ -13,7 +13,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Run Capybara tests
         uses: ./.github/actions/capybara-tests-action
-        working-directory: capybara
         with:
           command: |
-            'bundle install && bundle exec rspec spec/features/runner_spec.rb'
+            'cd capybara && bundle install && bundle exec rspec spec/features/runner_spec.rb'
