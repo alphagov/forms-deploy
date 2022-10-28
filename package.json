@@ -2,6 +2,7 @@
   "name": "forms-deploy",
   "private": "true",
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.3",
     "cypress": "^10.11.0",
     "totp-generator": "^0.0.14"
   },

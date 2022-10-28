@@ -15,17 +15,13 @@ const loadExampleForm = () => {
 }
 
 const fillInHowLongPage = () => {
-  cy.contains('How long do you need one?')
-    .click()
-    .type('5 months')
+  cy.findByLabelText('How long do you need one?').type('5 months')
 
   cy.contains('Continue').click()
 }
 
 const fillInWhatWillYouCatchPage = () => {
-  cy.contains('What are you likely to catch?')
-    .click()
-    .type('5 moths')
+  cy.findByLabelText('What are you likely to catch?').type('5 moths')
 
   cy.contains('Continue').click()
 }

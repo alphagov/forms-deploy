@@ -1,4 +1,5 @@
-const totp = require('totp-generator')
+import '@testing-library/cypress/add-commands'
+import totp from 'totp-generator'
 
 Cypress.Commands.add('logIn', () => {
   cy.enterEmailAndPassword()
