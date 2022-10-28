@@ -1,3 +1,3 @@
 --color
---format documentation
+--format RSpec::Github::Formatter --format documentation
 --require spec_helper
