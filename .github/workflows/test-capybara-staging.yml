@@ -1,0 +1,19 @@
+name: Run end-to-end tests in Staging
+
+on:
+  push:
+    branches:
+      - capybara
+jobs:
+  capybara:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout capybara tests
+        uses: actions/checkout@v2
+      - name: Run Capybara tests
+        uses: ./.github/actions/capybara-tests-action
+        working-directory: capybara
+        with:
+          command: |
+            'bundle install && bundle exec rspec spec/features/runner_spec.rb'

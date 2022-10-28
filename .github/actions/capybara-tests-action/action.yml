@@ -1,0 +1,11 @@
+name: 'Run capybara tests'
+description: 'Run capybara tests in headless chrome'
+inputs:
+  command:
+    description: 'command to run'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.command }}
