@@ -17,27 +17,85 @@ describe "Full lifecyle", type: :feature do
     click_button "Sign in"
     expect(page).to have_content 'GOV.UK Forms'
 
-    # require 'pry'; binding.pry
+
     click_link "Create a form"
-    expect(page.filter("h1")).to have_content 'What is the name of your form?'
+    expect(page.find("h1")).to have_content 'What is the name of your form?'
     fill_in "What is the name of your form?", :with => "capybara test form"
+    click_button "Continue"
+    # require "pry"; binding.pry
 
-    expect(page.filter("h1")).to have_content 'Create a form'
-    click_link 'Add and edit your questions'
+    next_form_creation_step 'Add and edit your questions'
 
-    expect(page.filter("h1")).to have_content 'Edit question'
+    expect(page.find("h1")).to have_content 'Edit question'
     fill_in "Question text", :with => "What is your name?"
-    # require 'pry'; binding.pry
-    
-    
-    
-    
+    choose "Single line of text", visible: false
+    click_button "Save and add next question"
+
+    click_link "Go to your questions"
+    click_link "Back to create a form"
+
+    next_form_creation_step 'Add information about what happens next'
+
+    expect(page.find("h1")).to have_content 'Form submitted page'
+    fill_in "Enter some information to tell people what will happen next", with: "We'll send you an email to let you know the outcome. You'll usually get a response within 10 working days."
+    click_button "Save and continue"
+
+    next_form_creation_step 'Set the email address completed forms will be sent to'
+
+    expect(page.find("h1")).to have_content 'What email address should completed forms be sent to?'
+    fill_in "What email address should completed forms be sent to?", with: "govuk-forms-tech@digital.cabinet-office.gov.uk"
+    click_button "Continue"
+
+    next_form_creation_step 'Provide a link to privacy information for this form'
+
+    expect(page.find("h1")).to have_content 'Provide a link to privacy information for this form'
+    fill_in "Enter a link to privacy information for this form", with: "https://www.gov.uk/help/privacy-notice"
+    click_button "Save and continue"
+
+    next_form_creation_step 'Provide contact details for support'
+
+    expect(page.find("h1")).to have_content "Provide contact details for support"
+    check "Email", visible: false
+    fill_in "Enter the email address", with: "govuk-forms-tech@digital.cabinet-office.gov.uk"
+    click_button "Save and continue"
+
+    next_form_creation_step 'Make your form live'
+
+    expect(page.find("h1")).to have_content "Make your form live"
+    choose "Yes", visible: false
+    click_button "Continue"
+    expect(page.find("h1")).to have_content "Your form is live"
+
+    click_link "Continue to form details"
+
+    expect(page.find("h1")).to have_content "Your form"
+
+    delete_form
+
+    # require "pry"; binding.pry
+
   end
 
   def totp
     totp = ROTP::TOTP.new(ENV.fetch("SIGNON_OTP") { raise "You must set SIGNON_OTP with the TOTP code for signon"})
     totp.now
   end
+
+  def next_form_creation_step(task)
+    expect(page.find("h1")).to have_content 'Create a form'
+    click_link task
+  end
+
+  def delete_form
+    click_link "Delete form"
+    expect(page.find("h1")).to have_content "Are you sure you want to delete this form?"
+    choose "Yes", visible: false
+    click_button "Continue"
+    expect(page.find("h1")).to have_content 'GOV.UK Forms'
+    expect(page).not_to have_content "capybara test form"
+
+  end
+
 end
 
 # it "completes a form" do
