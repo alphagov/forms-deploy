@@ -70,9 +70,14 @@ describe "Full lifecyle", type: :feature do
 
     expect(page.find("h1")).to have_content "Your form"
 
-    delete_form
+    live_form_link = page.find('[data-copy-target]').text
 
-    # require "pry"; binding.pry
+    form_is_filled_in_by_form_filler live_form_link
+
+
+    # delete_form
+
+
 
   end
 
@@ -93,9 +98,13 @@ describe "Full lifecyle", type: :feature do
     click_button "Continue"
     expect(page.find("h1")).to have_content 'GOV.UK Forms'
     expect(page).not_to have_content "capybara test form"
-
   end
 
+
+  def form_is_filled_in_by_form_filler live_form_link
+    visit live_form_link
+    require "pry"; binding.pry
+  end
 end
 
 # it "completes a form" do
