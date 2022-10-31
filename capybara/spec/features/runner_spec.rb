@@ -1,6 +1,5 @@
 describe "Form runner", type: :feature do
   before do
-    Capybara.default_driver = :headless_chrome
     Capybara.app_host = 'https://submit.staging.forms.service.gov.uk/'
   end
 
