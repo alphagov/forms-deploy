@@ -10,6 +10,7 @@ locals {
     "alistair.laing",
     "dan.worth",
     "david.biddle",
+    "james.sheppard",
     "samuel.culley",
     "tom.iles",
     "tristram.oaten"
