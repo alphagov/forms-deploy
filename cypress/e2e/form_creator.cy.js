@@ -2,6 +2,7 @@ describe('form creator', () => {
   it('creates a form and makes it live', () => {
     cy.logIn()
     loadAdminPage()
+    deleteExistingSmokeTestForm()
     createAForm()
     fillInFormNamePage()
     addAQuestion()
@@ -16,6 +17,13 @@ describe('form creator', () => {
 
 const loadAdminPage = () => {
   cy.visit('http://forms-admin-dev.london.cloudapps.digital')
+}
+
+const deleteExistingSmokeTestForm = () => {
+  cy.contains('Smoke test form').click()
+  cy.contains('Delete form').click()
+  cy.findByLabelText('Yes').click()
+  cy.contains('Continue').click()
 }
 
 const createAForm = () => {
