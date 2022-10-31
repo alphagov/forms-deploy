@@ -3,20 +3,23 @@ locals {
   # given access to the GOV.UK Forms accounts. To request an IAM user:
   # https://gds-request-an-aws-account.cloudapps.digital/user
 
-  # All GOV.UK Forms developers can have admin access to the development
-  # account.
+  # Admin access to the staging environment should only be provided when
+  # needed.
   admins = [
+    "dan.worth" // Required whilst setting up environments.
+  ]
+
+  # All GOV.UK Forms developers can have readonly access to
+  # the staging environment.
+  readonly = [
     "alice.carr",
     "alistair.laing",
     "dan.worth",
     "david.biddle",
+    "james.sheppard",
     "samuel.culley",
     "tom.iles",
     "tristram.oaten"
-  ]
-
-  readonly = [
-    "dan.worth"
   ]
 }
 
