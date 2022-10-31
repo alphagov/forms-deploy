@@ -1,5 +1,5 @@
-describe('user', () => {
-  it('creates a form', () => {
+describe('form creator', () => {
+  it('creates a form and makes it live', () => {
     cy.logIn()
     loadAdminPage()
     createAForm()

@@ -1,5 +1,5 @@
-describe('user fills in a form', () => {
-  it('succesfully', () => {
+describe('form filler', () => {
+  it('fills in a form successfully', () => {
     loadExampleForm()
 
     fillInHowLongPage()
