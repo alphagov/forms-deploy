@@ -4,8 +4,20 @@ inputs:
   command:
     description: 'command to run'
     required: true
+  username:
+    description: 'GDS SignOn username'
+    required: true
+  password:
+    description: 'GDS SignOn password'
+    required: true
+  token:
+    description: 'GDS SignOn OTP token'
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.command }}
+    - ${{ inputs.username }}
+    - ${{ inputs.password }}
+    - ${{ inputs.token }}

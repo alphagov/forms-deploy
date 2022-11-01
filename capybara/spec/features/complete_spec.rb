@@ -11,8 +11,8 @@ feature "Full lifecyle of a form", type: :feature do
     visit 'https://admin.staging.forms.service.gov.uk/'
     expect(page).to have_content 'Sign in to GOV.UK'
 
-    fill_in "Email", :with => ENV.fetch("SIGNON_USERNAME") { raise "You must set SIGNON_USERNAME" }
-    fill_in "Password", :with =>ENV.fetch("SIGNON_PASSWORD") { raise "You must set SIGNON_PASSWORD" }
+    fill_in "Email", :with => ENV.fetch("SIGNON_USERNAME") { raise "You must set INPUT_USERNAME" }
+    fill_in "Password", :with =>ENV.fetch("SIGNON_PASSWORD") { raise "You must set INPUT_PASSWORD" }
     click_button "Sign in"
     fill_in "Your verification code", :with => totp
     click_button "Sign in"
@@ -71,7 +71,7 @@ feature "Full lifecyle of a form", type: :feature do
   end
 
   def totp
-    totp = ROTP::TOTP.new(ENV.fetch("SIGNON_OTP") { raise "You must set SIGNON_OTP with the TOTP code for signon"})
+    totp = ROTP::TOTP.new(ENV.fetch("INPUT_TOKEN") { raise "You must set INPUT_OTP with the TOTP code for signon"})
     totp.now
   end
 

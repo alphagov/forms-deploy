@@ -59,3 +59,14 @@ jobs:
             --var API_KEY=${{ secrets.STAGING_FORMS_API_KEY }} \
             --var RUNNER_BASE=https://submit.staging.forms.service.gov.uk
           cf logout
+
+      - name: Checkout capybara tests
+        uses: actions/checkout@v2
+      - name: Run Capybara tests
+        uses: ./.github/actions/capybara-tests-action
+        with:
+          username: ${{ secrets.SIGNON_USERNAME }}
+          password: ${{ secrets.SIGNON_password }}
+          token: ${{ secrets.SIGNON_token }}
+          command: |
+             cd capybara && bundle install && bundle exec rspec
