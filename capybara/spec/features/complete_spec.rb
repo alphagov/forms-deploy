@@ -36,7 +36,7 @@ feature "Full lifecyle of a form", type: :feature do
     next_form_creation_step 'Set the email address completed forms will be sent to'
 
     expect(page.find("h1")).to have_content 'What email address should completed forms be sent to?'
-    fill_in "What email address should completed forms be sent to?", with: "govuk-forms-tech@digital.cabinet-office.gov.uk"
+    fill_in "What email address should completed forms be sent to?", with: "govuk-forms-automation-tests@digital.cabinet-office.gov.uk"
     click_button "Continue"
 
     next_form_creation_step 'Provide a link to privacy information for this form'
@@ -49,7 +49,7 @@ feature "Full lifecyle of a form", type: :feature do
 
     expect(page.find("h1")).to have_content "Provide contact details for support"
     check "Email", visible: false
-    fill_in "Enter the email address", with: "govuk-forms-tech@digital.cabinet-office.gov.uk"
+    fill_in "Enter the email address", with: "govuk-forms-automation-tests@digital.cabinet-office.gov.uk"
     click_button "Save and continue"
 
     next_form_creation_step 'Make your form live'
