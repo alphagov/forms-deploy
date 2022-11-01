@@ -1,12 +1,12 @@
 require 'rotp'
 
-describe "Full lifecyle", type: :feature do
+feature "Full lifecyle of a form", type: :feature do
   let(:form_name) { "capybara test form" }
   before do
     Capybara.app_host = 'https://admin.staging.forms.service.gov.uk/'
   end
 
-  it "logs in" do
+  scenario "Form is created, made live by form admin user and completed by a member of the public" do
     visit '/'
     visit 'https://admin.staging.forms.service.gov.uk/'
     expect(page).to have_content 'Sign in to GOV.UK'
@@ -18,18 +18,11 @@ describe "Full lifecyle", type: :feature do
     click_button "Sign in"
     expect(page).to have_content 'GOV.UK Forms'
 
-
-    click_link "Create a form"
-    expect(page.find("h1")).to have_content 'What is the name of your form?'
-    fill_in "What is the name of your form?", :with => form_name
-    click_button "Continue"
+    create_form_with_name(form_name)
 
     next_form_creation_step 'Add and edit your questions'
 
-    expect(page.find("h1")).to have_content 'Edit question'
-    fill_in "Question text", :with => "What is your name?"
-    choose "Single line of text", visible: false
-    click_button "Save and add next question"
+    create_a_single_line_of_text_question
 
     click_link "Go to your questions"
     click_link "Back to create a form"
@@ -85,6 +78,20 @@ describe "Full lifecyle", type: :feature do
   def next_form_creation_step(task)
     expect(page.find("h1")).to have_content 'Create a form'
     click_link task
+  end
+
+  def create_form_with_name(form_name)
+    click_link "Create a form"
+    expect(page.find("h1")).to have_content 'What is the name of your form?'
+    fill_in "What is the name of your form?", :with => form_name
+    click_button "Continue"
+  end
+
+  def create_a_single_line_of_text_question
+    expect(page.find("h1")).to have_content 'Edit question'
+    fill_in "Question text", :with => "What is your name?"
+    choose "Single line of text", visible: false
+    click_button "Save and add next question"
   end
 
   def delete_form
