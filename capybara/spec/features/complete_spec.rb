@@ -1,6 +1,7 @@
 require 'rotp'
 
 describe "Full lifecyle", type: :feature do
+  let(:form_name) { "capybara test form" }
   before do
     Capybara.app_host = 'https://admin.staging.forms.service.gov.uk/'
   end
@@ -20,9 +21,8 @@ describe "Full lifecyle", type: :feature do
 
     click_link "Create a form"
     expect(page.find("h1")).to have_content 'What is the name of your form?'
-    fill_in "What is the name of your form?", :with => "capybara test form"
+    fill_in "What is the name of your form?", :with => form_name
     click_button "Continue"
-    # require "pry"; binding.pry
 
     next_form_creation_step 'Add and edit your questions'
 
@@ -74,11 +74,7 @@ describe "Full lifecyle", type: :feature do
 
     form_is_filled_in_by_form_filler live_form_link
 
-
-    # delete_form
-
-
-
+    delete_form
   end
 
   def totp
@@ -92,36 +88,32 @@ describe "Full lifecyle", type: :feature do
   end
 
   def delete_form
+    visit 'https://admin.staging.forms.service.gov.uk/'
+    click_link(form_name, match: :one)
     click_link "Delete form"
     expect(page.find("h1")).to have_content "Are you sure you want to delete this form?"
     choose "Yes", visible: false
     click_button "Continue"
     expect(page.find("h1")).to have_content 'GOV.UK Forms'
-    expect(page).not_to have_content "capybara test form"
+    expect(page.find(".govuk-table")).not_to have_content form_name
   end
 
 
   def form_is_filled_in_by_form_filler live_form_link
     visit live_form_link
-    require "pry"; binding.pry
+
+    expect(page).to have_content 'What is your name?'
+    answer_single_line('test name')
+
+    expect(page).to have_content 'Check your answers before submitting your form'
+    expect(page).to have_content 'test name'
+    click_button 'Submit'
+
+    expect(page).to have_content 'Your form has been submitted'
   end
 end
 
-# it "completes a form" do
-#   visit 'preview-form/1/apply-for-a-fishing-license/1'
-#   expect(page).to have_content 'Apply for a fishing license'
-#   expect(page).to have_content 'How long do you need one?'
-#   answer_single_line('one week')
-#   expect(page).to have_content 'What are you likely to catch?'
-#   answer_single_line('fish')
-#   expect(page).to have_content 'Check your answers before submitting your form'
-#   expect(page).to have_content 'one week'
-#   expect(page).to have_content 'fish'
-#   click_button 'Submit'
-#   expect(page).to have_content 'Your form has been submitted'
-# end
-
-# def answer_single_line(text)
-#   fill_in 'question[text]', with: text
-#   click_button 'Continue'
-# end
+def answer_single_line(text)
+  fill_in 'question[text]', with: text
+  click_button 'Continue'
+end
