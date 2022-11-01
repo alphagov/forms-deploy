@@ -19,7 +19,7 @@ jobs:
       CF_SPACE: "forms-admin-staging"
       SIGNON_USERNAME: ${{ secrets.SIGNON_USERNAME }}
       SIGNON_PASSWORD: ${{ secrets.SIGNON_PASSWORD }}
-      SIGNON_OTP: ${{ secrets.ADMIN_SENTRY_DSN }}
+      SIGNON_OTP: ${{ secrets.SIGNON_OTP }}
 
     steps:
       - name: Checkout forms-admin
