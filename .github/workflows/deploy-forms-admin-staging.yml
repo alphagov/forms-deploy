@@ -34,4 +34,4 @@ jobs:
         uses: ./.github/actions/capybara-tests-action
         with:
           command: |
-             cd capybara && bundle install && bundle exec rspec spec/features/runner_spec.rb
+             cd capybara && bundle install && bundle exec rspec spec/features/complete_spec.rb
