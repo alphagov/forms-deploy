@@ -2,19 +2,18 @@ require 'rotp'
 
 feature "Full lifecyle of a form", type: :feature do
   let(:form_name) { "capybara test form" }
+  let(:username)  { ENV.fetch("SIGNON_USERNAME") { raise "You must set SIGNON_USERNAME" } }
+  let(:password) { ENV.fetch("SIGNON_PASSWORD") { raise "You must set SIGNON_PASSWORD" } }
+  let(:token)   { ENV.fetch("SIGNON_OTP") { raise "You must set $SIGNON_OTP with the TOTP code for signon"} }
+  let(:forms_admin_url) { ENV.fetch("FORMS_ADMIN_URL") { raise "You must set $FORMS_ADMIN_URL"} }
+
   before do
-    Capybara.app_host = 'https://admin.staging.forms.service.gov.uk/'
+    Capybara.app_host = forms_admin_url
   end
 
   scenario "Form is created, made live by form admin user and completed by a member of the public" do
+    sign_on(username, password, token) unless ENV.fetch("SKIP_SIGNON", false)
     visit '/'
-    expect(page).to have_content 'Sign in to GOV.UK'
-
-    fill_in "Email", :with => ENV.fetch("SIGNON_USERNAME") { raise "You must set SIGNON_USERNAME" }
-    fill_in "Password", :with =>ENV.fetch("SIGNON_PASSWORD") { raise "You must set SIGNON_PASSWORD" }
-    click_button "Sign in"
-    fill_in "Your verification code", :with => totp
-    click_button "Sign in"
     expect(page).to have_content 'GOV.UK Forms'
 
     create_form_with_name(form_name)
@@ -69,11 +68,6 @@ feature "Full lifecyle of a form", type: :feature do
     delete_form
   end
 
-  def totp
-    totp = ROTP::TOTP.new(ENV.fetch("SIGNON_OTP") { raise "You must set $SIGNON_OTP with the TOTP code for signon"})
-    totp.now
-  end
-
   def next_form_creation_step(task)
     expect(page.find("h1")).to have_content 'Create a form'
     click_link task
@@ -104,7 +98,6 @@ feature "Full lifecyle of a form", type: :feature do
     expect(page.find(".govuk-table")).not_to have_content form_name
   end
 
-
   def form_is_filled_in_by_form_filler live_form_link
     visit live_form_link
 
@@ -117,9 +110,25 @@ feature "Full lifecyle of a form", type: :feature do
 
     expect(page).to have_content 'Your form has been submitted'
   end
-end
 
-def answer_single_line(text)
-  fill_in 'question[text]', with: text
-  click_button 'Continue'
+  def answer_single_line(text)
+    fill_in 'question[text]', with: text
+    click_button 'Continue'
+  end
+
+  def sign_on(username, email, otp_token)
+    visit '/'
+    expect(page).to have_content 'Sign in to GOV.UK'
+
+    fill_in "Email", :with => username
+    fill_in "Password", :with => password
+    click_button "Sign in"
+    fill_in "Your verification code", :with => totp(otp_token)
+    click_button "Sign in"
+  end
+
+  def totp(token)
+    totp = ROTP::TOTP.new(token)
+    totp.now
+  end
 end

@@ -20,6 +20,7 @@ jobs:
       SIGNON_USERNAME: ${{ secrets.SIGNON_USERNAME }}
       SIGNON_PASSWORD: ${{ secrets.SIGNON_PASSWORD }}
       SIGNON_OTP: ${{ secrets.SIGNON_OTP }}
+      FORMS_ADMIN_URL: https://admin.staging.forms.service.gov.uk/
 
     steps:
       - name: Checkout forms-admin
