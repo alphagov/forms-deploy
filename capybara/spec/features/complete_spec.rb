@@ -8,7 +8,6 @@ feature "Full lifecyle of a form", type: :feature do
 
   scenario "Form is created, made live by form admin user and completed by a member of the public" do
     visit '/'
-    visit 'https://admin.staging.forms.service.gov.uk/'
     expect(page).to have_content 'Sign in to GOV.UK'
 
     fill_in "Email", :with => ENV.fetch("SIGNON_USERNAME") { raise "You must set SIGNON_USERNAME" }
