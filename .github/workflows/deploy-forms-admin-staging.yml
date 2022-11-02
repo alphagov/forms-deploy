@@ -39,4 +39,4 @@ jobs:
           bundler-cache: true
           working-directory: tests/capybara
       - name: Run tests
-        run: bundle exec rspec tests/capybara/spec/features/complete_spec.rb
+        run: cd tests/capybara && bundle exec rspec spec/features/complete_spec.rb
