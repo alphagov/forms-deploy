@@ -31,8 +31,8 @@ jobs:
       - uses: nanasess/setup-chromedriver@v1.0.1
       - name: Checkout capybara tests
         uses: actions/checkout@v2
-          with:
-            path: tests
+        with:
+          path: tests
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
