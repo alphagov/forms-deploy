@@ -37,6 +37,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          working-directory: tests
+          working-directory: tests/capybara
       - name: Run tests
         run: bundle exec rspec tests/capybara/spec/features/complete_spec.rb
