@@ -27,13 +27,16 @@ jobs:
         with:
           repository: alphagov/forms-admin
           ref: ${{ inputs.ref_to_deploy }}
+          path: main
       - uses: nanasess/setup-chromedriver@v1.0.1
+      - name: Checkout capybara tests
+        uses: actions/checkout@v2
+          with:
+            path: tests
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
           bundler-cache: true
-      - name: Checkout capybara tests
-        uses: actions/checkout@v2
+          working-directory: tests
       - name: Run tests
-        run: bundle exec rspec spec/features/complete_spec.rb
+        run: bundle exec rspec tests/capybara/spec/features/complete_spec.rb
