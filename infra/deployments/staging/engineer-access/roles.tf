@@ -7,6 +7,7 @@ locals {
   # needed.
   admins = [
     "dan.worth" // Required whilst setting up environments.
+    "alice.carr" // Required whilst setting up environments.
   ]
 
   # All GOV.UK Forms developers can have readonly access to
