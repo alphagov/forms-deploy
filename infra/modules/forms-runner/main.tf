@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 
 
 module "ecs_service" {
-  source             = "../ecs_service"
+  source             = "../ecs-service"
   env_name           = var.env_name
   application        = "forms-runner"
   sub_domain         = "submit"

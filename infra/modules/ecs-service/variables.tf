@@ -12,7 +12,7 @@ variable "sub_domain" {
   description = "The subdomain for this service."
   validation {
     condition     = contains(["submit", "admin", "www", "api"], var.sub_domain)
-    error_message = "Valid values for env_name are: submit, admin, www, api"
+    error_message = "Valid values for sub_domain are: submit, admin, www, api"
   }
 }
 
@@ -20,6 +20,10 @@ variable "sub_domain" {
 variable "application" {
   type        = string
   description = "The name of the application e.g. forms-admin"
+  validation {
+    condition     = contains(["forms-admin", "forms-runner", "forms-api"], var.application)
+    error_message = "Valid values for application are: forms-admin, forms-runner, forms-api"
+  }
 }
 
 variable "desired_task_count" {
