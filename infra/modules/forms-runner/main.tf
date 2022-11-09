@@ -37,6 +37,10 @@ module "ecs_service" {
     {
       name  = "SECRET_KEY_BASE",
       value = "something"
+    },
+    {
+      name  = "RAILS_SERVE_STATIC_FILES",
+      value = "1"
     }
   ]
 }
