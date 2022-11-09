@@ -8,7 +8,7 @@ variable "env_name" {
 }
 
 variable "mutable_image_tags" {
-  type        = string
+  type        = bool
   description = "If true then image tags in ECR are muttable"
   default     = false
 }

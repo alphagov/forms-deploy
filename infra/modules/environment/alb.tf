@@ -1,7 +1,7 @@
 locals {
   domain_names = {
     dev     = "dev."
-    staging = "stag."
+    staging = "stage."
   }
 }
 
