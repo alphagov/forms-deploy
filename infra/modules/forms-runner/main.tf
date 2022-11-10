@@ -49,6 +49,10 @@ module "ecs_service" {
     {
       name      = "API_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
+    },
+    {
+      name      = "NOTIFY_API_KEY",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/notify-api-key"
     }
   ]
 }
