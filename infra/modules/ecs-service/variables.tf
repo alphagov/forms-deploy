@@ -53,6 +53,12 @@ variable "environment_variables" {
   description = "Environment variables to set in the task environment"
 }
 
+variable "secrets" {
+  type        = list(any)
+  default     = []
+  description = "Secret values to look up form SSM Parameter store and set in the task environment"
+}
+
 variable "container_port" {
   type        = number
   description = "The port that the container process listens on."
