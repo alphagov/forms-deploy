@@ -6,15 +6,16 @@ data "aws_elasticache_replication_group" "forms_runner" {
 
 
 module "ecs_service" {
-  source             = "../ecs-service"
-  env_name           = var.env_name
-  application        = "forms-runner"
-  sub_domain         = "submit"
-  desired_task_count = var.desired_task_count
-  image              = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-${var.env_name}:${var.image_tag}"
-  cpu                = var.cpu
-  memory             = var.memory
-  container_port     = 3000
+  source                 = "../ecs-service"
+  env_name               = var.env_name
+  application            = "forms-runner"
+  sub_domain             = "submit"
+  desired_task_count     = var.desired_task_count
+  image                  = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-${var.env_name}:${var.image_tag}"
+  cpu                    = var.cpu
+  memory                 = var.memory
+  container_port         = 3000
+  permit_internet_egress = true
 
   # TODO: dummy values to get the app running. Update with real values.
   environment_variables = [
