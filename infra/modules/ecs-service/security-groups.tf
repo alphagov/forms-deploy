@@ -59,3 +59,15 @@ resource "aws_security_group_rule" "egress_to_redis" {
   cidr_blocks       = [data.aws_vpc.forms.cidr_block]
   security_group_id = aws_security_group.baseline.id
 }
+
+resource "aws_security_group_rule" "egress_to_internet" {
+  count = var.permit_internet_egress ? 1 : 0
+
+  description       = "Permits outbound 443 to the internet"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.baseline.id
+}

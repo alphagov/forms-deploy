@@ -59,7 +59,9 @@ resource "aws_vpc_endpoint" "s3" {
   service_name = "com.amazonaws.eu-west-2.s3"
   route_table_ids = [
     aws_route_table.public.id,
-    aws_route_table.private.id
+    aws_route_table.private_a.id,
+    aws_route_table.private_b.id,
+    aws_route_table.private_c.id
   ]
 
   tags = {

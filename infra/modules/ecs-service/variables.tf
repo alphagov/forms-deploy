@@ -57,3 +57,9 @@ variable "container_port" {
   type        = number
   description = "The port that the container process listens on."
 }
+
+variable "permit_internet_egress" {
+  type        = bool
+  default     = false
+  description = "If true then the app's security group will permit egress to the internet on port 443"
+}
