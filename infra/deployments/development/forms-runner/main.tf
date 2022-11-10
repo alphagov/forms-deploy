@@ -10,4 +10,5 @@ module "forms_runner" {
   desired_task_count = 1
   cpu                = 256
   memory             = 512
+  api_base_url       = "https://forms-api-dev.london.cloudapps.digital"
 }

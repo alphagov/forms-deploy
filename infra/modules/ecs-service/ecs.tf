@@ -19,6 +19,7 @@ resource "aws_ecs_task_definition" "task" {
     {
       name        = var.application,
       environment = var.environment_variables,
+      secrets     = var.secrets,
       image       = var.image,
       essential   = true,
       portMappings = [

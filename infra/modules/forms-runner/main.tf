@@ -25,11 +25,7 @@ module "ecs_service" {
     },
     {
       name  = "API_BASE",
-      value = "https://forms-api-dev.london.cloudapps.digital"
-    },
-    {
-      name  = "API_KEY",
-      value = "something"
+      value = var.api_base_url
     },
     {
       name  = "RACK_ENV",
@@ -46,6 +42,13 @@ module "ecs_service" {
     {
       name  = "RAILS_SERVE_STATIC_FILES",
       value = "1"
+    }
+  ]
+
+  secrets = [
+    {
+      name      = "API_KEY",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
     }
   ]
 }

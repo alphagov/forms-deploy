@@ -25,3 +25,8 @@ variable "desired_task_count" {
   type        = number
   default     = 2
 }
+
+variable "api_base_url" {
+  description = "The url for connecting to forms-api"
+  type        = string
+}
