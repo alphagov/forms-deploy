@@ -1,5 +1,9 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_elasticache_replication_group" "forms_runner" {
+  replication_group_id = "forms-runner-${var.env_name}"
+}
+
 
 module "ecs_service" {
   source             = "../ecs-service"
@@ -16,7 +20,7 @@ module "ecs_service" {
   environment_variables = [
     {
       name  = "REDIS_URL",
-      value = "rediss://dummy:6379"
+      value = "rediss://${data.aws_elasticache_replication_group.forms_runner.primary_endpoint_address}:${data.aws_elasticache_replication_group.forms_runner.port}"
     },
     {
       name  = "API_BASE",
