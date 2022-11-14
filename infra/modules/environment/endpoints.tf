@@ -85,3 +85,54 @@ resource "aws_vpc_endpoint" "cloudwatch" {
     Name = "cloudwatch-endpoint-${var.env_name}"
   }
 }
+
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id              = aws_vpc.forms.id
+  service_name        = "ssm.eu-west-2.amazonaws.com"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "ssm-endpoint-${var.env_name}"
+  }
+}
+
+resource "aws_vpc_endpoint" "ssm_messages" {
+  vpc_id              = aws_vpc.forms.id
+  service_name        = "ssmmessages.eu-west-2.amazonaws.com"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "ssm-messages-endpoint-${var.env_name}"
+  }
+}
+
+resource "aws_vpc_endpoint" "ec2_messages" {
+  vpc_id              = aws_vpc.forms.id
+  service_name        = "ec2messages.eu-west-2.amazonaws.com"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "ec2-messages-endpoint-${var.env_name}"
+  }
+}
