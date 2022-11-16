@@ -69,3 +69,15 @@ variable "permit_internet_egress" {
   default     = false
   description = "If true then the app's security group will permit egress to the internet on port 443"
 }
+
+variable "permit_postgres_egress" {
+  type        = bool
+  default     = false
+  description = "If true then the app's security group will permit egress to the postgres on port 5432"
+}
+
+variable "permit_redis_egress" {
+  type        = bool
+  default     = false
+  description = "If true then the app's security group will permit egress to the redis on port 6379"
+}
