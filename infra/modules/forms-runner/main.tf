@@ -16,6 +16,7 @@ module "ecs_service" {
   memory                 = var.memory
   container_port         = 3000
   permit_internet_egress = true
+  permit_redis_egress    = true
 
   # TODO: dummy values to get the app running. Update with real values.
   environment_variables = [

@@ -15,7 +15,7 @@ data "aws_prefix_list" "private_s3" {
 }
 
 resource "aws_security_group" "baseline" {
-  name        = "forms-baseline-${var.env_name}"
+  name        = "${var.application}-${var.env_name}"
   description = "Ingress from VPC, egress to VPC and S3"
   vpc_id      = data.aws_vpc.forms.id
 }
@@ -51,10 +51,24 @@ resource "aws_security_group_rule" "egress_to_vpc" {
 }
 
 resource "aws_security_group_rule" "egress_to_redis" {
+  count = var.permit_redis_egress ? 1 : 0
+
   description       = "Permit outbound to the redis port 6379"
   type              = "egress"
   from_port         = 6379
   to_port           = 6379
+  protocol          = "tcp"
+  cidr_blocks       = [data.aws_vpc.forms.cidr_block]
+  security_group_id = aws_security_group.baseline.id
+}
+
+resource "aws_security_group_rule" "egress_to_rds" {
+  count = var.permit_postgres_egress ? 1 : 0
+
+  description       = "Permit outbound to the postgres port 5432"
+  type              = "egress"
+  from_port         = 5432
+  to_port           = 5432
   protocol          = "tcp"
   cidr_blocks       = [data.aws_vpc.forms.cidr_block]
   security_group_id = aws_security_group.baseline.id
