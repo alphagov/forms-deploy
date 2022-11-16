@@ -17,6 +17,10 @@ jobs:
       CF_API: "https://api.london.cloud.service.gov.uk"
       CF_ORG: "gds-govuk-forms"
       CF_SPACE: "forms-runner-production"
+      SIGNON_USERNAME: ${{ secrets.SIGNON_USERNAME }}
+      SIGNON_PASSWORD: ${{ secrets.SIGNON_PASSWORD }}
+      SIGNON_OTP: ${{ secrets.SIGNON_OTP }}
+      FORMS_ADMIN_URL: https://admin.forms.service.gov.uk/
 
     steps:
       - name: Checkout forms-runner
@@ -56,3 +60,19 @@ jobs:
             --var API_KEY=${{ secrets.FORMS_API_KEY }} \
             --var NOTIFY_API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
           cf logout
+
+      - uses: nanasess/setup-chromedriver@v1.0.1
+
+      - name: Checkout capybara tests
+        uses: actions/checkout@v2
+        with:
+          path: tests
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          working-directory: tests/capybara
+
+      - name: Run tests
+        run: cd tests/capybara && bundle exec rspec spec/features/complete_spec.rb
