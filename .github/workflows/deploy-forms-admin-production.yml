@@ -21,6 +21,7 @@ jobs:
       SIGNON_PASSWORD: ${{ secrets.SIGNON_PASSWORD }}
       SIGNON_OTP: ${{ secrets.SIGNON_OTP }}
       FORMS_ADMIN_URL: https://admin.forms.service.gov.uk/
+      SETTINGS__GOVUK_NOTIFY__API_KEY: ${{ secrets.SETTINGS__GOVUK_NOTIFY__API_KEY }}
 
     steps:
       - name: Checkout forms-admin
