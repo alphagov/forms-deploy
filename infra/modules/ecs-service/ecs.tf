@@ -43,8 +43,8 @@ resource "aws_ecs_task_definition" "task" {
     cpu_architecture        = "ARM64"
   }
 
-  execution_role_arn = aws_iam_role.task_exec_role.arn
-  task_role_arn      = aws_iam_role.task_role.arn
+  execution_role_arn = aws_iam_role.ecs_task_exec_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
 
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.cpu
