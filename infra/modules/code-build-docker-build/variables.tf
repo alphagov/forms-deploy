@@ -23,3 +23,13 @@ variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"
 }
+
+variable "docker_username_parameter_path" {
+  type        = string
+  description = "The path to a secure string with the docker username"
+}
+
+variable "docker_password_parameter_path" {
+  type        = string
+  description = "The path to a secure string with the docker password"
+}

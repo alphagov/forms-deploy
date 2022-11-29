@@ -13,22 +13,11 @@ data "aws_iam_policy_document" "codebuild" {
     effect = "Allow"
   }
   statement {
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:CompleteLayerUpload",
-      "ecr:GetAuthorizationToken",
-      "ecr:InitiateLayerUpload",
-      "ecr:PutImage",
-      "ecr:UploadLayerPart"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-  statement {
     actions = ["ssm:GetParameter", "ssm:GetParameters"]
     resources = [
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.docker_username_parameter_path}",
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.docker_password_parameter_path}",
+      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_username_parameter_path}",
+      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_password_parameter_path}",
+      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_secret_parameter_path}",
     ]
     effect = "Allow"
   }

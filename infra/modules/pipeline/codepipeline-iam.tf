@@ -10,7 +10,8 @@ data "aws_iam_policy_document" "codepipeline" {
     actions = ["codebuild:*"]
     resources = [
       module.terraform_apply_dev.arn,
-      module.docker_build.arn
+      module.docker_build.arn,
+      module.smoke_tests_dev.arn
     ]
     effect = "Allow"
   }

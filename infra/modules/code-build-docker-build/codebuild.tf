@@ -35,6 +35,18 @@ resource "aws_codebuild_project" "main" {
       name  = "AWS_ACCOUNT_ID"
       value = local.aws_account_id
     }
+
+    environment_variable {
+      name  = "DOCKER_USERNAME"
+      value = var.docker_username_parameter_path
+      type  = "PARAMETER_STORE"
+    }
+
+    environment_variable {
+      name  = "DOCKER_PASSWORD"
+      value = var.docker_password_parameter_path
+      type  = "PARAMETER_STORE"
+    }
   }
 
   source {

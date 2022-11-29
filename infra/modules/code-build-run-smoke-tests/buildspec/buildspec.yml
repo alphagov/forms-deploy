@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Installing Chrome"
+      - wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+      - yum -y install ./google-chrome-stable_current_x86_64.rpm
+      - ln -s /usr/bin/google-chrome-stable /usr/bin/chromium
+      - echo "Installing Chromedriver"
+      - wget https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriver_linux64.zip
+      - unzip chromedriver_linux64.zip
+      - mv chromedriver /usr/bin/chromedriver
+      - chromedriver --version
+      - cd capybara
+      - bundle install
+  build:
+    commands:
+      - bundle exec rspec
