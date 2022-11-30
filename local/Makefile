@@ -18,7 +18,7 @@ all:
 admin:
 	docker-compose up -d redis postgres forms-runner forms-api
 api:
-	docker-compose up -d redis postgres forms-runner forms-admin
+	API_BASE=http://host.docker.internal:9292 docker-compose up -d redis postgres forms-runner forms-admin
 runner:
 	docker-compose up -d redis postgres forms-admin forms-api
 ps:
