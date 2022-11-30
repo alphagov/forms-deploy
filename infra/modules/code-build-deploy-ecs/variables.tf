@@ -24,13 +24,16 @@ variable "terraform_version" {
   default     = "1.2.8"
 }
 
-variable "terraform_command" {
-  type        = string
-  description = "The terraform command to run including any var arguments"
-  default     = "plan"
-}
-
 variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"
+}
+
+variable "cluster_name" {
+  type        = string
+  description = "The ECS cluster to deploy to"
+}
+variable "service_name" {
+  type        = string
+  description = "The ECS service to update"
 }

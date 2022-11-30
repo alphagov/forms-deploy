@@ -25,8 +25,12 @@ resource "aws_codebuild_project" "terraform" {
       value = var.terraform_version
     }
     environment_variable {
-      name  = "TERRAFORM_COMMAND"
-      value = var.terraform_command
+      name  = "CLUSTER_NAME"
+      value = var.cluster_name
+    }
+    environment_variable {
+      name  = "SERVICE_NAME"
+      value = var.service_name
     }
   }
 

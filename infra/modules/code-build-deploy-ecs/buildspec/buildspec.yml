@@ -21,4 +21,10 @@ phases:
       - cd "${DEPLOY_DIRECTORY}"
       - ls
       - terraform init
-      - terraform ${TERRAFORM_COMMAND} --var image_tag="${IMAGE_TAG}"
+      - terraform apply --auto-approve --var image_tag="${IMAGE_TAG}"
+  post_build:
+    commands:
+      - echo "Waiting for ECS to finish updating"
+      - cd "${CODEBUILD_SRC_DIR}/infra/modules/code-build-deploy-ecs/scripts"
+      - pwd
+      - ./wait-for-deploy.sh "${SERVICE_NAME}" "${CLUSTER_NAME}"

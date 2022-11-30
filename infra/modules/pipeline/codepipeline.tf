@@ -87,40 +87,41 @@ resource "aws_codepipeline" "main" {
       version         = "1"
       input_artifacts = ["forms_deploy"]
       configuration = {
-        ProjectName          = module.smoke_tests_dev.name
+        ProjectName = module.smoke_tests_dev.name
       }
     }
   }
 }
 
 module "docker_build" {
-  source              = "../code-build-docker-build"
-  project_name        = "docker-build-${var.source_repo}"
-  project_description = "Build the forms-api docker image and push into ECR"
-  image_name          = var.image_name
+  source                         = "../code-build-docker-build"
+  project_name                   = "docker-build-${var.source_repo}"
+  project_description            = "Build the forms-api docker image and push into ECR"
+  image_name                     = var.image_name
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
 }
 
 module "terraform_apply_dev" {
-  source              = "../code-build-run-terraform"
+  source              = "../code-build-deploy-ecs"
   project_name        = "${var.terraform_deployment}-deploy-dev"
   project_description = "Run terraform apply for ${var.terraform_deployment} in dev"
   deployer_role_arn   = var.development_deployer_role_arn
   deploy_directory    = "infra/deployments/development/${var.terraform_deployment}"
-  terraform_command   = "apply --auto-approve" # TODO: pass in vars.
   artifact_store_arn  = aws_s3_bucket.codepipeline.arn
+  cluster_name        = "forms-dev"
+  service_name        = var.terraform_deployment
 }
 
 module "smoke_tests_dev" {
-  source              = "../code-build-run-smoke-tests"
-  project_name        = "${var.terraform_deployment}-smoke-tests-dev"
-  project_description = "Run smoke tests for ${var.terraform_deployment} in dev"
+  source                         = "../code-build-run-smoke-tests"
+  project_name                   = "${var.terraform_deployment}-smoke-tests-dev"
+  project_description            = "Run smoke tests for ${var.terraform_deployment} in dev"
   signon_username_parameter_path = "/development/smoketests/signon/username"
   signon_password_parameter_path = "/development/smoketests/signon/password"
-  signon_secret_parameter_path =  "/development/smoketests/signon/secret"
-  forms_admin_url = "https://admin.dev.forms.service.gov.uk"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
+  signon_secret_parameter_path   = "/development/smoketests/signon/secret"
+  forms_admin_url                = "https://admin.dev.forms.service.gov.uk"
+  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
 }
 
