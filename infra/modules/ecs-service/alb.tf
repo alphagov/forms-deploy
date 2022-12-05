@@ -8,7 +8,7 @@ locals {
 }
 
 resource "aws_lb_target_group" "tg" {
-  name        = "forms-${var.application}-${var.env_name}"
+  name        = "${var.application}-${var.env_name}"
   port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.forms.id
