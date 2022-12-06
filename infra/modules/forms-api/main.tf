@@ -1,12 +1,16 @@
 data "aws_caller_identity" "current" {}
 
+locals {
+  deploy_account_id = "711966560482"
+}
+
 module "ecs_service" {
   source                 = "../ecs-service"
   env_name               = var.env_name
   application            = "forms-api"
   sub_domain             = "api"
   desired_task_count     = var.desired_task_count
-  image                  = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-${var.env_name}:${var.image_tag}"
+  image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 9292
