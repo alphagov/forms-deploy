@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "codepipeline" {
 }
 
 resource "aws_iam_policy" "codepipeline" {
-  name   = "codepipline"
+  name   = "codepipline-${var.app_name}"
   path   = "/"
   policy = data.aws_iam_policy_document.codepipeline.json
 }
@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
 }
 
 resource "aws_iam_role" "codepipeline" {
-  name = "codepipeline"
+  name = "codepipeline-${var.app_name}"
 
   assume_role_policy = data.aws_iam_policy_document.codepipeline_assume_role.json
 }

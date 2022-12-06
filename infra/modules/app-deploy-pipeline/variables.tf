@@ -9,23 +9,20 @@ variable "development_deployer_role_arn" {
   description = "The role arn to use when deploying to development environment"
 }
 
-variable "terraform_deployment" {
-  type        = string
-  description = "A directory under forms-deploy/infra/deployments/*/"
-}
-
-variable "source_repo" {
-  type        = string
-  description = "The github repo containing the source code and docker file to build"
-}
-
 variable "source_branch" {
   type        = string
   description = "The branch name of the source_repo to use"
   default     = "main"
 }
 
-variable "image_name" {
+variable "forms_deploy_branch" {
   type        = string
-  description = "The name of the image without the tag, e.g. forms-api"
+  description = "The branch of forms-deploy to use"
+  default     = "main"
 }
+
+variable "app_name" {
+  type        = string
+  description = "The name of the app to deploy"
+}
+

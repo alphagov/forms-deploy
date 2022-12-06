@@ -7,9 +7,9 @@ variable "env_name" {
   }
 }
 
-variable "codebuild_terraform_arn" {
-  type        = string
-  description = "The role arn for codebuild applying terraform"
+variable "codebuild_terraform_arns" {
+  type        = list(string)
+  description = "The role arns for codebuild applying terraform"
 }
 
 data "aws_caller_identity" "current" {}
@@ -23,11 +23,8 @@ data "aws_iam_policy_document" "assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${local.account_id}:role/dan.worth-admin",
-        var.codebuild_terraform_arn
-      ]
+      type        = "AWS"
+      identifiers = var.codebuild_terraform_arns
     }
   }
 }

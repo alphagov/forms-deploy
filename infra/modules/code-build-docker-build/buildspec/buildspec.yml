@@ -5,6 +5,7 @@ env:
 phases:
   install:
     commands:
+      - set -e
       - docker --version
       - echo "$DOCKER_PASSWORD" | docker login -u $(echo $DOCKER_USERNAME) --password-stdin
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &

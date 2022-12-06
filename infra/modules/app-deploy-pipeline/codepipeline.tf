@@ -1,5 +1,5 @@
 resource "aws_codepipeline" "main" {
-  name     = var.terraform_deployment
+  name     = var.app_name
   role_arn = aws_iam_role.codepipeline.arn
 
   artifact_store {
@@ -21,12 +21,13 @@ resource "aws_codepipeline" "main" {
         ConnectionArn    = var.github_connection_arn
         FullRepositoryId = "alphagov/forms-deploy"
         BranchName       = "code_pipeline"
+        DetectChanges    = false
       }
     }
 
     action {
-      name             = "get-${var.source_repo}"
-      namespace        = "get-${var.source_repo}"
+      name             = "get-${var.app_name}"
+      namespace        = "get-${var.app_name}"
       category         = "Source"
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
@@ -35,14 +36,14 @@ resource "aws_codepipeline" "main" {
 
       configuration = {
         ConnectionArn    = var.github_connection_arn
-        FullRepositoryId = "alphagov/${var.source_repo}"
+        FullRepositoryId = "alphagov/${var.app_name}"
         BranchName       = var.source_branch
       }
     }
   }
 
   stage {
-    name = "Build-${var.source_repo}-docker-image"
+    name = "Build-${var.app_name}-docker-image"
 
     action {
       name            = "Build"
@@ -54,7 +55,7 @@ resource "aws_codepipeline" "main" {
       input_artifacts = ["source_repo"]
       configuration = {
         ProjectName          = module.docker_build.name
-        EnvironmentVariables = "[{\"name\":\"GIT_SHA\",\"value\":\"#{get-${var.source_repo}.CommitId}\",\"type\":\"PLAINTEXT\"}]"
+        EnvironmentVariables = "[{\"name\":\"GIT_SHA\",\"value\":\"#{get-${var.app_name}.CommitId}\",\"type\":\"PLAINTEXT\"}]"
       }
     }
   }
@@ -95,9 +96,9 @@ resource "aws_codepipeline" "main" {
 
 module "docker_build" {
   source                         = "../code-build-docker-build"
-  project_name                   = "docker-build-${var.source_repo}"
+  project_name                   = "docker-build-${var.app_name}"
   project_description            = "Build the forms-api docker image and push into ECR"
-  image_name                     = var.image_name
+  image_name                     = "${var.app_name}-deploy"
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
   artifact_store_arn             = aws_s3_bucket.codepipeline.arn
@@ -105,19 +106,19 @@ module "docker_build" {
 
 module "terraform_apply_dev" {
   source              = "../code-build-deploy-ecs"
-  project_name        = "${var.terraform_deployment}-deploy-dev"
-  project_description = "Run terraform apply for ${var.terraform_deployment} in dev"
+  project_name        = "${var.app_name}-deploy-dev"
+  project_description = "Run terraform apply for ${var.app_name} in dev"
   deployer_role_arn   = var.development_deployer_role_arn
-  deploy_directory    = "infra/deployments/development/${var.terraform_deployment}"
+  deploy_directory    = "infra/deployments/development/${var.app_name}"
   artifact_store_arn  = aws_s3_bucket.codepipeline.arn
   cluster_name        = "forms-dev"
-  service_name        = var.terraform_deployment
+  service_name        = var.app_name
 }
 
 module "smoke_tests_dev" {
   source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.terraform_deployment}-smoke-tests-dev"
-  project_description            = "Run smoke tests for ${var.terraform_deployment} in dev"
+  project_name                   = "${var.app_name}-smoke-tests-dev"
+  project_description            = "Run smoke tests for ${var.app_name} in dev"
   signon_username_parameter_path = "/development/smoketests/signon/username"
   signon_password_parameter_path = "/development/smoketests/signon/password"
   signon_secret_parameter_path   = "/development/smoketests/signon/secret"
