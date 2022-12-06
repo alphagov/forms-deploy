@@ -23,3 +23,7 @@ runner:
 	docker-compose up -d redis postgres forms-admin forms-api
 ps:
 	docker-compose ps
+logs:
+	docker-compose logs -f
+reset:
+	docker-compose down --volumes
