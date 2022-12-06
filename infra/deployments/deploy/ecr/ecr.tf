@@ -33,7 +33,11 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
             "Sid": "AllowPull",
             "Effect": "Allow",
             "Principal": {
-              "AWS": "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution"
+              "AWS": [
+                "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
+                "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
+                "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution"
+                ]
               },
             "Action": [
                 "ecr:GetDownloadUrlForLayer",
