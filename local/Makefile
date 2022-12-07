@@ -8,6 +8,8 @@ help:
 	@echo "make api    - run everything BUT the API"
 	@echo "make runner - run everything BUT the runner"
 	@echo "make ps     - show docker-compose processses"
+	@echo "make logs   - show docker-compose logs"
+	@echo "make reset  - remove all docker-compose volumes and containers"
 
 db:
 	docker-compose up -d postgres
