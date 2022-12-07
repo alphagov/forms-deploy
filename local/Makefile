@@ -3,6 +3,7 @@
 help:
 	@echo "Usage:"
 	@echo "make clean  - run docker-compose down (useful for chaining)"
+	@echo "make all    - run the whole docker-compose stack" 
 	@echo "make db     - run just postgres"
 	@echo "make admin  - run everything BUT the admin"
 	@echo "make api    - run everything BUT the API"
