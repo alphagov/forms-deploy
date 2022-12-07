@@ -18,6 +18,7 @@ data "aws_iam_policy_document" "codebuild" {
       "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_username_parameter_path}",
       "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_password_parameter_path}",
       "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_secret_parameter_path}",
+      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.notify_api_key_secret_parameter_path}",
     ]
     effect = "Allow"
   }

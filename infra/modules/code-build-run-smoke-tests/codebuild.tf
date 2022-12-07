@@ -37,6 +37,12 @@ resource "aws_codebuild_project" "smoke_tests" {
     }
 
     environment_variable {
+      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
+      value = var.notify_api_key_secret_parameter_path
+      type  = "PARAMETER_STORE"
+    }
+
+    environment_variable {
       name  = "FORMS_ADMIN_URL"
       value = var.forms_admin_url
     }

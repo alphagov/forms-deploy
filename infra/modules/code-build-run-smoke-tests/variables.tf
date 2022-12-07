@@ -32,3 +32,9 @@ variable "forms_admin_url" {
   type        = string
   description = "The url for forms admin"
 }
+
+variable "notify_api_key_secret_parameter_path" {
+  type        = string
+  description = "The path to a secure string with the notify api key for smoketests"
+}
+

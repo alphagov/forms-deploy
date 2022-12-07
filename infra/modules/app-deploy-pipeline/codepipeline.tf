@@ -124,5 +124,7 @@ module "smoke_tests_dev" {
   signon_secret_parameter_path   = "/development/smoketests/signon/secret"
   forms_admin_url                = "https://admin.dev.forms.service.gov.uk"
   artifact_store_arn             = aws_s3_bucket.codepipeline.arn
+
+  notify_api_key_secret_parameter_path = "/development/smoketests/notify/api-key"
 }
 
