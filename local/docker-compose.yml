@@ -8,7 +8,7 @@ services:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
-      - API_BASE=http://forms-api:9292
+      - API_BASE=${API_BASE}
       - API_KEY=development_key
       - DATABASE_URL=postgres://forms_admin:forms_admin@postgres/forms_admin
       - GDS_SSO_OAUTH_ID=example.org
@@ -30,6 +30,8 @@ services:
         condition: service_started
     ports:
       - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: >
       sh -c "rails db:setup &&
       rails db:seed &&
@@ -57,7 +59,7 @@ services:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
-      - API_BASE=http://forms-api:9292
+      - API_BASE=${API_BASE}
       - API_KEY=development_key
       - NODE_ENV=development
       - RACK_ENV=development
