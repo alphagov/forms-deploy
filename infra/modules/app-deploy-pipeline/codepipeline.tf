@@ -66,44 +66,12 @@ resource "aws_codepipeline" "main" {
   }
 
   stage {
-    name = "Deploy-to-dev-environment"
-
-    action {
-      name            = "terraform-apply"
-      category        = "Build"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      input_artifacts = ["forms_deploy"]
-      configuration = {
-        ProjectName          = module.terraform_apply_dev.name
-        EnvironmentVariables = "[{\"name\":\"IMAGE_TAG\",\"value\":\"#{Build.IMAGE_TAG}\",\"type\":\"PLAINTEXT\"}]"
-      }
-    }
-  }
-
-  stage {
-    name = "Run-smoke-tests-development"
-
-    action {
-      name            = "run-smoke-tests-dev"
-      category        = "Build"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      input_artifacts = ["forms_deploy"]
-      configuration = {
-        ProjectName = module.smoke_tests_dev.name
-      }
-    }
-  }
-
-  stage {
     name = "Deploy-to-staging-environment"
 
     action {
       name            = "terraform-apply"
       category        = "Build"
+      run_order       = "1"
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
@@ -113,20 +81,48 @@ resource "aws_codepipeline" "main" {
         EnvironmentVariables = "[{\"name\":\"IMAGE_TAG\",\"value\":\"#{Build.IMAGE_TAG}\",\"type\":\"PLAINTEXT\"}]"
       }
     }
-  }
-
-  stage {
-    name = "Run-smoke-tests-staging"
 
     action {
       name            = "run-smoke-tests-staging"
       category        = "Build"
+      run_order       = "2"
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
       input_artifacts = ["forms_deploy"]
       configuration = {
         ProjectName = module.smoke_tests_staging.name
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy-to-dev-environment"
+
+    action {
+      name            = "terraform-apply"
+      category        = "Build"
+      run_order       = "1"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName          = module.terraform_apply_dev.name
+        EnvironmentVariables = "[{\"name\":\"IMAGE_TAG\",\"value\":\"#{Build.IMAGE_TAG}\",\"type\":\"PLAINTEXT\"}]"
+      }
+    }
+
+    action {
+      name            = "run-smoke-tests-dev"
+      category        = "Build"
+      owner           = "AWS"
+      run_order       = "2"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName = module.smoke_tests_dev.name
       }
     }
   }
@@ -181,9 +177,9 @@ module "smoke_tests_staging" {
   source                         = "../code-build-run-smoke-tests"
   project_name                   = "${var.app_name}-smoke-tests-staging"
   project_description            = "Run smoke tests for ${var.app_name} in staging"
-  signon_username_parameter_path = "/development/smoketests/signon/username"
-  signon_password_parameter_path = "/development/smoketests/signon/password"
-  signon_secret_parameter_path   = "/development/smoketests/signon/secret"
+  signon_username_parameter_path = "/staging/smoketests/signon/username"
+  signon_password_parameter_path = "/staging/smoketests/signon/password"
+  signon_secret_parameter_path   = "/staging/smoketests/signon/secret"
   forms_admin_url                = "https://admin.stage.forms.service.gov.uk"
   artifact_store_arn             = aws_s3_bucket.codepipeline.arn
 
