@@ -14,6 +14,8 @@ resource "aws_lb_target_group" "tg" {
   vpc_id      = data.aws_vpc.forms.id
   target_type = "ip"
 
+  deregistration_delay = "60"
+
   health_check {
     path     = "/ping"
     matcher  = "200"
