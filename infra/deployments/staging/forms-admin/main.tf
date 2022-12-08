@@ -3,12 +3,14 @@ variable "image_tag" {
   description = "The image tag to deploy"
 }
 
-module "forms_runner" {
-  source             = "../../../modules/forms-runner"
+module "forms_admin" {
+  source             = "../../../modules/forms-admin"
   env_name           = "staging"
   image_tag          = var.image_tag
   desired_task_count = 1
   cpu                = 256
   memory             = 512
   api_base_url       = "https://api.stage.forms.service.gov.uk"
+  runner_base        = "https://submit.stage.forms.service.gov.uk"
+  govuk_app_domain   = "integration.publishing.service.gov.uk"
 }

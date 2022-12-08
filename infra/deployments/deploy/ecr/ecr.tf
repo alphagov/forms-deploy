@@ -60,8 +60,11 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {
             "Sid": "AllowPull",
             "Effect": "Allow",
             "Principal": {
-              "AWS": "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution"
-              },
+              "AWS": [
+                "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
+                "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution"
+              ]
+            },
             "Action": [
                 "ecr:GetDownloadUrlForLayer",
                 "ecr:BatchGetImage",
