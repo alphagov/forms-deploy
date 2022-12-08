@@ -25,7 +25,7 @@ resource "aws_codepipeline" "main" {
       configuration = {
         ConnectionArn    = var.github_connection_arn
         FullRepositoryId = "alphagov/forms-deploy"
-        BranchName       = "code_pipeline"
+        BranchName       = "main"
         DetectChanges    = false
       }
     }
