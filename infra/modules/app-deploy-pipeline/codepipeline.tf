@@ -138,30 +138,6 @@ module "docker_build" {
   artifact_store_arn             = aws_s3_bucket.codepipeline.arn
 }
 
-module "terraform_apply_dev" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-dev"
-  project_description = "Run terraform apply for ${var.app_name} in dev"
-  deployer_role_arn   = local.development_deployer_role_arn
-  deploy_directory    = "infra/deployments/development/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-dev"
-  service_name        = var.app_name
-}
-
-module "smoke_tests_dev" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-dev"
-  project_description            = "Run smoke tests for ${var.app_name} in dev"
-  signon_username_parameter_path = "/development/smoketests/signon/username"
-  signon_password_parameter_path = "/development/smoketests/signon/password"
-  signon_secret_parameter_path   = "/development/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.dev.forms.service.gov.uk"
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/development/smoketests/notify/api-key"
-}
-
 module "terraform_apply_staging" {
   source              = "../code-build-deploy-ecs"
   project_name        = "${var.app_name}-deploy-staging"
@@ -184,4 +160,28 @@ module "smoke_tests_staging" {
   artifact_store_arn             = aws_s3_bucket.codepipeline.arn
 
   notify_api_key_secret_parameter_path = "/staging/smoketests/notify/api-key"
+}
+
+module "terraform_apply_dev" {
+  source              = "../code-build-deploy-ecs"
+  project_name        = "${var.app_name}-deploy-dev"
+  project_description = "Run terraform apply for ${var.app_name} in dev"
+  deployer_role_arn   = local.development_deployer_role_arn
+  deploy_directory    = "infra/deployments/development/${var.app_name}"
+  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
+  cluster_name        = "forms-dev"
+  service_name        = var.app_name
+}
+
+module "smoke_tests_dev" {
+  source                         = "../code-build-run-smoke-tests"
+  project_name                   = "${var.app_name}-smoke-tests-dev"
+  project_description            = "Run smoke tests for ${var.app_name} in dev"
+  signon_username_parameter_path = "/development/smoketests/signon/username"
+  signon_password_parameter_path = "/development/smoketests/signon/password"
+  signon_secret_parameter_path   = "/development/smoketests/signon/secret"
+  forms_admin_url                = "https://admin.dev.forms.service.gov.uk"
+  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
+
+  notify_api_key_secret_parameter_path = "/development/smoketests/notify/api-key"
 }
