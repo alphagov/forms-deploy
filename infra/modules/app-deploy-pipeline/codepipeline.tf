@@ -60,7 +60,7 @@ resource "aws_codepipeline" "main" {
       input_artifacts = ["source_repo"]
       configuration = {
         ProjectName          = module.docker_build.name
-        EnvironmentVariables = "[{\"name\":\"GIT_SHA\",\"value\":\"#{get-${var.app_name}.CommitId}\",\"type\":\"PLAINTEXT\"}]"
+        EnvironmentVariables = jsonencode([{ "name" : "GIT_SHA", "value" : "#{get-${var.app_name}.CommitId}", "type" : "PLAINTEXT" }])
       }
     }
   }
@@ -78,7 +78,7 @@ resource "aws_codepipeline" "main" {
       input_artifacts = ["forms_deploy"]
       configuration = {
         ProjectName          = module.terraform_apply_staging.name
-        EnvironmentVariables = "[{\"name\":\"IMAGE_TAG\",\"value\":\"#{Build.IMAGE_TAG}\",\"type\":\"PLAINTEXT\"}]"
+        EnvironmentVariables = jsonencode([{ "name" : "IMAGE_TAG", "value" : "#{Build.IMAGE_TAG}", "type" : "PLAINTEXT" }])
       }
     }
 
@@ -109,7 +109,7 @@ resource "aws_codepipeline" "main" {
       input_artifacts = ["forms_deploy"]
       configuration = {
         ProjectName          = module.terraform_apply_dev.name
-        EnvironmentVariables = "[{\"name\":\"IMAGE_TAG\",\"value\":\"#{Build.IMAGE_TAG}\",\"type\":\"PLAINTEXT\"}]"
+        EnvironmentVariables = jsonencode([{ "name" : "IMAGE_TAG", "value" : "#{Build.IMAGE_TAG}", "type" : "PLAINTEXT" }])
       }
     }
 
