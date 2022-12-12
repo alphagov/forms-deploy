@@ -8,7 +8,7 @@ terraform {
   # Comment out when bootstrapping
   backend "s3" {
     bucket = "gds-forms-deploy-tfstate"
-    key    = "forms-runner-pipeline.tfstate"
+    key    = "forms_runner_pipeline.tfstate"
     region = "eu-west-2"
   }
 }
