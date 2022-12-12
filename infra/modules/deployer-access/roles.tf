@@ -7,15 +7,8 @@ variable "env_name" {
   }
 }
 
-variable "codebuild_terraform_arns" {
-  type        = list(string)
-  description = "The role arns for codebuild applying terraform"
-}
-
-data "aws_caller_identity" "current" {}
-
 locals {
-  account_id = data.aws_caller_identity.current.account_id
+  deploy_account_id = "711966560482"
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -23,8 +16,12 @@ data "aws_iam_policy_document" "assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "AWS"
-      identifiers = var.codebuild_terraform_arns
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}",
+        "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}",
+        "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}"
+      ]
     }
   }
 }
