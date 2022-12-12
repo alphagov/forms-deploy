@@ -1,0 +1,30 @@
+version: 0.2
+env:
+  exported-variables:
+    - IMAGE_TAG
+phases:
+  install:
+    commands:
+      - set -e
+      - docker --version
+      - echo "$DOCKER_PASSWORD" | docker login -u $(echo $DOCKER_USERNAME) --password-stdin
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+  pre_build:
+    commands:
+      - EPOCH_SECONDS="$(date '+%s')"
+      - IMAGE_TAG="${GIT_SHA}-${EPOCH_SECONDS}"
+  build:
+    commands:
+      - cd "${BUILD_DIRECTORY}"
+      - ls
+      - docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+      - docker tag "${IMAGE_NAME}:"${IMAGE_TAG} "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:"${IMAGE_TAG}
+
+      - docker images
+  post_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com
+      - docker push "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:"${IMAGE_TAG}
+

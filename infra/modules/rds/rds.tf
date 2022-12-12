@@ -16,7 +16,7 @@ resource "aws_rds_cluster" "forms" {
 
   availability_zones = var.availability_zones
 
-  master_username = "forms_admin"
+  master_username = "root"
   master_password = var.main_password
   port            = local.rds_port
 
