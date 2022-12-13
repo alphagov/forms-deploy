@@ -1,16 +1,12 @@
 data "aws_caller_identity" "current" {}
 
-locals {
-  deploy_account_id = "711966560482"
-}
-
 data "aws_iam_policy_document" "codebuild" {
   statement {
     actions   = [
       "logs:PutLogEvents",
       "logs:CreateLogStream"
     ]
-    resources = ["arn:aws:logs:eu-west-2:${local.deploy_account_id}:log-group:/aws/codebuild/${var.project_name}:*"]
+    resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project_name}:*"]
     effect    = "Allow"
   }
   statement {
