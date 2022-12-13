@@ -8,7 +8,12 @@ data "aws_iam_policy_document" "codebuild" {
     effect    = "Allow"
   }
   statement {
-    actions = ["s3:*"]
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject", 
+      "s3:ListBucket"
+    ]
     resources = [
       "${var.artifact_store_arn}/*",
       "${var.artifact_store_arn}"
