@@ -1,11 +1,16 @@
-## Notes on the RDS Module
+### Description
 
-### Deployment configuration
-
-This module deploys an RDS cluster in Serverless V1 configuration using a postgres 11.x engine (the latest availble on Serverless). Serverless V1 will scale to "off" if `auto_pause` is set to `true` and after the `seconds_until_auto_pause` duration without any activity. Serverless V1 was chosen because it is compatible with AWS Data API which provides Engineers access without the need for a Bastion host within our VPC. Serverless V2 is not compatible with AWS Data API and does not scale to "off" when not in use.
+This module deploys an RDS cluster in Serverless V1 configuration using a postgres 11.x engine (the latest available on Serverless). Serverless V1 will scale to "off" if `auto_pause` is set to `true` and after the `seconds_until_auto_pause` duration without any activity. Serverless V1 was chosen because it is compatible with AWS Data API which provides Engineers access without the need for a Bastion host within our VPC. Serverless V2 is not compatible with AWS Data API and does not scale to "off" when not in use.
 
 ### How to prepare the databases
 
-Forms-api and Forms-admin each have their own database and both are setup in this single RDS cluster. After the initial `terraform apply` of this module into an environment run the SQL within `prepare.sql` via the Data API to create the databases, roles and users for the apps. The `prepare.sql` SQL is idempotent in a basic sense, if the object already exists that particular statement will fail but the others will continue to execute (unless you select the "fail on first error" within Data API). This is a one off operation and any future restores will be from snap shots or backups. The passwords for each of the app users should be set as a secure string within SSM parameter store at the location shown in the file.
+Forms-api and Forms-admin each have their own database and both are setup in this single RDS cluster. The following is a one-off operation to be done upon initial creation of the cluster. Any subsequent restoration should be done via backups.
+- Create a password for the `root` user and store in SSM Parameter Store as a secure string.
+- Apply the module and provide the password as the `main_password` variable.
+- Wait for the module to completely apply.
+- Use the AWS Data API to connect to the `postgres` database using username `root` and the password created above.
+- Create passwords for the `forms-api` and `forms-admin` users and store in SSM Parameter Store as secure strings.
+- Copy the `prepare.sql` script into the Data API console and replace the place-holders with the passwords above.
+- Run the script and check each statement is successful.
 
 Each app is currently configured to run its database migrations when it starts. These migrations will create the necessary tables and indexes and no further manual setup should be required.
