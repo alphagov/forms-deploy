@@ -57,8 +57,9 @@ jobs:
           cd main && cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=staging \
             --var INSTANCES=2 \
-            --var SENTRY_DSN=${{ secrets.API_SENTRY_DSN }} \
-            --var API_KEY=${{ secrets.STAGING_FORMS_API_KEY }}
+            --var SETTINGS__FORMS_API__AUTHENTICATION_KEY=${{ secrets.STAGING_FORMS_API_KEY }} \
+            --var SETTINGS__SENTRY__DSN=${{ secrets.API_SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__ENVIRONMENT=staging
           cf logout
 
       - uses: nanasess/setup-chromedriver@v1.0.1
