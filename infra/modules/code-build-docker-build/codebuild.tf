@@ -5,6 +5,7 @@ locals {
 }
 
 resource "aws_codebuild_project" "main" {
+  #checkov:skip=CKV_AWS_147:Amazon Managed SSE is sufficient.
   name         = var.project_name
   description  = var.project_description
   service_role = aws_iam_role.codebuild.arn

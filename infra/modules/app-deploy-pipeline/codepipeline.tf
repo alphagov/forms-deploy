@@ -4,6 +4,7 @@ locals {
 }
 
 resource "aws_codepipeline" "main" {
+  #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
   name     = var.app_name
   role_arn = aws_iam_role.codepipeline.arn
 
