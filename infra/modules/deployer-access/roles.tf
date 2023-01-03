@@ -32,6 +32,7 @@ resource "aws_iam_role" "deployer" {
 }
 
 resource "aws_iam_role_policy_attachment" "admin" { //TODO: lock this down when its working
+  #checkov:skip=CKV_AWS_274:Removal of Admin Access is TBD https://trello.com/c/nlWAz4SL/417-review-deployer-admin-access
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
   role       = aws_iam_role.deployer.id
 }
