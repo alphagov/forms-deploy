@@ -6,10 +6,14 @@ locals {
 }
 
 resource "aws_lb" "alb" {
+  #checkov:skip=CKV_AWS_91:ALB access logs to be added in https://trello.com/c/ArInd1jz/419-enable-alb-access-logs
+  #checkov:skip=CKV2_AWS_28:WAF is not considered necessary at this time.
+
   name                       = "forms-${var.env_name}"
   internal                   = false
   load_balancer_type         = "application"
-  enable_deletion_protection = false # TODO: Set this to true before go live
+  enable_deletion_protection = true
+  drop_invalid_header_fields = true
   security_groups            = [aws_security_group.alb.id]
   subnets = [
     aws_subnet.public_a.id,
@@ -60,6 +64,7 @@ resource "aws_lb_listener" "listener" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "443"
   protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
   certificate_arn   = aws_acm_certificate.alb_cert.arn
 
   default_action {
