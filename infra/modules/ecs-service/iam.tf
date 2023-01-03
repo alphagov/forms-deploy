@@ -1,6 +1,6 @@
 resource "aws_iam_role" "ecs_task_role" {
-  name = "${var.env_name}-${var.application}-ecs-task"
-  description = "Used by ${var.application} tasks when running"
+  name               = "${var.env_name}-${var.application}-ecs-task"
+  description        = "Used by ${var.application} tasks when running"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -18,35 +18,9 @@ resource "aws_iam_role" "ecs_task_role" {
 EOF
 }
 
-# Base policy attached to all tasks
-data "aws_iam_policy_document" "standard_ecs_app" {
-  statement {
-    actions = [
-      "s3:GetObject",
-      "s3:ListBucket",
-      "s3:GetBucketLocation"
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "ecs_task_policy" {
-  name   = "ecs_task_policy"
-  role   = aws_iam_role.ecs_task_role.name
-  policy = data.aws_iam_policy_document.standard_ecs_app.json
-}
-
-## Attaches additonal optional inline IAM policy to this task's role
-#resource "aws_iam_role_policy" "additional_task_policy" {
-#  count  = var.additional_policy_json == "" ? 0 : 1
-#  name   = "ecs_task_additional_policy"
-#  role   = aws_iam_role.task_role.name
-#  policy = var.additional_policy_json
-#}
-
 resource "aws_iam_role" "ecs_task_exec_role" {
-  name = "${var.env_name}-${var.application}-ecs-task-execution"
-  description = "Used by ECS to create ${var.application} task"
+  name               = "${var.env_name}-${var.application}-ecs-task-execution"
+  description        = "Used by ECS to create ${var.application} task"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
