@@ -41,16 +41,17 @@ services:
     build:
       context: ../../forms-api
     environment:
-      - API_KEY=development_key
+      - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
       - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
       - RACK_ENV=development
+      - SECRET_KEY_BASE=dummy_value
     volumes:
       - "../../forms-api:/app:cached"
     depends_on:
       postgres:
         condition: service_healthy
     ports:
-      - 9292:9292
+      - 9292:3000
 
   forms-runner:
     build:
