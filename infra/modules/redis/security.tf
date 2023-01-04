@@ -10,6 +10,7 @@ resource "aws_security_group" "forms_runner_redis" {
 
 resource "aws_security_group_rule" "redis_networks_ingress" {
   type              = "ingress"
+  description       = "Permit inbound connections from within the VPC"
   from_port         = local.redis_port
   to_port           = local.redis_port
   protocol          = "tcp"

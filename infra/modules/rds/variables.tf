@@ -31,12 +31,6 @@ variable "backup_retention_period" {
   default     = 30
 }
 
-variable "deletion_protection" {
-  type        = bool
-  description = "If true the rds cluster cannot be deleted"
-  default     = true
-}
-
 variable "auto_pause" {
   type        = bool
   description = "If true the cluster will pause when not in use"

@@ -1,4 +1,6 @@
+
 resource "aws_vpc" "forms" {
+  #checkov:skip=CKV2_AWS_11:VPC flow logs to be considered https://trello.com/c/1XytsgPE/420-consider-vpc-flow-logs
   cidr_block           = "10.10.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
@@ -8,32 +10,15 @@ resource "aws_vpc" "forms" {
   }
 }
 
+// This ensures the default security group provides no ingress or egress
+resource "aws_default_security_group" "no_access" {
+  vpc_id = aws_vpc.forms.id
+}
+
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.forms.id
 
   tags = {
     Name = "forms-${var.env_name}"
-  }
-}
-
-resource "aws_security_group" "tls_vpc_only" {
-  name        = "tls_within_vpc_${var.env_name}"
-  description = "Allows tls within the VPC"
-  vpc_id      = aws_vpc.forms.id
-
-  ingress {
-    description = "Port 443 from VPC"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.forms.cidr_block]
-  }
-
-  egress {
-    description = "Port 443 to VPC"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.forms.cidr_block]
   }
 }

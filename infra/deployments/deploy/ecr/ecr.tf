@@ -1,4 +1,5 @@
 resource "aws_ecr_repository" "forms_api" {
+  #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
   name                 = "forms-api-deploy"
   image_tag_mutability = "IMMUTABLE"
   image_scanning_configuration {
@@ -7,6 +8,7 @@ resource "aws_ecr_repository" "forms_api" {
 }
 
 resource "aws_ecr_repository" "forms_runner" {
+  #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
   name                 = "forms-runner-deploy"
   image_tag_mutability = "IMMUTABLE"
   image_scanning_configuration {
@@ -15,6 +17,7 @@ resource "aws_ecr_repository" "forms_runner" {
 }
 
 resource "aws_ecr_repository" "forms_admin" {
+  #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
   name                 = "forms-admin-deploy"
   image_tag_mutability = "IMMUTABLE"
   image_scanning_configuration {

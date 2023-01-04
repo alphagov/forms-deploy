@@ -10,6 +10,7 @@ resource "aws_security_group" "rds" {
 
 resource "aws_security_group_rule" "rds_network_ingress" {
   type              = "ingress"
+  description       = "Permit ingress from VPC CIDR"
   from_port         = local.rds_port
   to_port           = local.rds_port
   protocol          = "tcp"

@@ -1,4 +1,9 @@
 resource "aws_s3_bucket" "state" {
+  #checkov:skip=CKV_AWS_18:Review S3 access logging in https://trello.com/c/qUzZfopX/416-review-s3-bucket-access-logging
+  #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
+  #checkov:skip=CKV_AWS_21:Versioning is enabled via aws_s3_bucket_versioning below
+  #checkov:skip=CKV_AWS_144:No need for cross-region replication
+  #checkov:skip=CKV_AWS_145:S3-SSE mode using AES256 is sufficient.
   bucket = var.bucket_name
 }
 

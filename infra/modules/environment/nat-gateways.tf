@@ -1,4 +1,6 @@
-resource "aws_eip" "nat_a" {}
+resource "aws_eip" "nat_a" {
+  #checkov:skip=CKV2_AWS_19:Checkov error, EIP is allocated to Nat Gateway
+}
 
 resource "aws_nat_gateway" "nat_a" {
   allocation_id = aws_eip.nat_a.id
@@ -11,7 +13,9 @@ resource "aws_nat_gateway" "nat_a" {
   depends_on = [aws_internet_gateway.gw]
 }
 
-resource "aws_eip" "nat_b" {}
+resource "aws_eip" "nat_b" {
+  #checkov:skip=CKV2_AWS_19:Checkov error, EIP is allocated to Nat Gateway
+}
 
 resource "aws_nat_gateway" "nat_b" {
   allocation_id = aws_eip.nat_b.id
@@ -24,7 +28,9 @@ resource "aws_nat_gateway" "nat_b" {
   depends_on = [aws_internet_gateway.gw]
 }
 
-resource "aws_eip" "nat_c" {}
+resource "aws_eip" "nat_c" {
+  #checkov:skip=CKV2_AWS_19:Checkov error, EIP is allocated to Nat Gateway
+}
 
 resource "aws_nat_gateway" "nat_c" {
   allocation_id = aws_eip.nat_c.id
