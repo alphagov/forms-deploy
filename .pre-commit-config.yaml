@@ -6,3 +6,9 @@ repos:
       entry: pre-commit-tf-fmt.sh
       language: script
       files: \.tf$ 
+- repo: https://github.com/bridgecrewio/checkov.git
+  rev: '2.2.230'
+  hooks:
+  - id: checkov
+    verbose: true
+    args: [--quiet, --compact, --framework, terraform]

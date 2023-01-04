@@ -1,0 +1,18 @@
+name: "Infra-as-code-checks"
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  run_checkov:
+    runs-on: ubuntu-latest
+    name: checkov-action
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf #v12.1347.0
+        with:
+          directory: infra/
+          framework: terraform
+
