@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "codebuild" {
   statement {
-    actions   = [
+    actions = [
       "logs:PutLogEvents",
       "logs:CreateLogStream"
     ]
@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "codebuild" {
     actions = [
       "s3:PutObject",
       "s3:GetObject",
-      "s3:DeleteObject", 
+      "s3:DeleteObject",
       "s3:ListBucket"
     ]
     resources = [
