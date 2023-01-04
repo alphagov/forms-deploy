@@ -23,11 +23,9 @@ locals {
   },
   EOF
 
-  maybe_source_ip_restriction = "${
-    var.restrict_to_gds_ips
+  maybe_source_ip_restriction = (var.restrict_to_gds_ips
     ? local.gds_ip_restriction_policy_fragment
-    : ""
-  }"
+  : "")
 }
 
 resource "aws_iam_role" "gds_user_role" {
@@ -60,7 +58,7 @@ resource "aws_iam_role" "gds_user_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "gds_user_role_policy_attachments" {
-  count = length(var.iam_policy_arns)
-  role  = aws_iam_role.gds_user_role.name
+  count      = length(var.iam_policy_arns)
+  role       = aws_iam_role.gds_user_role.name
   policy_arn = element(var.iam_policy_arns, count.index)
 }

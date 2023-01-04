@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "codebuild" {
   statement {
-    actions   = [
+    actions = [
       "logs:PutLogEvents",
       "logs:CreateLogStream"
     ]
@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "codebuild" {
     actions = [
       "s3:PutObject",
       "s3:GetObject",
-      "s3:DeleteObject", 
+      "s3:DeleteObject",
       "s3:ListBucket"
     ]
     resources = [
@@ -31,10 +31,10 @@ data "aws_iam_policy_document" "codebuild" {
     resources = [
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/${var.image_name}",
       "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/${var.image_name}/*"
-      ]
-    effect    = "Allow"
+    ]
+    effect = "Allow"
   }
-    statement {
+  statement {
     actions = [
       "ecr:GetAuthorizationToken",
     ]
