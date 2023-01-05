@@ -1,7 +1,17 @@
 locals {
+  # domain_names and zone_names can be combined after the migration.
+  # Used to lookup the domain name for the ALB record and certificate.
   domain_names = {
-    dev     = "dev."
-    staging = "stage."
+    dev        = "dev."
+    staging    = "stage.",
+    production = "prod-temp." #TODO: Change to "" for migration
+  }
+
+  # Used for looking up the Route53 hosted zone to hold the ALB record
+  zone_names = {
+    dev        = "dev."
+    staging    = "stage.",
+    production = ""
   }
 }
 
@@ -80,7 +90,7 @@ resource "aws_lb_listener" "listener" {
 
 
 data "aws_route53_zone" "public" {
-  name         = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk."
+  name         = "${lookup(local.zone_names, var.env_name)}forms.service.gov.uk."
   private_zone = false
 }
 
