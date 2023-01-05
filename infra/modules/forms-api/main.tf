@@ -25,6 +25,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
+    },
+    {
+      name  = "SECRET_KEY_BASE",
+      value = "something"
     }
   ]
 
