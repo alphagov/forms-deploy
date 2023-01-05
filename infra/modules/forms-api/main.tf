@@ -23,6 +23,10 @@ module "ecs_service" {
       value = "production"
     },
     {
+      name  = "RAILS_LOG_TO_STDOUT",
+      value = "true"
+    },
+    {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
     },
