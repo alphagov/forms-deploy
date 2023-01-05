@@ -51,3 +51,14 @@ To recreate the `deploy` environment.
 ### DNS For GOV.UK Forms
 
 The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `deployments/production/dns` deployment manages records to delegate the `dev.` and `stage.` subdomains to Route53 Hosted Zones in the development and staging environments respectively. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output by the `deployments/development/dns` and `deployments/staging/dns` deployments.
+
+
+### Linting and Static Analysis
+
+[pre-commit](https://pre-commit.com/) runs checks on the Terraform code each time a developer runs `git commit`. The checks are defined within `forms-deploy/pre-commit-config.yaml` and include the following:
+- [Terraform format](https://developer.hashicorp.com/terraform/cli/commands/fmt)
+- [Checkov static analysis](https://www.checkov.io/)
+
+Each developer working on the Terraform must install pre-commit and initialize it for this repo along with installing the necessary binaries to run the checks, for example `checkov`. Follow the instructions at the links above for guidance.
+
+A Github Action Workflow runs `checkov` on the Terraform files within this repo on each PR. It is defined within `forms-deploy/.github/workflows/infra-ci.yml`.
