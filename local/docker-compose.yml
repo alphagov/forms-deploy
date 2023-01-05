@@ -51,7 +51,7 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - 9292:3000
+      - 9292:9292
 
   forms-runner:
     build:
