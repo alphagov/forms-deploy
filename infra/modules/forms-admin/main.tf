@@ -23,6 +23,10 @@ module "ecs_service" {
       value = var.api_base_url
     },
     {
+      name  = "RAILS_LOG_TO_STDOUT",
+      value = "true"
+    },
+    {
       name  = "RACK_ENV",
       value = "production"
     },
