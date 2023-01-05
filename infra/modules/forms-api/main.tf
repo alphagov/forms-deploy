@@ -21,17 +21,29 @@ module "ecs_service" {
     {
       name  = "RACK_ENV",
       value = "production"
+    },
+    {
+      name  = "SETTINGS__SENTRY__ENVIRONMENT",
+      value = "aws-${var.env_name}"
     }
   ]
 
   secrets = [
     {
-      name      = "API_KEY",
+      name      = "API_KEY", # TODO: Remove when rails version is deployed.
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/forms-api-key"
+    },
+    {
+      name      = "SETTINGS__FORMS_API__AUTHENTICATION_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/forms-api-key"
     },
     {
       name      = "DATABASE_URL",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/database/url"
+    },
+    {
+      name      = "SETTINGS__SENTRY__DSN",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/sentry/dsn"
     }
   ]
 }
