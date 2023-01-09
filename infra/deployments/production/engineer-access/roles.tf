@@ -6,7 +6,8 @@ locals {
   # Admin access to the production environment should only be provided when
   # needed.
   admins = [
-    "dan.worth" // Required whilst setting up environments.
+    "alice.carr", // Required whilst setting up environments.
+    "dan.worth"   // Required whilst setting up environments.
   ]
 
   # All GOV.UK Forms developers can have readonly access to
