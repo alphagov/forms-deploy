@@ -32,15 +32,11 @@ module "ecs_service" {
     },
     {
       name  = "SECRET_KEY_BASE",
-      value = "something"
+      value = "something" #TODO: We don't use this but app won't start without it. Try to remove it if possible.
     }
   ]
 
   secrets = [
-    {
-      name      = "API_KEY", # TODO: Remove when rails version is deployed.
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/forms-api-key"
-    },
     {
       name      = "SETTINGS__FORMS_API__AUTHENTICATION_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/forms-api-key"
