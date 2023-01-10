@@ -51,7 +51,7 @@ module "ecs_service" {
       value = var.govuk_app_domain
     },
     {
-      name  = "SENTRY_ENVIRONMENT",
+      name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
     }
   ]
@@ -78,7 +78,7 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-secret"
     },
     {
-      name      = "SENTRY_DSN",
+      name      = "SETTINGS__SENTRY__DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/sentry/dsn"
     }
   ]
