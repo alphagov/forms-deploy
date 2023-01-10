@@ -56,7 +56,8 @@ jobs:
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=production \
             --var INSTANCES=2 \
-            --var SENTRY_DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__ENVIRONMENT=production
             --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.SETTINGS__GOVUK_NOTIFY__API_KEY }} \
             --var GDS_SSO_OAUTH_ID=${{ secrets.GDS_SSO_OAUTH_ID }} \
             --var GDS_SSO_OAUTH_SECRET=${{ secrets.GDS_SSO_OAUTH_SECRET }} \
