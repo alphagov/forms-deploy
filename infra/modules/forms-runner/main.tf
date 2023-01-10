@@ -50,6 +50,10 @@ module "ecs_service" {
     {
       name  = "RAILS_SERVE_STATIC_FILES",
       value = "1"
+    },
+    {
+      name  = "SENTRY_ENVIRONMENT",
+      value = "aws-${var.env_name}"
     }
   ]
 
@@ -61,6 +65,10 @@ module "ecs_service" {
     {
       name      = "NOTIFY_API_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/notify-api-key"
+    },
+    {
+      name      = "SENTRY_DSN",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/sentry/dsn"
     }
   ]
 }
