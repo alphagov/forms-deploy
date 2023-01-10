@@ -1,5 +1,5 @@
 module "environment" {
   source   = "../../../modules/environment"
-  env_name = "staging"
+  env_name = "production"
 }
 
