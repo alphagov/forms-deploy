@@ -30,6 +30,9 @@ function admin_url() {
     "staging")
       echo "https://admin.stage.forms.service.gov.uk"
       ;;
+    "production")
+      echo "https://admin.prod-temp.forms.service.gov.uk" # Temp domain name
+      ;;
     *)
       echo "Unknown environment: ${environment}"
       exit 1
