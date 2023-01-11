@@ -38,7 +38,8 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
             "Principal": {
               "AWS": [
                 "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
-                "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution"
+                "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
+                "arn:aws:iam::443944947292:role/production-forms-api-ecs-task-execution"
               ]
             },
             "Action": [
