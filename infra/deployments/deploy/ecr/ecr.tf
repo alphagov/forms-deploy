@@ -94,7 +94,8 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_runner" {
             "Principal": {
               "AWS": [
                 "arn:aws:iam::498160065950:role/dev-forms-runner-ecs-task-execution",
-                "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution"
+                "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution",
+                "arn:aws:iam::443944947292:role/production-forms-runner-ecs-task-execution"
               ]
             },
             "Action": [
