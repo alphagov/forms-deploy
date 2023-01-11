@@ -2,7 +2,8 @@ data "aws_iam_policy_document" "codebuild" {
   statement {
     actions = [
       "logs:PutLogEvents",
-      "logs:CreateLogStream"
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup"
     ]
     resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project_name}:*"]
     effect    = "Allow"
