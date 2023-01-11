@@ -23,7 +23,7 @@ function get_environment() {
       echo "staging"
       ;;
     '443944947292')
-      echo "prod"
+      echo "production"
       ;;
     *)
       echo "Unknown AWS account"

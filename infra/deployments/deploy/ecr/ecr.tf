@@ -66,7 +66,8 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {
             "Principal": {
               "AWS": [
                 "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
-                "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution"
+                "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
+                "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
               ]
             },
             "Action": [
