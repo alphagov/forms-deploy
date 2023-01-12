@@ -1,6 +1,7 @@
 locals {
   development_deployer_role_arn = "arn:aws:iam::498160065950:role/deployer-dev"
   staging_deployer_role_arn     = "arn:aws:iam::972536609845:role/deployer-staging"
+  production_deployer_role_arn  = "arn:aws:iam::443944947292:role/deployer-production"
 }
 
 resource "aws_codepipeline" "main" {
@@ -98,6 +99,37 @@ resource "aws_codepipeline" "main" {
   }
 
   stage {
+    name = "Deploy-to-production-environment"
+
+    action {
+      name            = "terraform-apply"
+      category        = "Build"
+      run_order       = "1"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName          = module.terraform_apply_production.name
+        EnvironmentVariables = jsonencode([{ "name" : "IMAGE_TAG", "value" : "#{Build.IMAGE_TAG}", "type" : "PLAINTEXT" }])
+      }
+    }
+
+    action {
+      name            = "run-smoke-tests-production"
+      category        = "Build"
+      run_order       = "2"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName = module.smoke_tests_production.name
+      }
+    }
+  }
+
+  stage {
     name = "Deploy-to-dev-environment"
 
     action {
@@ -161,6 +193,30 @@ module "smoke_tests_staging" {
   artifact_store_arn             = aws_s3_bucket.codepipeline.arn
 
   notify_api_key_secret_parameter_path = "/staging/smoketests/notify/api-key"
+}
+
+module "terraform_apply_production" {
+  source              = "../code-build-deploy-ecs"
+  project_name        = "${var.app_name}-deploy-production"
+  project_description = "Run terraform apply for ${var.app_name} in production"
+  deployer_role_arn   = local.production_deployer_role_arn
+  deploy_directory    = "infra/deployments/production/${var.app_name}"
+  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
+  cluster_name        = "forms-production"
+  service_name        = var.app_name
+}
+
+module "smoke_tests_production" {
+  source                         = "../code-build-run-smoke-tests"
+  project_name                   = "${var.app_name}-smoke-tests-production"
+  project_description            = "Run smoke tests for ${var.app_name} in production"
+  signon_username_parameter_path = "/production/smoketests/signon/username"
+  signon_password_parameter_path = "/production/smoketests/signon/password"
+  signon_secret_parameter_path   = "/production/smoketests/signon/secret"
+  forms_admin_url                = "https://admin.prod-temp.forms.service.gov.uk" #TODO: Update for migration
+  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
+
+  notify_api_key_secret_parameter_path = "/production/smoketests/notify/api-key"
 }
 
 module "terraform_apply_dev" {

@@ -6,7 +6,9 @@ if [[ "$1" == "help" ]]; then
 
   Usage:
      Run in a authorized shell using gds-cli or aws-vault
-     $0
+     $0 [pipeline-name]
+
+     pipeline-name: optional name of a pipeline, defaults to all pipelines in account.
 
      Example:
      aws-vault exec deploy-admin -- ${0}"
@@ -28,7 +30,7 @@ function list_pipelines() {
   aws codepipeline list-pipelines | jq -r '.pipelines[].name'
 }
 
-for pipeline in $(list_pipelines); do
+for pipeline in ${1-$(list_pipelines)}; do
   printf "\n%s\n--------\n" "$pipeline"
   print_summary "$pipeline"
 done

@@ -13,7 +13,9 @@ data "aws_iam_policy_document" "codepipeline" {
       module.terraform_apply_dev.arn,
       module.smoke_tests_dev.arn,
       module.terraform_apply_staging.arn,
-      module.smoke_tests_staging.arn
+      module.smoke_tests_staging.arn,
+      module.terraform_apply_production.arn,
+      module.smoke_tests_production.arn
     ]
     effect = "Allow"
   }
