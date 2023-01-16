@@ -28,3 +28,16 @@ resource "aws_route53_record" "delegate_staging_domain" {
     "ns-765.awsdns-31.net",
   ]
 }
+
+resource "aws_route53_record" "delegate_research_domain" {
+  zone_id = data.aws_route53_zone.public.id
+  name    = "research.forms.service.gov.uk."
+  type    = "NS"
+  ttl     = 60
+  records = [
+    "ns-1068.awsdns-05.org",
+    "ns-1742.awsdns-25.co.uk",
+    "ns-279.awsdns-34.com",
+    "ns-950.awsdns-54.net",
+  ]
+}

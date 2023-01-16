@@ -32,8 +32,8 @@ The following provides a high-level overview of the deployments and in which ord
 #### Development, Staging or Production Environment
 In the unlikely event of needing to recreate an entire GOV.UK Forms environment the following order should be followed.
 - `engineer-access` to grant access to engineers to perform the following. If necessary ask an AWS admin to create a bootstrap role to provide authorization to apply the `engineer-access` deployment.
-- `environment` to create the networking and common components for each GOV.UK Forms application.
 - `dns` to create a Route53 hosted zone and records which resolve the environment's domain to the Application Load Balancer created by the `environment` deployment. If this is not production environment then copy the name server addresses from the output and update the `deployments/production/dns/main.ts` file to use the new name server addresses.
+- `environment` to create the networking and common components for each GOV.UK Forms application.
 - `rds` to create the Postgres database cluster used by `forms-admin` and `forms-api`.
 - `redis` to create the Redis cluster used by `forms-runner`.
 - `deployer-access` to create a role that can be used by the deployment pipelines in the `deploy` environment to deploy the GOV.UK Forms applications.
