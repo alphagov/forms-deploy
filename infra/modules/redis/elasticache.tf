@@ -5,6 +5,7 @@ locals {
 resource "aws_elasticache_replication_group" "forms-runner" {
   #checkov:skip=CKV_AWS_31:Password protection is not necessary
   #checkov:skip=CKV_AWS_191:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV2_AWS_50:Failover not required for all environments.
 
   replication_group_id       = "forms-runner-${var.env_name}"
   description                = "redis replication group for forms-runner"
