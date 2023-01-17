@@ -1,11 +1,19 @@
-variable "project_name" {
-  type        = string
-  description = "The name of the code build project"
+variable "environment" {
+  type = string
+
+  validation {
+    condition     = contains(["user-research", "dev", "staging", "production"], var.environment)
+    error_message = "Valid values for environment are: user-research, dev, staging, production"
+  }
 }
 
-variable "project_description" {
+variable "app_name" {
   type        = string
-  description = "The description of the code build project"
+  description = "The name of the application e.g. forms-admin"
+  validation {
+    condition     = contains(["forms-admin", "forms-runner", "forms-api"], var.app_name)
+    error_message = "Valid values for app_name are: forms-admin, forms-runner, forms-api"
+  }
 }
 
 variable "artifact_store_arn" {
@@ -13,28 +21,9 @@ variable "artifact_store_arn" {
   description = "An S3 bucket arn where artifacts can be stored"
 }
 
-variable "signon_username_parameter_path" {
-  type        = string
-  description = "The path to a secure string with the signon username for smoketests"
-}
-
-variable "signon_password_parameter_path" {
-  type        = string
-  description = "The path to a secure string with the signon password for smoketests"
-}
-
-variable "signon_secret_parameter_path" {
-  type        = string
-  description = "The path to a secure string with the signon secret for smoketests"
-}
-
 variable "forms_admin_url" {
   type        = string
   description = "The url for forms admin"
 }
 
-variable "notify_api_key_secret_parameter_path" {
-  type        = string
-  description = "The path to a secure string with the notify api key for smoketests"
-}
 

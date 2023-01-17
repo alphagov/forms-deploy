@@ -2,12 +2,13 @@ data "aws_caller_identity" "current" {}
 
 locals {
   aws_account_id = data.aws_caller_identity.current.account_id
+  project_name   = "${var.app_name}-smoke-tests-${var.environment}"
 }
 
 resource "aws_codebuild_project" "smoke_tests" {
   #checkov:skip=CKV_AWS_147:Amazon Managed SSE is sufficient.
-  name         = var.project_name
-  description  = var.project_description
+  name         = local.project_name
+  description  = "Run smoke tests for ${var.app_name} in ${var.environment}"
   service_role = aws_iam_role.codebuild.arn
 
   artifacts {
@@ -21,25 +22,25 @@ resource "aws_codebuild_project" "smoke_tests" {
 
     environment_variable {
       name  = "SIGNON_USERNAME"
-      value = var.signon_username_parameter_path
+      value = "/${var.environment}/smoketests/signon/username"
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
       name  = "SIGNON_PASSWORD"
-      value = var.signon_password_parameter_path
+      value = "/${var.environment}/smoketests/signon/password"
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
       name  = "SIGNON_OTP"
-      value = var.signon_secret_parameter_path
+      value = "/${var.environment}/smoketests/signon/secret"
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
       name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
-      value = var.notify_api_key_secret_parameter_path
+      value = "/${var.environment}/smoketests/notify/api-key"
       type  = "PARAMETER_STORE"
     }
 

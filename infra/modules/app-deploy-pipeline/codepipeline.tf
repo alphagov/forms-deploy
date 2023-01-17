@@ -173,16 +173,11 @@ module "terraform_apply_staging" {
 }
 
 module "smoke_tests_staging" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-staging"
-  project_description            = "Run smoke tests for ${var.app_name} in staging"
-  signon_username_parameter_path = "/staging/smoketests/signon/username"
-  signon_password_parameter_path = "/staging/smoketests/signon/password"
-  signon_secret_parameter_path   = "/staging/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.stage.forms.service.gov.uk"
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/staging/smoketests/notify/api-key"
+  source             = "../code-build-run-smoke-tests"
+  app_name           = var.app_name
+  environment        = "staging"
+  forms_admin_url    = "https://admin.stage.forms.service.gov.uk"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "terraform_apply_production" {
@@ -193,16 +188,11 @@ module "terraform_apply_production" {
 }
 
 module "smoke_tests_production" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-production"
-  project_description            = "Run smoke tests for ${var.app_name} in production"
-  signon_username_parameter_path = "/production/smoketests/signon/username"
-  signon_password_parameter_path = "/production/smoketests/signon/password"
-  signon_secret_parameter_path   = "/production/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.prod-temp.forms.service.gov.uk" #TODO: Update for migration
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/production/smoketests/notify/api-key"
+  source             = "../code-build-run-smoke-tests"
+  app_name           = var.app_name
+  environment        = "production"
+  forms_admin_url    = "https://admin.prod-temp.forms.service.gov.uk"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "terraform_apply_dev" {
@@ -213,14 +203,9 @@ module "terraform_apply_dev" {
 }
 
 module "smoke_tests_dev" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-dev"
-  project_description            = "Run smoke tests for ${var.app_name} in dev"
-  signon_username_parameter_path = "/development/smoketests/signon/username"
-  signon_password_parameter_path = "/development/smoketests/signon/password"
-  signon_secret_parameter_path   = "/development/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.dev.forms.service.gov.uk"
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/development/smoketests/notify/api-key"
+  source             = "../code-build-run-smoke-tests"
+  app_name           = var.app_name
+  environment        = "dev"
+  forms_admin_url    = "https://admin.dev.forms.service.gov.uk"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
