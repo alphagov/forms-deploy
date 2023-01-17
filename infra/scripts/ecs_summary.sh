@@ -25,6 +25,9 @@ function get_environment() {
     '443944947292')
       echo "production"
       ;;
+    '619109835131')
+      echo "user-research"
+      ;;
     *)
       echo "Unknown AWS account"
       exit 1
