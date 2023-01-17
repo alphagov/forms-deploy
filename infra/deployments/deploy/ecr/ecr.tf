@@ -37,6 +37,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
             "Effect": "Allow",
             "Principal": {
               "AWS": [
+                "arn:aws:iam::619109835131:role/user-research-forms-api-ecs-task-execution",
                 "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
                 "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
                 "arn:aws:iam::443944947292:role/production-forms-api-ecs-task-execution"
@@ -65,6 +66,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {
             "Effect": "Allow",
             "Principal": {
               "AWS": [
+                "arn:aws:iam::619109835131:role/user-research-forms-admin-ecs-task-execution",
                 "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
                 "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
                 "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
@@ -93,6 +95,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_runner" {
             "Effect": "Allow",
             "Principal": {
               "AWS": [
+                "arn:aws:iam::619109835131:role/user-research-forms-runner-ecs-task-execution",
                 "arn:aws:iam::498160065950:role/dev-forms-runner-ecs-task-execution",
                 "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution",
                 "arn:aws:iam::443944947292:role/production-forms-runner-ecs-task-execution"
