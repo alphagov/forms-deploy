@@ -153,6 +153,24 @@ resource "aws_codepipeline" "main" {
       }
     }
   }
+
+  stage {
+    name = "Deploy-to-user-research-environment"
+
+    action {
+      name            = "terraform-apply"
+      category        = "Build"
+      run_order       = "1"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName          = module.terraform_apply_user_research.name
+        EnvironmentVariables = jsonencode([{ "name" : "IMAGE_TAG", "value" : "#{Build.IMAGE_TAG}", "type" : "PLAINTEXT" }])
+      }
+    }
+  }
 }
 
 module "docker_build" {
@@ -209,3 +227,11 @@ module "smoke_tests_dev" {
   forms_admin_url    = "https://admin.dev.forms.service.gov.uk"
   artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
+
+module "terraform_apply_user_research" {
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "user-research"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+}
+

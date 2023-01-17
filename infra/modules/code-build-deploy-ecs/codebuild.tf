@@ -1,8 +1,9 @@
 locals {
   deployer_roles = {
-    "dev"        = "arn:aws:iam::498160065950:role/deployer-dev"
-    "staging"    = "arn:aws:iam::972536609845:role/deployer-staging"
-    "production" = "arn:aws:iam::443944947292:role/deployer-production"
+    "user-research" = "arn:aws:iam::619109835131:role/deployer-user-research"
+    "dev"           = "arn:aws:iam::498160065950:role/deployer-dev"
+    "staging"       = "arn:aws:iam::972536609845:role/deployer-staging"
+    "production"    = "arn:aws:iam::443944947292:role/deployer-production"
   }
 
   project_name = "${var.app_name}-deploy-${var.environment}"
