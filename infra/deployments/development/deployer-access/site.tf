@@ -14,7 +14,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "development"
-      Deployment  = "development/deployer_access"
+      Deployment  = "development/deployer-access"
     }
   }
 }

@@ -14,7 +14,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "staging"
-      Deployment  = "staging/deployer_access"
+      Deployment  = "staging/deployer-access"
     }
   }
 }

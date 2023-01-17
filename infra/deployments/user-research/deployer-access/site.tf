@@ -14,7 +14,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "user-research"
-      Deployment  = "user-research/deployer_access"
+      Deployment  = "user-research/deployer-access"
     }
   }
 }

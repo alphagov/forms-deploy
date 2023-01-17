@@ -160,7 +160,7 @@ resource "aws_codepipeline" "main" {
     action {
       name            = "terraform-apply"
       category        = "Build"
-      run_order       = "3"
+      run_order       = "1"
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
