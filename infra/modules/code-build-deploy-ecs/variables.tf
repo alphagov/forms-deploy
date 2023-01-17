@@ -1,21 +1,19 @@
-variable "project_name" {
-  type        = string
-  description = "The name of the code build project"
+variable "environment" {
+  type = string
+
+  validation {
+    condition     = contains(["user-research", "dev", "staging", "production"], var.environment)
+    error_message = "Valid values for environment are: user-research, dev, staging, production"
+  }
 }
 
-variable "project_description" {
+variable "app_name" {
   type        = string
-  description = "The description of the code build project"
-}
-
-variable "deployer_role_arn" {
-  type        = string
-  description = "The role arn that is used to perform the cross-account deployment"
-}
-
-variable "deploy_directory" {
-  type        = string
-  description = "The directory to run terraform from. Root is the base of forms-deploy"
+  description = "The name of the application e.g. forms-admin"
+  validation {
+    condition     = contains(["forms-admin", "forms-runner", "forms-api"], var.app_name)
+    error_message = "Valid values for app_name are: forms-admin, forms-runner, forms-api"
+  }
 }
 
 variable "terraform_version" {
@@ -27,13 +25,4 @@ variable "terraform_version" {
 variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"
-}
-
-variable "cluster_name" {
-  type        = string
-  description = "The ECS cluster to deploy to"
-}
-variable "service_name" {
-  type        = string
-  description = "The ECS service to update"
 }

@@ -1,9 +1,3 @@
-locals {
-  development_deployer_role_arn = "arn:aws:iam::498160065950:role/deployer-dev"
-  staging_deployer_role_arn     = "arn:aws:iam::972536609845:role/deployer-staging"
-  production_deployer_role_arn  = "arn:aws:iam::443944947292:role/deployer-production"
-}
-
 resource "aws_codepipeline" "main" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
   name     = var.app_name
@@ -172,73 +166,46 @@ module "docker_build" {
 }
 
 module "terraform_apply_staging" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-staging"
-  project_description = "Run terraform apply for ${var.app_name} in staging"
-  deployer_role_arn   = local.staging_deployer_role_arn
-  deploy_directory    = "infra/deployments/staging/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-staging"
-  service_name        = var.app_name
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "staging"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "smoke_tests_staging" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-staging"
-  project_description            = "Run smoke tests for ${var.app_name} in staging"
-  signon_username_parameter_path = "/staging/smoketests/signon/username"
-  signon_password_parameter_path = "/staging/smoketests/signon/password"
-  signon_secret_parameter_path   = "/staging/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.stage.forms.service.gov.uk"
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/staging/smoketests/notify/api-key"
+  source             = "../code-build-run-smoke-tests"
+  app_name           = var.app_name
+  environment        = "staging"
+  forms_admin_url    = "https://admin.stage.forms.service.gov.uk"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "terraform_apply_production" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-production"
-  project_description = "Run terraform apply for ${var.app_name} in production"
-  deployer_role_arn   = local.production_deployer_role_arn
-  deploy_directory    = "infra/deployments/production/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-production"
-  service_name        = var.app_name
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "production"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "smoke_tests_production" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-production"
-  project_description            = "Run smoke tests for ${var.app_name} in production"
-  signon_username_parameter_path = "/production/smoketests/signon/username"
-  signon_password_parameter_path = "/production/smoketests/signon/password"
-  signon_secret_parameter_path   = "/production/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.prod-temp.forms.service.gov.uk" #TODO: Update for migration
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/production/smoketests/notify/api-key"
+  source             = "../code-build-run-smoke-tests"
+  app_name           = var.app_name
+  environment        = "production"
+  forms_admin_url    = "https://admin.prod-temp.forms.service.gov.uk"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "terraform_apply_dev" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-dev"
-  project_description = "Run terraform apply for ${var.app_name} in dev"
-  deployer_role_arn   = local.development_deployer_role_arn
-  deploy_directory    = "infra/deployments/development/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-dev"
-  service_name        = var.app_name
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "dev"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "smoke_tests_dev" {
-  source                         = "../code-build-run-smoke-tests"
-  project_name                   = "${var.app_name}-smoke-tests-dev"
-  project_description            = "Run smoke tests for ${var.app_name} in dev"
-  signon_username_parameter_path = "/development/smoketests/signon/username"
-  signon_password_parameter_path = "/development/smoketests/signon/password"
-  signon_secret_parameter_path   = "/development/smoketests/signon/secret"
-  forms_admin_url                = "https://admin.dev.forms.service.gov.uk"
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
-
-  notify_api_key_secret_parameter_path = "/development/smoketests/notify/api-key"
+  source             = "../code-build-run-smoke-tests"
+  app_name           = var.app_name
+  environment        = "dev"
+  forms_admin_url    = "https://admin.dev.forms.service.gov.uk"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }

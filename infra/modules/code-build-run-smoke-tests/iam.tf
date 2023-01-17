@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "codebuild" {
       "logs:CreateLogStream",
       "logs:CreateLogGroup"
     ]
-    resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project_name}:*"]
+    resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.project_name}:*"]
     effect    = "Allow"
   }
   statement {
@@ -24,17 +24,14 @@ data "aws_iam_policy_document" "codebuild" {
   statement {
     actions = ["ssm:GetParameter", "ssm:GetParameters"]
     resources = [
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_username_parameter_path}",
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_password_parameter_path}",
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.signon_secret_parameter_path}",
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.notify_api_key_secret_parameter_path}",
+      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter/${var.environment}/smoketests/*"
     ]
     effect = "Allow"
   }
 }
 
 resource "aws_iam_policy" "codebuild" {
-  name   = "codebuild-${var.project_name}"
+  name   = "codebuild-${local.project_name}"
   path   = "/"
   policy = data.aws_iam_policy_document.codebuild.json
 }
@@ -53,7 +50,7 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
 }
 
 resource "aws_iam_role" "codebuild" {
-  name = "codebuild-${var.project_name}"
+  name = "codebuild-${local.project_name}"
 
   assume_role_policy = data.aws_iam_policy_document.codebuild_assume_role.json
 }
