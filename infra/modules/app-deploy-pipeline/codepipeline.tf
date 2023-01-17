@@ -1,9 +1,3 @@
-locals {
-  development_deployer_role_arn = "arn:aws:iam::498160065950:role/deployer-dev"
-  staging_deployer_role_arn     = "arn:aws:iam::972536609845:role/deployer-staging"
-  production_deployer_role_arn  = "arn:aws:iam::443944947292:role/deployer-production"
-}
-
 resource "aws_codepipeline" "main" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
   name     = var.app_name
@@ -172,14 +166,10 @@ module "docker_build" {
 }
 
 module "terraform_apply_staging" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-staging"
-  project_description = "Run terraform apply for ${var.app_name} in staging"
-  deployer_role_arn   = local.staging_deployer_role_arn
-  deploy_directory    = "infra/deployments/staging/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-staging"
-  service_name        = var.app_name
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "staging"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "smoke_tests_staging" {
@@ -196,14 +186,10 @@ module "smoke_tests_staging" {
 }
 
 module "terraform_apply_production" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-production"
-  project_description = "Run terraform apply for ${var.app_name} in production"
-  deployer_role_arn   = local.production_deployer_role_arn
-  deploy_directory    = "infra/deployments/production/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-production"
-  service_name        = var.app_name
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "production"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "smoke_tests_production" {
@@ -220,14 +206,10 @@ module "smoke_tests_production" {
 }
 
 module "terraform_apply_dev" {
-  source              = "../code-build-deploy-ecs"
-  project_name        = "${var.app_name}-deploy-dev"
-  project_description = "Run terraform apply for ${var.app_name} in dev"
-  deployer_role_arn   = local.development_deployer_role_arn
-  deploy_directory    = "infra/deployments/development/${var.app_name}"
-  artifact_store_arn  = aws_s3_bucket.codepipeline.arn
-  cluster_name        = "forms-dev"
-  service_name        = var.app_name
+  source             = "../code-build-deploy-ecs"
+  app_name           = var.app_name
+  environment        = "dev"
+  artifact_store_arn = aws_s3_bucket.codepipeline.arn
 }
 
 module "smoke_tests_dev" {
