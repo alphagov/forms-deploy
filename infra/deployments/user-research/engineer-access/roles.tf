@@ -11,13 +11,22 @@ locals {
     "dan.worth",
     "david.biddle",
     "james.sheppard",
+    "laurence.debruxelles",
     "samuel.culley",
     "tom.iles",
     "tristram.oaten"
   ]
 
   readonly = [
-    "dan.worth"
+    "alice.carr",
+    "alistair.laing",
+    "dan.worth",
+    "david.biddle",
+    "james.sheppard",
+    "laurence.debruxelles",
+    "samuel.culley",
+    "tom.iles",
+    "tristram.oaten"
   ]
 }
 
