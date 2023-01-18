@@ -18,6 +18,7 @@ locals {
     "dan.worth",
     "david.biddle",
     "james.sheppard",
+    "laurence.debruxelles",
     "samuel.culley",
     "tom.iles",
     "tristram.oaten"
