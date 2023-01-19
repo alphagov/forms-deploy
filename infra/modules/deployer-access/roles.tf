@@ -9,6 +9,25 @@ variable "env_name" {
 
 locals {
   deploy_account_id = "711966560482"
+
+  deploy_account_main_branch_roles = [
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}",
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}",
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}"
+  ]
+
+  deploy_account_development_branches_roles = [
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}-branches",
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}-branches",
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}-branches"
+  ]
+
+  deployer_roles_per_env = {
+    "user-research" = concat(local.deploy_account_main_branch_roles, local.deploy_account_development_branches_roles),
+    "dev"           = concat(local.deploy_account_main_branch_roles, local.deploy_account_development_branches_roles),
+    "staging"       = local.deploy_account_main_branch_roles,
+    "production"    = local.deploy_account_main_branch_roles
+  }
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -16,12 +35,8 @@ data "aws_iam_policy_document" "assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}",
-        "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}",
-        "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}"
-      ]
+      type        = "AWS"
+      identifiers = lookup(local.deployer_roles_per_env, var.env_name)
     }
   }
 }

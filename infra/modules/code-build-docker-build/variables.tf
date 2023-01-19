@@ -33,3 +33,9 @@ variable "docker_password_parameter_path" {
   type        = string
   description = "The path to a secure string with the docker password"
 }
+
+variable "tag_prefix" {
+  type        = string
+  description = "Optional image tag prefix"
+  default     = ""
+}

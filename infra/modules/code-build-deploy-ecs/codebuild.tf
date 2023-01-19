@@ -6,7 +6,7 @@ locals {
     "production"    = "arn:aws:iam::443944947292:role/deployer-production"
   }
 
-  project_name = "${var.app_name}-deploy-${var.environment}"
+  project_name = "${var.app_name}-deploy-${var.environment}${var.project_name_suffix}"
 
   deploy_directory = {
     "dev" = "development"
