@@ -34,4 +34,5 @@ module "engineer_access" {
   source   = "../../../modules/engineer-access"
   admins   = local.admins
   readonly = local.readonly
+  vpn      = false
 }
