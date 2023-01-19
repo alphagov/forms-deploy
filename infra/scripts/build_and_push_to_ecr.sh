@@ -45,7 +45,7 @@ fi
 echo "Building ${APP} docker image"
 
 APP_DIR="../../../${APP}"
-GIT_SHA="$(git --git-dir "${APP_DIR}/.git" rev-parse HEAD)"
+GIT_SHA="$(git --git-dir "${APP_DIR}/.git" describe --always --dirty)"
 DEFAULT_TAG_SUFFIX="${GIT_SHA}"
 
 echo "
@@ -54,7 +54,7 @@ tags are immutable and no two images can have the same tag. Images with tags
 beginning 'dev_' will be periodically deleted from ECR.
 "
 
-read -rp "Enter tag suffix (defaults to GIT SHA): [${DEFAULT_TAG_SUFFIX}]: " TAG_SUFFIX
+read -rp "Enter tag suffix (defaults to abbreviated GIT SHA): [${DEFAULT_TAG_SUFFIX}]: " TAG_SUFFIX
 TAG_SUFFIX=${TAG_SUFFIX:-${DEFAULT_TAG_SUFFIX}}
 TAG="dev_${TAG_SUFFIX}"
 
