@@ -90,17 +90,3 @@ resource "aws_lb_listener" "listener" {
   }
 }
 
-
-data "aws_route53_zone" "public" {
-  name         = "${lookup(local.zone_names, var.env_name)}forms.service.gov.uk."
-  private_zone = false
-}
-
-resource "aws_route53_record" "alb_a_record" {
-  zone_id = data.aws_route53_zone.public.id
-  name    = "*.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk."
-  type    = "CNAME"
-  ttl     = 60
-  records = [aws_lb.alb.dns_name]
-}
-

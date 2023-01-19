@@ -23,4 +23,17 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  allowed_account_ids = ["619109835131"]
+
+  region = "us-east-1"
+  alias  = "us-east-1"
+
+  default_tags {
+    tags = {
+      Environment = "user-research"
+      Deployment  = "user-research/environment"
+    }
+  }
+}
 

@@ -23,4 +23,18 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  allowed_account_ids = ["972536609845"]
+
+  region = "us-east-1"
+  alias  = "us-east-1"
+
+  default_tags {
+    tags = {
+      Environment = "staging"
+      Deployment  = "staging/environment"
+    }
+  }
+}
+
 
