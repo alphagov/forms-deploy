@@ -5,6 +5,7 @@ locals {
 
   # All GOV.UK Forms developers can have admin access to the user research
   # account.
+
   admins = [
     "alice.carr",
     "alistair.laing",
@@ -34,4 +35,5 @@ module "engineer_access" {
   source   = "../../../modules/engineer-access"
   admins   = local.admins
   readonly = local.readonly
+  vpn      = false
 }
