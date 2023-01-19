@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   # domain_names and zone_names can be combined after the migration.
   # Used to lookup the domain name for the ALB record and certificate.
@@ -14,6 +16,32 @@ locals {
     dev           = "dev."
     staging       = "stage.",
     production    = ""
+  }
+
+  account_id = data.aws_caller_identity.current.account_id
+
+  #The AWS managed account for the ALB, see: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-access-logging.html
+  aws_lb_account_id = "652711504416"
+}
+
+module "logs_bucket" {
+  source = "../secure-bucket"
+  name   = "govuk-forms-alb-logs-${var.env_name}"
+}
+
+resource "aws_s3_bucket_policy" "allow_logs" {
+  bucket = module.logs_bucket.name
+  policy = data.aws_iam_policy_document.allow_logs.json
+}
+
+data "aws_iam_policy_document" "allow_logs" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
+    }
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*"]
   }
 }
 
@@ -32,6 +60,12 @@ resource "aws_lb" "alb" {
     aws_subnet.public_b.id,
     aws_subnet.public_c.id
   ]
+
+  access_logs {
+    bucket  = module.logs_bucket.name
+    prefix  = var.env_name
+    enabled = true
+  }
 }
 
 resource "aws_security_group" "alb" {
