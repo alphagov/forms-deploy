@@ -1,5 +1,5 @@
 locals {
-  name_suffix = "${var.app_name}-${var.environment}-branches"
+  name_suffix = "${var.app_name}-${var.environment}-dev-branches"
 }
 
 module "artifact_bucket" {
@@ -91,7 +91,7 @@ resource "aws_codepipeline" "main" {
 
 module "docker_build" {
   source                         = "../code-build-docker-build"
-  project_name                   = "${var.app_name}-docker-build-${var.environment}-branches"
+  project_name                   = "${var.app_name}-docker-build-${var.environment}-dev-branches"
   project_description            = "Build the forms-api docker image and push into ECR"
   image_name                     = "${var.app_name}-deploy"
   docker_username_parameter_path = "/development/dockerhub/username"
@@ -103,7 +103,7 @@ module "docker_build" {
 module "terraform_apply" {
   source              = "../code-build-deploy-ecs"
   app_name            = var.app_name
-  project_name_suffix = "-branches"
+  project_name_suffix = "-dev-branches"
   environment         = var.environment
   artifact_store_arn  = module.artifact_bucket.arn
 }
