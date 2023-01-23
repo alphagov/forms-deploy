@@ -6,14 +6,16 @@ if [[ "$1" == "help" ]]; then
 
   Usage:
      Run in a authorized shell using gds-cli or aws-vault
-     $0 [pipeline-name]
+     $0 [pipeline-name-filter]
 
-     pipeline-name: optional name of a pipeline, defaults to all pipelines in account.
+     pipeline-name-filter: optional string to filter pipelines by name
 
      Example:
-     aws-vault exec deploy-admin -- ${0}"
+     aws-vault exec deploy-admin -- ${0} main"
   exit 0
 fi
+
+FILTER="$1"
 
 function print_summary() {
   pipeline_name="$1"
@@ -27,10 +29,13 @@ function print_summary() {
 }
 
 function list_pipelines() {
-  aws codepipeline list-pipelines | jq -r '.pipelines[].name'
+  aws codepipeline list-pipelines \
+    | jq --arg FILTER "$FILTER" \
+         -r \
+         '.pipelines[].name | select(contains($FILTER))'
 }
 
-for pipeline in ${1-$(list_pipelines)}; do
+for pipeline in $(list_pipelines); do
   printf "\n%s\n--------\n" "$pipeline"
   print_summary "$pipeline"
 done
