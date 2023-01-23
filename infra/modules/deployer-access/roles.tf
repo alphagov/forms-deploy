@@ -11,9 +11,9 @@ locals {
   deploy_account_id = "711966560482"
 
   deploy_account_main_branch_roles = [
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}",
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}",
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}"
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}-main-branch",
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}-main-branch",
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}-main-branch"
   ]
 
   deploy_account_development_branches_roles = [

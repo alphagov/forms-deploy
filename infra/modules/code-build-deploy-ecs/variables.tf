@@ -30,5 +30,5 @@ variable "artifact_store_arn" {
 variable "project_name_suffix" {
   type        = string
   description = "Optional suffix to append to project name."
-  default     = ""
+  default     = "-main-branch"
 }

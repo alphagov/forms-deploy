@@ -37,15 +37,16 @@ data "aws_iam_policy_document" "codepipeline" {
 
   statement {
     actions   = ["s3:*"]
-    resources = ["${aws_s3_bucket.codepipeline.arn}/*"]
+    resources = ["${module.artifact_bucket.arn}/*"]
     effect    = "Allow"
   }
 }
 
 resource "aws_iam_policy" "codepipeline" {
-  name   = "codepipline-${var.app_name}"
-  path   = "/"
-  policy = data.aws_iam_policy_document.codepipeline.json
+  name        = "codepipline-${var.app_name}-main-branch"
+  description = "Used by codepipeline when deploying ${var.app_name} from the main branch"
+  path        = "/"
+  policy      = data.aws_iam_policy_document.codepipeline.json
 }
 
 data "aws_iam_policy_document" "codepipeline_assume_role" {
@@ -62,7 +63,8 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
 }
 
 resource "aws_iam_role" "codepipeline" {
-  name = "codepipeline-${var.app_name}"
+  name        = "codepipeline-${var.app_name}-main-branch"
+  description = "Used by codepipeline when deploying ${var.app_name} from the main branch"
 
   assume_role_policy = data.aws_iam_policy_document.codepipeline_assume_role.json
 }

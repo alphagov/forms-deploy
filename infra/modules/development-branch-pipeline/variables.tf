@@ -6,7 +6,7 @@ variable "github_connection_arn" {
 
 variable "source_branch" {
   type        = string
-  description = "The branch name of the source_repo to use"
+  description = "The branch name of the application source repo (e.g. forms-admin repo) to use"
   default     = "main"
 }
 

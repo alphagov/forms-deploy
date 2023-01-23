@@ -1,11 +1,16 @@
+module "artifact_bucket" {
+  source = "../secure-bucket"
+  name   = "pipeline-${var.app_name}-main-branch"
+}
+
 resource "aws_codepipeline" "main" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
-  name     = var.app_name
+  name     = "${var.app_name}-main-branch"
   role_arn = aws_iam_role.codepipeline.arn
 
   artifact_store {
     type     = "S3"
-    location = aws_s3_bucket.codepipeline.bucket
+    location = module.artifact_bucket.name
   }
 
   stage {
@@ -175,19 +180,19 @@ resource "aws_codepipeline" "main" {
 
 module "docker_build" {
   source                         = "../code-build-docker-build"
-  project_name                   = "docker-build-${var.app_name}"
-  project_description            = "Build the forms-api docker image and push into ECR"
+  project_name                   = "${var.app_name}-docker-build-main-branch"
+  project_description            = "Build the forms-api docker image from main branch and push into ECR"
   image_name                     = "${var.app_name}-deploy"
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
-  artifact_store_arn             = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn             = module.artifact_bucket.arn
 }
 
 module "terraform_apply_staging" {
   source             = "../code-build-deploy-ecs"
   app_name           = var.app_name
   environment        = "staging"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 
 module "smoke_tests_staging" {
@@ -195,14 +200,14 @@ module "smoke_tests_staging" {
   app_name           = var.app_name
   environment        = "staging"
   forms_admin_url    = "https://admin.stage.forms.service.gov.uk"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 
 module "terraform_apply_production" {
   source             = "../code-build-deploy-ecs"
   app_name           = var.app_name
   environment        = "production"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 
 module "smoke_tests_production" {
@@ -210,14 +215,14 @@ module "smoke_tests_production" {
   app_name           = var.app_name
   environment        = "production"
   forms_admin_url    = "https://admin.prod-temp.forms.service.gov.uk"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 
 module "terraform_apply_dev" {
   source             = "../code-build-deploy-ecs"
   app_name           = var.app_name
   environment        = "dev"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 
 module "smoke_tests_dev" {
@@ -225,13 +230,13 @@ module "smoke_tests_dev" {
   app_name           = var.app_name
   environment        = "dev"
   forms_admin_url    = "https://admin.dev.forms.service.gov.uk"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 
 module "terraform_apply_user_research" {
   source             = "../code-build-deploy-ecs"
   app_name           = var.app_name
   environment        = "user-research"
-  artifact_store_arn = aws_s3_bucket.codepipeline.arn
+  artifact_store_arn = module.artifact_bucket.arn
 }
 

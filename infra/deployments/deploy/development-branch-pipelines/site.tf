@@ -19,7 +19,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/development_branch_pipelines"
+      Deployment  = "deploy/development-branch-pipelines"
     }
   }
 }
