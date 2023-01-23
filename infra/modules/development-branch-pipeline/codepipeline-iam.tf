@@ -10,13 +10,7 @@ data "aws_iam_policy_document" "codepipeline" {
     actions = ["codebuild:*"]
     resources = [
       module.docker_build.arn,
-      module.terraform_apply_dev.arn,
-      module.smoke_tests_dev.arn,
-      module.terraform_apply_staging.arn,
-      module.smoke_tests_staging.arn,
-      module.terraform_apply_production.arn,
-      module.smoke_tests_production.arn,
-      module.terraform_apply_user_research.arn,
+      module.terraform_apply.arn,
     ]
     effect = "Allow"
   }
@@ -37,13 +31,13 @@ data "aws_iam_policy_document" "codepipeline" {
 
   statement {
     actions   = ["s3:*"]
-    resources = ["${aws_s3_bucket.codepipeline.arn}/*"]
+    resources = ["${module.artifact_bucket.arn}/*"]
     effect    = "Allow"
   }
 }
 
 resource "aws_iam_policy" "codepipeline" {
-  name   = "codepipline-${var.app_name}"
+  name   = "codepipline-${local.name_suffix}"
   path   = "/"
   policy = data.aws_iam_policy_document.codepipeline.json
 }
@@ -62,12 +56,12 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
 }
 
 resource "aws_iam_role" "codepipeline" {
-  name = "codepipeline-${var.app_name}"
+  name = "codepipeline-${local.name_suffix}"
 
   assume_role_policy = data.aws_iam_policy_document.codepipeline_assume_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "codepipeline-policy-attachment" {
+resource "aws_iam_role_policy_attachment" "codepipeline" {
   policy_arn = aws_iam_policy.codepipeline.arn
   role       = aws_iam_role.codepipeline.id
 }

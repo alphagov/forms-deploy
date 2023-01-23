@@ -26,3 +26,9 @@ variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"
 }
+
+variable "project_name_suffix" {
+  type        = string
+  description = "Optional suffix to append to project name."
+  default     = "-main-branch"
+}

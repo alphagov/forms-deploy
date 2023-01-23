@@ -13,7 +13,7 @@ phases:
   pre_build:
     commands:
       - EPOCH_SECONDS="$(date '+%s')"
-      - IMAGE_TAG="${GIT_SHA}-${EPOCH_SECONDS}"
+      - IMAGE_TAG="${TAG_PREFIX}${GIT_SHA}-${EPOCH_SECONDS}"
   build:
     commands:
       - cd "${BUILD_DIRECTORY}"

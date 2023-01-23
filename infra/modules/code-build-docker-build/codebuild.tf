@@ -33,6 +33,11 @@ resource "aws_codebuild_project" "main" {
     }
 
     environment_variable {
+      name  = "TAG_PREFIX"
+      value = var.tag_prefix
+    }
+
+    environment_variable {
       name  = "AWS_ACCOUNT_ID"
       value = local.aws_account_id
     }
@@ -54,5 +59,4 @@ resource "aws_codebuild_project" "main" {
     type      = "CODEPIPELINE"
     buildspec = file("${path.module}/buildspec/buildspec.yml")
   }
-
 }

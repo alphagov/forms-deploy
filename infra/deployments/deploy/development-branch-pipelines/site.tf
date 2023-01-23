@@ -8,7 +8,7 @@ terraform {
   # Comment out when bootstrapping
   backend "s3" {
     bucket = "gds-forms-deploy-tfstate"
-    key    = "forms_admin_pipeline.tfstate"
+    key    = "development_branch_pipelines.tfstate"
     region = "eu-west-2"
   }
 }
@@ -19,7 +19,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/forms-admin-pipeline"
+      Deployment  = "deploy/development-branch-pipelines"
     }
   }
 }
