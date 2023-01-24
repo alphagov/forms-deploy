@@ -48,6 +48,7 @@ resource "aws_codepipeline" "main" {
         ConnectionArn    = var.github_connection_arn
         FullRepositoryId = "alphagov/${var.app_name}"
         BranchName       = var.source_branch
+        DetectChanges    = false
       }
     }
   }
