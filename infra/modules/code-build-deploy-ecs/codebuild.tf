@@ -48,6 +48,14 @@ resource "aws_codebuild_project" "terraform" {
       name  = "SERVICE_NAME"
       value = var.app_name
     }
+    environment_variable {
+      name  = "MAX_WAIT_TIME_SECONDS"
+      value = "600"
+    }
+    environment_variable {
+      name  = "DEPLOYMENT_UPDATE_POLLING_SECONDS"
+      value = "5"
+    }
   }
 
   source {
