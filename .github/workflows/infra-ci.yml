@@ -15,4 +15,5 @@ jobs:
         with:
           directory: infra/
           framework: terraform
+          quiet: true #Only show failed checks
 
