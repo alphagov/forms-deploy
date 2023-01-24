@@ -10,6 +10,13 @@ variable "env_name" {
 locals {
   deploy_account_id = "711966560482"
 
+  account_ids = {
+    "dev"           = "498160065950"
+    "staging"       = "972536609845"
+    "production"    = "443944947292"
+    "user-research" = "619109835131"
+  }
+
   deploy_account_main_branch_roles = [
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}-main-branch",
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}-main-branch",
@@ -46,9 +53,11 @@ resource "aws_iam_role" "deployer" {
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "admin" { //TODO: lock this down when its working
-  #checkov:skip=CKV_AWS_274:Removal of Admin Access is TBD https://trello.com/c/nlWAz4SL/417-review-deployer-admin-access
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-  role       = aws_iam_role.deployer.id
+resource "aws_iam_policy" "deployer" {
+  policy = data.aws_iam_policy_document.deployer.json
 }
 
+resource "aws_iam_role_policy_attachment" "deployer" { 
+  policy_arn =  aws_iam_policy.deployer.arn
+  role       = aws_iam_role.deployer.id
+}
