@@ -32,6 +32,11 @@ module "ecs_service" {
       value = var.api_base_url
     },
     {
+      #TODO Delete once config settings changes have been deployed
+      name  = "SETTINGS__FORMS_API__BASE_URL",
+      value = var.api_base_url
+    },
+    {
       name  = "RACK_ENV",
       value = "production"
     },
@@ -59,7 +64,12 @@ module "ecs_service" {
 
   secrets = [
     {
+      #TODO Delete once config settings changes have been deployed
       name      = "API_KEY",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
+    },
+    {
+      name      = "SETTINGS__FORMS_API__AUTH_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
     },
     {
