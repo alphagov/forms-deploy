@@ -41,3 +41,9 @@ variable "govuk_app_domain" {
   type        = string
 }
 
+variable "enable_basic_auth" {
+  description = "Controls if basic auth should be used."
+  type        = bool
+  default     = false
+}
+

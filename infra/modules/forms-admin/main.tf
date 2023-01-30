@@ -2,6 +2,17 @@ data "aws_caller_identity" "current" {}
 
 locals {
   deploy_account_id = "711966560482"
+
+  basic_auth_credentials = [
+    {
+      name      = "SETTINGS__BASIC_AUTH__USERNAME",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/username"
+    },
+    {
+      name      = "SETTINGS__BASIC_AUTH__PASSWORD",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/password"
+    }
+  ]
 }
 
 module "ecs_service" {
@@ -53,10 +64,14 @@ module "ecs_service" {
     {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
-    }
+    },
+    {
+      name  = "SETTINGS__BASIC_AUTH__ENABLED",
+      value = var.enable_basic_auth
+    },
   ]
 
-  secrets = [
+  secrets = flatten([
     {
       name      = "API_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/forms-api-key"
@@ -80,7 +95,8 @@ module "ecs_service" {
     {
       name      = "SETTINGS__SENTRY__DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/sentry/dsn"
-    }
-  ]
+    },
+    var.enable_basic_auth ? local.basic_auth_credentials : []
+  ])
 }
 
