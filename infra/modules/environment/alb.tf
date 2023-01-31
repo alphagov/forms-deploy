@@ -27,7 +27,7 @@ locals {
 # this is for csls log shipping
 module "s3_log_shipping" {
   source    = "github.com/alphagov/cyber-security-shared-terraform-modules//s3/s3_log_shipping"
-  sqs_arn   = aws_sqs_queue.sqs.arn
+  s3_processor_lambda_role   = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
   s3_name   = module.logs_bucket.name
 }
 
