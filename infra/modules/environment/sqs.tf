@@ -1,10 +1,12 @@
 resource "aws_sqs_queue" "sqs" {
+  #checkov:skip=CKV_AWS_27:SQS queues must be unencrypted for csls
   name                        = "sqs-${var.env_name}"
   visibility_timeout_seconds  = 90
   redrive_policy             = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.sqs_deadletter.arn}\",\"maxReceiveCount\":1}"
 }
 
 resource "aws_sqs_queue" "sqs_deadletter" {
+  #checkov:skip=CKV_AWS_27:SQS queues must be unencrypted for csls
   name = "sqs-deadletter-${var.env_name}"
 }
 
