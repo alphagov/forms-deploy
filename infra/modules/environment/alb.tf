@@ -24,14 +24,16 @@ locals {
   aws_lb_account_id = "652711504416"
 }
 
+# this is for csls log shipping
+module "s3_log_shipping" {
+  source    = "github.com/alphagov/cyber-security-shared-terraform-modules//s3/s3_log_shipping"
+  sqs_arn   = aws_sqs_queue.sqs.arn
+  s3_name   = module.logs_bucket.name
+}
+
 module "logs_bucket" {
   source = "../secure-bucket"
   name   = "govuk-forms-alb-logs-${var.env_name}"
-}
-
-resource "aws_s3_bucket_policy" "allow_logs" {
-  bucket = module.logs_bucket.name
-  policy = data.aws_iam_policy_document.allow_logs.json
 }
 
 data "aws_iam_policy_document" "allow_logs" {
@@ -43,6 +45,18 @@ data "aws_iam_policy_document" "allow_logs" {
     actions   = ["s3:PutObject"]
     resources = ["arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*"]
   }
+}
+
+data "aws_iam_policy_document" "s3_combined_csls_policy" {
+   source_policy_documents = [
+     data.aws_iam_policy_document.allow_logs.json,
+     module.s3_log_shipping.s3_policy
+   ]
+ }
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = module.logs_bucket.name
+  policy = data.aws_iam_policy_document.s3_combined_csls_policy.json
 }
 
 resource "aws_lb" "alb" {
