@@ -29,10 +29,6 @@ module "ecs_service" {
     {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
-    },
-    {
-      name  = "SECRET_KEY_BASE",
-      value = "something" #TODO: We don't use this but app won't start without it. Try to remove it if possible.
     }
   ]
 
@@ -48,6 +44,10 @@ module "ecs_service" {
     {
       name      = "SETTINGS__SENTRY__DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/sentry/dsn"
+    },
+    {
+      name      = "SECRET_KEY_BASE",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/secret-key-base"
     }
   ]
 }

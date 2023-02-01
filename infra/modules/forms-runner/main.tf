@@ -44,10 +44,6 @@ module "ecs_service" {
       value = "production"
     },
     {
-      name  = "SECRET_KEY_BASE",
-      value = "something"
-    },
-    {
       name  = "RAILS_SERVE_STATIC_FILES",
       value = "1"
     },
@@ -69,6 +65,10 @@ module "ecs_service" {
     {
       name      = "SENTRY_DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/sentry/dsn"
+    },
+    {
+      name      = "SECRET_KEY_BASE",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base"
     }
   ]
 }
