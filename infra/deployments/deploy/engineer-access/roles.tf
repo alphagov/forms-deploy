@@ -6,8 +6,9 @@ locals {
   # The deploy account has access to deploy to production. As always access
   # should be based on least privilege for a given user to perform their duties
   admins = [
-    "alice.carr", # Admin whilst setting up the deploy account
-    "dan.worth",  # Admin whilst setting up the deploy account
+    "alice.carr",   # Admin whilst setting up the deploy account
+    "dan.worth",    # Admin whilst setting up the deploy account
+    "david.biddle", #Admin to deploy basic auth to UR
   ]
 
   readonly = [
