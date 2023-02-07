@@ -7,7 +7,7 @@ module "forms_admin" {
   source             = "../../../modules/forms-admin"
   env_name           = "production"
   image_tag          = var.image_tag
-  desired_task_count = 1 #TODO: Update for migration
+  desired_task_count = 2
   cpu                = 256
   memory             = 512
   api_base_url       = "https://api.prod-temp.forms.service.gov.uk"    #TODO: Update for migration
