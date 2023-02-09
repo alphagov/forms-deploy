@@ -64,7 +64,8 @@ jobs:
             --var GOVUK_APP_DOMAIN=publishing.service.gov.uk \
             --var API_BASE=https://forms-api-production.london.cloudapps.digital \
             --var API_KEY=${{ secrets.FORMS_API_KEY }} \
-            --var RUNNER_BASE=https://submit.forms.service.gov.uk
+            --var RUNNER_BASE=https://submit.forms.service.gov.uk \
+            --var SETTINGS__FEATURES__AUTOCOMPLETE_ANSWER_TYPES=false
           cf logout
 
       - uses: nanasess/setup-chromedriver@v1.0.1
