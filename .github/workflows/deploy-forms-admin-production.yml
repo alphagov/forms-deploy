@@ -65,7 +65,7 @@ jobs:
             --var API_BASE=https://forms-api-production.london.cloudapps.digital \
             --var API_KEY=${{ secrets.FORMS_API_KEY }} \
             --var RUNNER_BASE=https://submit.forms.service.gov.uk \
-            --var SETTINGS__FEATURES__AUTOCOMPLETE_ANSWER_TYPES=false
+            --var SETTINGS__FEATURES__AUTOCOMPLETE_ANSWER_TYPES=true
           cf logout
 
       - uses: nanasess/setup-chromedriver@v1.0.1
