@@ -65,6 +65,10 @@ module "ecs_service" {
       name  = "SETTINGS__BASIC_AUTH__ENABLED",
       value = var.enable_basic_auth
     },
+    {
+      name  = "SETTINGS__FEATURES__AUTOCOMPLETE_ANSWER_TYPES",
+      value = "true"
+    },
   ]
 
   secrets = flatten([
