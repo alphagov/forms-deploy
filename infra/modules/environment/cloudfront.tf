@@ -36,9 +36,8 @@ data "aws_cloudfront_response_headers_policy" "cors" {
 
 resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
-  #checkov:skip=CKV_AWS_68:WAF is not necessary currently.
-  #checkov:skip=CKV2_AWS_47:WAF is not necessary currently.
   #checkov:skip=CKV2_AWS_32:Checkov error, response headers policy is set.
+  #checkov:skip=CKV2_AWS_47:We don't use log4j
   origin {
     domain_name = aws_lb.alb.dns_name
     origin_id   = "application_load_balancer"
@@ -91,6 +90,81 @@ resource "aws_cloudfront_distribution" "main" {
     "submit.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk",
     "www.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   ]
+
+  web_acl_id = aws_wafv2_web_acl.this.arn
+}
+
+resource "aws_wafv2_web_acl" "this" {
+  #checkov:skip=CKV_AWS_192:We don't use log4j
+  provider = aws.us-east-1
+
+  name        = "cloudfront_waf_${var.env_name}"
+  description = "AWS WAF for the CloudFront Distribution"
+  scope       = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "OriginIPRateLimit"
+    sampled_requests_enabled   = false
+  }
+
+  rule {
+    name     = "OriginIPRateLimit"
+    priority = 1
+
+    action {
+      block {
+        custom_response {
+          response_code = 429
+        }
+      }
+    }
+
+    statement {
+      rate_based_statement {
+        limit              = var.ip_rate_limit
+        aggregate_key_type = "IP"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "OriginIPRateLimit"
+      sampled_requests_enabled   = false
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "waf" {
+  #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
+  provider          = aws.us-east-1
+  name              = "aws-waf-logs-${var.env_name}"
+  retention_in_days = 14
+}
+
+resource "aws_wafv2_web_acl_logging_configuration" "this" {
+  provider                = aws.us-east-1
+  log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
+  resource_arn            = aws_wafv2_web_acl.this.arn
+
+  logging_filter {
+    default_behavior = "DROP"
+
+    filter {
+      behavior    = "KEEP"
+      requirement = "MEETS_ALL"
+
+      condition {
+        action_condition {
+          action = "BLOCK"
+        }
+      }
+    }
+  }
 }
 
 output "cloudfront_dns_name" {
