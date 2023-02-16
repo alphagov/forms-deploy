@@ -18,6 +18,8 @@ attempts=0
 # Wait the time it generally takes to deploy and healtcheck new containers and
 # then stop old containers (note deregistration delay is currently 60 seconds).
 INITIAL_DELAY="${INITIAL_DELAY:-120}"
+DEPLOYMENT_UPDATE_POLLING_SECONDS="${DEPLOYMENT_UPDATE_POLLING_SECONDS:-30}"
+MAX_WAIT_TIME_SECONDS="${MAX_WAIT_TIME_SECONDS:-600}"
 MAX_ATTEMPTS="$(( (MAX_WAIT_TIME_SECONDS - INITIAL_DELAY) / DEPLOYMENT_UPDATE_POLLING_SECONDS ))"
 echo "Waiting ${INITIAL_DELAY} seconds for deployment"
 sleep "$INITIAL_DELAY"
