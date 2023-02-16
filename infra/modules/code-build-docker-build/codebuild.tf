@@ -15,9 +15,9 @@ resource "aws_codebuild_project" "main" {
   }
 
   environment {
-    compute_type    = "BUILD_GENERAL1_LARGE"
-    image           = "aws/codebuild/amazonlinux2-aarch64-standard:2.0"
-    type            = "ARM_CONTAINER"
+    compute_type    = var.code_build_project_compute_size
+    image           = var.code_build_project_image
+    type            = var.code_build_project_compute_arch
     privileged_mode = true
 
     environment_variable {
@@ -35,6 +35,11 @@ resource "aws_codebuild_project" "main" {
     environment_variable {
       name  = "TAG_PREFIX"
       value = var.tag_prefix
+    }
+
+    environment_variable {
+      name  = "IMAGE_TAG"
+      value = var.image_tag
     }
 
     environment_variable {

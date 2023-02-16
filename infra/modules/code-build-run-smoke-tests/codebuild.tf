@@ -17,8 +17,10 @@ resource "aws_codebuild_project" "smoke_tests" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
+    image        = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/end-to-end-tests:latest"
     type         = "LINUX_CONTAINER"
+
+    image_pull_credentials_type = "SERVICE_ROLE"
 
     environment_variable {
       name  = "SIGNON_USERNAME"

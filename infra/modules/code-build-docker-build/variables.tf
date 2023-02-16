@@ -19,6 +19,18 @@ variable "image_name" {
   description = "The name of the image excluding its tag"
 }
 
+variable "image_tag" {
+  type        = string
+  description = "The image tag to use. Alternatively the GIT SHA and epoch timestamp will be used"
+  default     = ""
+}
+
+variable "tag_prefix" {
+  type        = string
+  description = "Optional image tag prefix"
+  default     = ""
+}
+
 variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"
@@ -34,8 +46,21 @@ variable "docker_password_parameter_path" {
   description = "The path to a secure string with the docker password"
 }
 
-variable "tag_prefix" {
+variable "code_build_project_image" {
   type        = string
-  description = "Optional image tag prefix"
-  default     = ""
+  description = "The docker image to use to run the CodeBuild project"
+  default     = "aws/codebuild/amazonlinux2-aarch64-standard:2.0"
 }
+
+variable "code_build_project_compute_size" {
+  type        = string
+  description = "The compute size to use for the CodeBuild project"
+  default     = "BUILD_GENERAL1_LARGE"
+}
+
+variable "code_build_project_compute_arch" {
+  type        = string
+  description = "The archecture of the container"
+  default     = "ARM_CONTAINER"
+}
+

@@ -28,6 +28,24 @@ data "aws_iam_policy_document" "codebuild" {
     ]
     effect = "Allow"
   }
+  statement {
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
+    ]
+    resources = [
+      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/end-to-end-tests",
+    ]
+    effect = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "codebuild" {
