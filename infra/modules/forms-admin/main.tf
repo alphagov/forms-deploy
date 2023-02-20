@@ -34,6 +34,10 @@ module "ecs_service" {
       value = var.api_base_url
     },
     {
+      name  = "SETTINGS__FORMS_API__BASE_URL",
+      value = var.api_base_url
+    },
+    {
       name  = "RAILS_LOG_TO_STDOUT",
       value = "true"
     },
