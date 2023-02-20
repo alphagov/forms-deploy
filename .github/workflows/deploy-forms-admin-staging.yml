@@ -65,7 +65,7 @@ jobs:
             --var GOVUK_APP_DOMAIN=staging.publishing.service.gov.uk \
             --var API_BASE=https://forms-api-staging.london.cloudapps.digital \
             --var API_KEY=${{ secrets.STAGING_FORMS_API_KEY }} \
-            --var RUNNER_BASE=https://submit.staging.forms.service.gov.uk \
+            --var SETTINGS__FORMS_RUNNER__URL=https://submit.staging.forms.service.gov.uk \
             --var SETTINGS__FEATURES__AUTOCOMPLETE_ANSWER_TYPES=true
           cf logout
 

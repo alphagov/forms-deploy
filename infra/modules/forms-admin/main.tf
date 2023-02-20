@@ -54,6 +54,10 @@ module "ecs_service" {
       value = var.runner_base
     },
     {
+      name  = "SETTINGS__FORMS_RUNNER__URL",
+      value = var.runner_base
+    },
+    {
       name  = "GOVUK_APP_DOMAIN",
       value = var.govuk_app_domain
     },
