@@ -23,10 +23,18 @@ locals {
     "tom.iles",
     "tristram.oaten"
   ]
+
+  pentesters = [
+    "alice.carr",
+    "dan.worth",
+    "david.cliff",
+    #"felix.ryan" #Waiting for their gds-users IAM user to be created.
+  ]
 }
 
 module "engineer_access" {
-  source   = "../../../modules/engineer-access"
-  admins   = local.admins
-  readonly = local.readonly
+  source     = "../../../modules/engineer-access"
+  admins     = local.admins
+  readonly   = local.readonly
+  pentesters = local.pentesters
 }
