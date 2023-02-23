@@ -32,7 +32,8 @@ locals {
 }
 
 module "engineer_access" {
-  source   = "../../../modules/engineer-access"
-  admins   = local.admins
-  readonly = local.readonly
+  source     = "../../../modules/engineer-access"
+  admins     = local.admins
+  readonly   = local.readonly
+  pentesters = local.pentesters
 }
