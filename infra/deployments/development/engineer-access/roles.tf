@@ -17,6 +17,19 @@ locals {
     "tristram.oaten"
   ]
 
+  # GOV.UK Forms developers that have completed onboarding and support the
+  # platform can have this role
+  support = [
+    "alice.carr",
+    "alistair.laing",
+    "dan.worth",
+    "david.biddle",
+    "laurence.debruxelles",
+    "samuel.culley",
+    "tom.iles",
+    "tristram.oaten"
+  ]
+
   readonly = [
     "alice.carr",
     "alistair.laing",
@@ -32,7 +45,9 @@ locals {
 
 module "engineer_access" {
   source   = "../../../modules/engineer-access"
+  env_name = "dev"
   admins   = local.admins
   readonly = local.readonly
+  support  = local.support
   vpn      = false
 }

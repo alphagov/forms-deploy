@@ -31,3 +31,17 @@ module "pentester_role" {
   restrict_to_gds_ips = var.vpn
 }
 
+module "support_role" {
+  for_each = toset(var.support)
+
+  source      = "../gds-user-role/"
+  email       = "${each.value}@digital.cabinet-office.gov.uk"
+  role_suffix = "support"
+  iam_policy_arns = flatten([
+    "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    var.env_name == "deploy" ? [aws_iam_policy.manage_deployments[0].arn] : [],
+    var.env_name != "deploy" ? [aws_iam_policy.query_rds_with_data_api[0].arn] : []
+  ])
+  restrict_to_gds_ips = var.vpn
+}
+
