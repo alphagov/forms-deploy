@@ -117,11 +117,7 @@ resource "aws_wafv2_web_acl" "this" {
     priority = 1
 
     action {
-      block {
-        custom_response {
-          response_code = 429
-        }
-      }
+      count {}
     }
 
     statement {
@@ -156,11 +152,16 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
 
     filter {
       behavior    = "KEEP"
-      requirement = "MEETS_ALL"
+      requirement = "MEETS_ANY"
 
       condition {
         action_condition {
           action = "BLOCK"
+        }
+      }
+      condition {
+        action_condition {
+          action = "COUNT"
         }
       }
     }
