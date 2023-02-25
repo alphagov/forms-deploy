@@ -30,10 +30,6 @@ module "ecs_service" {
 
   environment_variables = [
     {
-      name  = "API_BASE",
-      value = var.api_base_url
-    },
-    {
       name  = "SETTINGS__FORMS_API__BASE_URL",
       value = var.api_base_url
     },
@@ -54,10 +50,6 @@ module "ecs_service" {
       value = "1"
     },
     {
-      name  = "RUNNER_BASE",
-      value = var.runner_base
-    },
-    {
       name  = "SETTINGS__FORMS_RUNNER__URL",
       value = var.runner_base
     },
@@ -76,10 +68,6 @@ module "ecs_service" {
   ]
 
   secrets = flatten([
-    {
-      name      = "API_KEY",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/forms-api-key"
-    },
     {
       name      = "SETTINGS__FORMS_API__AUTH_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/forms-api-key"
