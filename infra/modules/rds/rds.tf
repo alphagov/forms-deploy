@@ -29,7 +29,7 @@ resource "aws_rds_cluster" "forms" {
 
   engine         = "aurora-postgresql"
   engine_mode    = "serverless"
-  engine_version = "11.13"
+  engine_version = "11.16"
 
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.rds.id
