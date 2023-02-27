@@ -28,7 +28,7 @@ locals {
     "alice.carr",
     "dan.worth",
     "david.cliff",
-    #"felix.ryan" #Waiting for their gds-users IAM user to be created.
+    "felix.ryan"
   ]
 }
 
