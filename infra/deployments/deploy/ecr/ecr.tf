@@ -25,6 +25,16 @@ resource "aws_ecr_repository" "forms_admin" {
   }
 }
 
+resource "aws_ecr_repository" "end_to_end_tests" {
+  #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV_AWS_51:Permit mutable tags on pipeline images
+  name                 = "end-to-end-tests"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
   repository = aws_ecr_repository.forms_api.name
 

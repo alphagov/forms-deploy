@@ -1,0 +1,40 @@
+FROM public.ecr.aws/amazonlinux/amazonlinux:2@sha256:f2ad893d53e1e1813272c43096a79e74ab0b63128489a45f233066c26fef8468
+
+RUN set -e
+
+#Install system dependencies
+RUN yum update -y
+RUN yum -y install wget unzip tar procps openssl openssl-devel git
+RUN yum groupinstall -y -q "Development tools"
+
+#Install google chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+RUN yum -y install ./google-chrome-stable_current_x86_64.rpm
+RUN ln -s /usr/bin/google-chrome-stable /usr/bin/chromium
+
+#Install chrome driver
+RUN wget https://chromedriver.storage.googleapis.com/110.0.5481.77/chromedriver_linux64.zip
+RUN unzip chromedriver_linux64.zip
+RUN mv chromedriver /usr/bin/chromedriver
+
+#Install rbenv
+ENV RBENV_SRC_DIR="/usr/local/rbenv"
+ENV PATH="~/.rbenv/shims:$RBENV_SRC_DIR/bin:$RBENV_SRC_DIR/shims:$PATH"
+ENV RUBY_BUILD_SRC_DIR="$RBENV_SRC_DIR/plugins/ruby-build"
+
+RUN git clone https://github.com/rbenv/rbenv.git $RBENV_SRC_DIR
+RUN mkdir -p $RBENV_SRC_DIR/plugins
+RUN git clone https://github.com/rbenv/ruby-build.git $RUBY_BUILD_SRC_DIR
+RUN sh $RUBY_BUILD_SRC_DIR/install.sh
+
+# Create code build user
+RUN useradd -m codebuild
+USER codebuild
+
+# Install ruby version
+ENV RUBY_31_VERSION="3.1.3"
+RUN rbenv install $RUBY_31_VERSION
+RUN rm -rf /tmp/*
+RUN rbenv global $RUBY_31_VERSION
+RUN ruby -v
+
