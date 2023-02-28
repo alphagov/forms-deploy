@@ -5,13 +5,25 @@ locals {
 
   # All GOV.UK Forms developers can have admin access to the user research
   # account.
-
   admins = [
     "alice.carr",
     "alistair.laing",
     "dan.worth",
     "david.biddle",
     "james.sheppard",
+    "laurence.debruxelles",
+    "samuel.culley",
+    "tom.iles",
+    "tristram.oaten"
+  ]
+
+  # GOV.UK Forms developers that have completed onboarding and support the
+  # platform can have this role
+  support = [
+    "alice.carr",
+    "alistair.laing",
+    "dan.worth",
+    "david.biddle",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles",
@@ -33,7 +45,9 @@ locals {
 
 module "engineer_access" {
   source   = "../../../modules/engineer-access"
+  env_name = "user-research"
   admins   = local.admins
   readonly = local.readonly
+  support  = local.support
   vpn      = false
 }

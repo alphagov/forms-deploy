@@ -6,9 +6,21 @@ locals {
   # The deploy account has access to deploy to production. As always access
   # should be based on least privilege for a given user to perform their duties
   admins = [
-    "alice.carr",   # Admin whilst setting up the deploy account
-    "dan.worth",    # Admin whilst setting up the deploy account
-    "david.biddle", #Admin to deploy basic auth to UR
+    "alice.carr", # Admin whilst setting up the deploy account
+    "dan.worth",  # Admin whilst setting up the deploy account
+  ]
+
+  # GOV.UK Forms developers that have completed onboarding and support the
+  # platform can have this role
+  support = [
+    "alice.carr",
+    "alistair.laing",
+    "dan.worth",
+    "david.biddle",
+    "laurence.debruxelles",
+    "samuel.culley",
+    "tom.iles",
+    "tristram.oaten"
   ]
 
   readonly = [
@@ -36,4 +48,6 @@ module "engineer_access" {
   admins     = local.admins
   readonly   = local.readonly
   pentesters = local.pentesters
+  support    = local.support
+  env_name   = "deploy"
 }

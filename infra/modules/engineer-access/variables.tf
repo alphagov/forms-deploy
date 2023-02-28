@@ -1,3 +1,12 @@
+variable "env_name" {
+  type        = string
+  description = "The name of the environment to be used in resource names."
+  validation {
+    condition     = contains(["user-research", "deploy", "dev", "staging", "production"], var.env_name)
+    error_message = "Valid values for env_name are: user-research, deploy, dev, staging, production"
+  }
+}
+
 variable "admins" {
   type        = list(string)
   default     = []
@@ -14,6 +23,12 @@ variable "pentesters" {
   type        = list(string)
   default     = []
   description = "user names for engineers to have pen testing access"
+}
+
+variable "support" {
+  type        = list(string)
+  default     = []
+  description = "user names for engineers to have support access"
 }
 
 variable "vpn" {

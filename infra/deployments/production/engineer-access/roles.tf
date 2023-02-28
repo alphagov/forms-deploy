@@ -10,6 +10,19 @@ locals {
     "dan.worth"   // Required whilst setting up environments.
   ]
 
+  # GOV.UK Forms developers that have completed onboarding and support the
+  # platform can have this role
+  support = [
+    "alice.carr",
+    "alistair.laing",
+    "dan.worth",
+    "david.biddle",
+    "laurence.debruxelles",
+    "samuel.culley",
+    "tom.iles",
+    "tristram.oaten"
+  ]
+
   # All GOV.UK Forms developers can have readonly access to
   # the production environment.
   readonly = [
@@ -27,6 +40,8 @@ locals {
 
 module "engineer_access" {
   source   = "../../../modules/engineer-access"
+  env_name = "production"
   admins   = local.admins
   readonly = local.readonly
+  support  = local.support
 }
