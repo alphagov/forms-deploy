@@ -1,0 +1,38 @@
+# frozen_string_literal: true
+
+require 'time'
+
+# Fixtures for secrets manager api calls
+module SecretsManagerFixtures
+  @secrets_manager_stub = Aws::SecretsManager::Client.new({ stub_responses: true })
+
+  def self.list_secrets
+    @secrets_manager_stub.stub_data(:list_secrets,
+    {
+      secret_list: [
+        {
+          arn: "arn-for-forms-admin-database-credentials",
+          description: "forms-admin-database credentials",
+          last_changed_date: Time.parse('2023-01-01'),
+          name: "forms-admin-database",
+          secret_versions_to_stages: {
+            "EXAMPLE1-90ab-cdef-fedc-ba987EXAMPLE" => [
+              "AWSCURRENT",
+            ],
+          },
+        },
+        {
+          arn: "arn-for-forms-api-database-credentials",
+          description: "forms-api-database credentials",
+          last_changed_date: Time.parse('2023-01-01'),
+          name: "forms-api-database",
+          secret_versions_to_stages: {
+            "EXAMPLE2-90ab-cdef-fedc-ba987EXAMPLE" => [
+              "AWSCURRENT",
+            ],
+          },
+        },
+      ],
+    })
+  end
+end

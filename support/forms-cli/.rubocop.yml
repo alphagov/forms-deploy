@@ -1,0 +1,19 @@
+require: 'rubocop-rspec'
+
+AllCops:
+  Exclude:
+    - 'spec/fixtures/*'
+
+Metrics/MethodLength:
+  Max: 25
+Metrics/BlockLength:
+  Max: 100
+# Sometimes tests are clearer referencing the class under test than 'subject'
+RSpec/DescribedClass:
+  Enabled: false
+# Seemingly 'AnyInstanceOf' is necessary to stub mixins from a module method.
+Rspec/AnyInstance:
+  Enabled: false
+# Sometimes spliting long line over multiple lines makes it clearer and its no more complicated
+Rspec/ExampleLength:
+  Max: 20

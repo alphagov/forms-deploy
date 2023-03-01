@@ -1,0 +1,26 @@
+name: "Test Forms Cli"
+on:
+  push:
+    branches: [forms_cli]
+    paths:
+      - 'support/forms-cli/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'support/forms-cli/**'
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: support/forms-cli
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@d3c9825d67b0d8720afdfdde5af56c79fdb38d16 # v1.117.0
+        with:
+          bundler-cache: true
+          working-directory: support/forms-cli
+      - name: Run tests
+        run: bundle exec rspec

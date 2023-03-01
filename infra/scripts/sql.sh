@@ -3,6 +3,8 @@
 DATA_BASE="$1"
 STATEMENT="$2"
 
+echo 'This is defunct. Use the forms-cli instead'
+
 function usage() {
   echo "
   Executes the provided SQL statement against the specified database.
