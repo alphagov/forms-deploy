@@ -35,21 +35,27 @@ class GetParameters
   end
 
   def fetch_parameters
+    get_parameters_by_path.map do |param|
+      {
+        name: param.name,
+        value: @options[:decrypt] ? param.value : '********'
+      }
+    end
+  end
+
+  def get_parameters_by_path(next_token: nil)
     opts = {
       path: @options[:path],
       recursive: true,
-      with_decryption: @options[:decrypt]
+      with_decryption: @options[:decrypt],
+      next_token:
     }
 
-    @ssm
-      .get_parameters_by_path(opts)
-      .parameters
-      .map do |param|
-        {
-          name: param.name,
-          value: @options[:decrypt] ? param.value : '********'
-        }
-      end
+    results = @ssm.get_parameters_by_path(opts)
+
+    return results.parameters if results.next_token.nil?
+
+    results.parameters.concat(get_parameters_by_path(next_token: results.next_token))
   end
 
   def parse_command_options

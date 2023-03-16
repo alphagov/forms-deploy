@@ -21,6 +21,6 @@ module SsmFixtures
                                                                          last_modified_date: Time.parse('2023-01-01'),
                                                                          arn: 'some-arn',
                                                                          data_type: 'text' }],
-                                                          next_token: 'some_next_token' })
+                                                          next_token: nil })
   end
 end
