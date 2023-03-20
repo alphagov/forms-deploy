@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo 'This is defunct. Use the forms-cli instead'
+
 if [[ "$1" == "help" ]]; then
   echo "
   Returns SSM Parameters using aws ssm get-parameters-by-path.

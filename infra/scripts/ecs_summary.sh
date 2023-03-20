@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo 'This is defunct. Use the forms-cli instead'
+
 if [[ "$1" == "help" ]]; then
   echo "   Usage:"
   echo "     Run in a authorized shell using gds-cli or aws-vault"
