@@ -2,20 +2,12 @@
 
 require 'optionparser'
 require 'aws-sdk-ecs'
-require 'aws-sdk-sts'
 require_relative '../utilities/printer'
 require_relative '../utilities/helpers'
 
 # Prints the ECS summary details of an environment
 class EcsSummary
   include Helpers
-
-  ACCOUNT_IDS = {
-    '498160065950' => 'dev',
-    '972536609845' => 'staging',
-    '443944947292' => 'production',
-    '619109835131' => 'user-research'
-  }.freeze
 
   def run
     parse_options
@@ -45,12 +37,6 @@ class EcsSummary
         exit
       end
     end.parse!
-  end
-
-  def fetch_environment
-    sts = Aws::STS::Client.new
-    account = sts.get_caller_identity({}).account
-    ACCOUNT_IDS[account]
   end
 
   # rubocop:disable Metrics/AbcSize
