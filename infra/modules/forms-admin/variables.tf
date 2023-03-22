@@ -47,3 +47,8 @@ variable "enable_basic_auth" {
   default     = false
 }
 
+variable "enable_draft_live_versions" {
+  description = "Controls if draft/live form feature should be used."
+  type        = bool
+  default     = false
+}
