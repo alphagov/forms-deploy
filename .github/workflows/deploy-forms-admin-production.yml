@@ -66,6 +66,7 @@ jobs:
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.FORMS_API_KEY_FOR_FORMS_ADMIN }} \
             --var SETTINGS__FORMS_RUNNER__URL=https://submit.forms.service.gov.uk \
             --var SETTINGS__FEATURES__AUTOCOMPLETE_ANSWER_TYPES=true
+            --var SETTINGS__FEATURES__DRAFT_LIVE_VERSIONING=false
           cf logout
 
       - uses: nanasess/setup-chromedriver@v1.0.1

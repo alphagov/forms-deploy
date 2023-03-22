@@ -65,6 +65,10 @@ module "ecs_service" {
       name  = "SETTINGS__BASIC_AUTH__ENABLED",
       value = var.enable_basic_auth
     },
+    {
+      name  = "SETTINGS__FEATURES__DRAFT_LIVE_VERSIONING",
+      value = var.enable_draft_live_versions
+    },
   ]
 
   secrets = flatten([
