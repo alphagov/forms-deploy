@@ -28,6 +28,7 @@ locals {
   readonly = [
     "alice.carr",
     "alistair.laing",
+    "catalina.garcia",
     "dan.worth",
     "david.biddle",
     "james.sheppard",

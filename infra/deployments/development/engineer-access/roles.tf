@@ -8,6 +8,7 @@ locals {
   admins = [
     "alice.carr",
     "alistair.laing",
+    "catalina.garcia",
     "dan.worth",
     "david.biddle",
     "james.sheppard",
@@ -22,8 +23,10 @@ locals {
   support = [
     "alice.carr",
     "alistair.laing",
+    "catalina.garcia",
     "dan.worth",
     "david.biddle",
+    "james.sheppard",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles",
@@ -33,6 +36,7 @@ locals {
   readonly = [
     "alice.carr",
     "alistair.laing",
+    "catalina.garcia",
     "dan.worth",
     "david.biddle",
     "james.sheppard",
