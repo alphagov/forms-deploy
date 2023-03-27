@@ -2,6 +2,12 @@ variable "name" {
   type = string
 }
 
+variable "extra_bucket_policies" {
+  type        = list(string)
+  description = "extra bucket policies to apply to this bucket. List of json policies"
+  default     = []
+}
+
 resource "aws_s3_bucket" "this" {
   #checkov:skip=CKV_AWS_18:Review S3 access logging in https://trello.com/c/qUzZfopX/416-review-s3-bucket-access-logging
   #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
@@ -45,6 +51,38 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
       sse_algorithm = "AES256"
     }
   }
+}
+
+data "aws_iam_policy_document" "https_only" {
+  statement {
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    sid     = "https_only"
+    effect  = "Deny"
+    actions = ["s3:*"]
+    resources = [
+      aws_s3_bucket.this.arn,
+      "${aws_s3_bucket.this.arn}/*"
+    ]
+    condition {
+      test     = "Bool"
+      values   = ["false"]
+      variable = "aws:SecureTransport"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "s3_combined_policy" {
+  source_policy_documents = flatten([
+    data.aws_iam_policy_document.https_only.json,
+  var.extra_bucket_policies])
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.this.id
+  policy = data.aws_iam_policy_document.s3_combined_policy.json
 }
 
 output "name" {
