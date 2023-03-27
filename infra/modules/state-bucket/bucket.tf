@@ -38,3 +38,29 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "state" {
     }
   }
 }
+
+data "aws_iam_policy_document" "https_only" {
+  statement {
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    sid     = "https_only"
+    effect  = "Deny"
+    actions = ["s3:*"]
+    resources = [
+      aws_s3_bucket.state.arn,
+      "${aws_s3_bucket.state.arn}/*"
+    ]
+    condition {
+      test     = "Bool"
+      values   = ["false"]
+      variable = "aws:SecureTransport"
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.state.id
+  policy = data.aws_iam_policy_document.https_only.json
+}
