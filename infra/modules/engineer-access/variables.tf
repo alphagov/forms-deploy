@@ -19,12 +19,6 @@ variable "readonly" {
   description = "user names for engineers to have readonly access"
 }
 
-variable "pentesters" {
-  type        = list(string)
-  default     = []
-  description = "user names for engineers to have pen testing access"
-}
-
 variable "support" {
   type        = list(string)
   default     = []

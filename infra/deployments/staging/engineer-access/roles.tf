@@ -41,10 +41,9 @@ locals {
 }
 
 module "engineer_access" {
-  source     = "../../../modules/engineer-access"
-  env_name   = "staging"
-  admins     = local.admins
-  readonly   = local.readonly
-  support    = local.support
-  pentesters = local.pentesters
+  source   = "../../../modules/engineer-access"
+  env_name = "staging"
+  admins   = local.admins
+  readonly = local.readonly
+  support  = local.support
 }
