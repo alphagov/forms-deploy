@@ -33,28 +33,25 @@ resource "aws_iam_role" "gds_user_role" {
 
   max_session_duration = var.max_session_duration
 
-  assume_role_policy = <<-EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Principal": {
-          "AWS": [
-            "${local.trust_principal}"
-          ]
-        },
-        "Action": "sts:AssumeRole",
-        "Condition": {
-          ${local.maybe_source_ip_restriction}
-          "Bool": {
-            "aws:MultiFactorAuthPresent": "true"
-          }
-        }
-      }
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    actions = [
+      "sts:AssumeRole"
     ]
+    Principals {
+      type        = "AWS"
+      identifiers = [local.trust_principal]
+    }
+    effect = "Allow"
+    condition {
+      test     = "Bool"
+      values   = [local.maybe_source_ip_restriction]
+      variable = "aws:MultiFactorAuthPresent"
+    }
   }
-  EOF
 }
 
 resource "aws_iam_role_policy_attachment" "gds_user_role_policy_attachments" {
