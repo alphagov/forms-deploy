@@ -39,35 +39,31 @@ resource "aws_iam_role_policy_attachment" "ecs_task_exec_standard_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy" "ecs_task_exec_policy" {
-  name = "parameter_store_exec_policy"
-  role = aws_iam_role.ecs_task_exec_role.name
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Action": [
-        "ssm:DescribeParameters"
-      ],
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Action": [
-        "ssm:GetParameters"
-      ],
-      "Resource": [
-        "arn:aws:ssm:*:*:parameter/${var.application}-${var.env_name}/*"
-      ]
-    }
-  ]
+resource "aws_iam_role_policy_attachment" "ecs_task_exec_additional_policies" {
+  role       = aws_iam_role.ecs_task_exec_role.name
+  policy_arn = aws_iam_policy.ecs_task_exec_additional_policy.arn
 }
-EOF
+
+resource "aws_iam_policy" "ecs_task_exec_additional_policy" {
+  name   = "${var.env_name}-${var.application}-ecs-task-execution-additional"
+  policy = data.aws_iam_policy_document.ecs_task_exec_additional_policies.json
+}
+
+data "aws_iam_policy_document" "ecs_task_exec_additional_policies" {
+  statement {
+    actions = [
+      "ssm:DescribeParameters"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
+      "ssm:GetParameters"
+    ]
+    resources = [
+      "arn:aws:ssm:*:*:parameter/${var.application}-${var.env_name}/*"
+    ]
+    effect = "Allow"
+  }
 }

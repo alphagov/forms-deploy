@@ -112,6 +112,25 @@ data "aws_iam_policy_document" "deployer" {
   }
 
   statement {
+    sid = "ManageEcsExecutionPolicies"
+    actions = [
+      "iam:CreatePolicy",
+      "iam:GetRolePolicy",
+      "iam:GetPolicy",
+      "iam:TagPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
+      "iam:DeletePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-execution-additional",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-api-ecs-task-execution-additional",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-runner-ecs-task-execution-additional"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid = "ManageAlb"
     actions = [
       "elasticloadbalancing:CreateTargetGroup",
