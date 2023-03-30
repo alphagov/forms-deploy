@@ -1,0 +1,55 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
+resource "aws_sns_topic" "alert_topic" {
+  name              = "pager_duty_integration_${var.environment}"
+  kms_master_key_id = aws_kms_key.topic_sse.key_id
+}
+
+data "aws_ssm_parameter" "pager_duty_integration_url" {
+  name = "/alerting/${var.environment}/pager-duty-integration-url"
+}
+
+resource "aws_sns_topic_subscription" "pager_duty_subscription" {
+  topic_arn = aws_sns_topic.alert_topic.arn
+  protocol  = "https"
+  endpoint  = data.aws_ssm_parameter.pager_duty_integration_url.value
+}
+
+resource "aws_kms_key" "topic_sse" {
+  description = "For server side encryption of the alerts topic"
+  policy      = data.aws_iam_policy_document.key_policy.json
+
+  enable_key_rotation = true
+}
+
+data "aws_iam_policy_document" "key_policy" {
+  # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
+  #checkov:skip=CKV_AWS_111:AWS suggest the EnableIamAccess statement for key policies.
+  #checkov:skip=CKV_AWS_109:AWS suggest the EnableIamAccess statement for key policies.
+  statement {
+    sid    = "EnableIamAccess"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "EnableCloudWatchAccess"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["cloudwatch.amazonaws.com"]
+    }
+    actions   = ["kms:GenerateDataKey*", "kms:Decrypt"]
+    resources = ["*"]
+  }
+}
+
