@@ -4,28 +4,20 @@ locals {
   role_name       = "${local.role_prefix}-${var.role_suffix}"
   trust_principal = "arn:aws:iam::622626885786:user/${var.email}"
 
-  gds_ip_restriction_policy_fragment = <<-EOF
-  "IpAddress": {
-    "aws:SourceIp": [
-      "213.86.153.211/32",
-      "213.86.153.212/32",
-      "213.86.153.213/32",
-      "213.86.153.214/32",
-      "213.86.153.231/32",
-      "213.86.153.235/32",
-      "213.86.153.236/32",
-      "213.86.153.237/32",
-      "51.149.8.0/25",
-      "51.149.8.128/29",
-      "51.149.9.112/29",
-      "51.149.9.240/29"
-    ]
-  },
-  EOF
-
-  maybe_source_ip_restriction = (var.restrict_to_gds_ips
-    ? local.gds_ip_restriction_policy_fragment
-  : "")
+  permitted_source_ips = [
+    "213.86.153.211/32",
+    "213.86.153.212/32",
+    "213.86.153.213/32",
+    "213.86.153.214/32",
+    "213.86.153.231/32",
+    "213.86.153.235/32",
+    "213.86.153.236/32",
+    "213.86.153.237/32",
+    "51.149.8.0/25",
+    "51.149.8.128/29",
+    "51.149.9.112/29",
+    "51.149.9.240/29"
+  ]
 }
 
 resource "aws_iam_role" "gds_user_role" {
@@ -41,15 +33,25 @@ data "aws_iam_policy_document" "assume_role" {
     actions = [
       "sts:AssumeRole"
     ]
-    Principals {
+    principals {
       type        = "AWS"
       identifiers = [local.trust_principal]
     }
     effect = "Allow"
+
     condition {
       test     = "Bool"
-      values   = [local.maybe_source_ip_restriction]
+      values   = ["true"]
       variable = "aws:MultiFactorAuthPresent"
+    }
+
+    dynamic "condition" {
+      for_each = var.restrict_to_gds_ips ? [1] : []
+      content {
+        test     = "IpAddress"
+        values   = local.permitted_source_ips
+        variable = "aws:SourceIp"
+      }
     }
   }
 }
