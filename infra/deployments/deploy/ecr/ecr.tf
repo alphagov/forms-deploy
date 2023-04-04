@@ -37,87 +37,83 @@ resource "aws_ecr_repository" "end_to_end_tests" {
 
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
   repository = aws_ecr_repository.forms_api.name
+  policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_api_document.json
 
-  policy = <<EOF
-{
-    "Version": "2008-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowPull",
-            "Effect": "Allow",
-            "Principal": {
-              "AWS": [
-                "arn:aws:iam::619109835131:role/user-research-forms-api-ecs-task-execution",
-                "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
-                "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
-                "arn:aws:iam::443944947292:role/production-forms-api-ecs-task-execution"
-              ]
-            },
-            "Action": [
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability"
-            ]
-        }
+}
+
+data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
+  statement {
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability"
     ]
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::619109835131:role/user-research-forms-api-ecs-task-execution",
+        "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
+        "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
+        "arn:aws:iam::443944947292:role/production-forms-api-ecs-task-execution"
+      ]
+    }
+  }
 }
-EOF
-}
+
 
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {
   repository = aws_ecr_repository.forms_admin.name
+  policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_admin.json
 
-  policy = <<EOF
-{
-    "Version": "2008-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowPull",
-            "Effect": "Allow",
-            "Principal": {
-              "AWS": [
-                "arn:aws:iam::619109835131:role/user-research-forms-admin-ecs-task-execution",
-                "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
-                "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
-                "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
-              ]
-            },
-            "Action": [
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability"
-            ]
-        }
-    ]
 }
-EOF
+
+data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
+  statement {
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability"
+    ]
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::619109835131:role/user-research-forms-admin-ecs-task-execution",
+        "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
+        "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
+        "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
+      ]
+    }
+  }
 }
 
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_runner" {
   repository = aws_ecr_repository.forms_runner.name
+  policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_runner_document.json
 
-  policy = <<EOF
-{
-    "Version": "2008-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowPull",
-            "Effect": "Allow",
-            "Principal": {
-              "AWS": [
-                "arn:aws:iam::619109835131:role/user-research-forms-runner-ecs-task-execution",
-                "arn:aws:iam::498160065950:role/dev-forms-runner-ecs-task-execution",
-                "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution",
-                "arn:aws:iam::443944947292:role/production-forms-runner-ecs-task-execution"
-              ]
-            },
-            "Action": [
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability"
-            ]
-        }
-    ]
 }
-EOF
+
+data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
+
+  statement {
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability"
+    ]
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::619109835131:role/user-research-forms-runner-ecs-task-execution",
+        "arn:aws:iam::498160065950:role/dev-forms-runner-ecs-task-execution",
+        "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution",
+        "arn:aws:iam::443944947292:role/production-forms-runner-ecs-task-execution"
+      ]
+    }
+  }
 }
