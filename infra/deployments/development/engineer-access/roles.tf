@@ -28,6 +28,7 @@ locals {
     "david.biddle",
     "james.sheppard",
     "laurence.debruxelles",
+    "radha.kotyankar",
     "samuel.culley",
     "tom.iles",
     "tristram.oaten"
@@ -41,6 +42,7 @@ locals {
     "david.biddle",
     "james.sheppard",
     "laurence.debruxelles",
+    "radha.kotyankar",
     "samuel.culley",
     "tom.iles",
     "tristram.oaten"
