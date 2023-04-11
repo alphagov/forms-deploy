@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout forms-runner
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: alphagov/forms-runner
           ref: ${{ inputs.ref_to_deploy }}
@@ -66,10 +66,10 @@ jobs:
             --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
           cf logout
 
-      - uses: nanasess/setup-chromedriver@v1.0.1
+      - uses: nanasess/setup-chromedriver@v2
 
       - name: Checkout capybara tests
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: tests
 
