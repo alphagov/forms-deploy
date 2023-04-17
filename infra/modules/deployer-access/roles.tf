@@ -45,6 +45,13 @@ data "aws_iam_policy_document" "assume_role" {
       type        = "AWS"
       identifiers = lookup(local.deployer_roles_per_env, var.env_name)
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "sts:ExternalId"
+
+      values = [var.env_name]
+    }
   }
 }
 

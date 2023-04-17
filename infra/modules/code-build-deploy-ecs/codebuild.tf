@@ -49,6 +49,10 @@ resource "aws_codebuild_project" "terraform" {
       value = var.app_name
     }
     environment_variable {
+      name  = "EXTERNAL_ID"
+      value = var.environment
+    }
+    environment_variable {
       name  = "MAX_WAIT_TIME_SECONDS"
       value = "600"
     }
