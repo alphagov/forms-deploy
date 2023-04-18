@@ -6,8 +6,9 @@ locals {
   # Admin access to the staging environment should only be provided when
   # needed.
   admins = [
-    "dan.worth", // Required whilst setting up environments.
-    "alice.carr" // Required whilst setting up environments.
+    "dan.worth",      // Required whilst setting up environments.
+    "alice.carr",     // Required whilst setting up environments.
+    "catalina.garcia" // Required whilst setting up environments.
   ]
 
   # GOV.UK Forms developers that have completed onboarding and support the
