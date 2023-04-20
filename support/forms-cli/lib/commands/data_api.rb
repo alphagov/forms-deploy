@@ -31,7 +31,7 @@ class DataApi
   def print(results)
     puts JSON.pretty_generate({
                                 updated: results.number_of_records_updated,
-                                records: JSON.parse(execute_statement.formatted_records)
+                                records: JSON.parse(execute_statement.formatted_records || '{}')
                               })
   end
 
