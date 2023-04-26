@@ -65,6 +65,10 @@ def check_forms_exist(aws_forms, paas_forms)
   total_forms
 end
 
+def compare_forms(aws_forms, paas_forms)
+  difference = paas_forms.to_a - aws_forms.to_a
+end
+
 unless ENVIRONMENTS.key?(environment.to_sym)
   puts "Unknown environment '#{environment}'".red.bold
   usage
@@ -92,3 +96,15 @@ end
 puts "All forms are the same!".green if paas_forms == aws_forms
 puts "There are #{count} mismatches between AWS and PaaS"
 
+puts "\nWould you like to comparing each form? y/n"
+compare_all_forms = STDIN.gets.chomp
+
+if compare_all_forms == 'n'
+  exit(0)
+elsif compare_all_forms == 'y'
+  difference = compare_forms(aws_forms, paas_forms)
+  puts "Difference: \n#{difference}"
+else
+  puts "don't know what you said"
+  exit(1)
+end
