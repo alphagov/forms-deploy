@@ -21,8 +21,7 @@ locals {
     "david.biddle",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 
   readonly = [
@@ -34,8 +33,7 @@ locals {
     "james.sheppard",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 }
 

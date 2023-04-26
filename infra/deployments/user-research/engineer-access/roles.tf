@@ -14,8 +14,7 @@ locals {
     "james.sheppard",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 
   # GOV.UK Forms developers that have completed onboarding and support the
@@ -28,8 +27,7 @@ locals {
     "david.biddle",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 
   readonly = [
@@ -41,8 +39,7 @@ locals {
     "james.sheppard",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 }
 
