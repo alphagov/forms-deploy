@@ -21,8 +21,7 @@ locals {
     "david.biddle",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 
   # All GOV.UK Forms developers can have readonly access to
@@ -36,8 +35,7 @@ locals {
     "james.sheppard",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles",
-    "tristram.oaten"
+    "tom.iles"
   ]
 }
 
