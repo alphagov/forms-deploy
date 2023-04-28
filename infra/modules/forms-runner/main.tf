@@ -50,6 +50,10 @@ module "ecs_service" {
     {
       name  = "SENTRY_ENVIRONMENT",
       value = "aws-${var.env_name}"
+    },
+    {
+      name  = "SETTINGS__SENTRY__ENVIRONMENT",
+      value = "aws-${var.env_name}"
     }
   ]
 
@@ -64,6 +68,10 @@ module "ecs_service" {
     },
     {
       name      = "SENTRY_DSN",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/sentry/dsn"
+    },
+    {
+      name      = "SETTINGS__SENTRY__DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/sentry/dsn"
     },
     {
