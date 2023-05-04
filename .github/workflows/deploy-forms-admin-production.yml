@@ -1,4 +1,4 @@
-name: Deploy forms-admin to Production
+name: Deploy-admin-to-prod
 
 on:
   workflow_dispatch:

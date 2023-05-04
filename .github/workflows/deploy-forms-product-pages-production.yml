@@ -1,4 +1,4 @@
-name: Deploy forms-product-pages to Production environment
+name: Deploy-product-pages-to-prod
 
 on:
   workflow_dispatch:

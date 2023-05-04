@@ -1,4 +1,4 @@
-name: Deploy forms-runner to Production
+name: Deploy-runner-to-prod
 
 on:
   workflow_dispatch:
