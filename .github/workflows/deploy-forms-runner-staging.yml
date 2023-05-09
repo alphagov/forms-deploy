@@ -60,7 +60,8 @@ jobs:
           cd main && cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=staging \
             --var INSTANCES=2 \
-            --var SENTRY_DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__ENVIRONMENT=staging \
             --var SETTINGS__FORMS_API__BASE_URL=https://forms-api-staging.london.cloudapps.digital \
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.FORMS_API_KEY_FOR_FORMS_RUNNER }} \
             --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
