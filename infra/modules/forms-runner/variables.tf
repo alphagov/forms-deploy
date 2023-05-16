@@ -26,6 +26,11 @@ variable "desired_task_count" {
   default     = 2
 }
 
+variable "admin_base_url" {
+  description = "The url for redirecting to forms-admin"
+  type        = string
+}
+
 variable "api_base_url" {
   description = "The url for connecting to forms-api"
   type        = string

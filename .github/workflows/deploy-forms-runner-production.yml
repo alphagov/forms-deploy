@@ -22,6 +22,7 @@ jobs:
       SIGNON_OTP: ${{ secrets.SIGNON_OTP }}
       FORMS_ADMIN_URL: https://admin.forms.service.gov.uk/
       SETTINGS__GOVUK_NOTIFY__API_KEY: ${{ secrets.SETTINGS__GOVUK_NOTIFY__API_KEY }}
+      SETTINGS__FORMS_ADMIN__BASE_URL: ${{ secrets.SETTINGS__FORMS_ADMIN__BASE_URL }}
 
     steps:
       - name: Checkout forms-runner
@@ -61,6 +62,7 @@ jobs:
             --var INSTANCES=2 \
             --var SETTINGS__SENTRY__DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=production \
+            --var SETTINGS__FORMS_ADMIN__BASE_URL=${{ secrets.SETTINGS__FORMS_ADMIN__BASE_URL }} \
             --var SETTINGS__FORMS_API__BASE_URL=https://forms-api-production.london.cloudapps.digital \
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.FORMS_API_KEY_FOR_FORMS_RUNNER }} \
             --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
