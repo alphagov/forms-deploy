@@ -67,10 +67,6 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/notify-api-key"
     },
     {
-      name      = "SENTRY_DSN",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/sentry/dsn"
-    },
-    {
       name      = "SETTINGS__SENTRY__DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/sentry/dsn"
     },
