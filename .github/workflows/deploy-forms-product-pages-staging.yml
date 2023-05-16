@@ -1,4 +1,4 @@
-name: Deploy-product-pages-to-staging
+name: Deploy product pages to staging
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Deploy-product-pages-to-prod
+name: Deploy product pages to prod
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Deploy-admin-to-staging
+name: Deploy admin to staging
 
 on:
   workflow_dispatch:

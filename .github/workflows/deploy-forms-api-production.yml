@@ -1,4 +1,4 @@
-name: Deploy-api-to-prod
+name: Deploy api to prod
 
 on:
   workflow_dispatch:

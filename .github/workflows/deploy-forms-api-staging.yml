@@ -1,4 +1,4 @@
-name: Deploy-api-to-staging
+name: Deploy api to staging
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Deploy-runner-to-prod
+name: Deploy runner to prod
 
 on:
   workflow_dispatch:
