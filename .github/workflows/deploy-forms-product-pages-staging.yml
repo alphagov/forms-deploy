@@ -1,4 +1,4 @@
-name: Deploy forms-product-pages to Staging environment
+name: Deploy product pages to staging
 
 on:
   workflow_dispatch:

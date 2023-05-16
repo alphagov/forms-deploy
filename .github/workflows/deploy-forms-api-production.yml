@@ -1,4 +1,4 @@
-name: Deploy forms-api to Production
+name: Deploy api to prod
 
 on:
   workflow_dispatch:
