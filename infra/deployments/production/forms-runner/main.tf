@@ -11,4 +11,5 @@ module "forms_runner" {
   cpu                = 256
   memory             = 512
   api_base_url       = "https://api.prod-temp.forms.service.gov.uk" #TODO: update before migration
+  admin_base_url     = "https://admin.prod-temp.forms.service.gov.uk" #TODO: Update before migration
 }
