@@ -32,6 +32,10 @@ module "ecs_service" {
       value = var.api_base_url
     },
     {
+      name  = "SETTINGS__FORMS_ADMIN__BASE_URL",
+      value = var.admin_base_url
+    },
+    {
       name  = "RACK_ENV",
       value = "production"
     },
