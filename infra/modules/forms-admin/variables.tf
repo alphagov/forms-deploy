@@ -52,3 +52,9 @@ variable "enable_draft_live_versions" {
   type        = bool
   default     = false
 }
+
+variable "enable_basic_routing" {
+  description = "Controls if basic routing feature should be used."
+  type        = bool
+  default     = false
+}

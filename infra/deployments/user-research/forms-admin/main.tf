@@ -15,4 +15,5 @@ module "forms_admin" {
   govuk_app_domain   = "use_basic_auth" #TODO: Implement basic auth and remove this dummy value.
   enable_basic_auth  = true
   enable_draft_live_versions = true
+  enable_basic_routing       = false
 }
