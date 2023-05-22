@@ -14,4 +14,5 @@ module "forms_admin" {
   runner_base        = "https://submit.prod-temp.forms.service.gov.uk" #TODO: Update for migration
   govuk_app_domain   = "integration.publishing.service.gov.uk"         #TODO: Update for migration
   enable_draft_live_versions = true
+  enable_basic_routing       = false
 }
