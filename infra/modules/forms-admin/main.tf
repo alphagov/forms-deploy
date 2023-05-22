@@ -66,10 +66,6 @@ module "ecs_service" {
       value = var.enable_basic_auth
     },
     {
-      name  = "SETTINGS__FEATURES__DRAFT_LIVE_VERSIONING",
-      value = var.enable_draft_live_versions
-    },
-    {
       name  = "SETTINGS__FEATURES__BASIC_ROUTING",
       value = var.enable_basic_routing
     },

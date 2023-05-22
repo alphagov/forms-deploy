@@ -46,13 +46,6 @@ variable "enable_basic_auth" {
   type        = bool
   default     = false
 }
-
-variable "enable_draft_live_versions" {
-  description = "Controls if draft/live form feature should be used."
-  type        = bool
-  default     = false
-}
-
 variable "enable_basic_routing" {
   description = "Controls if basic routing feature should be used."
   type        = bool
