@@ -19,6 +19,7 @@ locals {
     "catalina.garcia",
     "dan.worth",
     "david.biddle",
+    "jamie.wilkinson",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
@@ -31,6 +32,7 @@ locals {
     "dan.worth",
     "david.biddle",
     "james.sheppard",
+    "jamie.wilkinson",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
