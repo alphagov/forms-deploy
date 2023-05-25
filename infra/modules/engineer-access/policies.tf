@@ -25,6 +25,32 @@ resource "aws_iam_policy" "manage_deployments" {
         Resource = "*"
       },
       {
+        Sid = "DisableDeploymentToUserResearchOnMainMerge"
+        Action = [
+          "codepipeline:DisableStageTransition",
+          "codepipeline:EnableStageTransition",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-admin-main-branch/Deploy-to-user-research-environment",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-main-branch/Deploy-to-user-research-environment",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-main-branch/Deploy-to-user-research-environment"
+        ]
+      },
+      {
+        Sid = "DisableDeploymentToDevelopmentOnMainMerge"
+        Action = [
+          "codepipeline:DisableStageTransition",
+          "codepipeline:EnableStageTransition",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-admin-main-branch/Deploy-to-dev-environment",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-main-branch/Deploy-to-dev-environment",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-main-branch/Deploy-to-dev-environment",
+        ]
+      },
+      {
         Sid = "CodePipelineStartStopRetry"
         Action = [
           "codepipeline:RetryStageExecution",
