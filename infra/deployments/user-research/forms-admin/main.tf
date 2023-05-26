@@ -12,6 +12,6 @@ module "forms_admin" {
   memory               = 512
   api_base_url         = "https://api.research.forms.service.gov.uk"
   runner_base          = "https://submit.research.forms.service.gov.uk"
-  enable_basic_auth    = true
+  auth_provider        = "basic_auth"
   enable_basic_routing = true
 }
