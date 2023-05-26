@@ -12,7 +12,6 @@ module "forms_admin" {
   memory               = 512
   api_base_url         = "https://api.research.forms.service.gov.uk"
   runner_base          = "https://submit.research.forms.service.gov.uk"
-  govuk_app_domain     = "use_basic_auth" #TODO: Implement basic auth and remove this dummy value.
   enable_basic_auth    = true
   enable_basic_routing = true
 }

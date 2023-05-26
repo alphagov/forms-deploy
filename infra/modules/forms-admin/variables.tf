@@ -39,6 +39,7 @@ variable "runner_base" {
 variable "govuk_app_domain" {
   description = "The domain name for the Signon integration for auth flow"
   type        = string
+  default     = ""
 }
 
 variable "enable_basic_auth" {
