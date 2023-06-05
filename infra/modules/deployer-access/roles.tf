@@ -64,7 +64,7 @@ resource "aws_iam_policy" "deployer" {
   policy = data.aws_iam_policy_document.deployer.json
 }
 
-resource "aws_iam_role_policy_attachment" "deployer" { 
-  policy_arn =  aws_iam_policy.deployer.arn
+resource "aws_iam_role_policy_attachment" "deployer" {
+  policy_arn = aws_iam_policy.deployer.arn
   role       = aws_iam_role.deployer.id
 }

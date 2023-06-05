@@ -3,16 +3,29 @@ data "aws_caller_identity" "current" {}
 locals {
   deploy_account_id = "711966560482"
 
-  basic_auth_credentials = [
-    {
-      name      = "SETTINGS__BASIC_AUTH__USERNAME",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/username"
-    },
-    {
-      name      = "SETTINGS__BASIC_AUTH__PASSWORD",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/password"
-    }
-  ]
+  auth_credentials = {
+    basic_auth = [
+      {
+        name      = "SETTINGS__BASIC_AUTH__USERNAME",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/username"
+      },
+      {
+        name      = "SETTINGS__BASIC_AUTH__PASSWORD",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/password"
+      }
+    ],
+    gds_sso = [
+      {
+        name      = "GDS_SSO_OAUTH_ID",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-id"
+      },
+      {
+        name      = "GDS_SSO_OAUTH_SECRET",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-secret"
+      }
+    ]
+  }
+
 }
 
 module "ecs_service" {
@@ -54,16 +67,16 @@ module "ecs_service" {
       value = var.runner_base
     },
     {
+      name  = "SETTINGS__AUTH_PROVIDER",
+      value = var.auth_provider
+    },
+    {
       name  = "GOVUK_APP_DOMAIN",
       value = var.govuk_app_domain
     },
     {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
-    },
-    {
-      name  = "SETTINGS__BASIC_AUTH__ENABLED",
-      value = var.enable_basic_auth
     },
     {
       name  = "SETTINGS__FEATURES__BASIC_ROUTING",
@@ -85,14 +98,6 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/database/url"
     },
     {
-      name      = "GDS_SSO_OAUTH_ID",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-id"
-    },
-    {
-      name      = "GDS_SSO_OAUTH_SECRET",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-secret"
-    },
-    {
       name      = "SETTINGS__SENTRY__DSN",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/sentry/dsn"
     },
@@ -100,7 +105,7 @@ module "ecs_service" {
       name      = "SECRET_KEY_BASE",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/secret-key-base"
     },
-    var.enable_basic_auth ? local.basic_auth_credentials : []
+    lookup(local.auth_credentials, var.auth_provider, [])
   ])
 }
 

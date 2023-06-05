@@ -36,16 +36,18 @@ variable "runner_base" {
   type        = string
 }
 
+variable "auth_provider" {
+  description = "Controls how users are authenticated"
+  type        = string
+  default     = "gds_sso"
+}
+
 variable "govuk_app_domain" {
   description = "The domain name for the Signon integration for auth flow"
   type        = string
+  default     = ""
 }
 
-variable "enable_basic_auth" {
-  description = "Controls if basic auth should be used."
-  type        = bool
-  default     = false
-}
 variable "enable_basic_routing" {
   description = "Controls if basic routing feature should be used."
   type        = bool
