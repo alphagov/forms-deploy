@@ -15,7 +15,8 @@ locals {
     "jamie.wilkinson",
     "laurence.debruxelles",
     "samuel.culley",
-    "tom.iles"
+    "tom.iles",
+    "radha.kotyankar"
   ]
 
   # GOV.UK Forms developers that have completed onboarding and support the
