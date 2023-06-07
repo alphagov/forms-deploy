@@ -8,7 +8,7 @@
 # - using an authenticated shell for the AWS account you need (via gds-cli or aws-vault)
 
 if [ $# -eq 0 ]; then
-    >&2 echo "No ENVIRONMENT set"
+    >&2 echo "No ENVIRONMENT set. Valid values: dev, staging, production, user-research"
     exit 1
 fi
 
@@ -19,6 +19,47 @@ fi
 ENVIRONMENT="$1"
 ORG="gds-govuk-forms"
 SPACE="forms-api-${ENVIRONMENT}"
+
+aws_account_id=$(aws sts get-caller-identity --query 'Account' --output text)
+
+case "$aws_account_id" in
+    '498160065950')
+      aws_account="dev"
+      ;;
+    '972536609845')
+      aws_account="staging"
+      ;;
+    '443944947292')
+      aws_account="production"
+      ;;
+    '619109835131')
+      aws_account="user-research"
+      ;;
+    *)
+      echo "Unknown AWS account"
+      exit 1
+      ;;
+esac
+
+read -rep "You will use the AWS account: ${aws_account} | PaaS space: ${SPACE}. \
+ Would you like to continue? (y/n): " yn
+case $yn in
+  [Yy]* )
+  ;;
+  * )
+    echo "Quitting"
+    exit;;
+esac
+
+if [[ $aws_account == "production" ]]; then
+    read -rep "Are you sure? it's production! (y/n): " yn
+    case $yn in
+    [Yy]* ) echo "Good luck";;
+    * )
+        echo "Phew..."
+        exit;;
+    esac
+fi
 
 target_paas=$(cf target -o "${ORG}" -s "${SPACE}")
 
