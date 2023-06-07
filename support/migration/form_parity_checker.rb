@@ -39,7 +39,7 @@ def forms_api_request(uri, auth_key)
     exit 1
   end
 
-  JSON.parse(res.body)
+  JSON.parse(res.body.gsub('\r', ''))
 end
 
 def list_forms(host_name, auth_key)
