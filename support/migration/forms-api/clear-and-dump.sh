@@ -1,39 +1,39 @@
 #!/bin/bash
+set -eou pipefail
 
-# Migrates the forms-api database from PaaS to AWS for a given environment.
+# Migrates the forms-api database from PaaS to AWS for a given environment (inferred from the AWS account you're logged into).
 # It outputs a pgdump file. The contents have to be manually copied to the AWS RDS Query editor for the corresponding RDS instance.
+# It checks that the content of the two databases match.
 
 # Requires
 # - forms-cli installed and using the alias "forms"
 # - using an authenticated shell for the AWS account you need (via gds-cli or aws-vault)
+# - be logged into PaaS London
 
-if [ $# -eq 0 ]; then
-    >&2 echo "No ENVIRONMENT set. Valid values: dev, staging, production, user-research"
-    exit 1
+if [ $# -lt "2" ]; then
+        echo "Usage:  $0 <FORMS_API_AWS_KEY> <FORMS_API_PAAS_KEY>"
+        exit 1;
 fi
 
-if [[ "$(cf target)" =~ "FAILED" ]]; then
-    exit 1
-fi
+FORMS_API_AWS_KEY=$1
+FORMS_API_PAAS_KEY=$2
 
-ENVIRONMENT="$1"
-ORG="gds-govuk-forms"
-SPACE="forms-api-${ENVIRONMENT}"
 
 aws_account_id=$(aws sts get-caller-identity --query 'Account' --output text)
 
 case "$aws_account_id" in
     '498160065950')
-      aws_account="dev"
+      ENVIRONMENT="dev"
       ;;
     '972536609845')
-      aws_account="staging"
+      ENVIRONMENT="staging"
       ;;
     '443944947292')
-      aws_account="production"
+      ENVIRONMENT="production"
       ;;
     '619109835131')
-      aws_account="user-research"
+      echo "You're in the user-research account. We don't have one in PaaS so there's nothing to do here."
+      exit 1
       ;;
     *)
       echo "Unknown AWS account"
@@ -41,7 +41,14 @@ case "$aws_account_id" in
       ;;
 esac
 
-read -rep "You will use the AWS account: ${aws_account} | PaaS space: ${SPACE}. \
+if [[ "$(cf target)" =~ "FAILED" ]]; then
+    exit 1
+fi
+
+ORG="gds-govuk-forms"
+SPACE="forms-api-${ENVIRONMENT}"
+
+read -rep "You will use the AWS account: ${ENVIRONMENT} | PaaS space: ${SPACE}. \
  Would you like to continue? (y/n): " yn
 case $yn in
   [Yy]* )
@@ -51,7 +58,7 @@ case $yn in
     exit;;
 esac
 
-if [[ $aws_account == "production" ]]; then
+if [[ $ENVIRONMENT == "production" ]]; then
     read -rep "Are you sure? it's production! (y/n): " yn
     case $yn in
     [Yy]* ) echo "Good luck";;
@@ -61,7 +68,7 @@ if [[ $aws_account == "production" ]]; then
     esac
 fi
 
-target_paas=$(cf target -o "${ORG}" -s "${SPACE}")
+cf target -o "${ORG}" -s "${SPACE}"
 
 echo "Clearing ${ENVIRONMENT} and generating pg_dump"
 ./clear-tables.sh
@@ -75,3 +82,5 @@ echo "continuing"
 # The order in the tables matters because we rely on the primary keys to identify the forms.
 ./reset-table-sequences.sh
 
+# Check that the data is the same in both databases
+ruby form-parity-checker.rb ${ENVIRONMENT} ${FORMS_API_AWS_KEY} ${FORMS_API_PAAS_KEY}

@@ -4,7 +4,7 @@ require 'net/http'
 require 'json'
 
 ENVIRONMENTS = {
-  'development': {
+  'dev': {
     aws: 'api.dev.forms.service.gov.uk',
     paas: 'forms-api-dev.london.cloudapps.digital'
   },
