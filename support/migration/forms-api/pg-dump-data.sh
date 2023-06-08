@@ -6,10 +6,8 @@
 ENVIRONMENT="$1"
 TIME_STAMP="$(date +%s)"
 EXTRACT_FILE_NAME="${TMPDIR}/forms-api-paas-${ENVIRONMENT}-${TIME_STAMP}"
-cf_london
 
 echo "Extracting data from forms-api"
-cf t -s "forms-api-${ENVIRONMENT}"
 cf services
 cf conduit "forms-api-${ENVIRONMENT}-db" -- pg_dump \
   -O \
@@ -21,5 +19,5 @@ cf conduit "forms-api-${ENVIRONMENT}-db" -- pg_dump \
   --exclude-table access_tokens \
   -f "$EXTRACT_FILE_NAME"
 
-echo "Copy the SQL from the extract into the query editor and check the output"
+echo "Copy the SQL from the extract into the AWS RDSquery editor and check the output"
 echo "cat ${EXTRACT_FILE_NAME} | pbcopy"

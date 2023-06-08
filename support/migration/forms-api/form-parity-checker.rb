@@ -4,7 +4,7 @@ require 'net/http'
 require 'json'
 
 ENVIRONMENTS = {
-  'development': {
+  'dev': {
     aws: 'api.dev.forms.service.gov.uk',
     paas: 'forms-api-dev.london.cloudapps.digital'
   },
@@ -39,7 +39,7 @@ def forms_api_request(uri, auth_key)
     exit 1
   end
 
-  JSON.parse(res.body)
+  JSON.parse(res.body.gsub('\r', ''))
 end
 
 def list_forms(host_name, auth_key)

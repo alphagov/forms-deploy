@@ -3,8 +3,6 @@
 # Resets the postgres table sequences so that they align with data which has
 # been inserted whilst specifying the tables primary key.
 
-ENVIRONMENT="$1"
-
 echo "Resetting sequences"
 reset_commands=(
   "SELECT SETVAL('public.conditions_id_seq', COALESCE(MAX(id), 1) ) FROM public.conditions;"
@@ -16,5 +14,5 @@ reset_commands=(
 
 for command in "${reset_commands[@]}"; do
   echo "Running: ${command}"
-  aws-vault exec "${ENVIRONMENT}-support" -- forms data_api -d forms-api -s "${command}"
+  forms data_api -d forms-api -s "${command}"
 done
