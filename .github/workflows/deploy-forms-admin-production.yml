@@ -58,6 +58,7 @@ jobs:
         run: |
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=production \
+            --var SETTINGS__SERVICE_UNAVAILABLE=false \
             --var INSTANCES=2 \
             --var SETTINGS__SENTRY__DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=production \
