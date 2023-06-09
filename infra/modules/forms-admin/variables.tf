@@ -48,6 +48,11 @@ variable "govuk_app_domain" {
   default     = ""
 }
 
+variable "enable_maintenance_mode" {
+  description = "Controls whether the maintenance page is shown"
+  type        = bool
+}
+
 variable "enable_basic_routing" {
   description = "Controls if basic routing feature should be used."
   type        = bool
