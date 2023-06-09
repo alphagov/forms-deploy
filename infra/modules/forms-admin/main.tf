@@ -79,6 +79,10 @@ module "ecs_service" {
       value = "aws-${var.env_name}"
     },
     {
+      name  = "SETTINGS__SERVICE_UNAVAILABLE",
+      value = var.service_unavailable
+    },
+    {
       name  = "SETTINGS__FEATURES__BASIC_ROUTING",
       value = var.enable_basic_routing
     },

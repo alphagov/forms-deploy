@@ -48,6 +48,12 @@ variable "govuk_app_domain" {
   default     = ""
 }
 
+variable "service_unavailable" {
+  description = "Controls whether the service unavailable page is shown"
+  type        = bool
+  default     = false
+}
+
 variable "enable_basic_routing" {
   description = "Controls if basic routing feature should be used."
   type        = bool
