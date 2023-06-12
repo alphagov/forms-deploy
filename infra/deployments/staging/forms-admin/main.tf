@@ -13,5 +13,5 @@ module "forms_admin" {
   api_base_url         = "https://api.stage.forms.service.gov.uk"
   runner_base          = "https://submit.stage.forms.service.gov.uk"
   govuk_app_domain     = "integration.publishing.service.gov.uk"
-  enable_basic_routing = false
+  enable_basic_routing = true
 }
