@@ -59,7 +59,7 @@ jobs:
         run: |
           cd main && cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=staging \
-            --var SETTINGS__SERVICE_UNAVAILABLE=false \
+            --var SETTINGS__MAINTENANCE_MODE_ENABLED=false \
             --var INSTANCES=2 \
             --var SETTINGS__SENTRY__DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=staging \
