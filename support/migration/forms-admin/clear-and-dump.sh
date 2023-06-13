@@ -76,3 +76,11 @@ echo "continuing"
 # The order in the tables matters because we rely on the primary keys to identify the forms.
 ./reset-table-sequences.sh
 
+read -rep "Would you like to check that the tables match? (y/n): " yn
+case $yn in
+  [Yy]* )
+  ./check-tables-match.sh ${ENVIRONMENT};;
+  * )
+    echo "Quitting"
+    exit;;
+esac
