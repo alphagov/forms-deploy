@@ -79,6 +79,10 @@ module "ecs_service" {
       value = "aws-${var.env_name}"
     },
     {
+      name  = "SETTINGS__MAINTENANCE_MODE_ENABLED",
+      value = var.enable_maintenance_mode
+    },
+    {
       name  = "SETTINGS__FEATURES__BASIC_ROUTING",
       value = var.enable_basic_routing
     },
