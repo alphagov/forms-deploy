@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-secretsmanager'
-require 'aws-sdk-rds'
-require 'aws-sdk-rdsdataservice'
 require 'colorize'
+require_relative '../utilities/data_api_connection'
 require_relative '../utilities/helpers'
 
 # Executes statements on AWS RDS using the Data API.
@@ -15,9 +13,7 @@ class DataApi
     parse_options
     return unless aws_authenticated? && valid_options?
 
-    @secrets_manager = Aws::SecretsManager::Client.new
-    @rds = Aws::RDS::Client.new
-    @data_service = Aws::RDSDataService::Client.new
+    @connection = DataApiConnection.new(@options[:database])
 
     begin
       print execute_statement
@@ -31,7 +27,7 @@ class DataApi
   def print(results)
     puts JSON.pretty_generate({
                                 updated: results.number_of_records_updated,
-                                records: JSON.parse(execute_statement.formatted_records || '{}')
+                                records: JSON.parse(results.formatted_records || '{}')
                               })
   end
 
@@ -77,37 +73,7 @@ class DataApi
     end.parse!
   end
 
-  def query_credential_arn
-    credential_name = "#{@options[:database]}-app"
-    params = {
-      filters: [
-        { key: 'all', values: [credential_name] }
-      ]
-    }
-    arn = @secrets_manager.list_secrets(params)&.secret_list&.[](0)&.arn
-
-    raise "Credential named #{credential_name} was not found" if arn.nil?
-
-    arn
-  end
-
-  def query_database_cluster_arn
-    arn = @rds.describe_db_clusters&.db_clusters&.[](0)&.db_cluster_arn
-
-    raise 'Database cluster was not be found' if arn.nil?
-
-    arn
-  end
-
   def execute_statement
-    params = {
-      resource_arn: query_database_cluster_arn,
-      secret_arn: query_credential_arn,
-      sql: @options[:statement],
-      database: @options[:database],
-      include_result_metadata: true,
-      format_records_as: 'JSON' # Its simpler to get the results as JSON and parse it back...
-    }
-    @data_service.execute_statement(params)
+    @connection.execute_statement(@options[:statement])
   end
 end
