@@ -8,7 +8,7 @@ require_relative "../fixtures/rdsdataservice"
 describe DataApi do
   context "when not authenticated" do
     it "prompts the user to authenticate" do
-      expect { DataApi.new.run }.to output(/You must be authenticated/).to_stdout
+      expect { described_class.new.run }.to output(/You must be authenticated/).to_stdout
     end
   end
 
@@ -25,7 +25,7 @@ describe DataApi do
     before do
       stub_const("ARGV", ["-d", "forms-api", "-s", "select * from testing;"])
 
-      allow_any_instance_of(Helpers)
+      allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
         .to receive(:aws_authenticated?)
         .and_return(true)
 
@@ -35,7 +35,7 @@ describe DataApi do
     end
 
     it "-d, --database is correctly passed to DataApiConnection" do
-      DataApi.new.run
+      described_class.new.run
 
       expect(DataApiConnection)
         .to have_received(:new)
@@ -44,7 +44,7 @@ describe DataApi do
     end
 
     it "-s, --statement is correctly passed to DataApiConnection" do
-      DataApi.new.run
+      described_class.new.run
 
       expect(data_api_connection_mock)
         .to have_received(:execute_statement)

@@ -49,7 +49,7 @@ describe DataApiConnection do
   end
 
   it "set correct rds cluster arn" do
-    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
@@ -58,7 +58,7 @@ describe DataApiConnection do
   end
 
   it "database_name is correctly passed to secrets manager" do
-    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api").execute_statement("select * from testing;")
 
     expect(secrets_manager_mock)
       .to have_received(:list_secrets)
@@ -67,7 +67,7 @@ describe DataApiConnection do
   end
 
   it "database_name is correctly passed to data api" do
-    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
@@ -76,7 +76,7 @@ describe DataApiConnection do
   end
 
   it "statement is correctly passed" do
-    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)

@@ -6,7 +6,7 @@ require "notifications/client"
 describe Notify do
   context "without API key provided" do
     it "outputs that the key must be provided" do
-      expect { Notify.new.run }
+      expect { described_class.new.run }
         .to output(/key must be provided/).to_stdout
     end
   end
@@ -36,7 +36,7 @@ describe Notify do
 
     it "-k, --key, passes the api key" do
       stub_const("ARGV", ["-k", "some-key"])
-      Notify.new.run
+      described_class.new.run
 
       expect(Notifications::Client)
         .to have_received(:new)
@@ -45,7 +45,7 @@ describe Notify do
 
     it "queries all recent records by default" do
       stub_const("ARGV", ["-k", "some-key"])
-      Notify.new.run
+      described_class.new.run
 
       expect(notify_mock)
         .to have_received(:get_notifications)
@@ -55,7 +55,7 @@ describe Notify do
       expected_id = "123"
 
       stub_const("ARGV", ["-k", "some-key", "-n", expected_id])
-      Notify.new.run
+      described_class.new.run
 
       expect(notify_mock)
         .to have_received(:get_notification)

@@ -6,7 +6,7 @@ require_relative "../fixtures/ssm"
 describe GetParameters do
   context "when not authenticated" do
     it "prompts the user to authenticate" do
-      expect { GetParameters.new.run }.to output(/You must be authenticated/).to_stdout
+      expect { described_class.new.run }.to output(/You must be authenticated/).to_stdout
     end
   end
 
@@ -35,7 +35,7 @@ describe GetParameters do
         .to receive(:new)
         .and_return(printer_mock)
 
-      allow_any_instance_of(Helpers)
+      allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
         .to receive(:aws_authenticated?)
         .and_return(true)
 
@@ -45,7 +45,7 @@ describe GetParameters do
     end
 
     it "prints the parameters" do
-      GetParameters.new.run
+      described_class.new.run
 
       expect(printer_mock)
         .to have_received(:print_table)
@@ -58,7 +58,7 @@ describe GetParameters do
 
     describe "the decrypt option -d --decrypt" do
       it "defaults to false" do
-        GetParameters.new.run
+        described_class.new.run
 
         expect(ssm_mock)
           .to have_received(:get_parameters_by_path)
@@ -67,7 +67,7 @@ describe GetParameters do
 
       it "is passed to SSM when set" do
         stub_const("ARGV", ["--decrypt"])
-        GetParameters.new.run
+        described_class.new.run
 
         expect(ssm_mock)
           .to have_received(:get_parameters_by_path)
@@ -78,7 +78,7 @@ describe GetParameters do
     describe "path option -p --path" do
       it "the path is provided to SSM" do
         stub_const("ARGV", ["--path", "/option_set_path"])
-        GetParameters.new.run
+        described_class.new.run
 
         expect(ssm_mock)
           .to have_received(:get_parameters_by_path)
@@ -88,7 +88,7 @@ describe GetParameters do
       it 'checks it begins with a "/"' do
         stub_const("ARGV", ["--path", "no-leading-slash"])
 
-        expect { GetParameters.new.run }
+        expect { described_class.new.run }
           .to output(/--path must begin with/).to_stdout
       end
     end

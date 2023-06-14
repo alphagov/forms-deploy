@@ -8,7 +8,7 @@ require_relative "../fixtures/sts"
 describe EcsSummary do
   context "when not authenticated" do
     it "prompts the user to authenticate" do
-      expect { EcsSummary.new.run }.to output(/You must be authenticated/).to_stdout
+      expect { described_class.new.run }.to output(/You must be authenticated/).to_stdout
     end
   end
 
@@ -23,7 +23,7 @@ describe EcsSummary do
     end
 
     before do
-      allow_any_instance_of(Helpers)
+      allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
         .to receive(:aws_authenticated?)
         .and_return(true)
 
@@ -59,7 +59,7 @@ describe EcsSummary do
     end
 
     it "prints the ECS summary" do
-      EcsSummary.new.run
+      described_class.new.run
 
       expect(printer_mock)
         .to have_received(:print_table)

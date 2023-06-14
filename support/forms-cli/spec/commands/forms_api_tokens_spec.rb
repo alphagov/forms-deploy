@@ -8,7 +8,7 @@ describe FormsApiTokens do
     describe "shell is not authenticated" do
       it "prompts the user to authenticate" do
         stub_const("ARGV", ["--token", "some-valid-token", "--service", "forms-admin"])
-        expect { FormsApiTokens.new.run }.to output(/You must be authenticated/).to_stdout
+        expect { described_class.new.run }.to output(/You must be authenticated/).to_stdout
       end
     end
 
@@ -60,7 +60,7 @@ describe FormsApiTokens do
       before do
         forms_api_stub
         stub_const("ARGV", ["--token", valid_token, "--service", "forms-admin"])
-        allow_any_instance_of(Helpers)
+        allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
           .to receive(:aws_authenticated?)
           .and_return(true)
         allow(Aws::STS::Client)
@@ -77,11 +77,11 @@ describe FormsApiTokens do
       it "only allows forms-admin and forms-runner" do
         stub_const("ARGV", ["--token", valid_token, "--service", "not-allowed"])
 
-        expect { FormsApiTokens.new.run }.to output(/service must be "forms-admin" or "forms-runner"/).to_stdout
+        expect { described_class.new.run }.to output(/service must be "forms-admin" or "forms-runner"/).to_stdout
       end
 
       it "updates parameter store" do
-        FormsApiTokens.new.run
+        described_class.new.run
 
         expect(ssm_mock)
           .to have_received(:put_parameter)
@@ -94,7 +94,7 @@ describe FormsApiTokens do
       end
 
       it "redeploys the service" do
-        FormsApiTokens.new.run
+        described_class.new.run
 
         expect(ecs_mock)
           .to have_received(:update_service)

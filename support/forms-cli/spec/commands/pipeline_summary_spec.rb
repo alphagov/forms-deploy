@@ -6,7 +6,7 @@ require_relative "../fixtures/codepipeline"
 describe PipelineSummary do
   context "when not authenticated" do
     it "prompts the user to authenticate" do
-      expect { PipelineSummary.new.run }.to output(/You must be authenticated/).to_stdout
+      expect { described_class.new.run }.to output(/You must be authenticated/).to_stdout
     end
 
     context "when authenticated" do
@@ -20,7 +20,7 @@ describe PipelineSummary do
       end
 
       before do
-        allow_any_instance_of(Helpers)
+        allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
           .to receive(:aws_authenticated?)
           .and_return(true)
 
@@ -57,7 +57,7 @@ describe PipelineSummary do
             status: "Succeeded",
             time: Time.parse("2023-01-01 00:00:00 +0000") },
         ]
-        PipelineSummary.new.run
+        described_class.new.run
 
         expect(printer_mock)
           .to have_received(:print_table)
@@ -67,7 +67,7 @@ describe PipelineSummary do
 
       it "filters pipelines" do
         stub_const("ARGV", ["--filter", "pipeline-one"])
-        PipelineSummary.new.run
+        described_class.new.run
 
         expect(printer_mock)
           .to have_received(:print_table)

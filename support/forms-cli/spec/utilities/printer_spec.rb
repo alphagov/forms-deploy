@@ -22,10 +22,10 @@ describe Printer do
                 "1           2           3           \n" \
                 "4           5           6           \n"
 
-    expect { Printer.new.print_table "Testing table", data }.to output(expected).to_stdout
+    expect { described_class.new.print_table "Testing table", data }.to output(expected).to_stdout
   end
 
   it 'prints "No Data" when there is no data' do
-    expect { Printer.new.print_table "Testing", [] }.to output(/No Data/).to_stdout
+    expect { described_class.new.print_table "Testing", [] }.to output(/No Data/).to_stdout
   end
 end
