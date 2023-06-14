@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'optionparser'
-require 'aws-sdk-ssm'
-require 'colorize'
-require_relative '../utilities/printer'
-require_relative '../utilities/helpers'
+require "optionparser"
+require "aws-sdk-ssm"
+require "colorize"
+require_relative "../utilities/printer"
+require_relative "../utilities/helpers"
 
 # Prints ssm parameters from the authenticated environment
 class GetParameters
@@ -13,7 +13,7 @@ class GetParameters
   def run
     @options = {
       decrypt: false,
-      path: '/'
+      path: "/",
     }
     parse_command_options
 
@@ -21,13 +21,13 @@ class GetParameters
 
     @ssm = Aws::SSM::Client.new
 
-    Printer.new.print_table('Parameters', fetch_parameters)
+    Printer.new.print_table("Parameters", fetch_parameters)
   end
 
-  private
+private
 
   def valid_options?
-    unless @options[:path].start_with?('/')
+    unless @options[:path].start_with?("/")
       puts '-p, --path must begin with "/"'.red
       return false
     end
@@ -38,7 +38,7 @@ class GetParameters
     get_parameters_by_path.map do |param|
       {
         name: param.name,
-        value: @options[:decrypt] ? param.value : '********'
+        value: @options[:decrypt] ? param.value : "********",
       }
     end
   end
@@ -48,7 +48,7 @@ class GetParameters
       path: @options[:path],
       recursive: true,
       with_decryption: @options[:decrypt],
-      next_token:
+      next_token:,
     }
 
     results = @ssm.get_parameters_by_path(opts)
@@ -59,7 +59,7 @@ class GetParameters
   end
 
   def parse_command_options
-    OptionParser.new do |opts|
+    OptionParser.new { |opts|
       opts.banner = "
       Returns SSM Parameters using aws ssm get-parameters-by-path.
 
@@ -68,17 +68,17 @@ class GetParameters
       Example:
       gds aws gds-forms-dev-support -- forms get_parameters\n\n"
 
-      opts.on('-h', '--help', 'Prints help') do
+      opts.on("-h", "--help", "Prints help") do
         puts opts
         exit
       end
-      opts.on('-pPATH', '--path=PATH', 'Path to filter on, must begin with /, defaults to /') do |p|
+      opts.on("-pPATH", "--path=PATH", "Path to filter on, must begin with /, defaults to /") do |p|
         @options[:path] = p
       end
-      opts.on('-d', '--decrypt', 'Decrypt and show values, defaults to false') do |d|
+      opts.on("-d", "--decrypt", "Decrypt and show values, defaults to false") do |d|
         @options[:decrypt] = d
       end
-    end.parse!
+    }.parse!
   end
 end
 

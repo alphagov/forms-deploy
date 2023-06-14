@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'utilities/data_api_connection'
+require "utilities/data_api_connection"
 
-require_relative '../fixtures/secretsmanager'
-require_relative '../fixtures/rds'
-require_relative '../fixtures/rdsdataservice'
+require_relative "../fixtures/secretsmanager"
+require_relative "../fixtures/rds"
+require_relative "../fixtures/rdsdataservice"
 
 describe DataApiConnection do
   let(:secrets_manager_mock) do
@@ -48,39 +48,39 @@ describe DataApiConnection do
       .and_return(data_api_mock)
   end
 
-  it 'set correct rds cluster arn' do
-    DataApiConnection.new('forms-api').execute_statement('select * from testing;')
+  it "set correct rds cluster arn" do
+    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
-      .with(hash_including(resource_arn: 'cluster-arn'))
+      .with(hash_including(resource_arn: "cluster-arn"))
       .at_least(:once)
   end
 
-  it 'database_name is correctly passed to secrets manager' do
-    DataApiConnection.new('forms-api').execute_statement('select * from testing;')
+  it "database_name is correctly passed to secrets manager" do
+    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
 
     expect(secrets_manager_mock)
       .to have_received(:list_secrets)
-      .with(hash_including(filters: [{ key: 'all', values: ['forms-api-app'] }]))
+      .with(hash_including(filters: [{ key: "all", values: %w[forms-api-app] }]))
       .at_least(:once)
   end
 
-  it 'database_name is correctly passed to data api' do
-    DataApiConnection.new('forms-api').execute_statement('select * from testing;')
+  it "database_name is correctly passed to data api" do
+    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
-      .with(hash_including(database: 'forms-api'))
+      .with(hash_including(database: "forms-api"))
       .at_least(:once)
   end
 
-  it 'statement is correctly passed' do
-    DataApiConnection.new('forms-api').execute_statement('select * from testing;')
+  it "statement is correctly passed" do
+    DataApiConnection.new("forms-api").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
-      .with(hash_including(sql: 'select * from testing;'))
+      .with(hash_including(sql: "select * from testing;"))
       .at_least(:once)
   end
 end

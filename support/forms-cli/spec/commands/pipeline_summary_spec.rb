@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'commands/pipeline_summary'
-require_relative '../fixtures/codepipeline'
+require "commands/pipeline_summary"
+require_relative "../fixtures/codepipeline"
 
 describe PipelineSummary do
-  context 'when not authenticated' do
-    it 'prompts the user to authenticate' do
+  context "when not authenticated" do
+    it "prompts the user to authenticate" do
       expect { PipelineSummary.new.run }.to output(/You must be authenticated/).to_stdout
     end
 
-    context 'when authenticated' do
+    context "when authenticated" do
       let(:printer_mock) do
         printer_mock = instance_double(Printer)
 
@@ -42,14 +42,20 @@ describe PipelineSummary do
           .and_return(CodePipelineFixtures.get_pipeline_state)
       end
 
-      it 'prints all of the pipeline summaries' do
+      it "prints all of the pipeline summaries" do
         expected_actions = [
-          { stage_name: 'stage-one', action_name: 'action-one', status: 'Succeeded',
-            time: Time.parse('2023-01-01 00:00:00 +0000') },
-          { stage_name: 'stage-one', action_name: 'action-two', status: 'Succeeded',
-            time: Time.parse('2023-01-01 00:00:00 +0000') },
-          { stage_name: 'stage-two', action_name: 'action-one', status: 'Succeeded',
-            time: Time.parse('2023-01-01 00:00:00 +0000') }
+          { stage_name: "stage-one",
+            action_name: "action-one",
+            status: "Succeeded",
+            time: Time.parse("2023-01-01 00:00:00 +0000") },
+          { stage_name: "stage-one",
+            action_name: "action-two",
+            status: "Succeeded",
+            time: Time.parse("2023-01-01 00:00:00 +0000") },
+          { stage_name: "stage-two",
+            action_name: "action-one",
+            status: "Succeeded",
+            time: Time.parse("2023-01-01 00:00:00 +0000") },
         ]
         PipelineSummary.new.run
 
@@ -59,13 +65,13 @@ describe PipelineSummary do
           .exactly(3).times
       end
 
-      it 'filters pipelines' do
-        stub_const('ARGV', ['--filter', 'pipeline-one'])
+      it "filters pipelines" do
+        stub_const("ARGV", ["--filter", "pipeline-one"])
         PipelineSummary.new.run
 
         expect(printer_mock)
           .to have_received(:print_table)
-          .with('pipeline-one', anything)
+          .with("pipeline-one", anything)
       end
     end
   end

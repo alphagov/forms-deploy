@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'notifications/client'
-require 'colorize'
-require 'json'
+require "notifications/client"
+require "colorize"
+require "json"
 
 # Queries GOV.UK Notify for one or more notifications
 class Notify
@@ -20,11 +20,11 @@ class Notify
     end
   end
 
-  private
+private
 
   def valid_options?
     if @options[:key].nil?
-      puts '-k, --key must be provided'.red
+      puts "-k, --key must be provided".red
       return false
     end
 
@@ -48,12 +48,12 @@ class Notify
       status: response.status,
       template: response.template,
       body: response.body,
-      subject: response.subject
+      subject: response.subject,
     }
   end
 
   def parse_options
-    OptionParser.new do |opts|
+    OptionParser.new { |opts|
       opts.banner = "
       Queries GOV.UK Notify to return submitted email details. If a
       notification id [-n, --notification] is not provided it will return up
@@ -63,18 +63,18 @@ class Notify
       Example:
       forms notify -k <API_KEY>\n\n"
 
-      opts.on('-h', '--help', 'Prints help') do
+      opts.on("-h", "--help", "Prints help") do
         puts opts
         exit
       end
 
-      opts.on('-kKEY', '--key=KEY', '[Mandatory] The GOV.UK Notify API Key') do |key|
+      opts.on("-kKEY", "--key=KEY", "[Mandatory] The GOV.UK Notify API Key") do |key|
         @options[:key] = key
       end
 
-      opts.on('-nId', '--notification=Id', 'Id of notification to return') do |id|
+      opts.on("-nId", "--notification=Id", "Id of notification to return") do |id|
         @options[:notification_id] = id
       end
-    end.parse!
+    }.parse!
   end
 end

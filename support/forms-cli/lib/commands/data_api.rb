@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'colorize'
-require_relative '../utilities/data_api_connection'
-require_relative '../utilities/helpers'
+require "colorize"
+require_relative "../utilities/data_api_connection"
+require_relative "../utilities/helpers"
 
 # Executes statements on AWS RDS using the Data API.
 class DataApi
@@ -22,13 +22,13 @@ class DataApi
     end
   end
 
-  private
+private
 
   def print(results)
     puts JSON.pretty_generate({
-                                updated: results.number_of_records_updated,
-                                records: JSON.parse(results.formatted_records || '{}')
-                              })
+      updated: results.number_of_records_updated,
+      records: JSON.parse(results.formatted_records || "{}"),
+    })
   end
 
   def valid_options?
@@ -48,7 +48,7 @@ class DataApi
   end
 
   def parse_options
-    OptionParser.new do |opts|
+    OptionParser.new { |opts|
       opts.banner = "
       Executes the provided statement on the provide database for the currently
       authenticated shell.
@@ -58,19 +58,19 @@ class DataApi
       Example:
       gds aws gds-forms-dev-support -- forms data_api --database forms-api --statement 'select * from forms;'\n\n"
 
-      opts.on('-h', '--help', 'Prints help') do
+      opts.on("-h", "--help", "Prints help") do
         puts opts
         exit
       end
 
-      opts.on('-dDATABASE', '--database=DATABASE', '[Mandatory] database to query, forms-api forms-admin') do |database|
+      opts.on("-dDATABASE", "--database=DATABASE", "[Mandatory] database to query, forms-api forms-admin") do |database|
         @options[:database] = database
       end
 
-      opts.on('-sSTATEMENT', '--statement=STATEMENT', '[Mandatory] The statement to execute') do |statement|
+      opts.on("-sSTATEMENT", "--statement=STATEMENT", "[Mandatory] The statement to execute") do |statement|
         @options[:statement] = statement
       end
-    end.parse!
+    }.parse!
   end
 
   def execute_statement

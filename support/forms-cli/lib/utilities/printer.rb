@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'colorize'
+require "colorize"
 
 # Prints a list of hashes into a dynamic colum width table
 class Printer
@@ -8,7 +8,7 @@ class Printer
     puts "\n#{title}\n".blue.bold
 
     unless contents.any?
-      puts 'No Data'
+      puts "No Data"
       return
     end
 
@@ -23,12 +23,12 @@ class Printer
     end
   end
 
-  private
+private
 
   def print_table_row(row, column_widths)
     puts row.each_with_index
             .map { |s, i| s.to_s.ljust(column_widths[i]) }
-            .join('  ')
+            .join("  ")
   end
 
   def calculate_column_widths(contents)
@@ -39,7 +39,7 @@ class Printer
         column_widths[i] = [
           column_widths[i],
           heading.length,
-          service[heading].to_s.length
+          service[heading].to_s.length,
         ].max
       end
     end
