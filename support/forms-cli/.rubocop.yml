@@ -1,19 +1,19 @@
-require: 'rubocop-rspec'
+# .rubocop.yml
+inherit_gem:
+  rubocop-govuk:
+    - config/default.yml
+    - config/rspec.yml
 
-AllCops:
-  Exclude:
-    - 'spec/fixtures/*'
+inherit_mode:
+  merge:
+    - Exclude
 
-Metrics/MethodLength:
-  Max: 25
-Metrics/BlockLength:
-  Max: 100
-# Sometimes tests are clearer referencing the class under test than 'subject'
-RSpec/DescribedClass:
-  Enabled: false
-# Seemingly 'AnyInstanceOf' is necessary to stub mixins from a module method.
-Rspec/AnyInstance:
-  Enabled: false
-# Sometimes spliting long line over multiple lines makes it clearer and its no more complicated
-Rspec/ExampleLength:
-  Max: 20
+# **************************************************************
+# TRY NOT TO ADD OVERRIDES IN THIS FILE
+#
+# This repo is configured to follow the RuboCop GOV.UK styleguide.
+# Any rules you override here will cause this repo to diverge from
+# the way we write code in all other GOV.UK repos.
+#
+# See https://github.com/alphagov/rubocop-govuk/blob/main/CONTRIBUTING.md
+# **************************************************************

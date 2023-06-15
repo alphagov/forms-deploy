@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'time'
+require "time"
 
 # Fixtures for secrets manager api calls
 module RDSFixtures
@@ -8,6 +8,6 @@ module RDSFixtures
 
   def self.describe_db_clusters
     @rds_stub.stub_data(:describe_db_clusters,
-                                    { db_clusters: [{ db_cluster_arn: 'cluster-arn' }]})
+                        { db_clusters: [{ db_cluster_arn: "cluster-arn" }] })
   end
 end

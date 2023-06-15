@@ -22,5 +22,7 @@ jobs:
         with:
           bundler-cache: true
           working-directory: support/forms-cli
+      - name: Run linter
+        run: bundle exec rubocop
       - name: Run tests
         run: bundle exec rspec

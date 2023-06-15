@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'optionparser'
-require 'aws-sdk-codepipeline'
-require_relative '../utilities/printer'
-require_relative '../utilities/helpers'
+require "optionparser"
+require "aws-sdk-codepipeline"
+require_relative "../utilities/printer"
+require_relative "../utilities/helpers"
 
 # Prints summary of CodePipelines in the deploy account
 class PipelineSummary
   include Helpers
 
   def run
-    @options = { filter: '' }
+    @options = { filter: "" }
     parse_options
 
     return unless aws_authenticated?
@@ -19,7 +19,7 @@ class PipelineSummary
     print_summaries
   end
 
-  private
+private
 
   def print_summaries
     printer = Printer.new
@@ -29,7 +29,7 @@ class PipelineSummary
   end
 
   def parse_options
-    OptionParser.new do |opts|
+    OptionParser.new { |opts|
       opts.banner = "
       Returns the latest status for the deployment pipelines.
 
@@ -38,14 +38,14 @@ class PipelineSummary
       Example:
       gds aws gds-forms-deploy-support -- forms pipelines\n\n"
 
-      opts.on('-h', '--help', 'Prints help') do
+      opts.on("-h", "--help", "Prints help") do
         puts opts
         exit
       end
-      opts.on('-fFILTER', '--filter=FILTER', 'String to filter pipelines, defaults to empty') do |f|
+      opts.on("-fFILTER", "--filter=FILTER", "String to filter pipelines, defaults to empty") do |f|
         @options[:filter] = f
       end
-    end.parse!
+    }.parse!
   end
 end
 
@@ -65,8 +65,8 @@ def pipeline_state_summary(state)
     {
       stage_name:,
       action_name: action.action_name,
-      status: action.latest_execution.nil? ? 'unavailable' : action.latest_execution.status,
-      time: action.latest_execution.nil? ? 'unavailble' : action.latest_execution.last_status_change
+      status: action.latest_execution.nil? ? "unavailable" : action.latest_execution.status,
+      time: action.latest_execution.nil? ? "unavailble" : action.latest_execution.last_status_change,
     }
   end
 end

@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-ecs'
-require 'aws-sdk-ssm'
-require 'colorize'
-require_relative '../utilities/helpers'
-require 'net/http'
-require 'uri'
+require "aws-sdk-ecs"
+require "aws-sdk-ssm"
+require "colorize"
+require_relative "../utilities/helpers"
+require "net/http"
+require "uri"
 
 # Manages API Tokens for authenticating with forms-api service
 class FormsApiTokens
   FORMS_API_DOMAINS = {
-    'dev' => 'api.dev.forms.service.gov.uk',
-    'staging' => 'api.stage.forms.service.gov.uk',
-    'production' => 'api.prod-temp.forms.service.gov.uk',
-    'user-research' => 'api.research.forms.service.gov.uk'
+    "dev" => "api.dev.forms.service.gov.uk",
+    "staging" => "api.stage.forms.service.gov.uk",
+    "production" => "api.prod-temp.forms.service.gov.uk",
+    "user-research" => "api.research.forms.service.gov.uk",
   }.freeze
 
   include Helpers
@@ -26,11 +26,11 @@ class FormsApiTokens
     if @options.key?(:service)
       service
     else
-      puts 'Only the --service option is currently supported'.red
+      puts "Only the --service option is currently supported".red
     end
   end
 
-  private
+private
 
   def service
     @environment = fetch_environment
@@ -49,15 +49,15 @@ class FormsApiTokens
   def create_token(owner, description)
     domain = FORMS_API_DOMAINS[@environment]
     uri = URI "https://#{domain}/api/v1/access-tokens"
-    headers = { 'Authorization' => "Token #{@options[:token]}" }
+    headers = { "Authorization" => "Token #{@options[:token]}" }
 
     form_params = "owner=#{owner}&description=#{description}"
 
     response = Net::HTTP.post(uri, form_params, headers)
 
-    raise "Error response from forms-api: #{response.body}" unless response.code == '201'
+    raise "Error response from forms-api: #{response.body}" unless response.code == "201"
 
-    JSON.parse(response.body)['token']
+    JSON.parse(response.body)["token"]
   end
 
   def update_ssm_parameter(token)
@@ -65,8 +65,8 @@ class FormsApiTokens
     opts = {
       name: "/#{@options[:service]}-#{@environment}/forms-api-key",
       value: token,
-      type: 'SecureString',
-      overwrite: true
+      type: "SecureString",
+      overwrite: true,
     }
     ssm.put_parameter(opts)
   end
@@ -77,7 +77,7 @@ class FormsApiTokens
     opts = {
       service: @options[:service],
       cluster: "forms-#{@environment}",
-      force_new_deployment: true
+      force_new_deployment: true,
     }
     ecs.update_service(opts)
   end
@@ -103,7 +103,7 @@ class FormsApiTokens
   end
 
   def parse_options
-    OptionParser.new do |opts|
+    OptionParser.new { |opts|
       opts.banner = "
       Manages api tokens for forms-api.
 
@@ -113,12 +113,12 @@ class FormsApiTokens
       Example:
       gds aws gds-forms-dev-support -- forms forms_api_tokens --service forms-admin --token a-valid-token\n\n"
 
-      opts.on('-h', '--help', 'Prints help') do
+      opts.on("-h", "--help", "Prints help") do
         puts opts
         exit
       end
 
-      opts.on('-sSERVICE', '--service=SERVICE', 'Generates a new token for the
+      opts.on("-sSERVICE", "--service=SERVICE", 'Generates a new token for the
               service in the environment which the shell is authenticated for.
               Updates the necessary SSM Parameter and redeploys the service.
               Service must be forms-admin or forms-runner.
@@ -126,9 +126,9 @@ class FormsApiTokens
         @options[:service] = service
       end
 
-      opts.on('-tTOKEN', '--token=TOKEN', 'Valid forms-api token used to authenticate with forms-api') do |token|
+      opts.on("-tTOKEN", "--token=TOKEN", "Valid forms-api token used to authenticate with forms-api") do |token|
         @options[:token] = token
       end
-    end.parse!
+    }.parse!
   end
 end

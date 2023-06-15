@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'time'
+require "time"
 
 # Fixtures for secrets manager api calls
 module RDSDataServiceFixtures
