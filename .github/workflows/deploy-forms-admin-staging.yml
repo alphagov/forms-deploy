@@ -60,7 +60,7 @@ jobs:
           cd main && cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=staging \
             --var SETTINGS__MAINTENANCE_MODE__ENABLED=false \
-            --var SETTINGS__MAINTENANCE_MODE__BYPASS_IPS="" \
+            --var SETTINGS__MAINTENANCE_MODE__BYPASS_IPS=" " \
             --var INSTANCES=2 \
             --var SETTINGS__SENTRY__DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=staging \
