@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eou pipefail
+set -ou pipefail
 
 ENVIRONMENT="$1"
 TIME_STAMP="$(date +%s)"
@@ -19,16 +19,15 @@ for table in "${tables[@]}"; do
     > ${PAAS_TABLE}
 
 
-  echo "Comparing ${table} tables..."
-  diff <(jq --sort-keys '.[]' ${PAAS_USERS}) \
-    <(jq --sort-keys '.records[] | (.created_at, .updated_at) |= gsub(" "; "T")' \
-    "${AWS_USERS}")
+  echo -e "\nComparing ${table} tables..."
+  diff --side-by-side \
+    <(jq --sort-keys '. | sort_by(.id)[]' ${PAAS_TABLE}) \
+    <(jq --sort-keys '.records | sort_by(.id)[] | (.created_at, .updated_at) |= gsub(" "; "T")' \
+    "${AWS_TABLE}")
   if [[ $? == 0 ]]; then
-    echo "${table} tables match!"
+    echo -e "${table} tables match!\n"
   else
-    echo "${table} tables do not match"
-  exit 1
+    echo -e "${table} tables do not match\n"
   fi
-done
 
-echo "All tables match!"
+done
