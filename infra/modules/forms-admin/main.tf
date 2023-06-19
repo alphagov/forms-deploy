@@ -79,8 +79,12 @@ module "ecs_service" {
       value = "aws-${var.env_name}"
     },
     {
-      name  = "SETTINGS__MAINTENANCE_MODE_ENABLED",
+      name  = "SETTINGS__MAINTENANCE_MODE__ENABLED",
       value = var.enable_maintenance_mode
+    },
+    {
+      name  = "SETTINGS__MAINTENANCE_MODE__BYPASS_IPS",
+      value = var.maintenance_mode_bypass_ips
     },
     {
       name  = "SETTINGS__FEATURES__BASIC_ROUTING",

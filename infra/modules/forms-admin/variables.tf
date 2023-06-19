@@ -53,6 +53,11 @@ variable "enable_maintenance_mode" {
   type        = bool
 }
 
+variable "maintenance_mode_bypass_ips" {
+  description = "List of IP addresses which will bypass the maintenance mode message"
+  type        = string
+}
+
 variable "enable_basic_routing" {
   description = "Controls if basic routing feature should be used."
   type        = bool
