@@ -15,5 +15,4 @@ module "forms_admin" {
   auth_provider               = "basic_auth"
   enable_maintenance_mode     = false
   maintenance_mode_bypass_ips = ""
-  enable_basic_routing        = true
 }
