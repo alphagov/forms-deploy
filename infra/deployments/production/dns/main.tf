@@ -23,6 +23,20 @@ resource "aws_route53_record" "delegate_dev_domain" {
 
 resource "aws_route53_record" "delegate_staging_domain" {
   zone_id = aws_route53_zone.public.id
+  name    = "staging.forms.service.gov.uk."
+  type    = "NS"
+  ttl     = 60
+  records = [
+    "ns-1162.awsdns-17.org",
+    "ns-1604.awsdns-08.co.uk",
+    "ns-359.awsdns-44.com",
+    "ns-638.awsdns-15.net",
+  ]
+}
+
+# stage is a temporary sub domain for the aws staging environment. It will be dropped after the cutover
+resource "aws_route53_record" "delegate_stage_domain" {
+  zone_id = aws_route53_zone.public.id
   name    = "stage.forms.service.gov.uk."
   type    = "NS"
   ttl     = 60
