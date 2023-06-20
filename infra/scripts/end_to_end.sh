@@ -14,17 +14,17 @@ if [[ -z "$environment" ]] || [[ "$1" == "help" ]] || [[ -z "$AWS_ACCESS_KEY_ID"
 Run in an authenticated shell with permission to access ssm params in
 gds-forms-deploy using the gds-cli or aws-vault
 
-Usage: $0 development|staging
+Usage: $0 dev|staging
 
 Example:
-gds-cli aws gds-forms-deploy-readonly -- $0 development
+gds-cli aws gds-forms-deploy-readonly -- $0 dev
 "
   exit 0
 fi
 
 function admin_url() {
   case "$environment" in
-    "development")
+    "dev")
       echo "https://admin.dev.forms.service.gov.uk"
       ;;
     "staging")
@@ -58,7 +58,6 @@ export SIGNON_PASSWORD="$(get_param /${environment}/smoketests/signon/password)"
 export SETTINGS__GOVUK_NOTIFY__API_KEY="$(get_param /${environment}/smoketests/notify/api-key)"
 
 cd ../../capybara
-
 bundle install
 
 bundle exec rspec
