@@ -24,19 +24,19 @@ resource "aws_codebuild_project" "smoke_tests" {
 
     environment_variable {
       name  = "SIGNON_USERNAME"
-      value = "/${var.environment}/smoketests/signon/username"
+      value = "/${var.environment}/smoketests/${var.temporary}signon/username"
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
       name  = "SIGNON_PASSWORD"
-      value = "/${var.environment}/smoketests/signon/password"
+      value = "/${var.environment}/smoketests/${var.temporary}signon/password"
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
       name  = "SIGNON_OTP"
-      value = "/${var.environment}/smoketests/signon/secret"
+      value = "/${var.environment}/smoketests/${var.temporary}signon/secret"
       type  = "PARAMETER_STORE"
     }
 
