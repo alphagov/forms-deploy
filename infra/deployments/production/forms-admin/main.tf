@@ -15,5 +15,4 @@ module "forms_admin" {
   govuk_app_domain            = "integration.publishing.service.gov.uk"         #TODO: Update for migration
   enable_maintenance_mode     = false
   maintenance_mode_bypass_ips = ""
-  enable_basic_routing        = true
 }

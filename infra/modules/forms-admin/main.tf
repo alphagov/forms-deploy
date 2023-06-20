@@ -86,10 +86,6 @@ module "ecs_service" {
       name  = "SETTINGS__MAINTENANCE_MODE__BYPASS_IPS",
       value = var.maintenance_mode_bypass_ips
     },
-    {
-      name  = "SETTINGS__FEATURES__BASIC_ROUTING",
-      value = var.enable_basic_routing
-    },
   ]
 
   secrets = flatten([
