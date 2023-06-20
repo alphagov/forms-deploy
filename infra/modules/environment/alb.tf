@@ -6,8 +6,40 @@ locals {
   domain_names = {
     user-research = "research.",
     dev           = "dev."
-    staging       = "stage.",
+    staging       = "staging.",
     production    = "prod-temp." #TODO: Change to "" for migration
+  }
+
+  subject_alternative_names = {
+    user-research = [
+      "api.research.forms.service.gov.uk",
+      "admin.research.forms.service.gov.uk",
+      "submit.research.forms.service.gov.uk",
+      "www.research.forms.service.gov.uk",
+    ],
+    dev = [
+      "api.dev.forms.service.gov.uk",
+      "admin.dev.forms.service.gov.uk",
+      "submit.dev.forms.service.gov.uk",
+      "www.dev.forms.service.gov.uk",
+    ],
+    staging = [
+      "api.staging.forms.service.gov.uk",
+      "admin.staging.forms.service.gov.uk",
+      "submit.staging.forms.service.gov.uk",
+      "www.staging.forms.service.gov.uk",
+      "stage.forms.service.gov.uk",
+      "api.stage.forms.service.gov.uk",
+      "admin.stage.forms.service.gov.uk",
+      "submit.stage.forms.service.gov.uk",
+      "www.stage.forms.service.gov.uk",
+    ],
+    production = [
+      "api.prod-temp.forms.service.gov.uk",
+      "admin.prod-temp.forms.service.gov.uk",
+      "submit.prod-temp.forms.service.gov.uk",
+      "www.prod-temp.forms.service.gov.uk",
+    ]
   }
 
   account_id = data.aws_caller_identity.current.account_id
@@ -98,12 +130,7 @@ resource "aws_acm_certificate" "alb_cert" {
   domain_name       = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   validation_method = "DNS"
 
-  subject_alternative_names = [
-    "api.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk",
-    "admin.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk",
-    "submit.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk",
-    "www.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
-  ]
+  subject_alternative_names = lookup(local.subject_alternative_names, var.env_name)
 
   lifecycle {
     create_before_destroy = true

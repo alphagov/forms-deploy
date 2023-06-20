@@ -1,7 +1,6 @@
 locals {
   paas_admin_cloudfront_distribution  = "d1o16xvhbur5rw.cloudfront.net"
   paas_runner_cloudfront_distribution = "d14wye87h7xnwn.cloudfront.net"
-  aws_cloudfront_distribution         = "d291xzc38hga3k.cloudfront.net"
   aws_alb                             = "forms-staging-989380100.eu-west-2.elb.amazonaws.com"
 }
 

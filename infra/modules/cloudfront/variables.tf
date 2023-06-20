@@ -18,3 +18,18 @@ variable "enable_cloudfront" {
   description = "If true then a cloudfront distribution is created."
   default     = false
 }
+
+variable "domain_name" {
+  type        = string
+  description = "The domain name for the distribution"
+}
+
+variable "alb_dns_name" {
+  type        = string
+  description = "The alb dns name to use as the origin of the distribution"
+}
+
+variable "subject_alternative_names" {
+  type        = list(string)
+  description = "Alternative names for the distribution and its certificate"
+}
