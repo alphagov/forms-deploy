@@ -8,12 +8,12 @@ resource "aws_route53_zone" "public" {
   }
 }
 
-resource "aws_route53_record" "aws_cloudfront" {
+resource "aws_route53_record" "research" {
   zone_id = aws_route53_zone.public.id
   name    = "*.research.forms.service.gov.uk."
   type    = "CNAME"
   ttl     = 60
-  records = ["d3graxinrekbaq.cloudfront.net"]
+  records = ["forms-user-research-752966643.eu-west-2.elb.amazonaws.com"]
 }
 
 output "name_servers" {

@@ -9,12 +9,12 @@ resource "aws_route53_zone" "public" {
 }
 
 # This will not be required after the migration
-resource "aws_route53_record" "temp_aws_cloudfront" {
+resource "aws_route53_record" "prod_temp" {
   zone_id = aws_route53_zone.public.id
   name    = "*.prod-temp.forms.service.gov.uk."
   type    = "CNAME"
   ttl     = 60
-  records = ["d2wbtpx65ue6b2.cloudfront.net"]
+  records = ["forms-production-1193111259.eu-west-2.elb.amazonaws.com"]
 }
 
 resource "aws_route53_record" "delegate_dev_domain" {

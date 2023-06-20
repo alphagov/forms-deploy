@@ -2,6 +2,7 @@ locals {
   paas_admin_cloudfront_distribution  = "d1o16xvhbur5rw.cloudfront.net"
   paas_runner_cloudfront_distribution = "d14wye87h7xnwn.cloudfront.net"
   aws_cloudfront_distribution         = "d291xzc38hga3k.cloudfront.net"
+  aws_alb                             = "forms-staging-989380100.eu-west-2.elb.amazonaws.com"
 }
 
 # This hosted zone is for the temporary 'stage' domain which will be removed
@@ -16,12 +17,12 @@ resource "aws_route53_zone" "stage" {
   }
 }
 
-resource "aws_route53_record" "stage_to_aws_cloudfront" {
+resource "aws_route53_record" "stage" {
   zone_id = aws_route53_zone.stage.id
   name    = "*.stage.forms.service.gov.uk."
   type    = "CNAME"
   ttl     = 60
-  records = [local.aws_cloudfront_distribution]
+  records = [local.aws_alb]
 }
 
 resource "aws_route53_zone" "staging" {
@@ -49,7 +50,6 @@ resource "aws_route53_record" "admin" {
   ttl     = 60
   records = [local.paas_admin_cloudfront_distribution]
 }
-
 
 output "stage_zone_name_servers" {
   value = aws_route53_zone.stage.name_servers
