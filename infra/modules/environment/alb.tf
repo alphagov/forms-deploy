@@ -10,14 +10,6 @@ locals {
     production    = "prod-temp." #TODO: Change to "" for migration
   }
 
-  # Used for looking up the Route53 hosted zone to hold the ALB record
-  zone_names = {
-    user-research = "research.",
-    dev           = "dev."
-    staging       = "stage.",
-    production    = ""
-  }
-
   account_id = data.aws_caller_identity.current.account_id
 
   #The AWS managed account for the ALB, see: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-access-logging.html

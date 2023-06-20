@@ -17,18 +17,6 @@ resource "aws_acm_certificate" "cloud_front" {
   }
 }
 
-data "aws_route53_zone" "public" {
-  name         = "${lookup(local.zone_names, var.env_name)}forms.service.gov.uk."
-  private_zone = false
-}
-
-resource "aws_route53_record" "cloud_front_cname" {
-  zone_id = data.aws_route53_zone.public.id
-  name    = "*.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk."
-  type    = "CNAME"
-  ttl     = 60
-  records = [aws_cloudfront_distribution.main.domain_name]
-}
 
 data "aws_cloudfront_response_headers_policy" "cors" {
   name = "Managed-SimpleCORS"

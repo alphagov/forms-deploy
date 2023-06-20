@@ -1,6 +1,7 @@
 locals {
   paas_admin_cloudfront_distribution  = "d1o16xvhbur5rw.cloudfront.net"
   paas_runner_cloudfront_distribution = "d14wye87h7xnwn.cloudfront.net"
+  aws_cloudfront_distribution         = "d291xzc38hga3k.cloudfront.net"
 }
 
 # This hosted zone is for the temporary 'stage' domain which will be removed
@@ -13,6 +14,14 @@ resource "aws_route53_zone" "stage" {
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "aws_route53_record" "stage_to_aws_cloudfront" {
+  zone_id = aws_route53_zone.stage.id
+  name    = "*.stage.forms.service.gov.uk."
+  type    = "CNAME"
+  ttl     = 60
+  records = [local.aws_cloudfront_distribution]
 }
 
 resource "aws_route53_zone" "staging" {
@@ -40,6 +49,7 @@ resource "aws_route53_record" "admin" {
   ttl     = 60
   records = [local.paas_admin_cloudfront_distribution]
 }
+
 
 output "stage_zone_name_servers" {
   value = aws_route53_zone.stage.name_servers
