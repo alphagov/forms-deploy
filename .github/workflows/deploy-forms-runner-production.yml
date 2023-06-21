@@ -59,7 +59,7 @@ jobs:
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=production \
             --var INSTANCES=2 \
-            --var SETTINGS__MAINTENANCE_MODE__ENABLED=false \
+            --var SETTINGS__MAINTENANCE_MODE__ENABLED=true \
             --var SETTINGS__MAINTENANCE_MODE__BYPASS_IPS="213.86.153.211/32, 213.86.153.212/32, 213.86.153.213/32,213.86.153.214/32, 213.86.153.231/32, 213.86.153.235/32, 213.86.153.236/32, 213.86.153.237/32, 51.149.8.0/25, 51.149.8.128/29, 51.149.9.112/29, 51.149.9.240/29" \
             --var SETTINGS__SENTRY__DSN=${{ secrets.RUNNER_SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=production \
