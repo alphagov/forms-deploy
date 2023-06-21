@@ -7,36 +7,50 @@ if ! command -v chromedriver &> /dev/null; then
 fi
 
 environment="$1"
+kind="$2"
 
-if [[ -z "$environment" ]] || [[ "$1" == "help" ]] || [[ -z "$AWS_ACCESS_KEY_ID" ]]; then
+if [[ -z "$environment" ]] || [[ -z "$kind" ]] || [[ "$1" == "help" ]] || [[ -z "$AWS_ACCESS_KEY_ID" ]]; then
   echo "Runs the Capybara end-to-end tests for the given environment.
 
 Run in an authenticated shell with permission to access ssm params in
 gds-forms-deploy using the gds-cli or aws-vault
 
-Usage: $0 dev|staging
+Usage: $0 dev|staging tmp|perm
 
 Example:
-gds-cli aws gds-forms-deploy-readonly -- $0 dev
+gds-cli aws gds-forms-deploy-readonly -- $0 dev tmp
 "
   exit 0
 fi
 
 function admin_url() {
-  case "$environment" in
-    "dev")
-      echo "https://admin.dev.forms.service.gov.uk"
+  case $kind in
+    "tmp")
+      case $environment in
+        "dev") echo "https://admin.dev.forms.service.gov.uk" ;;
+        "staging") echo "https://admin.stage.forms.service.gov.uk" ;;
+        "production") echo "https://admin.prod-temp.forms.service.gov.uk" ;;
+        *)
+          echo "Unknown environment: ${environment}"
+          exit 1
+          ;;
+      esac
       ;;
-    "staging")
-      echo "https://admin.stage.forms.service.gov.uk"
+    "perm")
+      case $environment in
+        "dev") echo "https://admin.dev.forms.service.gov.uk" ;;
+        "staging") echo "https://admin.staging.forms.service.gov.uk" ;;
+        "production") echo "https://admin.forms.service.gov.uk" ;;
+        *)
+          echo "Unknown environment: ${environment}"
+          exit 1
+          ;;
+      esac
       ;;
-    "production")
-      echo "https://admin.prod-temp.forms.service.gov.uk" # Temp domain name
-      ;;
-    *)
-      echo "Unknown environment: ${environment}"
-      exit 1
-      ;;
+  *)
+    echo "Unknown kind: ${kind}"
+    exit 1
+    ;;
   esac
 }
 
@@ -50,11 +64,14 @@ function get_param() {
     --query 'Parameter.Value'
 }
 
+if [[ "$(admin_url)" =~ "Unknown" ]]; then
+    exit 1
+fi
 
 export FORMS_ADMIN_URL="$(admin_url)"
-export SIGNON_USERNAME="$(get_param /${environment}/smoketests/signon/username)"
-export SIGNON_OTP="$(get_param /${environment}/smoketests/signon/secret)"
-export SIGNON_PASSWORD="$(get_param /${environment}/smoketests/signon/password)"
+export SIGNON_USERNAME="$(get_param /${environment}/smoketests/${kind}/signon/username)"
+export SIGNON_OTP="$(get_param /${environment}/smoketests/${kind}/signon/secret)"
+export SIGNON_PASSWORD="$(get_param /${environment}/smoketests/${kind}/signon/password)"
 export SETTINGS__GOVUK_NOTIFY__API_KEY="$(get_param /${environment}/smoketests/notify/api-key)"
 
 cd ../../capybara

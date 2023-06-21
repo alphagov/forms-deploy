@@ -2,6 +2,7 @@
 
 require 'resolv'
 require 'aws-sdk-cloudfront'
+require 'aws-sdk-elasticloadbalancingv2'
 require 'colorize'
 require 'aws-sdk-sts'
 
@@ -68,6 +69,14 @@ def get_cloudfront_ip
   get_ipv4_addresses domain_name
 end
 
+def get_alb_ip
+  alb_client = Aws::ElasticLoadBalancingV2::Client.new({
+                                                    region: 'eu-west-2'
+                                                  })
+  dns_name = alb_client.describe_load_balancers[:load_balancers][0][:dns_name]
+  get_ipv4_addresses dns_name
+end
+
 def summarise_domain(aws_cloudfront_ip_address, domains)
   domains.each do |domain|
     puts "#{domain}"
@@ -100,19 +109,19 @@ end
 def check_environment
   environment = fetch_environment
   puts "Checking DNS in #{environment}"
-  aws_cloudfront_ip_address = get_cloudfront_ip
+  alb_ip_addresses = get_alb_ip
 
   puts "\nThese domains are the permanent domains and should point to AWS when the migration is complete".bold
   permanent_domains = DOMAIN_NAMES[environment.to_sym][:permanent_domains].values
-  summarise_domain(aws_cloudfront_ip_address, permanent_domains)
+  summarise_domain(alb_ip_addresses, permanent_domains)
 
   puts "\nThese are temporary domains and should only point to AWS".bold
   tmp_domains = DOMAIN_NAMES[environment.to_sym][:tmp_domains].values
-  summarise_domain(aws_cloudfront_ip_address, tmp_domains)
+  summarise_domain(alb_ip_addresses, tmp_domains)
 
   puts "\nForms-runner and Froms-admin on PaaS use CF domain for forms-api. This will stay with PaaS".bold
   paas_only_domains = DOMAIN_NAMES[environment.to_sym][:paas_only_domains].values
-  summarise_domain(aws_cloudfront_ip_address, paas_only_domains)
+  summarise_domain(alb_ip_addresses, paas_only_domains)
 
   if environment == :production
     puts "\nChecking product pages are available".bold

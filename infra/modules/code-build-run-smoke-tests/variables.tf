@@ -7,6 +7,17 @@ variable "environment" {
   }
 }
 
+variable "temporary" {
+  type = string
+
+  default = "tmp/"
+
+  validation {
+    condition   = contains(["","tmp/", "perm/"], var.temporary)
+    error_message = "Valid values for temporary are: tmp, perm"
+  }
+}
+
 variable "app_name" {
   type        = string
   description = "The name of the application e.g. forms-admin"
