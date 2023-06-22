@@ -14,5 +14,4 @@ module "forms_admin" {
   runner_base                 = "https://submit.research.forms.service.gov.uk"
   auth_provider               = "basic_auth"
   enable_maintenance_mode     = false
-  maintenance_mode_bypass_ips = ""
 }
