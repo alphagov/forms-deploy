@@ -10,8 +10,8 @@ module "forms_admin" {
   desired_task_count          = 3
   cpu                         = 256
   memory                      = 512
-  api_base_url                = "https://api.prod-temp.forms.service.gov.uk"    #TODO: Update for migration
-  runner_base                 = "https://submit.prod-temp.forms.service.gov.uk" #TODO: Update for migration
-  govuk_app_domain            = "integration.publishing.service.gov.uk"         #TODO: Update for migration
+  api_base_url                = "https://api.forms.service.gov.uk"
+  runner_base                 = "https://submit.forms.service.gov.uk"
+  govuk_app_domain            = "publishing.service.gov.uk"
   enable_maintenance_mode     = false
 }
