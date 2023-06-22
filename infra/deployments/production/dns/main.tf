@@ -1,3 +1,9 @@
+locals {
+  paas_admin_cloudfront_distribution  = "d3r22e84hwvy8u.cloudfront.net"
+  paas_runner_cloudfront_distribution = "d38kosxua6o1pg.cloudfront.net"
+  aws_alb                             = "forms-production-1193111259.eu-west-2.elb.amazonaws.com"
+}
+
 resource "aws_route53_zone" "public" {
   #checkov:skip=CKV2_AWS_38:DNSSEC is not currently necessary
   #checkov:skip=CKV2_AWS_39:DNS query logging not necessary
@@ -6,6 +12,22 @@ resource "aws_route53_zone" "public" {
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "aws_route53_record" "runner" {
+  zone_id = aws_route53_zone.public.id
+  name    = "submit.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 300
+  records = [local.paas_runner_cloudfront_distribution]
+}
+
+resource "aws_route53_record" "admin" {
+  zone_id = aws_route53_zone.public.id
+  name    = "admin.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 300
+  records = [local.paas_admin_cloudfront_distribution]
 }
 
 # This will not be required after the migration
