@@ -12,7 +12,7 @@ module "forms_admin" {
   memory                      = 512
   api_base_url                = "https://api.research.forms.service.gov.uk"
   runner_base                 = "https://submit.research.forms.service.gov.uk"
-  auth_provider               = "basic_auth"
+  auth_provider               = "cddo_sso"
   enable_maintenance_mode     = false
   secret_kind                 = ""
 }
