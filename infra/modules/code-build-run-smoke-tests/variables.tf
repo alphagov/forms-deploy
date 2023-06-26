@@ -14,7 +14,7 @@ variable "secret_kind" {
 
   validation {
     condition   = contains(["","tmp/", "perm/"], var.secret_kind)
-    error_message = "Valid values for secret_kind are: tmp, perm"
+    error_message = "Valid values for secret_kind are: tmp/, perm/"
   }
 }
 
