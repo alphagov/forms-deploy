@@ -29,7 +29,11 @@ module "ecs_service" {
     {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
-    }
+    },
+    {
+      name  = "FORMS_ENV",
+      value = var.env_name
+    },
   ]
 
   secrets = [
