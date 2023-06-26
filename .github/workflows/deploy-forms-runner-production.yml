@@ -66,7 +66,8 @@ jobs:
             --var SETTINGS__FORMS_ADMIN__BASE_URL=${{ env.FORMS_ADMIN_URL }} \
             --var SETTINGS__FORMS_API__BASE_URL=https://forms-api-production.london.cloudapps.digital \
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.FORMS_API_KEY_FOR_FORMS_RUNNER }} \
-            --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }}
+            --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.RUNNER_NOTIFY_API_KEY }} \
+            --var FORMS_ENV=paas_production
           cf logout
 
       - uses: nanasess/setup-chromedriver@v2

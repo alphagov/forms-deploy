@@ -67,6 +67,10 @@ module "ecs_service" {
       name  = "SETTINGS__MAINTENANCE_MODE__BYPASS_IPS",
       value = var.maintenance_mode_bypass_ips
     },
+    {
+      name  = "FORMS_ENV",
+      value = var.env_name
+    },
   ]
 
   secrets = [
