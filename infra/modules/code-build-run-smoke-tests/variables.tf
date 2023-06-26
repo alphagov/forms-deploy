@@ -7,14 +7,14 @@ variable "environment" {
   }
 }
 
-variable "temporary" {
+variable "secret_kind" {
   type = string
 
   default = "tmp/"
 
   validation {
-    condition   = contains(["","tmp/", "perm/"], var.temporary)
-    error_message = "Valid values for temporary are: tmp, perm"
+    condition   = contains(["","tmp/", "perm/"], var.secret_kind)
+    error_message = "Valid values for secret_kind are: tmp/, perm/"
   }
 }
 
