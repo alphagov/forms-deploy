@@ -61,7 +61,7 @@ jobs:
             --var SETTINGS__SENTRY__DSN=${{ secrets.API_SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=staging \
             --var SETTINGS__FEATURES__ACCEPT_LEGACY_ANSWER_TYPES=false \
-            --var FORMS_ENV=paas_staging
+            --var SETTINGS__FORMS_ENV=paas_staging
           cf logout
 
       - uses: nanasess/setup-chromedriver@v2
