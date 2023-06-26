@@ -23,6 +23,16 @@ locals {
         name      = "GDS_SSO_OAUTH_SECRET",
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-secret"
       }
+    ],
+    cddo_sso = [
+      {
+        name      = "SETTINGS__CDDO_SSO__USERNAME",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/identifier"
+      },
+      {
+        name      = "SETTINGS__CDDO_SSO__PASSWORD",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/secret"
+      }
     ]
   }
 
