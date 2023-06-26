@@ -201,7 +201,7 @@ module "smoke_tests_staging" {
   environment        = "staging"
   forms_admin_url    = "https://admin.staging.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
-  temporary          = "perm/"
+  secret_kind        = "perm/"
 }
 
 module "terraform_apply_production" {
