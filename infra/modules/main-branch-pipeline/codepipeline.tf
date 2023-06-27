@@ -199,7 +199,7 @@ module "smoke_tests_staging" {
   source             = "../code-build-run-smoke-tests"
   app_name           = var.app_name
   environment        = "staging"
-  forms_admin_url    = "https://admin.stage.forms.service.gov.uk"
+  forms_admin_url    = "https://admin.staging.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
 }
 
