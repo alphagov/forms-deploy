@@ -31,7 +31,7 @@ module "ecs_service" {
       value = "aws-${var.env_name}"
     },
     {
-      name  = "FORMS_ENV",
+      name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
   ]

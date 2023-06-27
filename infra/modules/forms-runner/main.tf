@@ -68,7 +68,7 @@ module "ecs_service" {
       value = var.maintenance_mode_bypass_ips
     },
     {
-      name  = "FORMS_ENV",
+      name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
   ]

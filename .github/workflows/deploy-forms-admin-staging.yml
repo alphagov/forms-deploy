@@ -59,7 +59,7 @@ jobs:
         run: |
           cd main && cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=staging \
-            --var SETTINGS__MAINTENANCE_MODE__ENABLED=false \
+            --var SETTINGS__MAINTENANCE_MODE__ENABLED=true \
             --var SETTINGS__MAINTENANCE_MODE__BYPASS_IPS="213.86.153.211/32, 213.86.153.212/32, 213.86.153.213/32,213.86.153.214/32, 213.86.153.231/32, 213.86.153.235/32, 213.86.153.236/32, 213.86.153.237/32, 51.149.8.0/25, 51.149.8.128/29, 51.149.9.112/29, 51.149.9.240/29" \
             --var INSTANCES=2 \
             --var SETTINGS__SENTRY__DSN=${{ secrets.ADMIN_SENTRY_DSN }} \
@@ -71,7 +71,7 @@ jobs:
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.FORMS_API_KEY_FOR_FORMS_ADMIN }} \
             --var SETTINGS__FORMS_API__BASE_URL=https://forms-api-staging.london.cloudapps.digital \
             --var SETTINGS__FORMS_RUNNER__URL=https://submit.staging.forms.service.gov.uk \
-            --var FORMS_ENV=paas_staging
+            --var SETTINGS__FORMS_ENV=paas_staging
           cf logout
 
       - uses: nanasess/setup-chromedriver@v2
