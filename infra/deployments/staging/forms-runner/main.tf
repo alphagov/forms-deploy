@@ -10,7 +10,7 @@ module "forms_runner" {
   desired_task_count      = 2
   cpu                     = 256
   memory                  = 512
-  api_base_url            = "https://api.staging.forms.service.gov.uk"
-  admin_base_url          = "https://admin.staging.forms.service.gov.uk"
+  api_base_url            = "https://api.stage.forms.service.gov.uk"
+  admin_base_url          = "https://admin.stage.forms.service.gov.uk"
   enable_maintenance_mode = true
 }
