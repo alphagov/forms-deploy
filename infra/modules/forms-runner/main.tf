@@ -21,7 +21,6 @@ module "ecs_service" {
   permit_internet_egress = true
   permit_redis_egress    = true
 
-  # TODO: dummy values to get the app running. Update with real values.
   environment_variables = [
     {
       name  = "REDIS_URL",
