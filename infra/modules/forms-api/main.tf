@@ -14,7 +14,7 @@ module "ecs_service" {
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 9292
-  permit_internet_egress = true # TODO: necessary until VPC endpoint for SSM.
+  permit_internet_egress = true # Required for Sentry.io and AWS SSM
   permit_postgres_egress = true
 
   environment_variables = [
