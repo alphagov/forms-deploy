@@ -26,11 +26,11 @@ locals {
     ],
     cddo_sso = [
       {
-        name      = "SETTINGS__CDDO_SSO__USERNAME",
+        name      = "SETTINGS__CDDO_SSO__IDENTIFIER",
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/identifier"
       },
       {
-        name      = "SETTINGS__CDDO_SSO__PASSWORD",
+        name      = "SETTINGS__CDDO_SSO__SECRET",
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/secret"
       }
     ]
@@ -97,7 +97,7 @@ module "ecs_service" {
       value = var.maintenance_mode_bypass_ips
     },
     {
-      name  = "FORMS_ENV",
+      name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
   ]
