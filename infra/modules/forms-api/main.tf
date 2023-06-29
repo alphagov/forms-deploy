@@ -23,6 +23,10 @@ module "ecs_service" {
       value = "production"
     },
     {
+      name  = "RAILS_ENV",
+      value = "production"
+    },
+    {
       name  = "RAILS_LOG_TO_STDOUT",
       value = "true"
     },
