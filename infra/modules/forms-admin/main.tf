@@ -33,6 +33,20 @@ locals {
         name      = "SETTINGS__CDDO_SSO__SECRET",
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/secret"
       }
+    ],
+    auth0 = [
+      {
+        name      = "SETTINGS__AUTH0__CLIENT_ID",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/client-id"
+      },
+      {
+        name      = "SETTINGS__AUTH0__CLIENT_SECRET",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/client-secret"
+      },
+      {
+        name      = "SETTINGS__AUTH0__DOMAIN",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/domain"
+      }
     ]
   }
 
