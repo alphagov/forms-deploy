@@ -31,7 +31,7 @@ resource "aws_route53_record" "admin" {
 }
 
 resource "aws_route53_record" "api" {
-  zone_id = aws_route53_zone.pulic.id
+  zone_id = aws_route53_zone.public.id
   name    = "api.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 60
