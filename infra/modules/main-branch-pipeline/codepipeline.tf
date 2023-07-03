@@ -215,8 +215,9 @@ module "smoke_tests_production" {
   source             = "../code-build-run-smoke-tests"
   app_name           = var.app_name
   environment        = "production"
-  forms_admin_url    = "https://admin.prod-temp.forms.service.gov.uk"
+  forms_admin_url    = "https://admin.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
+  secret_kind        = "perm/"
 }
 
 module "terraform_apply_dev" {

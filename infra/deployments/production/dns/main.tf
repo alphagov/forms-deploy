@@ -19,7 +19,7 @@ resource "aws_route53_record" "runner" {
   name    = "submit.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 300
-  records = [local.paas_runner_cloudfront_distribution]
+  records = [local.aws_alb]
 }
 
 resource "aws_route53_record" "admin" {
@@ -27,7 +27,15 @@ resource "aws_route53_record" "admin" {
   name    = "admin.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 300
-  records = [local.paas_admin_cloudfront_distribution]
+  records = [local.aws_alb]
+}
+
+resource "aws_route53_record" "api" {
+  zone_id = aws_route53_zone.pulic.id
+  name    = "api.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 60
+  records = [local.aws_alb]
 }
 
 # This will not be required after the migration
