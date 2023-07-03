@@ -14,4 +14,5 @@ module "forms_admin" {
   runner_base                 = "https://submit.staging.forms.service.gov.uk"
   govuk_app_domain            = "staging.publishing.service.gov.uk"
   enable_maintenance_mode     = true
+  secret_kind                 = "perm/"
 }
