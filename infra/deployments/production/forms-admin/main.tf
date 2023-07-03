@@ -13,6 +13,6 @@ module "forms_admin" {
   api_base_url                = "https://api.forms.service.gov.uk"
   runner_base                 = "https://submit.forms.service.gov.uk"
   govuk_app_domain            = "publishing.service.gov.uk"
-  enable_maintenance_mode     = true
+  enable_maintenance_mode     = false
   secret_kind                 = "perm/"
 }
