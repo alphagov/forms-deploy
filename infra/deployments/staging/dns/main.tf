@@ -56,6 +56,7 @@ resource "aws_route53_record" "api" {
   type    = "CNAME"
   ttl     = 60
   records = [local.aws_alb]
+}
 
 output "stage_zone_name_servers" {
   value = aws_route53_zone.stage.name_servers
