@@ -12,5 +12,5 @@ module "forms_runner" {
   memory                  = 512
   api_base_url            = "https://api.staging.forms.service.gov.uk"
   admin_base_url          = "https://admin.staging.forms.service.gov.uk"
-  enable_maintenance_mode = true
+  enable_maintenance_mode = false
 }
