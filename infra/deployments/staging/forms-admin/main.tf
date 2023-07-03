@@ -10,8 +10,9 @@ module "forms_admin" {
   desired_task_count          = 2
   cpu                         = 256
   memory                      = 512
-  api_base_url                = "https://api.stage.forms.service.gov.uk"
-  runner_base                 = "https://submit.stage.forms.service.gov.uk"
-  govuk_app_domain            = "integration.publishing.service.gov.uk"
-  enable_maintenance_mode     = false
+  api_base_url                = "https://api.staging.forms.service.gov.uk"
+  runner_base                 = "https://submit.staging.forms.service.gov.uk"
+  govuk_app_domain            = "staging.publishing.service.gov.uk"
+  enable_maintenance_mode     = true
+  secret_kind                 = "perm/"
 }
