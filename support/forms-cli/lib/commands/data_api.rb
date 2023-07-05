@@ -27,7 +27,7 @@ private
   def print(results)
     puts JSON.pretty_generate({
       updated: results.number_of_records_updated,
-      records: JSON.parse(results.formatted_records || "{}"),
+      records: results.records,
     })
   end
 
