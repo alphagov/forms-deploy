@@ -15,4 +15,5 @@ module "forms_admin" {
   auth_provider               = "basic_auth"
   enable_maintenance_mode     = false
   secret_kind                 = ""
+  details_guidance_feature_flag = false
 }

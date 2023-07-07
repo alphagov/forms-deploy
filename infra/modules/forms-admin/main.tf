@@ -114,6 +114,10 @@ module "ecs_service" {
       name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
+    {
+      name  = "SETTINGS__FEATURES__DETAILED_GUIDANCE_ENABLED",
+      value = var.details_guidance_feature_flag
+    }
   ]
 
   secrets = flatten([
