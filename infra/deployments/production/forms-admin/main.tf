@@ -15,4 +15,5 @@ module "forms_admin" {
   govuk_app_domain            = "publishing.service.gov.uk"
   enable_maintenance_mode     = false
   secret_kind                 = "perm/"
+  details_guidance_feature_flag = false
 }
