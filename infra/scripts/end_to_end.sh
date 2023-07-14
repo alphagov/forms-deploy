@@ -7,50 +7,33 @@ if ! command -v chromedriver &> /dev/null; then
 fi
 
 environment="$1"
-kind="$2"
 
-if [[ -z "$environment" ]] || [[ -z "$kind" ]] || [[ "$1" == "help" ]] || [[ -z "$AWS_ACCESS_KEY_ID" ]]; then
+if [[ -z "$environment" ]] || [[ "$1" == "help" ]] || [[ -z "$AWS_ACCESS_KEY_ID" ]]; then
   echo "Runs the Capybara end-to-end tests for the given environment.
 
 Run in an authenticated shell with permission to access ssm params in
 gds-forms-deploy using the gds-cli or aws-vault
 
-Usage: $0 dev|staging tmp|perm
+Usage: $0 dev|staging|paas_dev|paas_staging
 
 Example:
-gds-cli aws gds-forms-deploy-readonly -- $0 dev tmp
+gds-cli aws gds-forms-deploy-readonly -- $0 dev
 "
   exit 0
 fi
 
 function admin_url() {
-  case $kind in
-    "tmp")
-      case $environment in
-        "dev") echo "https://admin.dev.forms.service.gov.uk" ;;
-        "staging") echo "https://admin.stage.forms.service.gov.uk" ;;
-        "production") echo "https://admin.prod-temp.forms.service.gov.uk" ;;
-        *)
-          echo "Unknown environment: ${environment}"
-          exit 1
-          ;;
-      esac
+  case $environment in
+    "paas_dev") echo "https://forms-admin-dev.london.cloudapps.digital" ;;
+    "paas_staging") echo "https://forms-admin-staging.london.cloudapps.digital" ;;
+    "paas_production") echo "https://forms-admin-prod.london.cloudapps.digital" ;;
+    "dev") echo "https://admin.dev.forms.service.gov.uk" ;;
+    "staging") echo "https://admin.staging.forms.service.gov.uk" ;;
+    "production") echo "https://admin.forms.service.gov.uk" ;;
+    *)
+      echo "Unknown environment: ${environment}"
+      exit 1
       ;;
-    "perm")
-      case $environment in
-        "dev") echo "https://admin.dev.forms.service.gov.uk" ;;
-        "staging") echo "https://admin.staging.forms.service.gov.uk" ;;
-        "production") echo "https://admin.forms.service.gov.uk" ;;
-        *)
-          echo "Unknown environment: ${environment}"
-          exit 1
-          ;;
-      esac
-      ;;
-  *)
-    echo "Unknown kind: ${kind}"
-    exit 1
-    ;;
   esac
 }
 
