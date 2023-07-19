@@ -36,6 +36,7 @@ locals {
     "james.sheppard",
     "jamie.wilkinson",
     "laurence.debruxelles",
+    "radha.kotyankar",
     "samuel.culley",
     "tom.iles"
   ]
