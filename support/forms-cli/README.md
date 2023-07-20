@@ -15,7 +15,7 @@ For a list of available commands type `forms`. Each command includes a help comm
 
 Any command that requires authorisation to make AWS api calls will need to be run in an authorised shell. This can be done with the `gds-cli` or `aws-vault`. Each command includes instructions where necessary. For example:
 
-`gds aws gds-forms-dev-support -- forms ecs_summary`
+`gds aws forms-dev-support -- forms ecs_summary`
 
 ### Updating the cli ###
 

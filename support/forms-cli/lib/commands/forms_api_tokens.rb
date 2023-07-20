@@ -111,7 +111,7 @@ private
       individual options below.
 
       Example:
-      gds aws gds-forms-dev-support -- forms forms_api_tokens --service forms-admin --token a-valid-token\n\n"
+      gds aws forms-dev-support -- forms forms_api_tokens --service forms-admin --token a-valid-token\n\n"
 
       opts.on("-h", "--help", "Prints help") do
         puts opts

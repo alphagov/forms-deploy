@@ -27,7 +27,7 @@ function usage() {
      app-name, the name of the application to build forms-api | forms-admin | forms-runner
 
      Example:
-     gds aws gds-forms-deploy-admin -- ${0} forms-api"
+     gds aws forms-deploy-admin -- ${0} forms-api"
   exit 0
 }
 

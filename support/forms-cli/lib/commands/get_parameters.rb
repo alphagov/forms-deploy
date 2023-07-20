@@ -66,7 +66,7 @@ private
       Run in a authorized shell using gds-cli or aws-vault
 
       Example:
-      gds aws gds-forms-dev-support -- forms get_parameters\n\n"
+      gds aws forms-dev-support -- forms get_parameters\n\n"
 
       opts.on("-h", "--help", "Prints help") do
         puts opts

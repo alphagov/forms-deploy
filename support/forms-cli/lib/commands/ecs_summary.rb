@@ -30,7 +30,7 @@ private
          aws-vault.
 
          Example:
-         gds aws gds-forms-dev-readonly -- forms ecs_summary\n\n"
+         gds aws forms-dev-readonly -- forms ecs_summary\n\n"
 
       opts.on("-h", "--help", "Prints help") do
         puts opts

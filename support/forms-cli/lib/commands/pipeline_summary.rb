@@ -36,7 +36,7 @@ private
       Run in a authorized shell for forms-deploy using gds-cli or aws-vault.
 
       Example:
-      gds aws gds-forms-deploy-support -- forms pipelines\n\n"
+      gds aws forms-deploy-support -- forms pipelines\n\n"
 
       opts.on("-h", "--help", "Prints help") do
         puts opts
