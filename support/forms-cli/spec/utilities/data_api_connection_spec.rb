@@ -83,4 +83,11 @@ describe DataApiConnection do
       .with(hash_including(sql: "select * from testing;"))
       .at_least(:once)
   end
+
+  it "parses records returned into an array of hashes" do
+    response = described_class.new("forms-api").execute_statement("select * from testing;")
+
+    expect(response.formatted_records).to eq('[{"id": 1, "name": "some-form"}]')
+    expect(response.records).to eq([{ id: 1, name: "some-form" }])
+  end
 end

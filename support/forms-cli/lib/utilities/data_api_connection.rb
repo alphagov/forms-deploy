@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "json"
+require "ostruct"
+
 require "aws-sdk-secretsmanager"
 require "aws-sdk-rds"
 require "aws-sdk-rdsdataservice"
@@ -14,7 +17,7 @@ class DataApiConnection
     @secrets_manager = Aws::SecretsManager::Client.new
   end
 
-  def execute_statement(statement)
+  def execute_statement(statement, params = {})
     params = {
       resource_arn: query_database_cluster_arn,
       secret_arn: query_credential_arn,
@@ -22,8 +25,13 @@ class DataApiConnection
       database: @database_name,
       include_result_metadata: true,
       format_records_as: "JSON", # Its simpler to get the results as JSON and parse it back...
-    }
-    @data_service.execute_statement(params)
+    }.merge(params)
+
+    response = @data_service.execute_statement(params)
+
+    OpenStruct.new(response.to_hash.merge({
+      records: JSON.parse(response.formatted_records || "[]", symbolize_names: true),
+    }))
   end
 
 private

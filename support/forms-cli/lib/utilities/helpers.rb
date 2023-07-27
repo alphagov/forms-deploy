@@ -21,9 +21,13 @@ module Helpers
   end
 
   def fetch_environment
-    sts = Aws::STS::Client.new
-    account = sts.get_caller_identity({}).account
-    ACCOUNT_IDS[account]
+    if ENV["FORMS_ENV"].nil? || ENV["FORMS_ENV"].empty?
+      sts = Aws::STS::Client.new
+      account = sts.get_caller_identity({}).account
+      ACCOUNT_IDS[account]
+    else
+      ENV["FORMS_ENV"]
+    end
   end
 
 private
