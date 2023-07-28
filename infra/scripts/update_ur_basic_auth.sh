@@ -29,7 +29,7 @@ NEW_USERNAME="$1"
 NEW_PASSWORD="$2"
 
 echo "Updating username"
-gds-cli aws gds-forms-user-research-admin -- \
+gds-cli aws forms-user-research-admin -- \
   aws ssm put-parameter \
     --type SecureString \
     --name "/forms-admin-user-research/basic-auth/username" \
@@ -37,7 +37,7 @@ gds-cli aws gds-forms-user-research-admin -- \
     --overwrite
 
 echo "Updating password"
-gds-cli aws gds-forms-user-research-admin -- \
+gds-cli aws forms-user-research-admin -- \
   aws ssm put-parameter \
     --type SecureString \
     --name "/forms-admin-user-research/basic-auth/password" \
@@ -45,7 +45,7 @@ gds-cli aws gds-forms-user-research-admin -- \
     --overwrite
 
 echo "Redeploying forms-admin"
-gds-cli aws gds-forms-user-research-admin -- \
+gds-cli aws forms-user-research-admin -- \
   aws ecs update-service \
   --service "forms-admin" \
   --cluster "forms-user-research" \
@@ -53,6 +53,6 @@ gds-cli aws gds-forms-user-research-admin -- \
   --no-cli-pager > /dev/null
 
 echo "Redeploy instruction sent. Wait for update to finish"
-gds-cli aws gds-forms-user-research-admin -- \
+gds-cli aws forms-user-research-admin -- \
   ../../infra/modules/code-build-deploy-ecs/scripts/wait-for-deploy.sh "forms-admin" "forms-user-research"
 
