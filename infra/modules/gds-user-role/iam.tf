@@ -3,21 +3,10 @@ locals {
   role_prefix     = replace(var.email, local.co_email, "")
   role_name       = "${local.role_prefix}-${var.role_suffix}"
   trust_principal = "arn:aws:iam::622626885786:user/${var.email}"
+}
 
-  permitted_source_ips = [
-    "213.86.153.211/32",
-    "213.86.153.212/32",
-    "213.86.153.213/32",
-    "213.86.153.214/32",
-    "213.86.153.231/32",
-    "213.86.153.235/32",
-    "213.86.153.236/32",
-    "213.86.153.237/32",
-    "51.149.8.0/25",
-    "51.149.8.128/29",
-    "51.149.9.112/29",
-    "51.149.9.240/29"
-  ]
+module "common_values" {
+  source   = "../common-values" 
 }
 
 resource "aws_iam_role" "gds_user_role" {
@@ -45,11 +34,12 @@ data "aws_iam_policy_document" "assume_role" {
       variable = "aws:MultiFactorAuthPresent"
     }
 
+
     dynamic "condition" {
       for_each = var.restrict_to_gds_ips ? [1] : []
       content {
         test     = "IpAddress"
-        values   = local.permitted_source_ips
+        values   = module.common_values.vpn_ip_addresses
         variable = "aws:SourceIp"
       }
     }
