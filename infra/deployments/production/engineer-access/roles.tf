@@ -16,6 +16,7 @@ locals {
   support = [
     "alice.carr",
     "alistair.laing",
+    "catalina.garcia",
     "dan.worth",
     "david.biddle",
     "jamie.wilkinson",
