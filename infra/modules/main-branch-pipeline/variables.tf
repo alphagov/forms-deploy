@@ -16,6 +16,12 @@ variable "forms_deploy_branch" {
   default     = "main"
 }
 
+variable "forms_e2e_tests_branch" {
+  type        = string
+  description = "The branch of forms-e2e-tests to use"
+  default     = "main"
+}
+
 variable "app_name" {
   type        = string
   description = "The name of the app to deploy"
