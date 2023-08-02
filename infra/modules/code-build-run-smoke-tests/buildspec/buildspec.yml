@@ -7,7 +7,6 @@ phases:
       - HOME='/home/codebuild' #Codebuild tries to set HOME=/root/ despite run-as value
       - ruby -v
       - bundle -v
-      - cd capybara
       - bundle install
   build:
     run-as: codebuild

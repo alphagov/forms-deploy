@@ -46,6 +46,22 @@ resource "aws_codepipeline" "main" {
         BranchName       = var.source_branch
       }
     }
+
+    action {
+      name             = "get-forms-e2e-tests"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
+      version          = "1"
+      output_artifacts = ["forms_e2e_tests"]
+
+      configuration = {
+        ConnectionArn    = var.github_connection_arn
+        FullRepositoryId = "alphagov/forms-e2e-tests"
+        BranchName       = var.forms_e2e_tests_branch
+        DetectChanges    = false
+      }
+    }
   }
 
   stage {
@@ -90,7 +106,7 @@ resource "aws_codepipeline" "main" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["forms_deploy"]
+      input_artifacts = ["forms_e2e_tests"]
       configuration = {
         ProjectName = module.smoke_tests_staging.name
       }
@@ -121,7 +137,7 @@ resource "aws_codepipeline" "main" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["forms_deploy"]
+      input_artifacts = ["forms_e2e_tests"]
       configuration = {
         ProjectName = module.smoke_tests_production.name
       }
@@ -152,7 +168,7 @@ resource "aws_codepipeline" "main" {
       run_order       = "2"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["forms_deploy"]
+      input_artifacts = ["forms_e2e_tests"]
       configuration = {
         ProjectName = module.smoke_tests_dev.name
       }
