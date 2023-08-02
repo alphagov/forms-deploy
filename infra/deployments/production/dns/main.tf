@@ -38,15 +38,6 @@ resource "aws_route53_record" "api" {
   records = [local.aws_alb]
 }
 
-# This will not be required after the migration
-resource "aws_route53_record" "prod_temp" {
-  zone_id = aws_route53_zone.public.id
-  name    = "*.prod-temp.forms.service.gov.uk."
-  type    = "CNAME"
-  ttl     = 60
-  records = ["forms-production-1193111259.eu-west-2.elb.amazonaws.com"]
-}
-
 resource "aws_route53_record" "delegate_dev_domain" {
   zone_id = aws_route53_zone.public.id
   name    = "dev.forms.service.gov.uk."
@@ -70,20 +61,6 @@ resource "aws_route53_record" "delegate_staging_domain" {
     "ns-1604.awsdns-08.co.uk",
     "ns-359.awsdns-44.com",
     "ns-638.awsdns-15.net",
-  ]
-}
-
-# stage is a temporary sub domain for the aws staging environment. It will be dropped after the cutover
-resource "aws_route53_record" "delegate_stage_domain" {
-  zone_id = aws_route53_zone.public.id
-  name    = "stage.forms.service.gov.uk."
-  type    = "NS"
-  ttl     = 60
-  records = [
-    "ns-1270.awsdns-30.org",
-    "ns-1681.awsdns-18.co.uk",
-    "ns-201.awsdns-25.com",
-    "ns-765.awsdns-31.net",
   ]
 }
 
