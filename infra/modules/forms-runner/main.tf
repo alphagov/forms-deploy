@@ -5,7 +5,12 @@ data "aws_elasticache_replication_group" "forms_runner" {
 }
 
 locals {
-  deploy_account_id = "711966560482"
+  deploy_account_id           = "711966560482"
+  maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
+}
+
+module "common_values" {
+  source = "../common-values"
 }
 
 module "ecs_service" {
@@ -64,7 +69,7 @@ module "ecs_service" {
     },
     {
       name  = "SETTINGS__MAINTENANCE_MODE__BYPASS_IPS",
-      value = var.maintenance_mode_bypass_ips
+      value = local.maintenance_mode_bypass_ips
     },
     {
       name  = "SETTINGS__FORMS_ENV",

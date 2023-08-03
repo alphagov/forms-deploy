@@ -1,8 +1,7 @@
 data "aws_caller_identity" "current" {}
-
 locals {
-  deploy_account_id = "711966560482"
-
+  deploy_account_id           = "711966560482"
+  maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
   auth_credentials = {
     basic_auth = [
       {
@@ -50,6 +49,10 @@ locals {
     ]
   }
 
+}
+
+module "common_values" {
+  source = "../common-values"
 }
 
 module "ecs_service" {
@@ -108,7 +111,7 @@ module "ecs_service" {
     },
     {
       name  = "SETTINGS__MAINTENANCE_MODE__BYPASS_IPS",
-      value = var.maintenance_mode_bypass_ips
+      value = local.maintenance_mode_bypass_ips
     },
     {
       name  = "SETTINGS__FORMS_ENV",
