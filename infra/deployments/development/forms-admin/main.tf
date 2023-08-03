@@ -14,5 +14,5 @@ module "forms_admin" {
   runner_base                 = "https://submit.dev.forms.service.gov.uk"
   govuk_app_domain            = "integration.publishing.service.gov.uk"
   enable_maintenance_mode     = false
-  details_guidance_feature_flag = false
+  details_guidance_feature_flag = true
 }
