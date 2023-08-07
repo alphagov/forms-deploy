@@ -146,3 +146,25 @@ resource "aws_iam_policy" "run_task" {
     ]
   })
 }
+
+resource "aws_iam_policy" "stop_task" {
+  count       = var.env_name != "deploy" ? 1 : 0
+  name        = "stop-task"
+  path        = "/"
+  description = "Permission to stop task on ECS"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecs:StopTask",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task/forms-*/*",
+        ]
+      },
+    ]
+  })
+}
