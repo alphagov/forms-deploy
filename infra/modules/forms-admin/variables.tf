@@ -8,17 +8,6 @@ variable "env_name" {
   }
 }
 
-variable "secret_kind" {
-  type = string
-
-  default = "tmp/"
-
-  validation {
-    condition     = contains(["", "tmp/", "perm/"], var.secret_kind)
-    error_message = "Valid values for secret_kind are: tmp/, perm/"
-  }
-}
-
 variable "image_tag" {
   type = string
 }

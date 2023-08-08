@@ -16,11 +16,11 @@ locals {
     gds_sso = [
       {
         name      = "GDS_SSO_OAUTH_ID",
-        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/${var.secret_kind}gds-sso-oauth-id"
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-id"
       },
       {
         name      = "GDS_SSO_OAUTH_SECRET",
-        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/${var.secret_kind}gds-sso-oauth-secret"
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-secret"
       }
     ],
     cddo_sso = [
