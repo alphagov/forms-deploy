@@ -50,7 +50,7 @@ To recreate the `deploy` environment.
 
 ### DNS For GOV.UK Forms
 
-The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `deployments/production/dns` deployment manages records to delegate the `dev.` and `stage.` subdomains to Route53 Hosted Zones in the development and staging environments respectively. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output by the `deployments/development/dns` and `deployments/staging/dns` deployments.
+The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `deployments/production/dns` deployment manages records to delegate the `dev.` and `staging.` subdomains to Route53 Hosted Zones in the development and staging environments respectively. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output by the `deployments/development/dns` and `deployments/staging/dns` deployments.
 
 
 ### Linting and Static Analysis
