@@ -217,7 +217,6 @@ module "smoke_tests_staging" {
   environment        = "staging"
   forms_admin_url    = "https://admin.staging.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
-  secret_kind        = "perm/"
 }
 
 module "terraform_apply_production" {
@@ -233,7 +232,6 @@ module "smoke_tests_production" {
   environment        = "production"
   forms_admin_url    = "https://admin.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
-  secret_kind        = "perm/"
 }
 
 module "terraform_apply_dev" {

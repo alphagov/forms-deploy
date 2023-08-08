@@ -7,17 +7,6 @@ variable "environment" {
   }
 }
 
-variable "secret_kind" {
-  type = string
-
-  default = "tmp/"
-
-  validation {
-    condition   = contains(["","tmp/", "perm/"], var.secret_kind)
-    error_message = "Valid values for secret_kind are: tmp/, perm/"
-  }
-}
-
 variable "app_name" {
   type        = string
   description = "The name of the application e.g. forms-admin"
