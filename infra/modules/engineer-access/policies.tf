@@ -111,3 +111,60 @@ resource "aws_iam_policy" "query_rds_with_data_api" {
     ]
   })
 }
+
+resource "aws_iam_policy" "run_task" {
+  count       = var.env_name != "deploy" ? 1 : 0
+  name        = "run-task"
+  path        = "/"
+  description = "Permission to run task on ECS"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecs:RunTask",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-admin:*",
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-api:*",
+        ]
+      },
+      {
+        Action = [
+          "iam:PassRole",
+        ],
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:iam::${local.account_id}:role/*-forms-admin-ecs-task",
+          "arn:aws:iam::${local.account_id}:role/*-forms-admin-ecs-task-execution",
+          "arn:aws:iam::${local.account_id}:role/*-forms-api-ecs-task",
+          "arn:aws:iam::${local.account_id}:role/*-forms-api-ecs-task-execution",
+        ]
+      },
+    ]
+  })
+}
+
+resource "aws_iam_policy" "stop_task" {
+  count       = var.env_name != "deploy" ? 1 : 0
+  name        = "stop-task"
+  path        = "/"
+  description = "Permission to stop task on ECS"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecs:StopTask",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task/forms-*/*",
+        ]
+      },
+    ]
+  })
+}
