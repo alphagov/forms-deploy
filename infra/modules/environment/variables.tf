@@ -18,9 +18,3 @@ variable "enable_cloudfront" {
   description = "If true then a cloudfront distribution is created."
   default     = false
 }
-
-variable "manage_certificate_dns_validation" {
-  type        = bool
-  description = "If true then terraform manages the creation of dns validation records for the ACM certificate"
-  default     = false
-}
