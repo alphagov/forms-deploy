@@ -121,22 +121,7 @@ resource "aws_security_group" "alb" {
   }
 }
 
-# Note: this is being replaced with the acm_certicate_with_validation module below.
-resource "aws_acm_certificate" "alb_cert" {
-  count             = var.manage_certificate_dns_validation ? 0 : 1
-  domain_name       = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
-  validation_method = "DNS"
-
-  subject_alternative_names = lookup(local.subject_alternative_names, var.env_name)
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 module "acm_certicate_with_validation" {
-  count = var.manage_certificate_dns_validation ? 1 : 0
-
   source = "../acm-cert-with-dns-validation"
 
   domain_name               = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -148,7 +133,7 @@ resource "aws_lb_listener" "listener" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = var.manage_certificate_dns_validation ? module.acm_certicate_with_validation[0].arn : aws_acm_certificate.alb_cert[0].arn
+  certificate_arn   = module.acm_certicate_with_validation.arn
 
   default_action {
     type = "fixed-response"
