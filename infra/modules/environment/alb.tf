@@ -123,6 +123,10 @@ resource "aws_security_group" "alb" {
 
 module "acm_certicate_with_validation" {
   source = "../acm-cert-with-dns-validation"
+  providers = {
+    aws             = aws
+    aws.certificate = aws # Create the certificate in the default eu-west-2
+  }
 
   domain_name               = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   subject_alternative_names = lookup(local.subject_alternative_names, var.env_name)

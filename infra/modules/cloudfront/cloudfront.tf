@@ -1,14 +1,13 @@
 # The Certificate for CloudFront must be in us-east-1
-resource "aws_acm_certificate" "cloud_front" {
-  provider = aws.us-east-1
+module "acm_certificate_with_validation" {
+  source = "../acm-cert-with-dns-validation"
 
-  domain_name       = var.domain_name
-  validation_method = "DNS"
-
+  domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
 
-  lifecycle {
-    create_before_destroy = true
+  providers = {
+    aws             = aws
+    aws.certificate = aws.us-east-1
   }
 }
 
@@ -20,6 +19,7 @@ resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
   #checkov:skip=CKV2_AWS_32:Checkov error, response headers policy is set.
   #checkov:skip=CKV2_AWS_47:We don't use log4j
+
   origin {
     domain_name = var.alb_dns_name
     origin_id   = "application_load_balancer"
@@ -61,7 +61,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate.cloud_front.arn
+    acm_certificate_arn      = module.acm_certificate_with_validation.arn
     minimum_protocol_version = "TLSv1.2_2019"
     ssl_support_method       = "sni-only"
   }
