@@ -120,7 +120,7 @@ private
     missing_options = required_options - options.keys
 
     unless missing_options.empty?
-      raise "Missing required options: #{missing_options}"
+      abort "Missing required options: #{missing_options}"
     end
 
     options
