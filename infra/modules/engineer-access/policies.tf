@@ -127,6 +127,8 @@ resource "aws_iam_policy" "run_task" {
         ]
         Effect = "Allow"
         Resource = [
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-admin",
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-api",
           "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-admin:*",
           "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-api:*",
         ]
