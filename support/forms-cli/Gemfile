@@ -6,3 +6,7 @@ gem "colorize"
 gem "notifications-ruby-client"
 gem "rspec"
 gem "rubocop-govuk"
+
+group :development do
+  gem "debug"
+end
