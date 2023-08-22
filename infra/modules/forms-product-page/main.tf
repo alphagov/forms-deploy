@@ -13,7 +13,7 @@ module "ecs_service" {
   image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory
-  container_port         = 9292
+  container_port         = 3000
   permit_internet_egress = true # Required for Sentry.io and AWS SSM
   permit_postgres_egress = true
 
