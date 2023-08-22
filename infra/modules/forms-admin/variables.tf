@@ -42,6 +42,12 @@ variable "auth_provider" {
   default     = "gds_sso"
 }
 
+variable "previous_auth_provider" {
+  description = "The previous auth provider changing to preserve env vars and allow users to logout"
+  type = string
+  default = ""
+}
+
 variable "govuk_app_domain" {
   description = "The domain name for the Signon integration for auth flow"
   type        = string
@@ -58,3 +64,4 @@ variable "details_guidance_feature_flag" {
   type        = bool
   default     = false
 }
+
