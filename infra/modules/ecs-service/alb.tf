@@ -1,9 +1,10 @@
 locals {
   # The ordering here is arbitary so long as they don't clash.
-  listner_priority = {
+  listener_priority = {
     forms-runner : 100
     forms-api : 200
     forms-admin : 300
+    forms-product-page : 400
   }
 }
 
@@ -34,7 +35,7 @@ data "aws_lb_listener" "main" {
 
 resource "aws_lb_listener_rule" "to_app" {
   listener_arn = data.aws_lb_listener.main.arn
-  priority     = lookup(local.listner_priority, var.application)
+  priority     = lookup(local.listener_priority, var.application)
 
   action {
     type             = "forward"
