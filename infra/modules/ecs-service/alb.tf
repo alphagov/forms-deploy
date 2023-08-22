@@ -4,6 +4,7 @@ locals {
     forms-runner : 100
     forms-api : 200
     forms-admin : 300
+    forms-product-page : 400
   }
 }
 
