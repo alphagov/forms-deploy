@@ -146,6 +146,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
     principals {
       type = "AWS"
       identifiers = [
+        "arn:aws:iam::619109835131:role/user-research-forms-product-page-ecs-task-execution",
         "arn:aws:iam::498160065950:role/dev-forms-product-page-ecs-task-execution",
         "arn:aws:iam::972536609845:role/staging-forms-product-page-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-product-page-ecs-task-execution"
