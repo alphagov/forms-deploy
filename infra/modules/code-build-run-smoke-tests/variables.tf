@@ -11,8 +11,8 @@ variable "app_name" {
   type        = string
   description = "The name of the application e.g. forms-admin"
   validation {
-    condition     = contains(["forms-admin", "forms-runner", "forms-api"], var.app_name)
-    error_message = "Valid values for app_name are: forms-admin, forms-runner, forms-api"
+    condition     = contains(["forms-admin", "forms-runner", "forms-api", "forms-product-page"], var.app_name)
+    error_message = "Valid values for app_name are: forms-admin, forms-runner, forms-api, forms-product-page"
   }
 }
 
