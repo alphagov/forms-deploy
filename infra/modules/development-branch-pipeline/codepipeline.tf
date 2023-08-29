@@ -92,8 +92,8 @@ resource "aws_codepipeline" "main" {
 
 module "docker_build" {
   source                         = "../code-build-docker-build"
-  project_name                   = "${var.app_name}-docker-build-${var.environment}-dev-branches"
-  project_description            = "Build the forms-api docker image and push into ECR"
+  project_name                   = "${var.app_name}-docker-build-${var.environment}-branch"
+  project_description            = "Build the ${var.app_name} docker image from a development branch and push into ECR"
   image_name                     = "${var.app_name}-deploy"
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
