@@ -80,6 +80,14 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.s3_combined_policy.json
 }
 
+resource "aws_s3_bucket_ownership_controls" "owner" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
 output "name" {
   value = aws_s3_bucket.this.id
 }
