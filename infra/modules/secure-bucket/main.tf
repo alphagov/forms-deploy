@@ -30,11 +30,6 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_acl" "this" {
-  bucket = aws_s3_bucket.this.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -83,6 +78,14 @@ data "aws_iam_policy_document" "s3_combined_policy" {
 resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.s3_combined_policy.json
+}
+
+resource "aws_s3_bucket_ownership_controls" "owner" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 output "name" {
