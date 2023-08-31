@@ -14,7 +14,7 @@ RUN ln -s /usr/bin/google-chrome-stable /usr/bin/chromium
 
 #Install chrome driver
 RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip
-RUN unzip chromedriver_linux64.zip
+RUN unzip chromedriver-linux64.zip
 RUN mv chromedriver /usr/bin/chromedriver
 
 #Install rbenv
