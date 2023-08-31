@@ -31,12 +31,20 @@ module "ecs_service" {
       value = "true"
     },
     {
+      name  = "SETTINGS__SENTRY__ENVIRONMENT",
+      value = "aws-${var.env_name}"
+    },
+    {
       name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
   ]
 
   secrets = [
+    {
+      name      = "SETTINGS__SENTRY__DSN",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-product-page-${var.env_name}/sentry/dsn"
+    },
     {
       name      = "SECRET_KEY_BASE",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-product-page-${var.env_name}/secret-key-base"
