@@ -39,6 +39,14 @@ resource "aws_route53_record" "api" {
   records = [local.aws_alb]
 }
 
+resource "aws_route53_record" "product-page" {
+  zone_id = aws_route53_zone.staging.id
+  name    = "www.staging.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 60
+  records = [local.aws_alb]
+}
+
 output "staging_zone_name_servers" {
   value = aws_route53_zone.staging.name_servers
 }
