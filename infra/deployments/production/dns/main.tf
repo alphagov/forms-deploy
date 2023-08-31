@@ -1,7 +1,8 @@
 locals {
-  paas_admin_cloudfront_distribution  = "d3r22e84hwvy8u.cloudfront.net"
-  paas_runner_cloudfront_distribution = "d38kosxua6o1pg.cloudfront.net"
-  aws_alb                             = "forms-production-1193111259.eu-west-2.elb.amazonaws.com"
+  paas_admin_cloudfront_distribution        = "d3r22e84hwvy8u.cloudfront.net"
+  paas_runner_cloudfront_distribution       = "d38kosxua6o1pg.cloudfront.net"
+  paas_product_page_cloudfront_distribution = "drcl5oio4aksk.cloudfront.net"
+  aws_alb                                   = "forms-production-1193111259.eu-west-2.elb.amazonaws.com"
 }
 
 resource "aws_route53_zone" "public" {
@@ -36,6 +37,14 @@ resource "aws_route53_record" "api" {
   type    = "CNAME"
   ttl     = 60
   records = [local.aws_alb]
+}
+
+resource "aws_route53_record" "product-page" {
+  zone_id = aws_route53_zone.public.id
+  name    = "www.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 300
+  records = [local.paas_product_page_cloudfront_distribution]
 }
 
 resource "aws_route53_record" "delegate_dev_domain" {
