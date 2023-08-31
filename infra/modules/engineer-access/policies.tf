@@ -35,6 +35,7 @@ resource "aws_iam_policy" "manage_deployments" {
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-admin-main-branch/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-main-branch/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-main-branch/*",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-product-page-main-branch/*",
         ]
       },
       {
@@ -60,12 +61,16 @@ resource "aws_iam_policy" "manage_deployments" {
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-user-research-dev-branches",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-dev-dev-branches",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-user-research-dev-branches",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-product-page-dev-dev-branches",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-product-page-user-research-dev-branches",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-admin-dev-dev-branches/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-admin-user-research-dev-branches/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-dev-dev-branches/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-user-research-dev-branches/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-dev-dev-branches/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-user-research-dev-branches/*",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-product-page-dev-dev-branches/*",
+          "arn:aws:codepipeline:eu-west-2:711966560482:forms-product-page-user-research-dev-branches/*",
         ]
       },
       {
