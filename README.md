@@ -1,11 +1,9 @@
 # forms-deploy
 This repo contains:
 
-- [end-to-end tests](https://github.com/alphagov/forms-deploy/blob/main/capybara/README.md)
 - [the infrastructure for GOV.UK Forms](https://github.com/alphagov/forms-deploy/blob/main/infra/README.md)
 - [GOV.UK Forms local development](https://github.com/alphagov/forms-deploy/blob/main/local/README.md)
 - [support scripts](https://github.com/alphagov/forms-deploy/tree/main/support)
-
 
 This is a *Private* repo due to some concerns raised by GDS IA, see [Assurance Report Use of Github Actions v1.0](https://docs.google.com/document/d/1f-0x5tamO7QjVGivsmFQ5RK9MKM84FRH/).
 
@@ -18,8 +16,8 @@ This is a *Private* repo due to some concerns raised by GDS IA, see [Assurance R
 
 ### forms-api
 
-- https://forms-api-staging.london.cloudapps.digital/
-- https://forms-api-production.london.cloudapps.digital/
+- https://api.staging.forms.service.gov.uk/
+- https://api.forms.service.gov.uk/
 
 ### forms-runner
 
