@@ -16,8 +16,8 @@ This is a *Private* repo due to some concerns raised by GDS IA, see [Assurance R
 
 ### forms-api
 
-- https://forms-api-staging.london.cloudapps.digital/
-- https://forms-api-production.london.cloudapps.digital/
+- https://api.staging.forms.service.gov.uk/
+- https://api.forms.service.gov.uk/
 
 ### forms-runner
 
