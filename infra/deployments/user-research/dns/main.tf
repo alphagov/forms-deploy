@@ -12,9 +12,25 @@ resource "aws_route53_zone" "public" {
   }
 }
 
-resource "aws_route53_record" "research" {
+resource "aws_route53_record" "runner" {
   zone_id = aws_route53_zone.public.id
-  name    = "*.research.forms.service.gov.uk."
+  name    = "submit.research.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 60
+  records = [local.aws_alb]
+}
+
+resource "aws_route53_record" "admin" {
+  zone_id = aws_route53_zone.public.id
+  name    = "admin.research.forms.service.gov.uk"
+  type    = "CNAME"
+  ttl     = 60
+  records = [local.aws_alb]
+}
+
+resource "aws_route53_record" "api" {
+  zone_id = aws_route53_zone.public.id
+  name    = "api.research.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 60
   records = [local.aws_alb]
