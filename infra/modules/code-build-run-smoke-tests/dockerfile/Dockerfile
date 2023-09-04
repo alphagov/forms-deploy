@@ -4,7 +4,7 @@ RUN set -e
 
 #Install system dependencies
 RUN yum update -y
-RUN yum -y install wget unzip tar procps openssl openssl-devel git
+RUN yum -y install wget unzip tar procps openssl openssl-devel git libyaml-devel
 RUN yum groupinstall -y -q "Development tools"
 
 #Install google chrome
