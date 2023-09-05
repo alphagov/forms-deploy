@@ -1,5 +1,4 @@
 locals {
-  paas_product_page_cloudfront_distribution = "drcl5oio4aksk.cloudfront.net"
   aws_alb                                   = "forms-production-1193111259.eu-west-2.elb.amazonaws.com"
 }
 
@@ -42,7 +41,7 @@ resource "aws_route53_record" "product-page" {
   name    = "www.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 300
-  records = [local.paas_product_page_cloudfront_distribution]
+  records = [local.aws_alb]
 }
 
 resource "aws_route53_record" "delegate_dev_domain" {
