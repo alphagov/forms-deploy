@@ -16,5 +16,5 @@ module "forms-runner" {
 module "forms-product-page" {
   source        = "../../../modules/main-branch-pipeline-no-smoke-tests"
   app_name      = "forms-product-page"
-  source_branch = "main-rails"
+  source_branch = "main"
 }
