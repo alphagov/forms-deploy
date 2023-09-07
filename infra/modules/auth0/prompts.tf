@@ -89,7 +89,7 @@ resource "auth0_branding_theme" "govuk_theme" {
 
   widget {
     logo_position         = "left"
-    logo_url              = ""
+    logo_url              = "${var.admin_base_url}${var.app_logo_path}"
     logo_height           = 52
     header_text_alignment = "left"
     social_buttons_layout = "bottom"

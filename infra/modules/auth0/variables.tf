@@ -8,6 +8,11 @@ variable "app_auth_callback_path" {
   default = "/auth/auth0/callback"
 }
 
+variable "app_logo_path" {
+  type    = string
+  default = "/auth-widget-logo.svg"
+}
+
 variable "env_name" {
   type        = string
   description = "The name of the environment to be used in resource names."
