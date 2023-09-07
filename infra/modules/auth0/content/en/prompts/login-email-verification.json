@@ -1,0 +1,10 @@
+{
+  "login-email-verification": {
+    "pageTitle": "Enter the email code to sign in | ${clientName}",
+    "description": "We've sent an email with a code to ${email}",
+    "title": "Enter the email code",
+    "invalid-otp-code-format": "The code must have 6 numeric characters",
+    "invalid-code": "The code you entered is incorrect",
+    "invalid-expired-code": "Wrong or expired code"
+  }
+}
