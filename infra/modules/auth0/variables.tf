@@ -1,3 +1,13 @@
+variable "admin_base_url" {
+  type        = string
+  description = "URL of the admin app"
+}
+
+variable "app_auth_callback_path" {
+  type    = string
+  default = "/auth/auth0/callback"
+}
+
 variable "env_name" {
   type        = string
   description = "The name of the environment to be used in resource names."
