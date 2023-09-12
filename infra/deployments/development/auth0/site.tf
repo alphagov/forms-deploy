@@ -17,6 +17,13 @@ terraform {
   }
 }
 
+provider "auth0" {
+  domain = "govuk-forms-dev.uk.auth0.com"
+
+  client_id     = var.auth0_client_id
+  client_secret = var.auth0_client_secret
+}
+
 provider "aws" {
   allowed_account_ids = ["498160065950"]
 
