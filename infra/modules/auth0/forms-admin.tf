@@ -12,3 +12,30 @@ resource "auth0_client" "forms_admin" {
 
   is_first_party = true
 }
+
+resource "auth0_client_credentials" "forms_admin" {
+  client_id = auth0_client.forms_admin.id
+
+  authentication_method = "client_secret_post"
+}
+
+# Get Terraform to copy the secrets over to AWS for us
+#
+
+resource "aws_ssm_parameter" "forms_admin_client_id" {
+  name  = "/forms-admin-${var.env_name}/auth0/client-id"
+  type  = "SecureString"
+  value = auth0_client_credentials.forms_admin.client_id
+}
+
+resource "aws_ssm_parameter" "forms_admin_client_secret" {
+  name  = "/forms-admin-${var.env_name}/auth0/client-secret"
+  type  = "SecureString"
+  value = auth0_client_credentials.forms_admin.client_secret
+}
+
+resource "aws_ssm_parameter" "forms_admin_domain" {
+  name  = "/forms-admin-${var.env_name}/auth0/domain"
+  type  = "SecureString"
+  value = data.auth0_tenant.tenant.domain
+}
