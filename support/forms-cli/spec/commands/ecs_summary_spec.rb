@@ -49,7 +49,7 @@ describe EcsSummary do
 
       allow(ecs_stub)
         .to receive(:describe_services)
-        .with({ services: %w[forms-api forms-admin forms-runner],
+        .with({ services: %w[forms-api forms-admin forms-runner forms-product-page],
                 cluster: "forms-dev" })
         .and_return(EcsFixtures.describe_services)
 
