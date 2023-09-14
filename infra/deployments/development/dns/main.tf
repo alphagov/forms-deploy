@@ -44,6 +44,21 @@ resource "aws_route53_record" "product-page" {
   records = [local.aws_alb]
 }
 
+data "aws_elb_hosted_zone_id" "main" {}
+
+resource "aws_route53_record" "apex-domain" {
+  #checkov:skip=CKV2_AWS_23:Not applicable to alias records
+  zone_id = aws_route53_zone.public.id
+  name    = "dev.forms.service.gov.uk"
+  type    = "A"
+
+  alias {
+    name                   = local.aws_alb
+    zone_id                = data.aws_elb_hosted_zone_id.main.id
+    evaluate_target_health = true
+  }
+}
+
 output "name_servers" {
   value = aws_route53_zone.public.name_servers
 }

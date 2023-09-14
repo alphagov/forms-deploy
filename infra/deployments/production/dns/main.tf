@@ -1,5 +1,5 @@
 locals {
-  aws_alb                                   = "forms-production-1193111259.eu-west-2.elb.amazonaws.com"
+  aws_alb = "forms-production-1193111259.eu-west-2.elb.amazonaws.com"
 }
 
 resource "aws_route53_zone" "public" {
@@ -42,6 +42,21 @@ resource "aws_route53_record" "product-page" {
   type    = "CNAME"
   ttl     = 300
   records = [local.aws_alb]
+}
+
+data "aws_elb_hosted_zone_id" "main" {}
+
+resource "aws_route53_record" "apex-domain" {
+  #checkov:skip=CKV2_AWS_23:Not applicable to alias records
+  zone_id = aws_route53_zone.public.id
+  name    = "forms.service.gov.uk"
+  type    = "A"
+
+  alias {
+    name                   = local.aws_alb
+    zone_id                = data.aws_elb_hosted_zone_id.main.id
+    evaluate_target_health = true
+  }
 }
 
 resource "aws_route53_record" "delegate_dev_domain" {
