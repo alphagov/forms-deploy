@@ -137,6 +137,7 @@ data "aws_iam_policy_document" "deployer" {
   statement {
     sid = "ManageAlb"
     actions = [
+      "elasticloadbalancing:AddTags",
       "elasticloadbalancing:CreateTargetGroup",
       "elasticloadbalancing:DeleteTargetGroup",
       "elasticloadbalancing:ModifyTargetGroup",
