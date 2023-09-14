@@ -1,0 +1,15 @@
+{
+  "signup-id": {
+    "pageTitle": "Create an account for GOV\u2060.\u2060UK Forms",
+    "title": "Create an account",
+    "description": "Create an account for GOV\u2060.\u2060UK Forms",
+    "footerLinkText": "sign in",
+    "footerText": "If you already have an account,",
+    "email-in-use": "This email address already has an account",
+    "invalid-email-format": "Enter your email address in the correct format",
+    "custom-script-error-code": "Something went wrong, please try again later",
+    "ip-blocked": "We have detected suspicious sign in behaviour and further attempts will be blocked. Please contact the GOV\u2060.\u2060UK Forms team.",
+    "ip-signup-blocked": "Too many attempts to sign in",
+    "no-email": "Enter an email address"
+  }
+}

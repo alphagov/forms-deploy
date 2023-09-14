@@ -1,0 +1,20 @@
+{
+  "login": {
+    "pageTitle": "Sign in to GOV\u2060.\u2060UK Forms",
+    "title": "Sign in",
+    "description": "Sign in to GOV\u2060.\u2060UK Forms",
+    "footerLinkText": "Create an account",
+    "invitationTitle": "You've been invited!",
+    "invitationDescription": "Sign in to accept ${inviterName}'s invitation to join ${companyName} on ${clientName}.",
+    "invalid-email-format": "Enter your email address in the correct format",
+    "custom-script-error-code": "Something went wrong, please try again later",
+    "authentication-failure": "We are sorry, something went wrong when attempting to sign in",
+    "ip-blocked": "We have detected suspicious sign in behaviour and further attempts will be blocked. Please contact the GOV\u2060.\u2060UK Forms team.",
+    "user-blocked": "Your account has been blocked after multiple consecutive attempts to sign in.",
+    "same-user-login": "Too many attempts to sign in. Please try again later.",
+    "no-email": "Enter your email address",
+    "no-username": "Enter your username or email address",
+    "wrong-credentials": "Wrong email address or password",
+    "wrong-email-credentials": "Wrong email address or password"
+  }
+}
