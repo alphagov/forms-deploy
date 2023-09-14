@@ -175,3 +175,33 @@ resource "aws_iam_policy" "stop_task" {
     ]
   })
 }
+
+resource "aws_iam_policy" "manage_parameter_store" {
+  name        = "manage-parameter-store"
+  path        = "/"
+  description = "Permission to create, delete and modify parameter store values"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ssm:PutParameter",
+          "ssm:DeleteParameter",
+        ]
+        Effect   = "Allow"
+        Resource = ["*"]
+      },
+      {
+        Action = [
+          "ssm:PutParameter",
+          "ssm:DeleteParameter",
+        ]
+        Effect = "Deny"
+        Resource = [
+          "arn:aws:ssm:*:*:parameter/database/master-password"
+        ]
+      },
+    ]
+  })
+}
