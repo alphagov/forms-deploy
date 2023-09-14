@@ -15,7 +15,7 @@ resource "aws_account_alternate_contact" "operations" {
 }
 
 resource "aws_ssm_parameter" "contact_email" {
-  name  = "contact-email"
+  name  = "/account/contact-email"
   type  = "SecureString"
   value = "dummy-email-address@digital.cabinet-office.gov.uk"
 
@@ -27,7 +27,7 @@ resource "aws_ssm_parameter" "contact_email" {
 }
 
 resource "aws_ssm_parameter" "contact_phone_number" {
-  name  = "contact-phone-number"
+  name  = "/account/contact-phone-number"
   type  = "SecureString"
   value = "+1234567890"
 
@@ -39,13 +39,13 @@ resource "aws_ssm_parameter" "contact_phone_number" {
 }
 
 data "aws_ssm_parameter" "contact_phone_number" {
-  name = "contact-phone-number"
+  name = "/account/contact-phone-number"
 
   depends_on = [aws_ssm_parameter.contact_phone_number]
 }
 
 data "aws_ssm_parameter" "contact_email" {
-  name = "contact-email"
+  name = "/account/contact-email"
 
   depends_on = [aws_ssm_parameter.contact_email]
 }
