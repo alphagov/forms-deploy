@@ -41,6 +41,24 @@ resource "aws_codebuild_project" "smoke_tests" {
     }
 
     environment_variable {
+      name  = "AUTH0_EMAIL_USERNAME"
+      value = "/${var.environment}/smoketests/auth0/email-username"
+      type  = "PARAMETER_STORE"
+    }
+
+    environment_variable {
+      name  = "AUTH0_GMAIL_ADDRESS"
+      value = "/${var.environment}/smoketests/auth0/gmail-address"
+      type  = "PARAMETER_STORE"
+    }
+
+    environment_variable {
+      name  = "AUTH0_GOOGLE_APP_PASSWORD"
+      value = "/${var.environment}/smoketests/auth0/gmail-password"
+      type  = "PARAMETER_STORE"
+    }
+
+    environment_variable {
       name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
       value = "/${var.environment}/smoketests/notify/api-key"
       type  = "PARAMETER_STORE"
