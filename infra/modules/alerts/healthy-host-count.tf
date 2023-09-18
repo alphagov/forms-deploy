@@ -1,5 +1,5 @@
 locals {
-  apps = ["forms-admin", "forms-api", "forms-runner"]
+  apps = ["forms-admin", "forms-api", "forms-runner", "forms-product-page"]
 }
 
 data "aws_lb" "alb" {
