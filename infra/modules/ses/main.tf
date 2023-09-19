@@ -20,7 +20,10 @@ resource "aws_iam_access_key" "smtp_user" {
 data "aws_iam_policy_document" "ses_sender" {
   #checkov:skip=CKV_AWS_111: ignoring while spiking
   statement {
-    actions   = ["ses:SendRawEmail"]
+    actions = [
+      "ses:SendRawEmail",
+      "ses:SendEmail"
+    ]
     resources = ["*"]
   }
 }
