@@ -1,5 +1,5 @@
 resource "aws_ses_email_identity" "validated_email" {
-  email = "email@email.com"
+  email = "email@gmail.com"
 }
 
 # resource "aws_ses_domain_identity" "validated_domain" {
@@ -36,9 +36,11 @@ resource "aws_iam_user_policy_attachment" "attach" {
 }
 
 output "smtp_username" {
-  value = aws_iam_access_key.smtp_user.id
+  value     = aws_iam_access_key.smtp_user.id
+  sensitive = true
 }
 
 output "smtp_password" {
-  value = aws_iam_access_key.smtp_user.ses_smtp_password_v4
+  value     = aws_iam_access_key.smtp_user.ses_smtp_password_v4
+  sensitive = true
 }
