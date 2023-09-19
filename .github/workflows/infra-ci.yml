@@ -18,4 +18,13 @@ jobs:
           directory: infra/
           framework: terraform
           quiet: true #Only show failed checks
-
+  run_tf_fmt:
+    runs-on: ubuntu-latest
+    name: terraform_fmt
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Terraform fmt
+        id: tf_fmt
+        run: terraform fmt -write=false -diff=true -list=true -recursive
+        
