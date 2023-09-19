@@ -1,10 +1,12 @@
 resource "aws_ses_email_identity" "validated_email" {
-  email = "email@gmail.com"
+  # this is the email address that sends the email
+  email = "email@email.com"
 }
 
-# resource "aws_ses_domain_identity" "validated_domain" {
-#   domain = "domain to validate"
-# }
+resource "aws_ses_domain_identity" "validated_domain" {
+  # this is the domain of the email address that we're sending from, eg. "forms.service.gov.uk"
+  domain = "domain to validate"
+}
 
 resource "aws_iam_user" "smtp_user" {
   #checkov:skip=CKV_AWS_273:ignoring while spiking

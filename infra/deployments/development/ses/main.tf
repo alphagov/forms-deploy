@@ -3,5 +3,6 @@ module "ses" {
 }
 
 output "smtp_username" {
-  value = module.ses
+  value     = module.ses
+  sensitive = true
 }
