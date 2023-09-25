@@ -42,6 +42,10 @@ module "ecs_service" {
       name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
+    {
+      name  = "SETTINGS__ZENDESK__SUBDOMAIN",
+      value = var.zendesk_subdomain
+    },
   ]
 
   secrets = [
@@ -50,9 +54,17 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-product-page-${var.env_name}/sentry/dsn"
     },
     {
+      name      = "SETTINGS__ZENDESK__API_USER",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-product-page-${var.env_name}/zendesk/api-user"
+    },
+    {
+      name      = "SETTINGS__ZENDESK__API_TOKEN",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-product-page-${var.env_name}/zendesk/api-token"
+    },
+    {
       name      = "SECRET_KEY_BASE",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-product-page-${var.env_name}/secret-key-base"
-    }
+    },
   ]
 }
 
