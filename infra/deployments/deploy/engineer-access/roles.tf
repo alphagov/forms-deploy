@@ -9,6 +9,7 @@ locals {
     "alice.carr",      # Admin whilst setting up the deploy account
     "catalina.garcia", # Admin to apply changes to pipelines until we have pipelines for our pipelines.
     "dan.worth",       # Admin whilst setting up the deploy account
+    "kelvin.gan"       # Feature Team Tech lead
   ]
 
   # GOV.UK Forms developers that have completed onboarding and support the
@@ -20,6 +21,7 @@ locals {
     "dan.worth",
     "david.biddle",
     "jamie.wilkinson",
+    "kelvin.gan",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
@@ -33,6 +35,7 @@ locals {
     "david.biddle",
     "james.sheppard",
     "jamie.wilkinson",
+    "kelvin.gan",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
