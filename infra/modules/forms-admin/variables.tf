@@ -44,8 +44,8 @@ variable "auth_provider" {
 
 variable "previous_auth_provider" {
   description = "The previous auth provider changing to preserve env vars and allow users to logout"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "govuk_app_domain" {
