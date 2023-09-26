@@ -6,7 +6,7 @@ locals {
 }
 
 module "common_values" {
-  source   = "../common-values" 
+  source = "../common-values"
 }
 
 resource "aws_iam_role" "gds_user_role" {
