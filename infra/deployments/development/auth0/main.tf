@@ -10,9 +10,16 @@ variable "auth0_client_secret" {
   sensitive   = true
 }
 
+module "ses" {
+  source = "../../../modules/ses"
+}
+
 module "auth0" {
   source = "../../../modules/auth0"
 
-  admin_base_url = "https://admin.dev.forms.service.gov.uk"
-  env_name       = "dev"
+  admin_base_url    = "https://admin.dev.forms.service.gov.uk"
+  env_name          = "dev"
+  smtp_username     = module.ses.smtp_username
+  smtp_password     = module.ses.smtp_password
+  smtp_from_address = "no-reply@dev.forms.service.gov.uk"
 }
