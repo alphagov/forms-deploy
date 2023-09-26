@@ -22,3 +22,30 @@ variable "env_name" {
     error_message = "Valid values for env_name are: user-research, dev, staging, production"
   }
 }
+
+variable "smtp_password" {
+  type        = string
+  description = "The password for the smtp user."
+}
+
+variable "smtp_username" {
+  type        = string
+  description = "The username of the smtp user."
+}
+
+variable "smtp_host" {
+  type        = string
+  description = "The hostname of the smtp server."
+  default     = "email-smtp.eu-west-2.amazonaws.com"
+}
+
+variable "smtp_port" {
+  type        = number
+  description = "The port used by the smtp server."
+  default     = 587
+}
+
+variable "smtp_from_address" {
+  type        = string
+  description = "The email address you want to send from."
+}

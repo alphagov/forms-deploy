@@ -1,11 +1,9 @@
 resource "aws_ses_email_identity" "validated_email" {
-  # this is the email address that sends the email
-  email = "email@email.com"
+  email = "laurence.debruxelles@digital.cabinet-office.gov.uk"
 }
 
-resource "aws_ses_domain_identity" "validated_domain" {
-  # this is the domain of the email address that we're sending from, eg. "forms.service.gov.uk"
-  domain = "domain to validate"
+resource "aws_ses_email_identity" "validated_email_1" {
+  email = "alice.carr@digital.cabinet-office.gov.uk"
 }
 
 resource "aws_iam_user" "smtp_user" {
