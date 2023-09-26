@@ -13,6 +13,7 @@ locals {
     "david.biddle",
     "james.sheppard",
     "jamie.wilkinson",
+    "kelvin.gan",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
@@ -27,6 +28,7 @@ locals {
     "dan.worth",
     "david.biddle",
     "jamie.wilkinson",
+    "kelvin.gan",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
@@ -40,6 +42,7 @@ locals {
     "david.biddle",
     "james.sheppard",
     "jamie.wilkinson",
+    "kelvin.gan",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
