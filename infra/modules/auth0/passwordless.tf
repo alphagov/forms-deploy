@@ -2,7 +2,7 @@ locals {
   en = {
     email_templates = {
       passwordless_email = merge(
-        jsondecode(file("${path.module}/content/en/email_templates/passwordless_email.json")),
+        jsondecode(templatefile("${path.module}/content/en/email_templates/passwordless_email.json.tftpl", { from_address = var.smtp_from_address })),
         {
           body = file("${path.module}/content/en/email_templates/passwordless_email_body.html")
         }
