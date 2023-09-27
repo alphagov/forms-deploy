@@ -15,4 +15,5 @@ module "forms_admin" {
   govuk_app_domain              = "staging.publishing.service.gov.uk"
   enable_maintenance_mode       = false
   details_guidance_feature_flag = true
+  metrics_feature_flag          = false
 }
