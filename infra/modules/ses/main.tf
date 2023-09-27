@@ -1,9 +1,6 @@
-resource "aws_ses_email_identity" "validated_email" {
-  email = "laurence.debruxelles@digital.cabinet-office.gov.uk"
-}
-
-resource "aws_ses_email_identity" "validated_email_1" {
-  email = "alice.carr@digital.cabinet-office.gov.uk"
+resource "aws_ses_email_identity" "verified_email_addresses" {
+  for_each = var.verified_email_addresses
+  email    = each.value
 }
 
 resource "aws_iam_user" "smtp_user" {
