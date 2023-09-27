@@ -13,3 +13,15 @@ resource "aws_cloudwatch_log_subscription_filter" "csls_log_subscription" {
     aws_cloudwatch_log_group.log
   ]
 }
+
+resource "aws_cloudwatch_log_metric_filter" "filter_out_ping_logs" {
+  name = "filter_out_ping_logs"
+  log_group_name = aws_cloudwatch_log_group.log.name
+  pattern =  "{ $.action != \"ping\" }"
+
+  metric_transformation {
+    name      = "ping_logs"
+    namespace = "Logs"
+    value     = ""
+  }
+}
