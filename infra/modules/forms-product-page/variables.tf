@@ -25,3 +25,8 @@ variable "desired_task_count" {
   type        = number
   default     = 2
 }
+
+variable "zendesk_subdomain" {
+  description = "The Zendesk tenant the support form should create tickets on"
+  default     = "govuk"
+}
