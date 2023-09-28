@@ -16,6 +16,18 @@ data "aws_iam_policy_document" "ecs_task_role_assume_role" {
   }
 }
 
+resource "aws_iam_policy" "ecs_task_policy" {
+  count  = var.ecs_task_role_policy_json == "" ? 0 : 1
+  name   = "${var.env_name}-${var.application}-ecs-task-policy"
+  policy = var.ecs_task_role_policy_json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_role_policy_attachment" {
+  count      = var.ecs_task_role_policy_json == "" ? 0 : 1
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.ecs_task_policy[0].arn
+}
+
 resource "aws_iam_role" "ecs_task_exec_role" {
   name               = "${var.env_name}-${var.application}-ecs-task-execution"
   description        = "Used by ECS to create ${var.application} task"

@@ -55,6 +55,24 @@ module "common_values" {
   source = "../common-values"
 }
 
+data "aws_iam_policy_document" "ecs_task_role_permissions" {
+  statement {
+    actions = [
+      "cloudwatch:GetMetricData"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+    condition {
+      test     = "StringLike"
+      variable = "cloudwatch:namespace"
+
+      values = [
+        "forms/${var.env_name}*"
+      ]
+    }
+  }
+}
+
 module "ecs_service" {
   source                 = "../ecs-service"
   env_name               = var.env_name
@@ -67,6 +85,8 @@ module "ecs_service" {
   container_port         = 3000
   permit_internet_egress = true
   permit_postgres_egress = true
+
+  ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
 
   environment_variables = [
     {

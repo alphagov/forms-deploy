@@ -81,3 +81,9 @@ variable "permit_redis_egress" {
   default     = false
   description = "If true then the app's security group will permit egress to the redis on port 6379"
 }
+
+variable "ecs_task_role_policy_json" {
+  type        = string
+  description = "JSON policy to be attached to the ECS task role"
+  default     = ""
+}
