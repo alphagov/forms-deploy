@@ -19,6 +19,8 @@ module "ses" {
     "catalina.garcia@digital.cabinet-office.gov.uk",
     "forms--test-automation-groupt@digital.cabinet-office.gov.uk", # smoke tests user
   ]
+
+  user = "smtp_user"
 }
 
 module "auth0" {

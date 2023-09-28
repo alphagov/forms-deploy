@@ -5,7 +5,7 @@ resource "aws_ses_email_identity" "verified_email_addresses" {
 
 resource "aws_iam_user" "smtp_user" {
   #checkov:skip=CKV_AWS_273:ignoring while spiking
-  name = "smtp_user"
+  name = var.user
 }
 
 resource "aws_iam_access_key" "smtp_user" {

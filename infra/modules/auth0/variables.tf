@@ -26,11 +26,13 @@ variable "env_name" {
 variable "smtp_password" {
   type        = string
   description = "The password for the smtp user."
+  sensitive   = true
 }
 
 variable "smtp_username" {
   type        = string
   description = "The username of the smtp user."
+  sensitive   = true
 }
 
 variable "smtp_host" {
