@@ -135,6 +135,26 @@ data "aws_iam_policy_document" "deployer" {
   }
 
   statement {
+    sid = "ManageEcsTaskPolicies"
+    actions = [
+      "iam:CreatePolicy",
+      "iam:GetRolePolicy",
+      "iam:GetPolicy",
+      "iam:TagPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
+      "iam:DeletePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-policy",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-api-ecs-task-policy",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-runner-ecs-task-policy",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-product-page-ecs-task-policy"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid = "ManageAlb"
     actions = [
       "elasticloadbalancing:AddTags",
