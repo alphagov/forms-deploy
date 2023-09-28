@@ -5,7 +5,7 @@ variable "verified_email_addresses" {
 }
 
 variable "user" {
-  type = string
+  type        = string
   description = "User to be created and be given SES SMTP credentials"
-  default = "smtp_user"
+  default     = "smtp_user"
 }

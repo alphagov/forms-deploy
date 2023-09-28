@@ -10,25 +10,10 @@ variable "auth0_client_secret" {
   sensitive   = true
 }
 
-module "ses" {
-  source = "../../../modules/ses"
-
-  verified_email_addresses = [
-    "alice.carr@digital.cabinet-office.gov.uk",
-    "laurence.debruxelles@digital.cabinet-office.gov.uk",
-    "catalina.garcia@digital.cabinet-office.gov.uk",
-    "forms--test-automation-groupt@digital.cabinet-office.gov.uk", # smoke tests user
-  ]
-
-  user = "auth0"
-}
-
 module "auth0" {
   source = "../../../modules/auth0"
 
   admin_base_url    = "https://admin.dev.forms.service.gov.uk"
   env_name          = "dev"
-  smtp_username     = module.ses.smtp_username
-  smtp_password     = module.ses.smtp_password
   smtp_from_address = "no-reply@dev.forms.service.gov.uk"
 }

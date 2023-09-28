@@ -35,12 +35,14 @@ resource "aws_iam_user_policy_attachment" "attach" {
   policy_arn = aws_iam_policy.ses_sender.arn
 }
 
-output "smtp_username" {
-  value     = aws_iam_access_key.this.id
-  sensitive = true
+resource "aws_ssm_parameter" "smtp_username" {
+  name  = "/ses/${var.user}-smtp-username"
+  type  = "SecureString"
+  value = aws_iam_access_key.this.id
 }
 
-output "smtp_password" {
-  value     = aws_iam_access_key.this.ses_smtp_password_v4
-  sensitive = true
+resource "aws_ssm_parameter" "smtp_password" {
+  name  = "/ses/${var.user}-smtp-password"
+  type  = "SecureString"
+  value = aws_iam_access_key.this.ses_smtp_password_v4
 }
