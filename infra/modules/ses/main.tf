@@ -3,13 +3,13 @@ resource "aws_ses_email_identity" "verified_email_addresses" {
   email    = each.value
 }
 
-resource "aws_iam_user" "smtp_user" {
+resource "aws_iam_user" "this" {
   #checkov:skip=CKV_AWS_273:ignoring while spiking
   name = var.user
 }
 
-resource "aws_iam_access_key" "smtp_user" {
-  user = aws_iam_user.smtp_user.name
+resource "aws_iam_access_key" "this" {
+  user = aws_iam_user.this.name
 }
 
 data "aws_iam_policy_document" "ses_sender" {
@@ -31,16 +31,16 @@ resource "aws_iam_policy" "ses_sender" {
 
 resource "aws_iam_user_policy_attachment" "attach" {
   #checkov:skip=CKV_AWS_40: ignoring while spiking
-  user       = aws_iam_user.smtp_user.name
+  user       = aws_iam_user.this.name
   policy_arn = aws_iam_policy.ses_sender.arn
 }
 
 output "smtp_username" {
-  value     = aws_iam_access_key.smtp_user.id
+  value     = aws_iam_access_key.this.id
   sensitive = true
 }
 
 output "smtp_password" {
-  value     = aws_iam_access_key.smtp_user.ses_smtp_password_v4
+  value     = aws_iam_access_key.this.ses_smtp_password_v4
   sensitive = true
 }

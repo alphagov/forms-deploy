@@ -20,7 +20,7 @@ module "ses" {
     "forms--test-automation-groupt@digital.cabinet-office.gov.uk", # smoke tests user
   ]
 
-  user = "smtp_user"
+  user = "auth0"
 }
 
 module "auth0" {
