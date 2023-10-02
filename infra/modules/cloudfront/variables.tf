@@ -13,12 +13,6 @@ variable "ip_rate_limit" {
   default     = 1000
 }
 
-variable "enable_cloudfront" {
-  type        = bool
-  description = "If true then a cloudfront distribution is created."
-  default     = false
-}
-
 variable "domain_name" {
   type        = string
   description = "The domain name for the distribution"

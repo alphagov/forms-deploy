@@ -16,5 +16,5 @@ variable "ip_rate_limit" {
 variable "enable_cloudfront" {
   type        = bool
   description = "If true then a cloudfront distribution is created."
-  default     = false
+  default     = true
 }
