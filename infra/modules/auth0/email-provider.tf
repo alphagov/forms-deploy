@@ -1,9 +1,9 @@
 data "aws_ssm_parameter" "smtp_username" {
-  name = "/ses/auth0-smtp-username"
+  name = "/ses/auth0/smtp-username"
 }
 
 data "aws_ssm_parameter" "smtp_password" {
-  name = "/ses/auth0-smtp-password"
+  name = "/ses/auth0/smtp-password"
 }
 
 resource "auth0_email_provider" "smtp_email_provider" {

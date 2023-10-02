@@ -5,7 +5,7 @@ resource "aws_ses_email_identity" "verified_email_addresses" {
 
 resource "aws_iam_user" "this" {
   #checkov:skip=CKV_AWS_273:ignoring while spiking
-  name = var.user
+  name = var.smtp_user
 }
 
 resource "aws_iam_access_key" "this" {
@@ -36,13 +36,13 @@ resource "aws_iam_user_policy_attachment" "attach" {
 }
 
 resource "aws_ssm_parameter" "smtp_username" {
-  name  = "/ses/${var.user}-smtp-username"
+  name  = "/ses/${var.smtp_user}/smtp-username"
   type  = "SecureString"
   value = aws_iam_access_key.this.id
 }
 
 resource "aws_ssm_parameter" "smtp_password" {
-  name  = "/ses/${var.user}-smtp-password"
+  name  = "/ses/${var.smtp_user}/smtp-password"
   type  = "SecureString"
   value = aws_iam_access_key.this.ses_smtp_password_v4
 }

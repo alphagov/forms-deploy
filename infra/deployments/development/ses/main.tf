@@ -8,5 +8,5 @@ module "ses" {
     "forms--test-automation-groupt@digital.cabinet-office.gov.uk", # smoke tests user
   ]
 
-  user = "auth0"
+  smtp_user = "auth0"
 }
