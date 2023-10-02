@@ -27,6 +27,7 @@ locals {
     "catalina.garcia",
     "dan.worth",
     "david.biddle",
+    "james.sheppard",
     "jamie.wilkinson",
     "kelvin.gan",
     "laurence.debruxelles",
