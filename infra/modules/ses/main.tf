@@ -20,6 +20,11 @@ data "aws_iam_policy_document" "ses_sender" {
       "ses:SendEmail"
     ]
     resources = ["*"]
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "ses:FromAddress"
+      values   = ["${var.from_address}"]
+    }
   }
 }
 

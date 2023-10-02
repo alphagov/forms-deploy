@@ -9,3 +9,8 @@ variable "smtp_user" {
   description = "User to be created and be given SES SMTP credentials"
   default     = "smtp_user"
 }
+
+variable "from_address" {
+  type        = string
+  description = "Address emails are sent from"
+}
