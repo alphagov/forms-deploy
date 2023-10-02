@@ -1,10 +1,4 @@
 terraform {
-  required_version = "= 1.2.8"
-
-  required_providers {
-    aws = ">= 4.37.0"
-  }
-
   backend "s3" {
     bucket = "gds-forms-staging-tfstate"
     key    = "redis.tfstate"

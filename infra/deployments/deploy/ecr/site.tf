@@ -1,6 +1,4 @@
 terraform {
-  required_version = "= 1.2.8"
-
   # Comment out when bootstrapping
   backend "s3" {
     bucket = "gds-forms-deploy-tfstate"
