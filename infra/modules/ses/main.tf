@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
 resource "aws_ses_email_identity" "verified_email_addresses" {
   for_each = var.verified_email_addresses
   email    = each.value
@@ -13,13 +19,12 @@ resource "aws_iam_access_key" "this" {
 }
 
 data "aws_iam_policy_document" "ses_sender" {
-  #checkov:skip=CKV_AWS_111: ignoring while spiking
   statement {
     actions = [
       "ses:SendRawEmail",
       "ses:SendEmail"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:ses:eu-west-2:${local.account_id}:identity/*"]
     condition {
       test     = "ForAnyValue:StringEquals"
       variable = "ses:FromAddress"
