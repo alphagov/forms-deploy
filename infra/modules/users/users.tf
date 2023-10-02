@@ -33,6 +33,13 @@ locals {
       dev           = "admin"
       user_research = "admin"
     },
+    "andy.hunt" = {
+      deploy        = "support"
+      staging       = "support"
+      prod          = "readonly"
+      dev           = "admin"
+      user_research = "support"
+    },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
       staging       = "admin" # Required whilst setting up environments
