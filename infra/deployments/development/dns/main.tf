@@ -1,5 +1,5 @@
-locals {
-  aws_alb = "forms-dev-1285400852.eu-west-2.elb.amazonaws.com"
+data "aws_cloudfront_distribution" "main" {
+  id = "E2BI70XAWS5P2T"
 }
 
 resource "aws_route53_zone" "public" {
@@ -17,7 +17,7 @@ resource "aws_route53_record" "runner" {
   name    = "submit.dev.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 60
-  records = [local.aws_alb]
+  records = [data.aws_cloudfront_distribution.main.domain_name]
 }
 
 resource "aws_route53_record" "admin" {
@@ -25,7 +25,7 @@ resource "aws_route53_record" "admin" {
   name    = "admin.dev.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 60
-  records = [local.aws_alb]
+  records = [data.aws_cloudfront_distribution.main.domain_name]
 }
 
 resource "aws_route53_record" "api" {
@@ -33,7 +33,7 @@ resource "aws_route53_record" "api" {
   name    = "api.dev.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 60
-  records = [local.aws_alb]
+  records = [data.aws_cloudfront_distribution.main.domain_name]
 }
 
 resource "aws_route53_record" "product-page" {
@@ -41,7 +41,7 @@ resource "aws_route53_record" "product-page" {
   name    = "www.dev.forms.service.gov.uk"
   type    = "CNAME"
   ttl     = 60
-  records = [local.aws_alb]
+  records = [data.aws_cloudfront_distribution.main.domain_name]
 }
 
 data "aws_elb_hosted_zone_id" "main" {}
@@ -53,8 +53,8 @@ resource "aws_route53_record" "apex-domain" {
   type    = "A"
 
   alias {
-    name                   = local.aws_alb
-    zone_id                = data.aws_elb_hosted_zone_id.main.id
+    name                   = data.aws_cloudfront_distribution.main.domain_name
+    zone_id                = data.aws_cloudfront_distribution.main.hosted_zone_id
     evaluate_target_health = true
   }
 }
