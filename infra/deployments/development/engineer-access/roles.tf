@@ -23,33 +23,9 @@ locals {
   # GOV.UK Forms developers that have completed onboarding and support the
   # platform can have this role
   support = [
-    "alice.carr",
-    "alistair.laing",
-    "catalina.garcia",
-    "dan.worth",
-    "david.biddle",
-    "james.sheppard",
-    "jamie.wilkinson",
-    "kelvin.gan",
-    "laurence.debruxelles",
-    "radha.kotyankar",
-    "samuel.culley",
-    "tom.iles"
   ]
 
   readonly = [
-    "alice.carr",
-    "alistair.laing",
-    "catalina.garcia",
-    "dan.worth",
-    "david.biddle",
-    "james.sheppard",
-    "jamie.wilkinson",
-    "kelvin.gan",
-    "laurence.debruxelles",
-    "radha.kotyankar",
-    "samuel.culley",
-    "tom.iles"
   ]
 }
 

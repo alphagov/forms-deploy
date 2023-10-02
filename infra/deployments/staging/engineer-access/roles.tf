@@ -6,22 +6,18 @@ locals {
   # Admin access to the staging environment should only be provided when
   # needed.
   admins = [
-    "dan.worth",       // Required whilst setting up environments.
     "alice.carr",      // Required whilst setting up environments.
     "catalina.garcia", // Required whilst setting up environments.
+    "dan.worth",       // Required whilst setting up environments.
     "kelvin.gan"       // Feature Team Tech lead
   ]
 
   # GOV.UK Forms developers that have completed onboarding and support the
   # platform can have this role
   support = [
-    "alice.carr",
     "alistair.laing",
-    "catalina.garcia",
-    "dan.worth",
     "david.biddle",
     "jamie.wilkinson",
-    "kelvin.gan",
     "laurence.debruxelles",
     "samuel.culley",
     "tom.iles"
@@ -30,17 +26,7 @@ locals {
   # All GOV.UK Forms developers can have readonly access to
   # the staging environment.
   readonly = [
-    "alice.carr",
-    "alistair.laing",
-    "catalina.garcia",
-    "dan.worth",
-    "david.biddle",
     "james.sheppard",
-    "jamie.wilkinson",
-    "kelvin.gan",
-    "laurence.debruxelles",
-    "samuel.culley",
-    "tom.iles"
   ]
 }
 
