@@ -7,6 +7,7 @@ data "aws_iam_policy_document" "deployer" {
       "logs:CreateLogStream",
       "logs:CreateLogGroup",
       "logs:DescribeSubscriptionFilters",
+      "logs:PutSubscriptionFilter",
       "logs:ListTagsLogGroup"
     ]
     resources = [
