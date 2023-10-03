@@ -90,11 +90,11 @@ locals {
       user_research = "admin"
     },
     "radha.kotyankar" = {
-      deploy        = false
-      staging       = false
-      prod          = false
+      deploy        = "support"
+      staging       = "support"
+      prod          = "readonly"
       dev           = "admin"
-      user_research = false
+      user_research = "support"
     },
     "samuel.culley" = {
       deploy        = "support"
