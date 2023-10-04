@@ -92,7 +92,7 @@ locals {
     "radha.kotyankar" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "readonly"
+      prod          = "support"
       dev           = "admin"
       user_research = "support"
     },
