@@ -205,3 +205,23 @@ resource "aws_iam_policy" "manage_parameter_store" {
     ]
   })
 }
+
+resource "aws_iam_policy" "manage_dashboards" {
+  name        = "manage-dashboards"
+  path        = "/"
+  description = "Create, update and delete CloudWatch dashbaords"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "cloudwatch:PutDashboard",
+          "cloudwatch:DeleteDashboards"
+        ]
+        Effect   = "Allow"
+        Resource = ["*"]
+      }
+    ]
+  })
+}
