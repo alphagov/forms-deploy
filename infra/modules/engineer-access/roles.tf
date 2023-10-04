@@ -17,6 +17,7 @@ module "support_role" {
   iam_policy_arns = flatten([
     "arn:aws:iam::aws:policy/ReadOnlyAccess",
     aws_iam_policy.manage_parameter_store.arn,
+    aws_iam_policy.manage_dashboards.arn,
     var.env_name == "deploy" ? [aws_iam_policy.manage_deployments[0].arn] : [],
     var.env_name != "deploy" ? [aws_iam_policy.query_rds_with_data_api[0].arn, aws_iam_policy.run_task[0].arn, aws_iam_policy.stop_task[0].arn] : []
   ])
