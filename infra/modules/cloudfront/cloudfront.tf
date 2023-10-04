@@ -66,7 +66,7 @@ resource "aws_cloudfront_distribution" "main" {
     ssl_support_method       = "sni-only"
   }
 
-  aliases    = var.subject_alternative_names
+  aliases    = concat([var.domain_name], var.subject_alternative_names)
   web_acl_id = aws_wafv2_web_acl.this.arn
 }
 
