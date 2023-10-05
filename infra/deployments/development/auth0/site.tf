@@ -17,11 +17,19 @@ terraform {
   }
 }
 
+data "aws_ssm_parameter" "auth0_client_id" {
+  name = "/terraform/auth0-access/client-id"
+}
+
+data "aws_ssm_parameter" "auth0_client_secret" {
+  name = "/terraform/auth0-access/client-secret"
+}
+
 provider "auth0" {
   domain = "govuk-forms-dev.uk.auth0.com"
 
-  client_id     = var.auth0_client_id
-  client_secret = var.auth0_client_secret
+  client_id     = data.aws_ssm_parameter.auth0_client_id.value
+  client_secret = data.aws_ssm_parameter.auth0_client_secret.value
 }
 
 provider "aws" {
