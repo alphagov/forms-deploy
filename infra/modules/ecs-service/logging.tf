@@ -5,6 +5,9 @@ resource "aws_cloudwatch_log_group" "log" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "csls_log_subscription" {
+  # Temporarily disable log messages to Splunk for Dev whilst load testing
+  count = var.env_name == "dev" ? 0 : 1
+
   name            = "csls_log_subscription"
   log_group_name  = "${var.application}-${var.env_name}"
   filter_pattern  = "{ $.action != \"ping\" }"
