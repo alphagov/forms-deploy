@@ -14,6 +14,5 @@ module "ses" {
     ],
   )
 
-  smtp_user    = "auth0"
   from_address = "no-reply@dev.forms.service.gov.uk"
 }
