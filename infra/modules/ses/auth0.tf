@@ -1,5 +1,5 @@
 resource "aws_iam_user" "auth0" {
-  #checkov:skip=CKV_AWS_273:ignoring while spiking
+  #checkov:skip=CKV_AWS_273: SES SMTP interface requires long-term IAM credentials
   name = "auth0"
 }
 
@@ -8,7 +8,7 @@ resource "aws_iam_access_key" "auth0" {
 }
 
 resource "aws_iam_user_policy_attachment" "attach" {
-  #checkov:skip=CKV_AWS_40: ignoring while spiking
+  #checkov:skip=CKV_AWS_40: SES SMTP interface requires long-term IAM credentials
   user       = aws_iam_user.auth0.name
   policy_arn = aws_iam_policy.ses_sender.arn
 }
