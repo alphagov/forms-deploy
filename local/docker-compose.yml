@@ -10,7 +10,7 @@ services:
         - NODE_ENV=development
     environment:
       - API_BASE=${API_BASE}
-      - DATABASE_URL=postgres://forms_admin:forms_admin@postgres/forms_admin
+      - DATABASE_URL=postgres://forms_admin:forms_admin@postgres
       - GDS_SSO_OAUTH_ID=example.org
       - GDS_SSO_OAUTH_SECRET=secret
       - GDS_SSO_STRATEGY=mock
@@ -49,7 +49,7 @@ services:
       target: build
     environment:
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
-      - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
+      - DATABASE_URL=postgres://forms_api:forms_api@postgres
       - RACK_ENV=development
       - SECRET_KEY_BASE=dummy_value
     volumes:
