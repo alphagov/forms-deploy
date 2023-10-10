@@ -14,5 +14,7 @@ module "ses" {
     ],
   )
 
+  email_domain = "dev.forms.service.gov.uk"
   from_address = "no-reply@dev.forms.service.gov.uk"
+  environment  = "dev"
 }

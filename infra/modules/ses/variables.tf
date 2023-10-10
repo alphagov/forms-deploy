@@ -17,3 +17,8 @@ variable "environment" {
     error_message = "Valid values for env_name are: user-research, dev, staging, production"
   }
 }
+
+variable "email_domain" {
+  type        = string
+  description = "the domain of the email address that emails are sent from."
+}
