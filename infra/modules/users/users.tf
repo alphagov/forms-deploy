@@ -34,11 +34,11 @@ locals {
       user_research = "admin"
     },
     "andy.hunt" = {
-      deploy        = "support"
-      staging       = "support"
-      prod          = "readonly"
+      deploy        = "admin"
+      staging       = "admin"
+      prod          = "admin"
       dev           = "admin"
-      user_research = "support"
+      user_research = "admin"
     },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
