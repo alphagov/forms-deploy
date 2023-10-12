@@ -1,0 +1,11 @@
+name: "Check version of curl"
+on:
+  push:
+    branches: [ check_curl_version ]
+jobs:
+  check_curl:
+    runs-on: ubuntu-latest
+    name: check_curl
+    steps:
+      - name: curl-version
+        run: curl --version
