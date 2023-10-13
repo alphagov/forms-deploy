@@ -37,9 +37,7 @@ services:
     command: >
       sh -c "
         bundle config unset --local without &&
-        bundle install &&
-        rails db:setup &&
-        rails db:seed &&
+        bin/setup &&
         rails s -b 0.0.0.0
       "
 
@@ -59,6 +57,11 @@ services:
         condition: service_healthy
     ports:
       - 9292:9292
+    command: >
+      sh -c "
+        bin/setup &&
+        rails s -b 0.0.0.0 -p 9292
+      "
 
   forms-runner:
     build:
@@ -87,7 +90,7 @@ services:
     command: >
       sh -c "
         bundle config unset --local without &&
-        bundle install &&
+        bin/setup &&
         rails s -b 0.0.0.0
       "
 
