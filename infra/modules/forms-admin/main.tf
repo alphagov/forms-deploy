@@ -58,7 +58,7 @@ module "common_values" {
 data "aws_iam_policy_document" "ecs_task_role_permissions" {
   statement {
     actions = [
-      "cloudwatch:GetMetricData"
+      "cloudwatch:GetMetricStatistics"
     ]
     resources = ["*"]
     effect    = "Allow"
