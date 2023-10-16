@@ -4,8 +4,6 @@ on:
     branches: [ main ]
   merge_group:
     types: [checks_requested]
-env:
-  SHELLCHECK_VERSION: "0.7.1"
 
 jobs:
   run_tests:
@@ -27,11 +25,6 @@ jobs:
           directory: infra/
           framework: terraform
           quiet: true #Only show failed checks
-
-      - name: Install Shellcheck
-        run: |
-          wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJv
-          sudo cp "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
 
       - name: Lint shell scripts
         run: |
