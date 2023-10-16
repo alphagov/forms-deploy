@@ -94,14 +94,14 @@ services:
       redis:
         condition: service_started
     ports:
-      - 3001:3000
+      - 3001:3001
     init: true
     tty: true
     command: >
       sh -c "
         bundle config unset --local without &&
         bin/setup &&
-        rails s --restart -b 0.0.0.0
+        rails s --restart -b 0.0.0.0 -p 3001
       "
 
   redis:
