@@ -78,6 +78,7 @@ services:
       - REDIS_URL=redis://redis/
     volumes:
       - "../../forms-runner:/app:cached"
+      - forms-runner-node-modules:/app/node_modules
     depends_on:
       redis:
         condition: service_started
@@ -116,5 +117,6 @@ services:
 
 volumes:
   forms-admin-node-modules:
+  forms-runner-node-modules:
   redis-data:
   postgres:
