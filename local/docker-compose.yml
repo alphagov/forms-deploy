@@ -4,6 +4,7 @@ services:
   forms-admin:
     build:
       context: ../../forms-admin
+      target: build
       args:
         - RAILS_ENV=development
         - NODE_ENV=development
@@ -39,6 +40,7 @@ services:
   forms-api:
     build:
       context: ../../forms-api
+      target: build
     environment:
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
       - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
@@ -55,6 +57,7 @@ services:
   forms-runner:
     build:
       context: "../../forms-runner"
+      target: build
       args:
         - RAILS_ENV=development
         - NODE_ENV=development
