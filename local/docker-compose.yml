@@ -9,7 +9,6 @@ services:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
-      - API_BASE=${API_BASE}
       - DATABASE_URL=postgres://forms_admin:forms_admin@postgres
       - GDS_SSO_OAUTH_ID=example.org
       - GDS_SSO_OAUTH_SECRET=secret
@@ -21,7 +20,8 @@ services:
       - RAILS_LOG_TO_STDOUT=1
       - RAILS_SERVE_STATIC_FILES=1
       - SECRET_KEY_BASE=assets
-      - RUNNER_BASE=http://localhost:3001
+      - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
+      - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     volumes:
       - "../../forms-admin:/app:cached"
       - forms-admin-node-modules:/app/node_modules
@@ -71,14 +71,14 @@ services:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
-      - API_BASE=${API_BASE}
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
       - RAILS_LOG_TO_STDOUT=1
       - RAILS_SERVE_STATIC_FILES=1
-      - SECRET_KEY_BASE=dummyvalue
       - REDIS_URL=redis://redis/
+      - SECRET_KEY_BASE=dummyvalue
+      - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
     volumes:
       - "../../forms-runner:/app:cached"
       - forms-runner-node-modules:/app/node_modules
