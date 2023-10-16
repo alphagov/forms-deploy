@@ -4,27 +4,37 @@ on:
     branches: [ main ]
   merge_group:
     types: [checks_requested]
+env:
+  SHELLCHECK_VERSION: "0.7.1"
+
 jobs:
-  run_checkov:
+  run_tests:
     runs-on: ubuntu-latest
-    name: checkov-action
+    name: Run tests
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Run Checkov
+
+      - name: Check Terraform style
+        id: tf_fmt
+        run: |
+          terraform fmt -write=false -diff=true -list=true -recursive -check
+
+      - name: Lint Terraform
         id: checkov
         uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf #v12.1347.0
         with:
           directory: infra/
           framework: terraform
           quiet: true #Only show failed checks
-  run_tf_fmt:
-    runs-on: ubuntu-latest
-    name: terraform_fmt
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Run Terraform fmt
-        id: tf_fmt
-        run: terraform fmt -write=false -diff=true -list=true -recursive -check
-        
+
+      - name: Lint shell scripts
+        run: |
+          wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJv
+          sudo cp "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
+
+          find . -type f \
+            -name "*.sh" \
+            -not \
+              -path "*/.terraform/*" \
+          | xargs shellcheck
