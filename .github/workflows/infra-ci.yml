@@ -28,13 +28,26 @@ jobs:
           framework: terraform
           quiet: true #Only show failed checks
 
-      - name: Lint shell scripts
+      - name: Install Shellcheck
         run: |
           wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJv
           sudo cp "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
 
+      - name: Lint shell scripts
+        run: |
+          # we don't have non-alpha-numeric file names
+          # shellcheck disable=SC2038
           find . -type f \
             -name "*.sh" \
             -not \
               -path "*/.terraform/*" \
-          | xargs shellcheck
+          | xargs -L1 shellcheck
+
+      - name: Lint shell scripts in GitHub actions
+        run: |
+          while IFS= read -r -d '' workflow
+          do
+            yq '.jobs[] | .steps[] | select(.|has("run")) | .run ' "${workflow}" | shellcheck -s bash -;
+          done <   <(find ".github/workflows" -type f \( -name "*.yml" -or -name "*.yaml" \) -print0)
+
+
