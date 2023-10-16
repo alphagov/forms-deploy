@@ -1,4 +1,4 @@
-version: "2.4"
+version: "3.8"
 
 services:
   forms-admin:
@@ -23,8 +23,9 @@ services:
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     volumes:
-      - "../../forms-admin:/app:cached"
+      - ../../forms-admin:/app:delegated
       - forms-admin-node-modules:/app/node_modules
+      - forms-admin-tmp:/app/tmp
     depends_on:
       postgres:
         condition: service_healthy
@@ -34,11 +35,12 @@ services:
       - 3000:3000
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    init: true
     command: >
       sh -c "
         bundle config unset --local without &&
         bin/setup &&
-        rails s -b 0.0.0.0
+        rails s --restart -b 0.0.0.0
       "
 
   forms-api:
@@ -51,16 +53,18 @@ services:
       - RACK_ENV=development
       - SECRET_KEY_BASE=dummy_value
     volumes:
-      - "../../forms-api:/app:cached"
+      - ../../forms-api:/app:delegated
+      - forms-api-tmp:/app/tmp
     depends_on:
       postgres:
         condition: service_healthy
     ports:
       - 9292:9292
+    init: true
     command: >
       sh -c "
         bin/setup &&
-        rails s -b 0.0.0.0 -p 9292
+        rails s --restart -b 0.0.0.0 -p 9292
       "
 
   forms-runner:
@@ -80,18 +84,20 @@ services:
       - SECRET_KEY_BASE=dummyvalue
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
     volumes:
-      - "../../forms-runner:/app:cached"
+      - ../../forms-runner:/app:delegated
       - forms-runner-node-modules:/app/node_modules
+      - forms-runner-tmp:/app/tmp
     depends_on:
       redis:
         condition: service_started
     ports:
       - 3001:3000
+    init: true
     command: >
       sh -c "
         bundle config unset --local without &&
         bin/setup &&
-        rails s -b 0.0.0.0
+        rails s --restart -b 0.0.0.0
       "
 
   redis:
@@ -120,6 +126,9 @@ services:
 
 volumes:
   forms-admin-node-modules:
+  forms-admin-tmp:
+  forms-api-tmp:
   forms-runner-node-modules:
+  forms-runner-tmp:
   redis-data:
   postgres:
