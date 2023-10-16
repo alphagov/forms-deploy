@@ -4,6 +4,7 @@ services:
   forms-admin:
     build:
       context: ../../forms-admin
+      target: build
       args:
         - RAILS_ENV=development
         - NODE_ENV=development
@@ -39,6 +40,10 @@ services:
   forms-api:
     build:
       context: ../../forms-api
+      target: build
+    command: >
+      sh -c "rake db:migrate &&
+      rails s -b 0.0.0.0 -p 9292"
     environment:
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
       - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
@@ -55,9 +60,12 @@ services:
   forms-runner:
     build:
       context: "../../forms-runner"
+      target: build
       args:
         - RAILS_ENV=development
         - NODE_ENV=development
+    command: >
+      rails s -b 0.0.0.0 -p 3000
     environment:
       - API_BASE=${API_BASE}
       - NODE_ENV=development
