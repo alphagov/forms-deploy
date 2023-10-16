@@ -83,9 +83,9 @@ locals {
       user_research = "admin"
     },
     "laurence.debruxelles" = {
-      deploy        = "support"
-      staging       = "support"
-      prod          = "support"
+      deploy        = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
+      staging       = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
+      prod          = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
       dev           = "admin"
       user_research = "admin"
     },
