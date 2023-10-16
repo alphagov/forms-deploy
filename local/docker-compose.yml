@@ -74,13 +74,19 @@ services:
       - RAILS_SERVE_STATIC_FILES=1
       - SECRET_KEY_BASE=dummyvalue
       - REDIS_URL=redis://redis/
+    volumes:
+      - "../../forms-runner:/app:cached"
     depends_on:
       redis:
         condition: service_started
     ports:
       - 3001:3000
-    volumes:
-      - "../../forms-runner:/app:cached"
+    command: >
+      sh -c "
+        bundle config unset --local without &&
+        bundle install &&
+        rails s -b 0.0.0.0
+      "
 
   redis:
     image: redis:latest
