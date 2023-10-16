@@ -9,6 +9,7 @@ services:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
+      - BINDING=0.0.0.0
       - DATABASE_URL=postgres://forms_admin:forms_admin@postgres
       - GDS_SSO_OAUTH_ID=example.org
       - GDS_SSO_OAUTH_SECRET=secret
@@ -41,7 +42,7 @@ services:
       sh -c "
         bundle config unset --local without &&
         bin/setup &&
-        rails s --restart -b 0.0.0.0
+        rails s --restart --port 3000
       "
 
   forms-api:
@@ -49,6 +50,7 @@ services:
       context: ../../forms-api
       target: build
     environment:
+      - BINDING=0.0.0.0
       - DATABASE_URL=postgres://forms_api:forms_api@postgres
       - RACK_ENV=development
       - RAILS_DEVELOPMENT_HOSTS=forms-api,host.docker.internal
@@ -67,7 +69,7 @@ services:
     command: >
       sh -c "
         bin/setup &&
-        rails s --restart -b 0.0.0.0 -p 9292
+        rails s --restart --port 9292
       "
 
   forms-runner:
@@ -78,6 +80,7 @@ services:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
+      - BINDING=0.0.0.0
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
@@ -101,7 +104,7 @@ services:
       sh -c "
         bundle config unset --local without &&
         bin/setup &&
-        rails s --restart -b 0.0.0.0 -p 3001
+        rails s --restart --port 3001
       "
 
   redis:
