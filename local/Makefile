@@ -30,3 +30,19 @@ logs:
 	docker-compose logs -f
 reset:
 	docker-compose down --volumes
+
+bundle-all: bundle-forms-api setup-forms-admin setup-forms-runner
+
+bundle-%:
+	docker-compose build $*
+	docker-compose run --no-deps $* bundle config unset --local without
+	docker-compose run --no-deps $* bundle
+
+setup-all: setup-forms-api setup-forms-admin setup-forms-runner
+
+setup-forms-runner: bundle-forms-runner
+	docker-compose run forms-runner bin/setup
+
+setup-%: bundle-%
+	docker-compose run $* bin/setup
+	docker-compose run $* env RAILS_ENV=test bin/rails db:create

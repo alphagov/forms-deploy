@@ -40,11 +40,7 @@ services:
     init: true
     tty: true
     command: >
-      sh -c "
-        bundle config unset --local without &&
-        bin/setup &&
-        rails s --restart --port 3000
-      "
+      rails s --restart --port 3000
 
   forms-api:
     build:
@@ -69,10 +65,7 @@ services:
     init: true
     tty: true
     command: >
-      sh -c "
-        bin/setup &&
-        rails s --restart --port 9292
-      "
+      rails s --restart --port 9292
 
   forms-runner:
     build:
@@ -104,11 +97,7 @@ services:
     init: true
     tty: true
     command: >
-      sh -c "
-        bundle config unset --local without &&
-        bin/setup &&
-        rails s --restart --port 3001
-      "
+      rails s --restart --port 3001
 
   redis:
     image: redis:latest
