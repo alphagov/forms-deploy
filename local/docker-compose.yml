@@ -33,9 +33,13 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: >
-      sh -c "rails db:setup &&
-      rails db:seed &&
-      rails s -b 0.0.0.0"
+      sh -c "
+        bundle config unset --local without &&
+        bundle install &&
+        rails db:setup &&
+        rails db:seed &&
+        rails s -b 0.0.0.0
+      "
 
   forms-api:
     build:
