@@ -15,6 +15,7 @@ services:
       - GDS_SSO_OAUTH_SECRET=secret
       - GDS_SSO_STRATEGY=mock
       - GOVUK_APP_DOMAIN=example.org
+      - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
       - RAILS_LOG_TO_STDOUT=1
@@ -23,6 +24,7 @@ services:
       - RUNNER_BASE=http://localhost:3001
     volumes:
       - "../../forms-admin:/app:cached"
+      - forms-admin-node-modules:/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -113,5 +115,6 @@ services:
       retries: 5
 
 volumes:
+  forms-admin-node-modules:
   redis-data:
   postgres:
