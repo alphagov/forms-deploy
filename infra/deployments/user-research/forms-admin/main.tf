@@ -15,5 +15,5 @@ module "forms_admin" {
   auth_provider                 = "basic_auth"
   enable_maintenance_mode       = false
   details_guidance_feature_flag = true
-  metrics_feature_flag          = false
+  metrics_feature_flag          = true
 }
