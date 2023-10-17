@@ -33,21 +33,6 @@ resource "aws_iam_policy" "ses_sender" {
   policy      = data.aws_iam_policy_document.ses_sender.json
 }
 
-resource "aws_ses_identity_notification_topic" "ses_bounces" {
-  topic_arn                = aws_sns_topic.ses_bounces_and_complaints_topic.arn
-  notification_type        = "Bounce"
-  identity                 = var.email_domain
-  include_original_headers = true
-}
-
-resource "aws_ses_identity_notification_topic" "ses_complaints" {
-  topic_arn                = aws_sns_topic.ses_bounces_and_complaints_topic.arn
-  notification_type        = "Complaint"
-  identity                 = var.email_domain
-  include_original_headers = true
-}
-
-
 resource "aws_ses_event_destination" "sns" {
   name                   = "ses-sns"
   configuration_set_name = aws_ses_configuration_set.ses_bounces_and_complaints_topic.name
