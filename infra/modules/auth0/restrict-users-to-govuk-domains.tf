@@ -11,7 +11,7 @@ resource "auth0_action" "restrict_users_to_govuk_domains" {
     */
     exports.onExecutePreUserRegistration = async (event, api) => {
       if (event.user.email && !event.user.email.endsWith(".gov.uk")) {
-        api.access.deny(`You must have an email address that ends with ".gov.uk".`);
+        api.access.deny("unauthorised_email_domain", 'You must have an email address that ends with ".gov.uk".');
       }
     };
   EOT
