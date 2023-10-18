@@ -95,6 +95,10 @@ module "ecs_service" {
       name  = "SETTINGS__FORMS_ENV",
       value = var.env_name
     },
+    {
+      name  = "SETTINGS__FEATURES__EMAIL_CONFIRMATIONS_ENABLED",
+      value = var.email_confirmations_enabled
+    }
   ]
 
   secrets = [
