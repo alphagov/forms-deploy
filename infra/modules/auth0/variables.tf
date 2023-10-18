@@ -13,6 +13,18 @@ variable "app_logo_path" {
   default = "/auth-widget-logo.svg"
 }
 
+variable "idle_session_lifetime" {
+  type        = number
+  default     = 24
+  description = "Number of hours for which a session can be inactive before the user must log in again."
+}
+
+variable "session_lifetime" {
+  type        = number
+  default     = 24
+  description = "Number of hours a session will stay valid."
+}
+
 variable "env_name" {
   type        = string
   description = "The name of the environment to be used in resource names."
