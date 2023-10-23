@@ -7,7 +7,7 @@ module "ses" {
 
   verified_email_addresses = concat(
     [
-      for user in module.users.for_env["prod"] : "${user}@digital.cabinet-office.gov.uk"
+      for user in module.users.for_env["production"] : "${user}@digital.cabinet-office.gov.uk"
     ],
     [
       "forms--test-automation-groupt@digital.cabinet-office.gov.uk", # smoke tests user
