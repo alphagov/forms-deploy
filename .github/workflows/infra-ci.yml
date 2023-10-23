@@ -1,12 +1,11 @@
 name: "Infra-as-code-checks"
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   merge_group:
     types: [checks_requested]
 env:
-  TF_VERSION: "1.2.8"
-
+  TF_VERSION: "~>1.6"
 jobs:
   run_tests:
     runs-on: ubuntu-latest
@@ -14,7 +13,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@54a18e26dbbb1eabc604f317ade9a5788dddef81 # v1.159.0
         with:
@@ -24,7 +22,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{env.TF_VERSION}}
-
+      
       - name: Check Terraform style
         id: tf_fmt
         run: |
@@ -52,7 +50,7 @@ jobs:
           framework: terraform
           quiet: true #Only show failed checks
           external_checks_dirs: infra/checkov/
-
+      
       - name: Lint shell scripts
         run: |
           # we don't have non-alpha-numeric file names
@@ -62,7 +60,7 @@ jobs:
             -not \
               -path "*/.terraform/*" \
           | xargs -L1 shellcheck
-
+      
       - name: Lint shell scripts in GitHub actions
         run: |
           # This is not the usual/best way to get the script directory.
@@ -85,7 +83,7 @@ jobs:
               popd >/dev/null || exit
             done
           done <  <(find ".github/workflows" -type f \( -name "*.yml" -or -name "*.yaml" \) -print0)
-
+      
       - name: Run Terraform specs
         working-directory: infra/
         run: bundle exec rspec
