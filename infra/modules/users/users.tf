@@ -15,98 +15,98 @@ locals {
   # All GOV.UK Forms developers can have admin access to the development
   # and user research accounts.
 
-  envs  = ["deploy", "staging", "prod", "dev", "user_research"]
+  envs  = ["deploy", "staging", "production", "dev", "user_research"]
   roles = ["admin", "support", "readonly"]
 
   users = {
     "alice.carr" = {
       deploy        = "admin" # Admin whilst setting up the deploy account
       staging       = "admin" # Required whilst setting up environments
-      prod          = "admin" # Required whilst setting up environments
+      production    = "admin" # Required whilst setting up environments
       dev           = "admin"
       user_research = "admin"
     },
     "alistair.laing" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "support"
+      production    = "support"
       dev           = "admin"
       user_research = "admin"
     },
     "andy.hunt" = {
       deploy        = "admin"
       staging       = "admin"
-      prod          = "admin"
+      production    = "admin"
       dev           = "admin"
       user_research = "admin"
     },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
       staging       = "admin" # Required whilst setting up environments
-      prod          = "admin" # Required whilst setting up environments
+      production    = "admin" # Required whilst setting up environments
       dev           = "admin"
       user_research = "admin"
     },
     "dan.worth" = {
       deploy        = "admin" # Admin whilst setting up the deploy account
       staging       = "admin" # Required whilst setting up environments
-      prod          = "admin" # Required whilst setting up environments
+      production    = "admin" # Required whilst setting up environments
       dev           = "admin"
       user_research = "admin"
     },
     "david.biddle" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "support"
+      production    = "support"
       dev           = "admin"
       user_research = "admin"
     },
     "james.sheppard" = {
       deploy        = "readonly"
       staging       = "readonly"
-      prod          = "readonly"
+      production    = "readonly"
       dev           = "admin"
       user_research = "admin"
     },
     "jamie.wilkinson" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "support"
+      production    = "support"
       dev           = "admin"
       user_research = "admin"
     },
     "kelvin.gan" = {
       deploy        = "admin" # Feature Team Tech lead
       staging       = "admin" # Feature Team Tech lead
-      prod          = "admin" # Feature Team Tech lead
+      production    = "admin" # Feature Team Tech lead
       dev           = "admin"
       user_research = "admin"
     },
     "laurence.debruxelles" = {
       deploy        = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
       staging       = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
-      prod          = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
+      production    = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
       dev           = "admin"
       user_research = "admin"
     },
     "radha.kotyankar" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "support"
+      production    = "support"
       dev           = "admin"
       user_research = "support"
     },
     "samuel.culley" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "support"
+      production    = "support"
       dev           = "admin"
       user_research = "admin"
     },
     "tom.iles" = {
       deploy        = "support"
       staging       = "support"
-      prod          = "support"
+      production    = "support"
       dev           = "admin"
       user_research = "admin"
     },
