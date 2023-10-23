@@ -12,31 +12,6 @@ resource "aws_route53_zone" "public" {
   }
 }
 
-resource "aws_ses_domain_identity" "ses" {
-  domain = "dev.forms.service.gov.uk"
-}
-
-resource "aws_ses_domain_dkim" "ses" {
-  domain = aws_ses_domain_identity.ses.domain
-}
-
-resource "aws_route53_record" "ses" {
-  count   = 3
-  zone_id = aws_route53_zone.public.id
-  name    = "${aws_ses_domain_dkim.ses.dkim_tokens[count.index]}._domainkey"
-  type    = "CNAME"
-  ttl     = 600
-  records = ["${aws_ses_domain_dkim.ses.dkim_tokens[count.index]}.dkim.amazonses.com"]
-}
-
-resource "aws_route53_record" "ses_email_receiving" {
-  zone_id = aws_route53_zone.public.id
-  name    = aws_ses_domain_identity.ses.domain
-  type    = "MX"
-  records = ["10 inbound-smtp.eu-west-2.amazonaws.com"]
-  ttl     = 3600
-}
-
 resource "aws_route53_record" "runner" {
   zone_id = aws_route53_zone.public.id
   name    = "submit.dev.forms.service.gov.uk"
