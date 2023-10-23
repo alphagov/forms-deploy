@@ -120,6 +120,7 @@ data "aws_iam_policy_document" "deployer" {
     sid = "ManageEcsExecutionPolicies"
     actions = [
       "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
       "iam:GetRolePolicy",
       "iam:GetPolicy",
       "iam:TagPolicy",
@@ -140,6 +141,7 @@ data "aws_iam_policy_document" "deployer" {
     sid = "ManageEcsTaskPolicies"
     actions = [
       "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
       "iam:GetRolePolicy",
       "iam:GetPolicy",
       "iam:TagPolicy",
