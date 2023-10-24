@@ -1,0 +1,8 @@
+jobs:
+  bad_script:
+    steps:
+      - run: |
+          HELLO=hello
+          WORLD=world
+
+          HELLO_WORLD=$hello $world
