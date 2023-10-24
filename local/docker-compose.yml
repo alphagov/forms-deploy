@@ -25,6 +25,7 @@ services:
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     volumes:
       - ../../forms-admin:/app:delegated
+      - forms-admin-bundle:/usr/local/bundle
       - forms-admin-node-modules:/app/node_modules
       - forms-admin-tmp:/app/tmp
     depends_on:
@@ -58,6 +59,7 @@ services:
       - SECRET_KEY_BASE=dummy_value
     volumes:
       - ../../forms-api:/app:delegated
+      - forms-api-bundle:/usr/local/bundle
       - forms-api-tmp:/app/tmp
     depends_on:
       postgres:
@@ -91,6 +93,7 @@ services:
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
     volumes:
       - ../../forms-runner:/app:delegated
+      - forms-runner-bundle:/usr/local/bundle
       - forms-runner-node-modules:/app/node_modules
       - forms-runner-tmp:/app/tmp
     depends_on:
@@ -132,9 +135,12 @@ services:
       retries: 5
 
 volumes:
+  forms-admin-bundle:
   forms-admin-node-modules:
   forms-admin-tmp:
+  forms-api-bundle:
   forms-api-tmp:
+  forms-runner-bundle:
   forms-runner-node-modules:
   forms-runner-tmp:
   redis-data:
