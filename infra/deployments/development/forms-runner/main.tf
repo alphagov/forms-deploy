@@ -7,7 +7,7 @@ module "forms_runner" {
   source                      = "../../../modules/forms-runner"
   env_name                    = "dev"
   image_tag                   = var.image_tag
-  desired_task_count          = 18
+  desired_task_count          = 3
   cpu                         = 512
   memory                      = 1024
   api_base_url                = "https://api.dev.forms.service.gov.uk"
