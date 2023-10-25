@@ -71,3 +71,8 @@ variable "metrics_feature_flag" {
   default     = false
 }
 
+variable "email_confirmations_feature_flag" {
+  description = "Toggles on/off the email confirmations feature"
+  type        = bool
+  default     = false
+}

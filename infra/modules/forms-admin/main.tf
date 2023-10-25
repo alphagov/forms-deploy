@@ -136,6 +136,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__METRICS_FOR_FORM_CREATORS_ENABLED",
       value = var.metrics_feature_flag
+    },
+    {
+      name  = "SETTINGS__FEATURES__EMAIL_CONFIRMATIONS_ENABLED",
+      value = var.email_confirmations_feature_flag
     }
   ]
 
