@@ -62,14 +62,6 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
     ]
     resources = ["*"]
     effect    = "Allow"
-    condition {
-      test     = "StringLike"
-      variable = "cloudwatch:namespace"
-
-      values = [
-        "forms/${var.env_name}*"
-      ]
-    }
   }
 }
 

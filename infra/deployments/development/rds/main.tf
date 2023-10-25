@@ -8,7 +8,7 @@ module "rds" {
   source                   = "../../../modules/rds"
   env_name                 = "dev"
   main_password            = var.main_password
-  auto_pause               = true
+  auto_pause               = false
   seconds_until_auto_pause = 300
   apply_immediately        = true
 }
