@@ -76,6 +76,10 @@ module "ecs_service" {
       value = "1"
     },
     {
+      name  = "RAILS_MAX_THREADS",
+      value = var.rails_max_threads
+    },
+    {
       name  = "SENTRY_ENVIRONMENT",
       value = "aws-${var.env_name}"
     },
