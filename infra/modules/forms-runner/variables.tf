@@ -51,3 +51,9 @@ variable "email_confirmations_enabled" {
   description = "Toggles on/off the email confirmations feature"
   type        = bool
 }
+
+variable "rails_max_threads" {
+  description = "The number of request threads run by the Puma server"
+  type        = number
+  default     = 5
+}

@@ -77,7 +77,7 @@ module "ecs_service" {
     },
     {
       name  = "RAILS_MAX_THREADS",
-      value = "25"
+      value = var.rails_max_threads
     },
     {
       name  = "SENTRY_ENVIRONMENT",
