@@ -17,4 +17,6 @@ module "forms_admin" {
   details_guidance_feature_flag    = true
   metrics_feature_flag             = true
   email_confirmations_feature_flag = true
+  auth_provider                    = "auth0"
+  previous_auth_provider           = "gds_sso"
 }
