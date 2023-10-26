@@ -126,7 +126,8 @@ data "aws_iam_policy_document" "deployer" {
       "iam:TagPolicy",
       "iam:GetPolicyVersion",
       "iam:ListPolicyVersions",
-      "iam:DeletePolicy"
+      "iam:DeletePolicy",
+      "iam:DeletePolicyVersion"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-execution-additional",
@@ -147,7 +148,8 @@ data "aws_iam_policy_document" "deployer" {
       "iam:TagPolicy",
       "iam:GetPolicyVersion",
       "iam:ListPolicyVersions",
-      "iam:DeletePolicy"
+      "iam:DeletePolicy",
+      "iam:DeletePolicyVersion"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-policy",
