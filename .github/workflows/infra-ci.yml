@@ -17,7 +17,7 @@ jobs:
         uses: ruby/setup-ruby@d3c9825d67b0d8720afdfdde5af56c79fdb38d16 # v1.117.0
         with:
           bundler-cache: true
-          working-directory: infra/        
+          working-directory: infra/
 
       - name: Check Terraform style
         id: tf_fmt
@@ -31,6 +31,7 @@ jobs:
           directory: infra/
           framework: terraform
           quiet: true #Only show failed checks
+          external_checks_dirs: infra/checkov/
 
       - name: Lint shell scripts
         run: |

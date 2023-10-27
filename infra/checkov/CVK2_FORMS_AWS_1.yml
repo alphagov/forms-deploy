@@ -1,0 +1,21 @@
+---
+metadata:
+    name: "Check that all CloudWatch metric alarms have an alarm action set"
+    id: "CVK2_FORMS_AWS_1"
+    category: "CONVENTION"
+scope:
+    provider: "AWS"
+definition:
+    and:
+        - cond_type: "attribute"
+          resource_types:
+              - "aws_cloudwatch_metric_alarm"
+          attribute: "alarm_actions"
+          operator: "is_not_empty"
+          
+        - cond_type: "attribute"
+          resource_types:
+              - "aws_cloudwatch_metric_alarm"
+          attribute: "alarm_actions"
+          operator: "exists"       
+    
