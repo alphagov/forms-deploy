@@ -12,6 +12,13 @@ resource "aws_codebuild_project" "main" {
   description  = var.project_description
   service_role = aws_iam_role.codebuild.arn
 
+  logs_config {
+    cloudwatch_logs {
+      group_name  = aws_cloudwatch_log_group.log_group.name
+      stream_name = "docker_build"
+    }
+  }
+
   artifacts {
     type = "CODEPIPELINE"
   }
