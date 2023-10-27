@@ -1,4 +1,4 @@
-FROM public.ecr.aws/amazonlinux/amazonlinux:2@sha256:f2ad893d53e1e1813272c43096a79e74ab0b63128489a45f233066c26fef8468
+FROM public.ecr.aws/amazonlinux/amazonlinux:2.0.20231012.1
 
 RUN set -e
 
