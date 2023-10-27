@@ -49,7 +49,7 @@ variable "docker_password_parameter_path" {
 variable "code_build_project_image" {
   type        = string
   description = "The docker image to use to run the CodeBuild project"
-  default     = "aws/codebuild/amazonlinux2-aarch64-standard:2.0"
+  default     = "aws/codebuild/amazonlinux2-aarch64-standard:3.0"
 }
 
 variable "code_build_project_compute_size" {
