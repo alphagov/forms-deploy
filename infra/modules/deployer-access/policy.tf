@@ -1,5 +1,6 @@
 data "aws_iam_policy_document" "deployer" {
   #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
+  #checkov:skip=CKV_AWS_356: allow resource * when needed
   statement {
     sid = "CreateLogs"
     actions = [

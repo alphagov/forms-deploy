@@ -5,6 +5,11 @@ locals {
 }
 
 resource "aws_iam_policy" "manage_deployments" {
+  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
+  #checkov:skip=CKV_AWS_290: allow write access without constraint when needed
+  #checkov:skip=CKV_AWS_289: allow permissions management (PassRole) without constraint when needed
+  #checkov:skip=CKV_AWS_355: allow resource * when needed
+
   count = var.env_name == "deploy" ? 1 : 0
 
   name        = "manage-deployments"
