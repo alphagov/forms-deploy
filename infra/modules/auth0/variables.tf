@@ -1,3 +1,8 @@
+variable "allowed_email_domains" {
+  type        = set(string)
+  description = "Allowed email domains"
+}
+
 variable "admin_base_url" {
   type        = string
   description = "URL of the admin app"
