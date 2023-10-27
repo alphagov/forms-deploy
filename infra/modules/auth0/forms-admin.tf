@@ -23,18 +23,24 @@ resource "auth0_client_credentials" "forms_admin" {
 #
 
 resource "aws_ssm_parameter" "forms_admin_client_id" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/forms-admin-${var.env_name}/auth0/client-id"
   type  = "SecureString"
   value = auth0_client_credentials.forms_admin.client_id
 }
 
 resource "aws_ssm_parameter" "forms_admin_client_secret" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/forms-admin-${var.env_name}/auth0/client-secret"
   type  = "SecureString"
   value = auth0_client_credentials.forms_admin.client_secret
 }
 
 resource "aws_ssm_parameter" "forms_admin_domain" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/forms-admin-${var.env_name}/auth0/domain"
   type  = "SecureString"
   value = data.auth0_tenant.tenant.domain

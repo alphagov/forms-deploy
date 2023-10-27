@@ -47,6 +47,8 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "gds_user_role_policy_attachments" {
+  #checkov:skip=CKV_AWS_274:We're OK with AdministratorAccess being attached, and we have controls in place to manage who it gets attached to
+
   count      = length(var.iam_policy_arns)
   role       = aws_iam_role.gds_user_role.name
   policy_arn = element(var.iam_policy_arns, count.index)

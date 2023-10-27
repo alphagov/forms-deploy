@@ -177,6 +177,7 @@ resource "aws_iam_policy" "stop_task" {
 }
 
 resource "aws_iam_policy" "manage_parameter_store" {
+  #checkov:skip=CKV_AWS_290:We have additional restrictions elsewhere
   name        = "manage-parameter-store"
   path        = "/"
   description = "Permission to create, delete and modify parameter store values"
@@ -207,6 +208,8 @@ resource "aws_iam_policy" "manage_parameter_store" {
 }
 
 resource "aws_iam_policy" "manage_dashboards" {
+  #checkov:skip=CKV_AWS_290: We're OK with unlimited access to CloudWatch dashboards
+  #checkov:skip=CKV_AWS_355: We're OK with unlimited access to CloudWatch dashboards
   name        = "manage-dashboards"
   path        = "/"
   description = "Create, update and delete CloudWatch dashbaords"

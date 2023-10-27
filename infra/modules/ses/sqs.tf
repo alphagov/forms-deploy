@@ -12,6 +12,7 @@ module "users" {
 data "aws_iam_policy_document" "encryption_key_policy" {
   #checkov:skip=CKV_AWS_111: This is applied directly to the key and we cannot specify the key in the resources.
   #checkov:skip=CKV_AWS_109: This is applied directly to the key and we cannot specify the key in the resources.
+  #checkov:skip=CKV_AWS_356: This is applied directly to the key and we cannot specify the key in the resources.
   statement {
     sid    = "Allow SQS, SNS and SES to use the key"
     effect = "Allow"

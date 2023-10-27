@@ -17,6 +17,8 @@ resource "aws_rds_cluster" "forms" {
   #checkov:skip=CKV2_AWS_8:AWS RDS inbuilt backup process is sufficient
   #checkov:skip=CKV2_AWS_27:Query logging is not required at this time
   #checkov:skip=CKV_AWS_133:Backup not required in all environments
+  #checkov:skip=CKV_AWS_327:Database is already encrypted with the default key, and we feel this is sufficient
+  #checkov:skip=CKV_AWS_324:Log capture is not required at this time
 
 
   cluster_identifier = "aurora-cluster-${var.env_name}"

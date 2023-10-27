@@ -14,12 +14,16 @@ resource "aws_iam_user_policy_attachment" "attach" {
 }
 
 resource "aws_ssm_parameter" "auth0_smtp_username" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/ses/auth0/smtp-username"
   type  = "SecureString"
   value = aws_iam_access_key.auth0.id
 }
 
 resource "aws_ssm_parameter" "auth0_smtp_password" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/ses/auth0/smtp-password"
   type  = "SecureString"
   value = aws_iam_access_key.auth0.ses_smtp_password_v4
