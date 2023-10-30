@@ -1,7 +1,7 @@
 ---
 metadata:
     name: "Check that all CloudWatch metric alarms have an alarm action set"
-    id: "CVK2_FORMS_AWS_1"
+    id: "CKV2_FORMS_AWS_1"
     category: "CONVENTION"
 scope:
     provider: "AWS"
