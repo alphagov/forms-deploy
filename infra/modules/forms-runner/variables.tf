@@ -55,5 +55,5 @@ variable "email_confirmations_enabled" {
 variable "rails_max_threads" {
   description = "The number of request threads run by the Puma server"
   type        = number
-  default     = 5
+  default     = 25
 }
