@@ -8,6 +8,6 @@ module "forms_api" {
   env_name           = "production"
   image_tag          = var.image_tag
   desired_task_count = 3
-  cpu                = 256
-  memory             = 512
+  cpu                = 512
+  memory             = 1024
 }
