@@ -42,7 +42,8 @@ module "pentester_role" {
   role_suffix = "pentester"
   iam_policy_arns = [
     "arn:aws:iam::aws:policy/ReadOnlyAccess",
-    "arn:aws:iam::aws:policy/SecurityAudit"
+    "arn:aws:iam::aws:policy/SecurityAudit",
+    aws_iam_policy.deny_parameter_store.arn
   ]
   restrict_to_gds_ips = var.vpn
 }
