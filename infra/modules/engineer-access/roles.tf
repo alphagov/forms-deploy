@@ -38,7 +38,7 @@ module "pentester_role" {
   for_each = toset(var.pentesters)
 
   source      = "../gds-user-role/"
-  email       = "${each.value}@digital.cabinet-office.gov.uk"
+  email       = each.value #Cannot assume the domain is GDS for external testers
   role_suffix = "pentester"
   iam_policy_arns = [
     "arn:aws:iam::aws:policy/ReadOnlyAccess",
