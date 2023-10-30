@@ -9,8 +9,9 @@ resource "auth0_action" "restrict_users_to_govuk_domains" {
     * @param {Event} event - Details about the context and user that is attempting to register.
     * @param {PreUserRegistrationAPI} api - Interface whose methods can be used to change the behavior of the signup.
     */
+    let domains = ${jsonencode(var.allowed_email_domains)}
     exports.onExecutePreUserRegistration = async (event, api) => {
-      if (event.user.email && !event.user.email.endsWith(".gov.uk")) {
+      if (event.user.email && !domains.some((domain) => event.user.email.endsWith(domain))) {
         api.access.deny("unauthorised_email_domain", 'You must have an email address that ends with ".gov.uk".');
       }
     };
