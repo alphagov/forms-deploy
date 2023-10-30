@@ -233,3 +233,22 @@ resource "aws_iam_policy" "manage_dashboards" {
     ]
   })
 }
+
+resource "aws_iam_policy" "deny_parameter_store" {
+  name        = "deny-parameter-store-read-access"
+  path        = "/"
+  description = "Deny viewing secrets in parameter store"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ssm:GetParameter*",
+        ]
+        Effect   = "Deny"
+        Resource = ["*"]
+      }
+    ]
+  })
+}
