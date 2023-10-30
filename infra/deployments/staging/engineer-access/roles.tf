@@ -8,4 +8,14 @@ module "engineer_access" {
   admins   = module.users.with_role["staging_admin"]
   support  = module.users.with_role["staging_support"]
   readonly = module.users.with_role["staging_readonly"]
+
+  # Pentesters may not have GDS domains so our pattern using the 'users' module
+  # doesn't necessarily work.
+  pentesters = [
+    "nick.simpson@pentestpartners.com",
+    "alice.carr@digital.cabinet-office.gov.uk",      # To help debugging if necessary.
+    "andy.hunt@digital.cabinet-office.gov.uk",       # To help debugging if necessary.
+    "catalina.garcia@digital.cabinet-office.gov.uk", # To help debugging if necessary.
+    "dan.worth@digital.cabinet-office.gov.uk"        # To help debugging if necessary.
+  ]
 }
