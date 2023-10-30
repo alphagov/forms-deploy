@@ -15,6 +15,8 @@ resource "aws_account_alternate_contact" "operations" {
 }
 
 resource "aws_ssm_parameter" "contact_email" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/account/contact-email"
   type  = "SecureString"
   value = "dummy-email-address@digital.cabinet-office.gov.uk"
@@ -27,6 +29,8 @@ resource "aws_ssm_parameter" "contact_email" {
 }
 
 resource "aws_ssm_parameter" "contact_phone_number" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
   name  = "/account/contact-phone-number"
   type  = "SecureString"
   value = "+1234567890"

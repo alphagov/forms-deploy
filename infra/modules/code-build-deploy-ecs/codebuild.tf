@@ -19,6 +19,13 @@ resource "aws_codebuild_project" "terraform" {
   description  = "Run terraform apply for ${var.app_name} in ${var.environment}"
   service_role = aws_iam_role.codebuild.arn
 
+  logs_config {
+    cloudwatch_logs {
+      group_name  = aws_cloudwatch_log_group.log_group.name
+      stream_name = "terraform"
+    }
+  }
+
   artifacts {
     type = "CODEPIPELINE"
   }

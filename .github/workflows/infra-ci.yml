@@ -17,7 +17,7 @@ jobs:
         uses: ruby/setup-ruby@d3c9825d67b0d8720afdfdde5af56c79fdb38d16 # v1.117.0
         with:
           bundler-cache: true
-          working-directory: infra/        
+          working-directory: infra/
 
       - name: Check Terraform style
         id: tf_fmt
@@ -26,11 +26,12 @@ jobs:
 
       - name: Lint Terraform
         id: checkov
-        uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf #v12.1347.0
+        uses: bridgecrewio/checkov-action@d403349a9193cf87f58f18a0f09aab1e9e058bde #v12.2552.0 
         with:
           directory: infra/
           framework: terraform
           quiet: true #Only show failed checks
+          external_checks_dirs: infra/checkov/
 
       - name: Lint shell scripts
         run: |

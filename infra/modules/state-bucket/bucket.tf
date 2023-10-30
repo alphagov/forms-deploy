@@ -4,6 +4,8 @@ resource "aws_s3_bucket" "state" {
   #checkov:skip=CKV_AWS_21:Versioning is enabled via aws_s3_bucket_versioning below
   #checkov:skip=CKV_AWS_144:No need for cross-region replication
   #checkov:skip=CKV_AWS_145:S3-SSE mode using AES256 is sufficient.
+  #checkov:skip=CKV2_AWS_61:Lifecycle rules are not needed at this time
+  #checkov:skip=CKV2_AWS_62:Notification are not needed at this time
   bucket = var.bucket_name
 }
 
