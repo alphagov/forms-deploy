@@ -1,4 +1,4 @@
 module "rds" {
-  source            = "../../../modules/rds"
-  env_name          = "production"
+  source   = "../../../modules/rds"
+  env_name = "production"
 }
