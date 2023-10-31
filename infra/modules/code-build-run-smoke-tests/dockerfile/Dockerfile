@@ -32,9 +32,9 @@ RUN useradd -m codebuild
 USER codebuild
 
 # Install ruby version
-ENV RUBY_31_VERSION="3.1.3"
-RUN rbenv install $RUBY_31_VERSION
+ENV RUBY_VERSION="3.2.2"
+RUN rbenv install $RUBY_VERSION
 RUN rm -rf /tmp/*
-RUN rbenv global $RUBY_31_VERSION
+RUN rbenv global $RUBY_VERSION
 RUN ruby -v
 
