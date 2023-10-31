@@ -6,7 +6,6 @@ This module deploys an RDS cluster in Serverless V1 configuration using a postgr
 
 Forms-api and Forms-admin each have their own database and both are setup in this single RDS cluster. The following is a one-off operation to be done upon initial creation of the cluster. Any subsequent restoration should be done via backups.
 - Create a password for the `root` user and store in SSM Parameter Store as a secure string.
-- Apply the module and provide the password as the `main_password` variable.
 - Wait for the module to completely apply.
 - Use the AWS Data API to connect to the `postgres` database using username `root` and the password created above.
 - Create passwords for the `forms-api` and `forms-admin` users and store in SSM Parameter Store as secure strings.
