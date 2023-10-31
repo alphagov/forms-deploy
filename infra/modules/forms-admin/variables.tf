@@ -76,3 +76,9 @@ variable "email_confirmations_feature_flag" {
   type        = bool
   default     = false
 }
+
+variable "forms_product_page_support_url" {
+  description = "Sets the support URL for the product page"
+  type        = string
+  default     = ""
+}
