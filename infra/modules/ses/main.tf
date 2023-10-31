@@ -24,11 +24,6 @@ data "aws_iam_policy_document" "ses_sender" {
       variable = "ses:FromAddress"
       values   = ["${var.from_address}"]
     }
-    condition {
-      test     = "ForAllValues:StringLike"
-      variable = "ses:Recipients"
-      values   = ["*.gov.uk"]
-    }
   }
 }
 
