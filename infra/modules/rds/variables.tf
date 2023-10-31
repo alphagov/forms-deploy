@@ -19,12 +19,6 @@ variable "apply_immediately" {
   default     = false
 }
 
-variable "main_password" {
-  type        = string
-  sensitive   = true
-  description = "The password for the database admin user"
-}
-
 variable "backup_retention_period" {
   type        = number
   description = "How many days to keep db backups for"
