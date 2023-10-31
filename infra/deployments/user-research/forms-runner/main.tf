@@ -4,6 +4,7 @@ variable "image_tag" {
 }
 
 module "forms_runner" {
+  #checkov:skip=CKV2_FORMS_AWS_2:We're OK with 2 instances in UR environment
   source                      = "../../../modules/forms-runner"
   env_name                    = "user-research"
   image_tag                   = var.image_tag
