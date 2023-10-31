@@ -15,7 +15,7 @@ variable "redis_version" {
 variable "apply_immediately" {
   type        = bool
   description = "If false then changes are applied during the maintenance window"
-  default     = true
+  default     = false
 }
 
 variable "availability_zones" {
