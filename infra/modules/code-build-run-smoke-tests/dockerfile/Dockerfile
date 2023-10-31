@@ -8,14 +8,13 @@ RUN yum -y install wget unzip tar procps openssl openssl-devel git libyaml-devel
 RUN yum groupinstall -y -q "Development tools"
 
 #Install google chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-RUN yum -y install ./google-chrome-stable_current_x86_64.rpm
-RUN ln -s /usr/bin/google-chrome-stable /usr/bin/chromium
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/120.0.6098.0/linux64/chrome-linux64.zip && unzip chrome-linux64.zip
+RUN install ./chrome-linux64/chrome /usr/bin/chromium
 
 #Install chrome driver
-RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip
-RUN unzip chromedriver-linux64.zip
-RUN mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/120.0.6098.0/linux64/chromedriver-linux64.zip && unzip chromedriver-linux64.zip
+RUN install ./chromedriver-linux64/chromedriver /usr/bin/chromedriver
+
 
 #Install rbenv
 ENV RBENV_SRC_DIR="/usr/local/rbenv"
