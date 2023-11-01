@@ -140,6 +140,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__EMAIL_CONFIRMATIONS_ENABLED",
       value = var.email_confirmations_feature_flag
+    },
+    {
+      name  = "SETTINGS__FORMS_PRODUCT_PAGE__SUPPORT_URL",
+      value = var.forms_product_page_support_url
     }
   ]
 

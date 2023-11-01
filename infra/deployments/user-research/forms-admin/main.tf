@@ -18,4 +18,5 @@ module "forms_admin" {
   details_guidance_feature_flag    = true
   metrics_feature_flag             = true
   email_confirmations_feature_flag = true
+  forms_product_page_support_url   = "https://www.research.forms.service.gov.uk/support"
 }
