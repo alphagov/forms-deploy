@@ -27,10 +27,6 @@ module "ecs_service" {
       value = "production"
     },
     {
-      name  = "RAILS_LOG_TO_STDOUT",
-      value = "true"
-    },
-    {
       name  = "RAILS_SERVE_STATIC_FILES",
       value = "1"
     },
