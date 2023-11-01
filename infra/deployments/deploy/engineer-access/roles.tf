@@ -13,6 +13,7 @@ module "engineer_access" {
   # doesn't necessarily work.
   pentesters = [
     "nick.simpson@pentestpartners.com",
+    "john.martin@pentestpartners.com",
     "alice.carr@digital.cabinet-office.gov.uk",      # To help debugging if necessary.
     "andy.hunt@digital.cabinet-office.gov.uk",       # To help debugging if necessary.
     "catalina.garcia@digital.cabinet-office.gov.uk", # To help debugging if necessary.
