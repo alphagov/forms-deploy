@@ -4,6 +4,10 @@ locals {
   timestamp_sanitized = replace("${local.timestamp}", "/[- TZ:]/", "")
 }
 
+data "aws_ssm_parameter" "database_password" {
+  name = "/database/master-password"
+}
+
 resource "aws_rds_cluster_parameter_group" "aurora_postgres" {
   name_prefix = "forms-${var.env_name}"
   family      = "aurora-postgresql11"
@@ -26,7 +30,7 @@ resource "aws_rds_cluster" "forms" {
   availability_zones = var.availability_zones
 
   master_username = "root"
-  master_password = var.main_password
+  master_password = data.aws_ssm_parameter.database_password.value
   port            = local.rds_port
 
   engine         = "aurora-postgresql"
