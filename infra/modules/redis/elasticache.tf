@@ -18,7 +18,7 @@ resource "aws_elasticache_replication_group" "forms-runner" {
   transit_encryption_enabled = true
   engine_version             = var.engine_version
   port                       = local.redis_port
-  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group.id
+  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group["6.x"].id
   subnet_group_name          = aws_elasticache_subnet_group.redis.id
   security_group_ids         = [aws_security_group.forms_runner_redis.id]
   apply_immediately          = var.apply_immediately
@@ -37,9 +37,11 @@ resource "aws_elasticache_replication_group" "forms-runner" {
 }
 
 resource "aws_elasticache_parameter_group" "redis_parameter_group" {
-  name        = "forms-runner-redis"
-  description = "ElastiCache parameter group for redis cluster"
-  family      = var.parameter_group_family
+  for_each = toset(["6.x", "7"])
+
+  name        = "forms-runner-redis-${each.key}"
+  description = "ElastiCache parameter group for redis cluster version ${each.key}"
+  family      = "redis${each.key}"
   dynamic "parameter" {
     for_each = var.redis_parameters
     content {

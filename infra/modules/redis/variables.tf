@@ -44,11 +44,6 @@ variable "automatic_failover_enabled" {
   description = "If the primary node fails it will failover to a replica"
 }
 
-variable "parameter_group_family" {
-  default     = "redis6.x"
-  description = "Must be compatible with the major redis engine version"
-}
-
 variable "redis_parameters" {
   description = "Redis parameters to change from the defaults"
   type        = list(map(any))
