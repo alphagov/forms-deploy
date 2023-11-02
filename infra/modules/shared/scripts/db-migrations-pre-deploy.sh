@@ -9,7 +9,7 @@ jq -nrM -f \
     --argjson "ECS_TASK_NETWORK_CONFIGURATION" "${ECS_TASK_NETWORK_CONFIGURATION}" \
     --arg "ECS_CLUSTER_ARN" "${ECS_CLUSTER_ARN}" \
     --arg "ECS_TASK_DEFINITION_ARN" "${ECS_TASK_DEFINITION_ARN}" \
-    "${SCRIPT_DIR}/ecs-run-task-input.jq" \
+    "${SCRIPT_DIR}/db-migrations-ecs-run-task-input.jq" \
     > "${SCRIPT_DIR}/run-task-input.tmp.json"
 
 # Start the task and get the task ARN

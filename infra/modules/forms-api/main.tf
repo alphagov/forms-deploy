@@ -59,6 +59,6 @@ module "ecs_service" {
     }
   ]
 
-  pre_deploy_script = abspath("${path.module}/scripts/pre-deploy.sh")
+  pre_deploy_script = abspath("${path.module}/../shared/scripts/db-migrations-pre-deploy.sh")
 }
 
