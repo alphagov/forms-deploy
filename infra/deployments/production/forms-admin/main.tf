@@ -18,4 +18,6 @@ module "forms_admin" {
   metrics_feature_flag             = true
   email_confirmations_feature_flag = false
   forms_product_page_support_url   = "https://www.forms.service.gov.uk/support"
+  auth_provider                    = "auth0"
+  previous_auth_provider           = "gds_sso"
 }
