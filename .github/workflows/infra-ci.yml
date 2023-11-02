@@ -4,6 +4,8 @@ on:
     branches: [ main ]
   merge_group:
     types: [checks_requested]
+env:
+  TF_VERSION: "1.2.8"
 
 jobs:
   run_tests:
@@ -19,10 +21,28 @@ jobs:
           bundler-cache: true
           working-directory: infra/
 
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{env.TF_VERSION}}
+
       - name: Check Terraform style
         id: tf_fmt
         run: |
           terraform fmt -write=false -diff=true -list=true -recursive -check
+
+      - name: Validate Terraform syntax
+        run: |
+          set -e -u -o pipefail
+
+          while IFS= read -r -d '' deployment
+          do
+            pushd "${deployment}" >/dev/null || exit
+              echo "Validating ${deployment}"
+          
+              terraform init -backend=false
+              terraform validate
+            popd >/dev/null || exit
+          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
 
       - name: Lint Terraform
         id: checkov
