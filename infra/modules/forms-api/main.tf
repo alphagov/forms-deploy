@@ -58,5 +58,7 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/secret-key-base"
     }
   ]
+
+  pre_deploy_script = abspath("${path.module}/scripts/pre-deploy.sh")
 }
 
