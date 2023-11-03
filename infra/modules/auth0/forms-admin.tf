@@ -11,6 +11,10 @@ resource "auth0_client" "forms_admin" {
   ]
 
   is_first_party = true
+
+  jwt_configuration {
+    alg = "RS256"
+  }
 }
 
 resource "auth0_client_credentials" "forms_admin" {
