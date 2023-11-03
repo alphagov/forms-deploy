@@ -13,6 +13,15 @@ if ! command -v jq >/dev/null; then
     exit 1
 fi
 
+if [[ -v TFENV_TERRAFORM_VERSION ]]; then
+    cat <<EOF
+You have the TFENV_TERRAFORM_VERSION environment variable set. This overrides
+the version of Terraform being supplied by tfenv and will cause this script to
+fail. You should unset it by running 'unset TFENV_TERRAFORM_VERSION'.
+EOF
+    exit 1
+fi
+
 current_version_constraint=$(sed -nr 's#.*required_version = "(.*)"#\1#p' "${__repo_root__}/infra/shared/versions.tf")
 echo "Current version constraint: ${current_version_constraint}"
 
@@ -57,8 +66,20 @@ do
     deployment=${dir#"${deployments_path}/"}
     echo "${deployment} ..."
     pushd "${dir}" >/dev/null || exit
-        rm ".terraform.lock.hcl"
+        # Remove the existing lock file so that we can init
+        # without the backend cleanly
+        rm -f ".terraform.lock.hcl"
+
+        # Initialize, installing the latest as we go
         terraform init -backend=false -upgrade >/dev/null
+
+        # Add the hashes for each provider and platform to the
+        # lock file so that it gets the expected thing everywhere
+        terraform providers lock \
+          -platform=linux_arm64 \
+          -platform=linux_amd64 \
+          -platform=darwin_amd64 \
+          -platform=windows_amd64
     popd >/dev/null || exit
 done <   <(find "${deployments_path}" -type d -maxdepth 2 -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
 
