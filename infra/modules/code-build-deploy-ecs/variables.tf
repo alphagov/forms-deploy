@@ -16,12 +16,6 @@ variable "app_name" {
   }
 }
 
-variable "terraform_version" {
-  type        = string
-  description = "The version of terraform to use"
-  default     = "1.2.8"
-}
-
 variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"

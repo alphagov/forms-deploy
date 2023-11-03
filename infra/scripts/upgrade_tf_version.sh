@@ -26,7 +26,7 @@ function update_versions_tf {
     jq_path="$1"
     new_value="$2"
 
-    jq --arg value "${new_value}" "${jq_path} = \$value" "${__repo_root__}/infra/shared/versions.tf.json" > "${__repo_root__}/infra/shared/versions.tf.json.tmp"
+    jq -r --arg value "${new_value}" "${jq_path} = \$value" "${__repo_root__}/infra/shared/versions.tf.json" > "${__repo_root__}/infra/shared/versions.tf.json.tmp"
     rm "${__repo_root__}/infra/shared/versions.tf.json"
     mv "${__repo_root__}/infra/shared/versions.tf.json.tmp" "${__repo_root__}/infra/shared/versions.tf.json"
     echo "Written to '${__repo_root__}/infra/shared/versions.tf.json'"
@@ -79,6 +79,16 @@ pushd "${__repo_root__}/infra" >/dev/null || exit
     # file using the environment variable
     TFENV_TERRAFORM_VERSION="latest:${tf_major}.${tf_minor}" tfenv pin
 popd >/dev/null || exit
+
+
+echo "Setting default Terraform version in CodePipeline configuration to '${latest_tf_version}'"
+jq -r --arg version "${latest_tf_version}" \
+    '.variable.terraform_version.default = $version' \
+    "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json" \
+> "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json.tmp"
+rm "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json"
+mv "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json.tmp" "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json"
+echo "Written to '${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json.tmp'"
 
 deployments_path=$(readlink -f "${__repo_root__}/infra/deployments")
 echo "Upgrading Terraform and providers in each deployment"
