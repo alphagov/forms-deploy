@@ -22,36 +22,62 @@ EOF
     exit 1
 fi
 
-current_version_constraint=$(jq -r '.terraform.required_version' "${__repo_root__}/infra/shared/versions.tf.json")
-echo "Current version constraint: ${current_version_constraint}"
+function update_versions_tf {
+    jq_path="$1"
+    new_value="$2"
 
-latest_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform/releases" | jq -rf "${__dir__}/latest-tf-release.jq" | tr -d 'v')
-echo "Latest version: ${latest_version}"
+    jq --arg value "${new_value}" "${jq_path} = \$value" "${__repo_root__}/infra/shared/versions.tf.json" > "${__repo_root__}/infra/shared/versions.tf.json.tmp"
+    rm "${__repo_root__}/infra/shared/versions.tf.json"
+    mv "${__repo_root__}/infra/shared/versions.tf.json.tmp" "${__repo_root__}/infra/shared/versions.tf.json"
+    echo "Written to '${__repo_root__}/infra/shared/versions.tf.json'"
+}
 
-major=$(echo "${latest_version}" | cut -d. -f1)
-minor=$(echo "${latest_version}" | cut -d. -f2)
-new_constraint="~>${major}.${minor}"
+current_tf_version_constraint=$(jq -r '.terraform.required_version' "${__repo_root__}/infra/shared/versions.tf.json")
+echo "Current Terraform version constraint: ${current_tf_version_constraint}"
 
-echo "Writing new version constraint '${new_constraint}'"
-jq --arg constraint "${new_constraint}" '.terraform.required_version = $constraint' "${__repo_root__}/infra/shared/versions.tf.json" > "${__repo_root__}/infra/shared/versions.tf.json.tmp";
-rm "${__repo_root__}/infra/shared/versions.tf.json"
-mv "${__repo_root__}/infra/shared/versions.tf.json.tmp" "${__repo_root__}/infra/shared/versions.tf.json"
-echo "Written to '${__repo_root__}/infra/shared/versions.tf.json'"
+current_aws_version_constraint=$(jq -r '.terraform.required_providers.aws' "${__repo_root__}/infra/shared/versions.tf.json")
+echo "Current AWS provider version constraint: ${current_aws_version_constraint}"
+
+latest_tf_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform/releases" | jq -rf "${__dir__}/latest-release.jq" | tr -d 'v')
+echo "Latest Terraform version: ${latest_tf_version}"
+
+tf_major=$(echo "${latest_tf_version}" | cut -d. -f1)
+tf_minor=$(echo "${latest_tf_version}" | cut -d. -f2)
+new_tf_constraint="~>${tf_major}.${tf_minor}"
+
+latest_aws_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform-provider-aws/releases" | jq -rf "${__dir__}/latest-release.jq" | tr -d 'v')
+echo "Latest AWS provider version: ${latest_aws_version}"
+
+aws_major=$(echo "${latest_aws_version}" | cut -d. -f1)
+aws_minor=$(echo "${latest_aws_version}" | cut -d. -f2)
+new_aws_constraint="~>${aws_major}.${aws_minor}"
+
+current_aws_major_version=$(echo "${current_aws_version_constraint}" | tr -d '~>' | cut -d '.' -f1)
+
+if [ "${aws_major}" -gt "${current_aws_major_version}" ]; then
+    echo "WARNING! AWS provider major version is increasing. There may be breaking changes."
+fi
+
+echo "Writing new Terraform version constraint '${new_tf_constraint}'"
+update_versions_tf '.terraform.required_version' "${new_tf_constraint}"
+
+echo "Writing new AWS provider version constraint '${new_aws_constraint}'"
+update_versions_tf '.terraform.required_providers.aws' "${new_aws_constraint}"
 
 echo "Attempting to install new Terraform version via tfenv"
 # tfenv 3.1.0 will support 'tfenv install latest-allowed', but this will have to do unitl then
 pushd "${__repo_root__}/infra" >/dev/null || exit
-    tfenv install "latest:^${major}.${minor}";
+    tfenv install "latest:^${tf_major}.${tf_minor}";
 popd >/dev/null|| exit
 
 echo "Setting Terraform version"
 pushd "${__repo_root__}/infra" >/dev/null || exit
-    tfenv use "latest:${major}.${minor}"
+    tfenv use "latest:${tf_major}.${tf_minor}"
 
     # 'tfenv pin' gets confused by the presence of the `.terraform-version` file
     # and pins the version it sees in there. To work around that, we override the
     # file using the environment variable
-    TFENV_TERRAFORM_VERSION="latest:${major}.${minor}" tfenv pin
+    TFENV_TERRAFORM_VERSION="latest:${tf_major}.${tf_minor}" tfenv pin
 popd >/dev/null || exit
 
 deployments_path=$(readlink -f "${__repo_root__}/infra/deployments")
@@ -84,4 +110,4 @@ do
 done <   <(find "${deployments_path}" -type d -maxdepth 2 -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
 
 echo "Setting version constraint in GitHub Actions workflows"
-yq -i ".env.TF_VERSION=\"${new_constraint}\"" "${__repo_root__}/.github/workflows/infra-ci.yml"
+yq -i ".env.TF_VERSION=\"${new_tf_constraint}\"" "${__repo_root__}/.github/workflows/infra-ci.yml"
