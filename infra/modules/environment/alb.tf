@@ -45,7 +45,9 @@ locals {
 
 # this is for csls log shipping
 module "s3_log_shipping" {
-  source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules//s3/s3_log_shipping@?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
+  # Double slash afer .git in the module source below is required
+  # https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
+  source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules.git//s3/s3_log_shipping?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
   s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
   s3_name                  = module.logs_bucket.name
 }
