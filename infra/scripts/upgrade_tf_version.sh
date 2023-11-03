@@ -22,7 +22,7 @@ EOF
     exit 1
 fi
 
-current_version_constraint=$(sed -nr 's#.*required_version = "(.*)"#\1#p' "${__repo_root__}/infra/shared/versions.tf")
+current_version_constraint=$(jq -r '.terraform.required_version' "${__repo_root__}/infra/shared/versions.tf.json")
 echo "Current version constraint: ${current_version_constraint}"
 
 latest_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform/releases" | jq -rf "${__dir__}/latest-tf-release.jq" | tr -d 'v')
@@ -33,10 +33,10 @@ minor=$(echo "${latest_version}" | cut -d. -f2)
 new_constraint="~>${major}.${minor}"
 
 echo "Writing new version constraint '${new_constraint}'"
-sed -r -i.bak "s%(.*)required_version = \"(.*)\"%\1required_version = \"${new_constraint}\"%g" "${__repo_root__}/infra/shared/versions.tf"
-rm "${__repo_root__}/infra/shared/versions.tf.bak"
-
-echo "Written to '${__repo_root__}/infra/shared/versions.tf'"
+jq --arg constraint "${new_constraint}" '.terraform.required_version = $constraint' "${__repo_root__}/infra/shared/versions.tf.json" > "${__repo_root__}/infra/shared/versions.tf.json.tmp";
+rm "${__repo_root__}/infra/shared/versions.tf.json"
+mv "${__repo_root__}/infra/shared/versions.tf.json.tmp" "${__repo_root__}/infra/shared/versions.tf.json"
+echo "Written to '${__repo_root__}/infra/shared/versions.tf.json'"
 
 echo "Attempting to install new Terraform version via tfenv"
 # tfenv 3.1.0 will support 'tfenv install latest-allowed', but this will have to do unitl then
@@ -79,7 +79,7 @@ do
           -platform=linux_arm64 \
           -platform=linux_amd64 \
           -platform=darwin_amd64 \
-          -platform=windows_amd64
+          -platform=windows_amd64 >/dev/null
     popd >/dev/null || exit
 done <   <(find "${deployments_path}" -type d -maxdepth 2 -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
 
