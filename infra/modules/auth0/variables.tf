@@ -24,6 +24,12 @@ variable "idle_session_lifetime" {
   description = "Number of hours for which a session can be inactive before the user must log in again."
 }
 
+variable "otp_expiry_length" {
+  type        = number
+  default     = 180
+  description = "Number of seconds that a one time password is valid for."
+}
+
 variable "session_lifetime" {
   type        = number
   default     = 24
