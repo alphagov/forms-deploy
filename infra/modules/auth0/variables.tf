@@ -8,6 +8,11 @@ variable "admin_base_url" {
   description = "URL of the admin app"
 }
 
+variable "app_auth_path" {
+  type    = string
+  default = "/auth/auth0"
+}
+
 variable "app_auth_callback_path" {
   type    = string
   default = "/auth/auth0/callback"
