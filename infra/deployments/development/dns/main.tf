@@ -16,7 +16,7 @@ resource "aws_route53_record" "runner" {
   zone_id = aws_route53_zone.public.id
   name    = "submit.dev.forms.service.gov.uk"
   type    = "CNAME"
-  ttl     = 60
+  ttl     = 120
   records = [data.aws_cloudfront_distribution.main.domain_name]
 }
 
