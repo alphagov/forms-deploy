@@ -14,6 +14,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          # Grab the last 50 commits. Later on we need to a git diff, and it's
+          # very likely that two commits involved will be inside the last 50
+          fetch-depth: 50
 
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@d3c9825d67b0d8720afdfdde5af56c79fdb38d16 # v1.117.0
@@ -31,18 +35,24 @@ jobs:
           terraform fmt -write=false -diff=true -list=true -recursive -check
 
       - name: Validate Terraform syntax
+        env:
+          BASE_REF: ${{github.event.pull_request.base.sha}}
+          HEAD_REF: ${{github.event.pull_request.head.sha}}
         run: |
           set -e -u -o pipefail
 
-          while IFS= read -r -d '' deployment
+          modified="$(ruby ./infra/scripts/find-altered-tf-deployments-and-modules.rb "${BASE_REF}" "${HEAD_REF}")"
+
+          echo "$(echo "${modified}" | wc -l) modified Terraform deployments and modules"
+          echo "${modified}"
+
+          while IFS= read -r dir
           do
-            pushd "${deployment}" >/dev/null || exit
-              echo "Validating ${deployment}"
-          
-              terraform init -backend=false
-              terraform validate
-            popd >/dev/null || exit
-          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
+            echo "Validating ${dir}"
+
+            terraform -chdir="${dir}" init -backend=false
+            terraform -chdir="${dir}" validate
+          done <<< "$modified"
 
       - name: Lint Terraform
         id: checkov
