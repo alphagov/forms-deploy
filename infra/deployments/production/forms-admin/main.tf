@@ -14,7 +14,6 @@ module "forms_admin" {
   runner_base                      = "https://submit.forms.service.gov.uk"
   govuk_app_domain                 = "publishing.service.gov.uk"
   enable_maintenance_mode          = false
-  details_guidance_feature_flag    = true
   metrics_feature_flag             = true
   email_confirmations_feature_flag = false
   forms_product_page_support_url   = "https://www.forms.service.gov.uk/support"

@@ -15,7 +15,6 @@ module "forms_admin" {
   runner_base                      = "https://submit.research.forms.service.gov.uk"
   auth_provider                    = "basic_auth"
   enable_maintenance_mode          = false
-  details_guidance_feature_flag    = true
   metrics_feature_flag             = true
   email_confirmations_feature_flag = true
   forms_product_page_support_url   = "https://www.research.forms.service.gov.uk/support"
