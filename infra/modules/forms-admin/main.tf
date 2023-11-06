@@ -130,10 +130,6 @@ module "ecs_service" {
       value = var.env_name
     },
     {
-      name  = "SETTINGS__FEATURES__DETAILED_GUIDANCE_ENABLED",
-      value = var.details_guidance_feature_flag
-    },
-    {
       name  = "SETTINGS__FEATURES__METRICS_FOR_FORM_CREATORS_ENABLED",
       value = var.metrics_feature_flag
     },

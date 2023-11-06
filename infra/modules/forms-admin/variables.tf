@@ -59,12 +59,6 @@ variable "enable_maintenance_mode" {
   type        = bool
 }
 
-variable "details_guidance_feature_flag" {
-  description = "Toggles on/off the detailed guidance feature"
-  type        = bool
-  default     = false
-}
-
 variable "metrics_feature_flag" {
   description = "Toggles on/off the metrics for form creators feature"
   type        = bool
