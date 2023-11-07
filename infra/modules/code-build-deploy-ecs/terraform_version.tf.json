@@ -1,10 +1,10 @@
 {
-    "//": "this file is maintained by a machine and should not be hand edited",
-    "variable": {
-        "terraform_version": {
-            "type": "string",
-            "description": "The version of terraform to use",
-            "default": "1.2.8"
-        }
+  "//": "this file is maintained by a machine and should not be hand edited",
+  "variable": {
+    "terraform_version": {
+      "type": "string",
+      "description": "The version of terraform to use",
+      "default": "1.6.3"
     }
+  }
 }
