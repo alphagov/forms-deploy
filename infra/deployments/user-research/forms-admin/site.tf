@@ -1,10 +1,4 @@
 terraform {
-  required_version = "= 1.2.8"
-
-  required_providers {
-    aws = ">= 4.37.0"
-  }
-
   # Comment out when bootstrapping
   backend "s3" {
     bucket = "gds-forms-user-research-tfstate"

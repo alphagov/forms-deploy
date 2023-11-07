@@ -1,15 +1,4 @@
 terraform {
-  required_version = "= 1.2.8"
-
-  required_providers {
-    auth0 = {
-      source  = "auth0/auth0"
-      version = "~> 1.0.0"
-    }
-
-    aws = ">= 4.37.0"
-  }
-
   backend "s3" {
     bucket = "gds-forms-production-tfstate"
     key    = "auth0.tfstate"

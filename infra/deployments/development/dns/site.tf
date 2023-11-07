@@ -1,6 +1,4 @@
 terraform {
-  required_version = "= 1.2.8"
-
   backend "s3" {
     bucket = "gds-forms-development-tfstate"
     key    = "dns.tfstate"

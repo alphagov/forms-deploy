@@ -5,6 +5,9 @@
 *.tfstate
 *.tfstate.*
 
+# tfenv files outside infra dirs
+.terraform-version
+
 # Crash log files
 crash.log
 crash.*.log
