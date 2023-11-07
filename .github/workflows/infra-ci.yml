@@ -46,10 +46,8 @@ jobs:
 
           while IFS= read -r -d '' deployment
           do
-            pushd "${deployment}" >/dev/null || exit
               echo "Validating ${deployment}"
-              terraform validate
-            popd >/dev/null || exit
+              terraform -chdir="${deployment}" validate || exit
           done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
       - name: Lint Terraform
         id: checkov
