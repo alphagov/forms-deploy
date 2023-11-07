@@ -79,7 +79,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 }
 
 resource "aws_lb" "alb" {
-  #checkov:skip=CKV_AWS_91:ALB access logs to be added in https://trello.com/c/ArInd1jz/419-enable-alb-access-logs
   #checkov:skip=CKV2_AWS_28:WAF is not considered necessary at this time.
 
   name                       = "forms-${var.env_name}"
