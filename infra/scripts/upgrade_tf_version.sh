@@ -54,8 +54,12 @@ aws_minor=$(echo "${latest_aws_version}" | cut -d. -f2)
 aws_patch=$(echo "${latest_aws_version}" | cut -d. -f3)
 new_aws_constraint="~>${aws_major}.${aws_minor}.${aws_patch}"
 
-current_aws_major_version=$(echo "${current_aws_version_constraint}" | tr -d '~>' | cut -d '.' -f1)
+if [[ "${current_tf_version_constraint}" == "${new_tf_constraint}" ]] && [[ "${current_aws_version_constraint}" == "${new_aws_constraint}" ]]; then
+    echo "There are no new versions. Not doing anything."
+    exit 0
+fi
 
+current_aws_major_version=$(echo "${current_aws_version_constraint}" | tr -d '~>' | cut -d '.' -f1)
 if [ "${aws_major}" -gt "${current_aws_major_version}" ]; then
     echo "WARNING! AWS provider major version is increasing. There may be breaking changes."
 fi
