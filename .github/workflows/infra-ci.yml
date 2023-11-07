@@ -2,6 +2,8 @@ name: "Infra-as-code-checks"
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [speed-up-terraform-validate]
   merge_group:
     types: [checks_requested]
 env:
@@ -21,6 +23,19 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{env.TF_VERSION}}
+      - name: Terraform init
+        env:
+          TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
+        run: |
+          set -e -u -o pipefail
+
+          mkdir "$TF_PLUGIN_CACHE_DIR"
+
+          while IFS= read -r -d '' deployment
+          do
+            echo "Initialising ${deployment}"
+            terraform -chdir="${deployment}" init -backend=false || exit
+          done <  <(find "infra/deployments" -type d -mindepth 2 -maxdepth 2 -print0)
       - name: Check Terraform style
         id: tf_fmt
         run: |
@@ -33,8 +48,6 @@ jobs:
           do
             pushd "${deployment}" >/dev/null || exit
               echo "Validating ${deployment}"
-
-              terraform init -backend=false
               terraform validate
             popd >/dev/null || exit
           done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
