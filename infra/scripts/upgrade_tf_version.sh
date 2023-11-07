@@ -43,14 +43,16 @@ echo "Latest Terraform version: ${latest_tf_version}"
 
 tf_major=$(echo "${latest_tf_version}" | cut -d. -f1)
 tf_minor=$(echo "${latest_tf_version}" | cut -d. -f2)
-new_tf_constraint="~>${tf_major}.${tf_minor}"
+tf_patch=$(echo "${latest_tf_version}" | cut -d. -f3)
+new_tf_constraint="~>${tf_major}.${tf_minor}.${tf_patch}"
 
 latest_aws_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform-provider-aws/releases" | jq -rf "${__dir__}/latest-release.jq" | tr -d 'v')
 echo "Latest AWS provider version: ${latest_aws_version}"
 
 aws_major=$(echo "${latest_aws_version}" | cut -d. -f1)
 aws_minor=$(echo "${latest_aws_version}" | cut -d. -f2)
-new_aws_constraint="~>${aws_major}.${aws_minor}"
+aws_patch=$(echo "${latest_aws_version}" | cut -d. -f3)
+new_aws_constraint="~>${aws_major}.${aws_minor}.${aws_patch}"
 
 current_aws_major_version=$(echo "${current_aws_version_constraint}" | tr -d '~>' | cut -d '.' -f1)
 
@@ -95,16 +97,13 @@ echo "Upgrading Terraform and providers in each deployment"
 # while loop recommended by https://www.shellcheck.net/wiki/SC2044
 while IFS= read -r -d '' dir
 do
-    # If there's no `main.tf` it's probably not a Terraform deployment
-    if [ ! -e "${dir}/main.tf" ]; then
-        continue
-    fi
     deployment=${dir#"${deployments_path}/"}
     echo "${deployment} ..."
     pushd "${dir}" >/dev/null || exit
         # Remove the existing lock file so that we can init
         # without the backend cleanly
         rm -f ".terraform.lock.hcl"
+        rm -rf ".terraform/"
 
         # Initialize, installing the latest as we go
         terraform init -backend=false -upgrade >/dev/null
@@ -117,7 +116,7 @@ do
           -platform=darwin_amd64 \
           -platform=windows_amd64 >/dev/null
     popd >/dev/null || exit
-done <   <(find "${deployments_path}" -type d -maxdepth 2 -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
+done <   <(find "${deployments_path}" -type d -depth 2 -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
 
 echo "Setting version constraint in GitHub Actions workflows"
 yq -i ".env.TF_VERSION=\"${new_tf_constraint}\"" "${__repo_root__}/.github/workflows/infra-ci.yml"
