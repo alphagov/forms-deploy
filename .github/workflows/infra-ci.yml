@@ -23,32 +23,6 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{env.TF_VERSION}}
-      - name: Terraform init
-        env:
-          TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
-        run: |
-          set -e -u -o pipefail
-
-          mkdir "$TF_PLUGIN_CACHE_DIR"
-
-          while IFS= read -r -d '' deployment
-          do
-            echo "Initialising ${deployment}"
-            terraform -chdir="${deployment}" init -backend=false || exit
-          done <  <(find "infra/deployments" -type d -mindepth 2 -maxdepth 2 -print0)
-      - name: Check Terraform style
-        id: tf_fmt
-        run: |
-          terraform fmt -write=false -diff=true -list=true -recursive -check
-      - name: Validate Terraform syntax
-        run: |
-          set -e -u -o pipefail
-
-          while IFS= read -r -d '' deployment
-          do
-              echo "Validating ${deployment}"
-              terraform -chdir="${deployment}" validate || exit
-          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
       - name: Lint Terraform
         id: checkov
         uses: bridgecrewio/checkov-action@d403349a9193cf87f58f18a0f09aab1e9e058bde #v12.2552.0 
@@ -88,6 +62,32 @@ jobs:
               popd >/dev/null || exit
             done
           done <  <(find ".github/workflows" -type f \( -name "*.yml" -or -name "*.yaml" \) -print0)
+      - name: Terraform init
+        env:
+          TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
+        run: |
+          set -e -u -o pipefail
+
+          mkdir "$TF_PLUGIN_CACHE_DIR"
+
+          while IFS= read -r -d '' deployment
+          do
+            echo "Initialising ${deployment}"
+            terraform -chdir="${deployment}" init -backend=false || exit
+          done <  <(find "infra/deployments" -type d -mindepth 2 -maxdepth 2 -print0)
+      - name: Check Terraform style
+        id: tf_fmt
+        run: |
+          terraform fmt -write=false -diff=true -list=true -recursive -check
+      - name: Validate Terraform syntax
+        run: |
+          set -e -u -o pipefail
+
+          while IFS= read -r -d '' deployment
+          do
+              echo "Validating ${deployment}"
+              terraform -chdir="${deployment}" validate || exit
+          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
       - name: Run Terraform specs
         working-directory: infra/
         run: bundle exec rspec
