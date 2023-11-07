@@ -20,11 +20,11 @@ fi
 
 # Update these values as necessary and then run the script
 NEW_RUBY_VERSION="3.2.2"
-DOCKER_ALPINE_VERSION="3.17"
+DOCKER_ALPINE_VERSION="3.18"
 
 # Constants that should not need to be updated
 GIT_BRANCH_NAME="bump_ruby_to_${NEW_RUBY_VERSION}"
-APPS=(forms-api forms-admin forms-runner)
+APPS=(forms-api forms-admin forms-runner forms-product-page)
 
 # Checks out main branch and pulls latests. Then creates a new
 # branch for the updates. If the branch already exists it continues
