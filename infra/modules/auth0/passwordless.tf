@@ -29,7 +29,7 @@ resource "auth0_connection" "passwordless_email" {
     brute_force_protection = true
 
     totp {
-      time_step = var.otp_expiry_length
+      time_step = 180
       length    = 6
     }
   }
