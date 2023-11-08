@@ -24,11 +24,10 @@ data "aws_iam_policy_document" "codepipeline" {
     effect    = "Allow"
   }
   statement {
-    actions   = ["codecommit:Get*", "codecommit:Describe*"]
+    actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
     resources = [var.github_connection_arn]
     effect    = "Allow"
   }
-
   statement {
     actions   = ["s3:*"]
     resources = ["${module.artifact_bucket.arn}/*"]

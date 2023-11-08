@@ -24,10 +24,11 @@ resource "aws_codepipeline" "main" {
       output_artifacts = ["forms_deploy"]
 
       configuration = {
-        ConnectionArn    = var.github_connection_arn
-        FullRepositoryId = "alphagov/forms-deploy"
-        BranchName       = var.forms_deploy_branch
-        DetectChanges    = false
+        ConnectionArn        = var.github_connection_arn
+        FullRepositoryId     = "alphagov/forms-deploy"
+        BranchName           = var.forms_deploy_branch
+        DetectChanges        = false
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }
 
@@ -41,9 +42,10 @@ resource "aws_codepipeline" "main" {
       output_artifacts = ["source_repo"]
 
       configuration = {
-        ConnectionArn    = var.github_connection_arn
-        FullRepositoryId = "alphagov/${var.app_name}"
-        BranchName       = var.source_branch
+        ConnectionArn        = var.github_connection_arn
+        FullRepositoryId     = "alphagov/${var.app_name}"
+        BranchName           = var.source_branch
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }
   }

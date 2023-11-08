@@ -27,6 +27,20 @@ data "aws_iam_policy_document" "codebuild" {
     effect = "Allow"
   }
   statement {
+    actions = [
+      "codestar-connections:UseConnection",
+      "codestar-connections:GetConnection",
+      "codestar-connections:ListConnections"
+    ]
+    resources = [var.github_connection_arn]
+    effect    = "Allow"
+  }
+  statement {
+    actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
+    resources = [var.github_connection_arn]
+    effect    = "Allow"
+  }
+  statement {
     actions   = ["sts:AssumeRole"]
     effect    = "Allow"
     resources = [lookup(local.deployer_roles, var.environment)]

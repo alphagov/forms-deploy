@@ -13,6 +13,20 @@ data "aws_iam_policy_document" "codebuild" {
   }
   statement {
     actions = [
+      "codestar-connections:UseConnection",
+      "codestar-connections:GetConnection",
+      "codestar-connections:ListConnections"
+    ]
+    resources = [var.github_connection_arn]
+    effect    = "Allow"
+  }
+  statement {
+    actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
+    resources = [var.github_connection_arn]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
       "s3:PutObject",
       "s3:GetObject",
       "s3:DeleteObject",
