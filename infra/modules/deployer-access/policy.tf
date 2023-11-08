@@ -249,4 +249,13 @@ data "aws_iam_policy_document" "deployer" {
     ]
     effect = "Allow"
   }
+
+  statement {
+    sid = "ManageApplicationAutoScaling"
+    actions = [
+      "application-autoscaling:*"
+    ]
+    resources = ["*"]
+    effect = "Allow"
+  }
 }
