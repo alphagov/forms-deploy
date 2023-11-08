@@ -83,7 +83,8 @@ data "aws_iam_policy_document" "deployer" {
       "ecs:DeleteTaskSet",
       "ecs:DescribeTaskSets",
       "ecs:UpdateServicePrimaryTaskSet",
-      "ecs:UpdateTaskSet"
+      "ecs:UpdateTaskSet",
+      "ecs:RunTask"
     ]
     resources = ["*"]
     effect    = "Allow"
