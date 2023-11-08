@@ -13,30 +13,40 @@ data "aws_subnets" "private" {
   }
 }
 
+locals {
+  task_container_definition = {
+    name        = var.application,
+    environment = var.environment_variables,
+    secrets     = var.secrets,
+    image       = var.image,
+    essential   = true,
+    portMappings = [
+      {
+        containerPort = var.container_port,
+      }
+    ],
+    logConfiguration = {
+      logDriver = "awslogs",
+      options = {
+        awslogs-group         = "${var.application}-${var.env_name}",
+        awslogs-region        = "eu-west-2",
+        awslogs-stream-prefix = "${var.application}-${var.env_name}"
+      }
+    },
+  }
+
+  # Extract the values needed for the ECS service network configuration
+  # to local variable so we can ensure the same configuration is used
+  # for any pre-deploy tasks
+  ecs_service_network_configuration = {
+    subnets        = data.aws_subnets.private.ids
+    securityGroups = [aws_security_group.baseline.id]
+    assignPublicIp = false
+  }
+}
 resource "aws_ecs_task_definition" "task" {
-  family = "${var.env_name}_${var.application}"
-  container_definitions = jsonencode([
-    {
-      name        = var.application,
-      environment = var.environment_variables,
-      secrets     = var.secrets,
-      image       = var.image,
-      essential   = true,
-      portMappings = [
-        {
-          containerPort = var.container_port,
-        }
-      ],
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = "${var.application}-${var.env_name}",
-          awslogs-region        = "eu-west-2",
-          awslogs-stream-prefix = "${var.application}-${var.env_name}"
-        }
-      },
-    }
-  ])
+  family                = "${var.env_name}_${var.application}"
+  container_definitions = jsonencode([local.task_container_definition])
 
   runtime_platform {
     operating_system_family = "LINUX"
@@ -76,8 +86,12 @@ resource "aws_ecs_service" "app_service" {
   }
 
   network_configuration {
-    subnets          = data.aws_subnets.private.ids
-    security_groups  = [aws_security_group.baseline.id]
-    assign_public_ip = false
+    subnets          = local.ecs_service_network_configuration.subnets
+    security_groups  = local.ecs_service_network_configuration.securityGroups
+    assign_public_ip = local.ecs_service_network_configuration.assignPublicIp
   }
+
+  depends_on = [
+    null_resource.pre_deploy_script
+  ]
 }

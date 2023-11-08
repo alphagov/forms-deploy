@@ -87,3 +87,18 @@ variable "ecs_task_role_policy_json" {
   description = "JSON policy to be attached to the ECS task role"
   default     = ""
 }
+
+variable "pre_deploy_script" {
+  type        = string
+  default     = ""
+  description = <<EOF
+Absolute path to a script to run before a new task definition is run. Arguments are given as environment variables
+
+ECS_CLUSTER_ARN: The ECS cluster ARN
+ECS_TASK_DEFINITION_ARN: The task definition ARN
+ECS_TASK_NETWORK_CONFIGURATION: The network configuration to use when running the task
+CONTAINER_DEFINITION_JSON: The task's container definition in JSON
+
+If left empty, no script will be run.
+EOF
+}
