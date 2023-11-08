@@ -30,3 +30,8 @@ variable "zendesk_subdomain" {
   description = "The Zendesk tenant the support form should create tickets on"
   default     = "govuk"
 }
+
+variable "admin_base_url" {
+  description = "The url for redirecting to forms-admin"
+  type        = string
+}

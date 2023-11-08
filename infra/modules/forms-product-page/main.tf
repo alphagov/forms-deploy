@@ -42,6 +42,10 @@ module "ecs_service" {
       name  = "SETTINGS__ZENDESK__SUBDOMAIN",
       value = var.zendesk_subdomain
     },
+    {
+      name  = "SETTINGS__FORMS_ADMIN__BASE_URL",
+      value = var.admin_base_url
+    },
   ]
 
   secrets = [
