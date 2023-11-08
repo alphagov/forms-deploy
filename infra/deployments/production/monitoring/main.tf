@@ -3,106 +3,107 @@ resource "aws_cloudwatch_dashboard" "overview" {
 
   dashboard_body = <<EOF
 {
+    {
     "widgets": [
         {
-            "height": 6,
-            "width": 8,
-            "y": 3,
+            "height": 5,
+            "width": 12,
+            "y": 14,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "color": "#d62728" } ],
-                    [ ".", "RequestCount", ".", ".", ".", ".", { "color": "#1f77b4" } ]
+                    [ { "expression": "100*(m1/m5)", "id": "e3", "label": "forms-admin", "region": "eu-west-2" } ],
+                    [ { "expression": "100*(m2/m6)", "id": "e2", "label": "forms-api", "region": "eu-west-2" } ],
+                    [ { "expression": "100*(m3/m7)", "id": "e1", "label": "forms-runner", "region": "eu-west-2" } ],
+                    [ { "expression": "100*(m4/m8)", "id": "e4", "label": "forms-product-page", "region": "eu-west-2" } ],
+                    [ "ECS/ContainerInsights", "CpuReserved", "ServiceName", "forms-product-page", "ClusterName", "forms-dev", { "id": "m23", "label": "forms-product-page CpuReserved [last: ${LAST}]", "yAxis": "right", "region": "eu-west-2", "visible": false } ],
+                    [ ".", "CpuUtilized", "TaskDefinitionFamily", "production_forms-runner", ".", "forms-production", { "id": "m3", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "production_forms-admin", ".", ".", { "id": "m1", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "production_forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "production_forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
+                    [ ".", "CpuReserved", ".", "production_forms-product-page", ".", ".", { "id": "m13", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "production_forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "production_forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "production_forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "ServiceName", "forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "forms-runner", ".", ".", { "id": "m18", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "forms-admin", ".", ".", { "id": "m19", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "forms-api", ".", ".", { "id": "m20", "region": "eu-west-2", "visible": false } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "stat": "Sum",
-                "period": 60,
-                "title": "Forms-Admin Requests"
+                "stat": "Maximum",
+                "period": 5,
+                "title": "ECS CPU Utilization (Percent)",
+                "liveData": true,
+                "yAxis": {
+                    "left": {
+                        "showUnits": false,
+                        "label": "Percent"
+                    },
+                    "right": {
+                        "showUnits": true,
+                        "label": ""
+                    }
+                }
             }
         },
         {
-            "height": 6,
-            "width": 8,
-            "y": 3,
-            "x": 8,
+            "height": 5,
+            "width": 12,
+            "y": 14,
+            "x": 12,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "TargetGroup", "targetgroup/forms-runner-production/dc1ef6b38be73050", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "color": "#d62728" } ],
-                    [ ".", "RequestCount", ".", ".", ".", ".", { "color": "#1f77b4" } ]
+                    [ { "expression": "100*(m1/m5)", "label": "forms-admin", "id": "e1", "region": "eu-west-2" } ],
+                    [ { "expression": "100*(m2/m6)", "label": "forms-api", "id": "e2", "region": "eu-west-2" } ],
+                    [ { "expression": "100*(m3/m7)", "label": "forms-runner", "id": "e3", "region": "eu-west-2" } ],
+                    [ { "expression": "100*(m4/m8)", "label": "forms-product-page", "id": "e4", "region": "eu-west-2" } ],
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "forms-admin", "ClusterName", "forms-production", { "id": "m1", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
+                    [ ".", "MemoryReserved", ".", "forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "label": "forms-admin MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
+                    [ "...", "forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "label": "forms-api MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
+                    [ "...", "forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "label": "forms-runner MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
+                    [ "...", "forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "label": "forms-product-page MemoryReserved [last: ${LAST}]", "yAxis": "right" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "stat": "Sum",
-                "period": 60,
-                "title": "Forms-Runner Requests"
+                "stat": "Maximum",
+                "period": 5,
+                "title": "ECS Memory Utilization (Percent)",
+                "yAxis": {
+                    "left": {
+                        "label": "Percent",
+                        "showUnits": false
+                    }
+                }
             }
         },
         {
             "height": 6,
             "width": 8,
-            "y": 3,
-            "x": 16,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "TargetGroup", "targetgroup/forms-api-production/c0855c3550515fa1", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "color": "#d62728" } ],
-                    [ ".", "RequestCount", ".", ".", ".", ".", { "color": "#1f77b4" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "stat": "Sum",
-                "period": 60,
-                "title": "Forms-Api Requests"
-            }
-        },
-        {
-            "height": 6,
-            "width": 8,
-            "y": 9,
+            "y": 25,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "CpuReserved", "ServiceName", "forms-runner", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
-                    [ ".", "CpuUtilized", ".", "forms-admin", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "forms-api", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "forms-product-page", ".", ".", { "region": "eu-west-2" } ]
+                    [ "AWS/ElastiCache", "CPUUtilization", { "region": "eu-west-2", "yAxis": "left" } ],
+                    [ ".", ".", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "period": 300,
-                "stat": "Average",
-                "title": "ECS CPU Utilisation"
-            }
-        },
-        {
-            "height": 6,
-            "width": 8,
-            "y": 9,
-            "x": 8,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "ECS/ContainerInsights", "MemoryReserved", "ServiceName", "forms-admin", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
-                    [ ".", "MemoryUtilized", ".", ".", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "forms-api", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "forms-product-page", ".", ".", { "region": "eu-west-2" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "ECS Memory Utilisation",
-                "period": 300,
-                "stat": "Average"
+                "stat": "Maximum",
+                "period": 5,
+                "title": "Redis Maximum CPU Utilization per 5 seconds"
             }
         },
         {
@@ -113,49 +114,70 @@ resource "aws_cloudwatch_dashboard" "overview" {
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "targetgroup/forms-runner-production/dc1ef6b38be73050", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
                     [ "...", "targetgroup/forms-api-production/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-runner-production/dc1ef6b38be73050", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ]
+                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", ".", ".", { "region": "eu-west-2" } ]
                 ],
-                "sparkline": true,
                 "view": "singleValue",
+                "stacked": false,
                 "region": "eu-west-2",
+                "title": "ALB HealthyHostCount",
                 "period": 300,
-                "stat": "Average",
-                "title": "ALB Healthy Host Count"
+                "stat": "Maximum",
+                "sparkline": true,
+                "setPeriodToTimeRange": false,
+                "trend": true
             }
         },
         {
-            "height": 7,
+            "height": 6,
             "width": 8,
-            "y": 15,
-            "x": 16,
+            "y": 19,
+            "x": 0,
             "type": "metric",
             "properties": {
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/RDS", "CPUUtilization", { "period": 60 } ]
+                    [ "AWS/RDS", "CPUUtilization", "EngineName", "aurora-postgresql", { "period": 60 } ]
                 ],
                 "region": "eu-west-2",
                 "title": "RDS CPU Utilization"
             }
         },
         {
-            "height": 7,
-            "width": 8,
-            "y": 15,
+            "height": 5,
+            "width": 24,
+            "y": 9,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ReadIOPS", { "region": "eu-west-2", "visible": false } ],
-                    [ ".", "ReadLatency", { "region": "eu-west-2" } ],
-                    [ ".", "ReadThroughput", { "region": "eu-west-2", "visible": false } ],
-                    [ ".", "WriteIOPS", { "region": "eu-west-2", "visible": false } ],
-                    [ ".", "WriteLatency", { "region": "eu-west-2" } ],
-                    [ ".", "WriteThroughput", { "region": "eu-west-2", "visible": false } ]
+                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ ".", ".", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-api-production/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-runner-production/dc1ef6b38be73050", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "period": 60,
+                "stat": "Sum",
+                "title": "ALB RequestCount"
+            }
+        },
+        {
+            "height": 6,
+            "width": 8,
+            "y": 19,
+            "x": 16,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/RDS", "WriteLatency", { "region": "eu-west-2" } ],
+                    [ ".", "ReadLatency", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -166,24 +188,20 @@ resource "aws_cloudwatch_dashboard" "overview" {
             }
         },
         {
-            "height": 7,
+            "height": 6,
             "width": 8,
-            "y": 15,
+            "y": 19,
             "x": 8,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/RDS", "ReadIOPS", { "region": "eu-west-2", "visible": false } ],
-                    [ ".", "ReadLatency", { "region": "eu-west-2", "visible": false } ],
-                    [ ".", "ReadThroughput", { "region": "eu-west-2" } ],
-                    [ ".", "WriteIOPS", { "region": "eu-west-2", "visible": false } ],
-                    [ ".", "WriteLatency", { "region": "eu-west-2", "visible": false } ],
+                    [ "AWS/RDS", "ReadThroughput", { "region": "eu-west-2" } ],
                     [ ".", "WriteThroughput", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "RDS Read/Write Throughput",
+                "title": "RDS Read/Write Throughtput",
                 "period": 60,
                 "stat": "Average"
             }
@@ -191,114 +209,115 @@ resource "aws_cloudwatch_dashboard" "overview" {
         {
             "height": 6,
             "width": 8,
-            "y": 9,
-            "x": 16,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "ECS/ContainerInsights", "DesiredTaskCount", "ServiceName", "forms-admin", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
-                    [ ".", "RunningTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "RunningTaskCount", ".", "forms-api", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "RunningTaskCount", ".", "forms-runner", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "RunningTaskCount", ".", "forms-product-page", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "period": 300,
-                "stat": "Average",
-                "title": "ECS Pending/Running Task Count"
-            }
-        },
-        {
-            "height": 7,
-            "width": 8,
-            "y": 22,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/ElastiCache", "CPUUtilization", { "region": "eu-west-2" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001" ],
-                    [ "...", "forms-runner-production-002" ],
-                    [ "...", "forms-runner-production-003" ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "period": 300,
-                "title": "Redis CPU Utilization",
-                "stat": "Average"
-            }
-        },
-        {
-            "height": 7,
-            "width": 8,
-            "y": 22,
+            "y": 31,
             "x": 8,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ElastiCache", "SwapUsage", { "region": "eu-west-2" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
+                    [ "AWS/ElastiCache", "SwapUsage", { "region": "eu-west-2" } ]
                 ],
-                "view": "timeSeries",
+                "view": "gauge",
                 "stacked": false,
                 "region": "eu-west-2",
                 "title": "Redis Swap Usage",
                 "period": 300,
-                "stat": "Average"
+                "stat": "Average",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 500000000
+                    }
+                },
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "color": "#d62728",
+                            "label": "broken things (https://repost.aws/knowledge-center/elasticache-swap-activity)",
+                            "value": 300000000,
+                            "fill": "above"
+                        },
+                        {
+                            "color": "#2ca02c",
+                            "label": "Untitled annotation",
+                            "value": 300000000,
+                            "fill": "below"
+                        }
+                    ]
+                }
             }
         },
         {
-            "height": 7,
-            "width": 8,
-            "y": 22,
-            "x": 16,
+            "height": 6,
+            "width": 6,
+            "y": 42,
+            "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ElastiCache", "FreeableMemory", { "region": "eu-west-2" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
+                    [ "...", { "region": "eu-west-2", "stat": "Maximum" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "Redis Freeable Memory",
+                "title": "ALB Forms-admin Latency metrics (Target Response Time)",
+                "period": 60,
+                "stat": "Average"
+            }
+        },
+        {
+            "height": 5,
+            "width": 12,
+            "y": 37,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "ProcessedBytes", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ALB Traffic metrics (ProcessedBytes)",
                 "period": 300,
                 "stat": "Average"
             }
         },
         {
-            "height": 7,
+            "height": 6,
             "width": 8,
-            "y": 29,
+            "y": 31,
             "x": 0,
             "type": "metric",
             "properties": {
+                "metrics": [
+                    [ "AWS/ElastiCache", "CacheHitRate", { "region": "eu-west-2", "yAxis": "left" } ],
+                    [ ".", "CacheHits", { "region": "eu-west-2", "yAxis": "left" } ],
+                    [ ".", "CacheMisses", { "region": "eu-west-2", "yAxis": "left" } ]
+                ],
                 "view": "timeSeries",
                 "stacked": false,
-                "metrics": [
-                    [ "AWS/ElastiCache", "CacheHitRate" ],
-                    [ ".", "CacheHits" ],
-                    [ ".", "CacheMisses" ]
-                ],
                 "region": "eu-west-2",
-                "title": "Redis Cache HitRate, Cache Hits, Cache Misses"
+                "title": "Redis CacheHitRate, CacheHits, CacheMisses",
+                "period": 60,
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "label": "Cache Hit Ratio",
+                        "min": 0,
+                        "max": 100
+                    },
+                    "right": {
+                        "label": "Hits and Misses"
+                    }
+                }
             }
         },
         {
-            "height": 7,
+            "height": 6,
             "width": 8,
-            "y": 29,
+            "y": 25,
             "x": 8,
             "type": "metric",
             "properties": {
@@ -306,7 +325,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
                     [ "AWS/ElastiCache", "DatabaseMemoryUsagePercentage", { "region": "eu-west-2" } ],
                     [ ".", ".", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
                     [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003" ]
+                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -317,9 +336,34 @@ resource "aws_cloudwatch_dashboard" "overview" {
             }
         },
         {
-            "height": 7,
+            "height": 6,
             "width": 8,
-            "y": 29,
+            "y": 31,
+            "x": 16,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ElastiCache", "CurrItems", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ],
+                    [ ".", "Evictions", ".", "forms-runner-production-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ],
+                    [ ".", "CurrItems", { "region": "eu-west-2" } ],
+                    [ ".", "Evictions", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "stat": "Maximum",
+                "period": 5,
+                "title": "Redis CurrItems and Evictions"
+            }
+        },
+        {
+            "height": 6,
+            "width": 8,
+            "y": 25,
             "x": 16,
             "type": "metric",
             "properties": {
@@ -327,158 +371,344 @@ resource "aws_cloudwatch_dashboard" "overview" {
                     [ "AWS/ElastiCache", "CurrConnections", { "region": "eu-west-2" } ],
                     [ ".", "NewConnections", { "region": "eu-west-2" } ],
                     [ ".", "CurrConnections", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnections", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "CurrConnections", ".", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnections", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "CurrConnections", ".", "forms-runner-production-003", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnections", ".", ".", { "region": "eu-west-2" } ]
+                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ],
+                    [ ".", "NewConnections", ".", "forms-runner-production-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "Redis Current/ New Connections",
+                "title": "Redis Current/NewConnections",
                 "period": 300,
                 "stat": "Average"
             }
         },
         {
-            "height": 7,
-            "width": 8,
-            "y": 36,
+            "height": 3,
+            "width": 12,
+            "y": 3,
             "x": 0,
             "type": "metric",
             "properties": {
-                "view": "timeSeries",
-                "stacked": false,
                 "metrics": [
-                    [ "AWS/ElastiCache", "Evictions" ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001" ],
-                    [ "...", "forms-runner-production-002" ],
-                    [ "...", "forms-runner-production-003" ]
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-admin", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
+                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
                 ],
+                "view": "singleValue",
+                "stacked": false,
                 "region": "eu-west-2",
-                "title": "Redis Evictions"
+                "title": "ECS Pending/Running Task Count - Forms Admin",
+                "period": 300,
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 3
+                    }
+                },
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "visible": false,
+                            "color": "#b2df8d",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "below"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#d62728",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "above"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#ff7f0e",
+                            "label": "Untitled annotation",
+                            "value": 0,
+                            "fill": "above"
+                        }
+                    ]
+                },
+                "setPeriodToTimeRange": false,
+                "legend": {
+                    "position": "bottom"
+                },
+                "sparkline": true,
+                "trend": true
             }
         },
         {
-            "height": 7,
-            "width": 8,
-            "y": 43,
-            "x": 8,
+            "height": 9,
+            "width": 24,
+            "y": 48,
+            "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "ActiveConnectionCount", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", "AvailabilityZone", "eu-west-2a", { "region": "eu-west-2" } ],
-                    [ "...", "eu-west-2b", { "region": "eu-west-2" } ],
-                    [ "...", "eu-west-2c", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnectionCount", ".", ".", ".", "eu-west-2a", { "region": "eu-west-2" } ],
-                    [ "...", "eu-west-2b", { "region": "eu-west-2" } ],
-                    [ "...", "eu-west-2c", { "region": "eu-west-2" } ]
+                    [ "AWS/SES", "Delivery", { "region": "eu-west-2" } ],
+                    [ ".", "Send", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "title": "SES Send and Deliver (Sample Count 1 minute)",
+                "region": "eu-west-2",
+                "stat": "SampleCount",
+                "period": 60
+            }
+        },
+        {
+            "height": 3,
+            "width": 12,
+            "y": 6,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-runner", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
+                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ECS Pending/Running Task Count - Forms Runner",
+                "period": 300,
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 3
+                    }
+                },
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "visible": false,
+                            "color": "#b2df8d",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "below"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#d62728",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "above"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#ff7f0e",
+                            "label": "Untitled annotation",
+                            "value": 0,
+                            "fill": "above"
+                        }
+                    ]
+                },
+                "setPeriodToTimeRange": false,
+                "legend": {
+                    "position": "bottom"
+                },
+                "sparkline": true,
+                "trend": true
+            }
+        },
+        {
+            "height": 3,
+            "width": 12,
+            "y": 6,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-product-page", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
+                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ECS Pending/Running Task Count - Forms-Product-page",
+                "period": 300,
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 3
+                    }
+                },
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "visible": false,
+                            "color": "#b2df8d",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "below"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#d62728",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "above"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#ff7f0e",
+                            "label": "Untitled annotation",
+                            "value": 0,
+                            "fill": "above"
+                        }
+                    ]
+                },
+                "setPeriodToTimeRange": false,
+                "legend": {
+                    "position": "bottom"
+                },
+                "sparkline": true,
+                "trend": true
+            }
+        },
+        {
+            "height": 3,
+            "width": 12,
+            "y": 3,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-api", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
+                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ECS Pending/Running Task Count - Forms API",
+                "period": 300,
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 3
+                    }
+                },
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "visible": false,
+                            "color": "#b2df8d",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "below"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#d62728",
+                            "label": "Untitled annotation",
+                            "value": 3.1,
+                            "fill": "above"
+                        },
+                        {
+                            "visible": false,
+                            "color": "#ff7f0e",
+                            "label": "Untitled annotation",
+                            "value": 0,
+                            "fill": "above"
+                        }
+                    ]
+                },
+                "setPeriodToTimeRange": false,
+                "legend": {
+                    "position": "bottom"
+                },
+                "sparkline": true,
+                "trend": true
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 42,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-runner-production/dc1ef6b38be73050", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
+                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
+                    [ "...", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ALB Connection Count",
+                "title": "ALB Forms-runner Latency metrics (Target Response Time)",
+                "period": 60,
+                "stat": "Maximum"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 42,
+            "x": 18,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-product-page-production/eea72df3bd4e7081", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
+                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
+                    [ "...", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ALB Forms-Product-page Latency (Target Response Time)",
+                "period": 60,
+                "stat": "Maximum"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 42,
+            "x": 6,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-api-production/c0855c3550515fa1", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
+                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
+                    [ "...", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ALB Forms-api Latency (Target Response Time)",
+                "period": 60,
+                "stat": "Maximum"
+            }
+        },
+        {
+            "height": 5,
+            "width": 12,
+            "y": 37,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ApplicationELB", "NewConnectionCount", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ ".", "ActiveConnectionCount", ".", ".", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ALB Active/New Connection Count",
                 "period": 300,
                 "stat": "Average"
-            }
-        },
-        {
-            "height": 7,
-            "width": 8,
-            "y": 43,
-            "x": 16,
-            "type": "metric",
-            "properties": {
-                "view": "timeSeries",
-                "stacked": false,
-                "metrics": [
-                    [ "AWS/ApplicationELB", "ProcessedBytes", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ ".", "ActiveConnectionCount", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnectionCount", ".", "." ]
-                ],
-                "region": "eu-west-2",
-                "period": 300,
-                "title": "ALB Traffic Metrics"
-            }
-        },
-        {
-            "height": 7,
-            "width": 8,
-            "y": 50,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "view": "timeSeries",
-                "stacked": false,
-                "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd" ],
-                    [ "...", "targetgroup/forms-api-production/c0855c3550515fa1", ".", "." ],
-                    [ "...", "targetgroup/forms-runner-production/dc1ef6b38be73050", ".", "." ],
-                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", ".", "." ],
-                    [ ".", ".", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd" ]
-                ],
-                "region": "eu-west-2",
-                "title": "ALB Latency Metrics (Target Response Time)"
-            }
-        },
-        {
-            "height": 7,
-            "width": 8,
-            "y": 43,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "view": "timeSeries",
-                "stacked": false,
-                "metrics": [
-                    [ "AWS/ApplicationELB", "HTTPCode_ELB_4XX_Count", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", "AvailabilityZone", "eu-west-2b" ],
-                    [ "...", "eu-west-2c" ],
-                    [ "...", "eu-west-2a" ],
-                    [ ".", ".", ".", "." ]
-                ],
-                "region": "eu-west-2",
-                "title": "ALB Error Metrics (HTTPCode_ELB_4XX/5XX_Count)"
-            }
-        },
-        {
-            "height": 7,
-            "width": 8,
-            "y": 36,
-            "x": 16,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/ApplicationELB", "RequestCountPerTarget", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-api-production/c0855c3550515fa1", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-runner-production/dc1ef6b38be73050", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", { "region": "eu-west-2" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "ALB Http reqest ( RequestCountPerTarget) ",
-                "period": 300,
-                "stat": "Average"
-            }
-        },
-        {
-            "type": "metric",
-            "x": 8,
-            "y": 36,
-            "width": 8,
-            "height": 7,
-            "properties": {
-                "view": "timeSeries",
-                "stacked": false,
-                "metrics": [
-                    [ "AWS/ElastiCache", "CurrItems" ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001" ],
-                    [ "...", "forms-runner-production-002" ],
-                    [ "...", "forms-runner-production-003" ]
-                ],
-                "region": "eu-west-2",
-                "title": "Redis Item Count"
             }
         }
     ]
