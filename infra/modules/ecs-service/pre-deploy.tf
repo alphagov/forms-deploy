@@ -13,6 +13,6 @@ resource "null_resource" "pre_deploy_script" {
   }
 
   triggers = {
-    always_run = "${timestamp()}"
+    always_run = var.image
   }
 }
