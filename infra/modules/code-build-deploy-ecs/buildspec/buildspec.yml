@@ -1,4 +1,6 @@
 version: 0.2
+artifacts:
+  enable-symlinks: yes
 phases:
   install:
     commands:
@@ -20,7 +22,6 @@ phases:
       - export AWS_SESSION_TOKEN="$(echo "$sts" | jq '.Credentials.SessionToken' -r )"
       - aws sts get-caller-identity
       - cd "${DEPLOY_DIRECTORY}"
-      - ls
       - terraform init
       - terraform apply --auto-approve --var image_tag="${IMAGE_TAG}"
   post_build:
