@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          # Grab the last 50 commits. Later on we need to a git diff, and it's
+          # very likely that two commits involved will be inside the last 50
+          fetch-depth: 50
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@54a18e26dbbb1eabc604f317ade9a5788dddef81 # v1.159.0
         with:
@@ -21,23 +25,6 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{env.TF_VERSION}}
-      - name: Check Terraform style
-        id: tf_fmt
-        run: |
-          terraform fmt -write=false -diff=true -list=true -recursive -check
-      - name: Validate Terraform syntax
-        run: |
-          set -e -u -o pipefail
-
-          while IFS= read -r -d '' deployment
-          do
-            pushd "${deployment}" >/dev/null || exit
-              echo "Validating ${deployment}"
-
-              terraform init -backend=false
-              terraform validate
-            popd >/dev/null || exit
-          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
       - name: Lint Terraform
         id: checkov
         uses: bridgecrewio/checkov-action@d403349a9193cf87f58f18a0f09aab1e9e058bde #v12.2552.0 
@@ -77,6 +64,76 @@ jobs:
               popd >/dev/null || exit
             done
           done <  <(find ".github/workflows" -type f \( -name "*.yml" -or -name "*.yaml" \) -print0)
+      - name: Terraform init
+        env:
+          TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
+        run: |
+          set -e -u -o pipefail
+
+          mkdir "$TF_PLUGIN_CACHE_DIR"
+
+          while IFS= read -r -d '' deployment
+          do
+            echo "Initialising ${deployment}"
+            terraform -chdir="${deployment}" init -backend=false || exit
+          done <  <(find "infra/deployments" -type d -mindepth 2 -maxdepth 2 -print0)
+      - name: Check Terraform style
+        id: tf_fmt
+        run: |
+          terraform fmt -write=false -diff=true -list=true -recursive -check
+      - name: Validate Terraform syntax
+        env:
+          BASE_REF: ${{github.event.pull_request.base.sha}}
+          HEAD_REF: ${{github.event.pull_request.head.sha}}
+        run: |
+          set -e -u -o pipefail
+
+          # The first run of "terraform validate" always takes much longer than
+          # subsequent runs. To keep our pipeline times down, we want to only
+          # validate deployments which will be affected by changes to one or more
+          # source files. To do that, we:
+          # 1. Find all the altered Terraform files
+          # 2. Generate a list of every Terraform file used in each deployment
+          # 3. Run "terraform validate" for each deployment which makes use of an
+          #    altered file
+
+          # 1. Find all of the altered Terraform files
+          git diff "${BASE_REF}"..."${HEAD_REF}" --name-only -- "*.tf" "*.tf.json" | sort > modified-tf-files.txt
+
+          # 2. Generate a list of every Terraform file used in each deployment
+          while IFS= read -r -d '' deployment
+          do
+            # If the Terraform deployment doesn't use other modules this file won't exist,
+            # and it will only be considering files in its immediate tree
+            if [[ ! -f "${deployment}/.terraform/modules/modules.json" ]]; then
+              # shellcheck disable=SC2038
+              find "${deployment}" -type f \( -name "*.tf" -or -name "*.tf.json" \) -and \( -not -path "*.terraform*" \) \
+              | xargs -I {} realpath --relative-to="$(pwd)" {} \
+              | sort > "${deployment}/all-terraform-files.txt";
+
+            # Otherwise find all of the modules used by the deployment, and then find
+            # the paths of all the Terraform files in every module, relative to
+            # the root directory
+            else
+              # shellcheck disable=SC2038
+              jq -r '.Modules[]|.Dir' \
+                "${deployment}/.terraform/modules/modules.json" \
+              | xargs -I {} find "${deployment}/{}" -type f \( -name "*.tf" -or -name "*.tf.json" \) -and \( -not -path "*.terraform*" \) \
+              | xargs -I {} realpath --relative-to="$(pwd)" {} \
+              | sort > "${deployment}/all-terraform-files.txt";
+            fi
+          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
+
+          # Run "terraform validate" for each deployment that uses one or more of the altered files
+          while IFS= read -r -d '' deployment
+          do
+            matching_lines="$(comm -1 -2 modified-tf-files.txt "${deployment}/all-terraform-files.txt")"
+
+            if [[ -n "$matching_lines" ]]; then
+              echo "Validating ${deployment}"
+              terraform -chdir="${deployment}" validate
+            fi
+          done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
       - name: Run Terraform specs
         working-directory: infra/
         run: bundle exec rspec
