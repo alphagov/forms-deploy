@@ -258,4 +258,19 @@ data "aws_iam_policy_document" "deployer" {
     resources = ["*"]
     effect    = "Allow"
   }
+
+  statement {
+    sid = "ManageServiceLinkedRoleForAutoscaling"
+    actions = [
+      "iam:CreateServiceLinkedRole"
+    ]
+    resources = ["arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+    ]
+    effect = "Allow"
+    condition {
+      test = "StringLike"
+      variable = "iam:AWSServiceName"
+      values = ["ecs.application-autoscaling.amazonaws.com"]
+    }
+  }
 }
