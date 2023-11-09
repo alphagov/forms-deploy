@@ -70,3 +70,13 @@ variable "forms_product_page_support_url" {
   type        = string
   default     = ""
 }
+
+variable "min_capacity" {
+  description = "Sets the minimum number of instances"
+  type        = number
+}
+
+variable "max_capacity" {
+  description = "Sets the maximum number of instances"
+  type        = number
+}

@@ -16,6 +16,14 @@ module "ecs_service" {
   permit_internet_egress = true # Required for Sentry.io and AWS SSM
   permit_postgres_egress = true
 
+  scaling_rules = {
+    min_capacity         = var.min_capacity
+    max_capacity         = var.max_capacity
+    cpu_usage_target_pct = 10
+    scale_in_cooldown    = 180
+    scale_out_cooldown   = 60
+  }
+
   environment_variables = [
     {
       name  = "RACK_ENV",

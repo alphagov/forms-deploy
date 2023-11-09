@@ -20,3 +20,12 @@ variable "memory" {
   type = number
 }
 
+variable "min_capacity" {
+  description = "Sets the minimum number of instances"
+  type        = number
+}
+
+variable "max_capacity" {
+  description = "Sets the maximum number of instances"
+  type        = number
+}
