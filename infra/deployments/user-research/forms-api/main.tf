@@ -5,9 +5,11 @@ variable "image_tag" {
 
 module "forms_api" {
   #checkov:skip=CKV2_FORMS_AWS_2:We're OK with 2 instances in UR environment
-  source    = "../../../modules/forms-api"
-  env_name  = "user-research"
-  image_tag = var.image_tag
-  cpu       = 256
-  memory    = 512
+  source       = "../../../modules/forms-api"
+  env_name     = "user-research"
+  image_tag    = var.image_tag
+  cpu          = 256
+  memory       = 512
+  min_capacity = 3
+  max_capacity = 3
 }

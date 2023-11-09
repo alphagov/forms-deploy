@@ -10,6 +10,8 @@ module "forms_admin" {
   image_tag                        = var.image_tag
   cpu                              = 256
   memory                           = 512
+  min_capacity                     = 3
+  max_capacity                     = 3
   api_base_url                     = "https://api.research.forms.service.gov.uk"
   runner_base                      = "https://submit.research.forms.service.gov.uk"
   auth_provider                    = "basic_auth"
