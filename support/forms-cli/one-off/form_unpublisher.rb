@@ -10,6 +10,7 @@ require_relative "./helpers"
 # 1. In forms-deploy/support/forms-cli
 # 2. run:
 # ```gds aws gds-forms-dev-support -- DRY_RUN=true && ruby remove_organisation_data_from_trial_user_forms.rb```
+# gds aws forms-dev-support -- forms run_task --app admin --command organisations:fetch
 #
 class FormUnpublisher
   def run(form_id)
@@ -24,6 +25,7 @@ class FormUnpublisher
                  DELETE FROM made_live_forms #{where_clause}
                SQL
              end
+    pp result if ENV["DRY_RUN"]
   end
 end
 
