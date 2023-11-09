@@ -83,6 +83,7 @@ resource "aws_ecs_service" "app_service" {
 
   lifecycle {
     prevent_destroy = true # ECS services cannot be destructively replaced without downtime. This helps to avoid accidentally doing so.
+    ignore_changes  = [desired_count]
   }
 
   network_configuration {

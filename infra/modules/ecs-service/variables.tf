@@ -102,3 +102,13 @@ CONTAINER_DEFINITION_JSON: The task's container definition in JSON
 If left empty, no script will be run.
 EOF
 }
+
+variable "scaling_rules" {
+  type = object({
+    min_capacity         = number
+    max_capacity         = number
+    cpu_usage_target_pct = number
+    scale_in_cooldown    = number
+    scale_out_cooldown   = number
+  })
+}

@@ -256,6 +256,6 @@ data "aws_iam_policy_document" "deployer" {
       "application-autoscaling:*"
     ]
     resources = ["*"]
-    effect = "Allow"
+    effect    = "Allow"
   }
 }
