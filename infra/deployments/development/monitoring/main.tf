@@ -3,7 +3,6 @@ resource "aws_cloudwatch_dashboard" "overview" {
 
   dashboard_body = <<EOF
 {
-    {
     "widgets": [
         {
             "height": 5,
