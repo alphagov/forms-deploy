@@ -9,7 +9,6 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-api"
   sub_domain             = "api"
-  desired_task_count     = var.desired_task_count
   image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory

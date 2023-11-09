@@ -20,12 +20,6 @@ variable "memory" {
   type = number
 }
 
-variable "desired_task_count" {
-  description = "How many tasks should run"
-  type        = number
-  default     = 2
-}
-
 variable "api_base_url" {
   description = "The url for connecting to forms-api"
   type        = string

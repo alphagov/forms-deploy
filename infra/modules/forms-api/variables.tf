@@ -20,8 +20,3 @@ variable "memory" {
   type = number
 }
 
-variable "desired_task_count" {
-  description = "How many tasks should run"
-  type        = number
-  default     = 2
-}

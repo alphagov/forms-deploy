@@ -26,12 +26,6 @@ variable "application" {
   }
 }
 
-variable "desired_task_count" {
-  type        = number
-  default     = 2
-  description = "How many tasks to run"
-}
-
 variable "image" {
   type        = string
   description = "The image in ECR to deploy"

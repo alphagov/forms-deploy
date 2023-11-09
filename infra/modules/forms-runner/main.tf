@@ -36,7 +36,6 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-runner"
   sub_domain             = "submit"
-  desired_task_count     = var.desired_task_count
   image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory
