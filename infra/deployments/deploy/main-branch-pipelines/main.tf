@@ -18,3 +18,7 @@ module "forms-product-page" {
   app_name      = "forms-product-page"
   source_branch = "main"
 }
+
+module "forms-e2e-tests" {
+  source = "../../../modules/e2e-image-pipeline"
+}

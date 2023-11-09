@@ -67,6 +67,16 @@ resource "aws_codebuild_project" "main" {
       value = var.docker_password_parameter_path
       type  = "PARAMETER_STORE"
     }
+
+    dynamic "environment_variable" {
+      for_each = var.extra_env_vars
+
+      content {
+        name  = environment_variable.value["name"]
+        value = environment_variable.value["value"]
+        type  = environment_variable.value["type"]
+      }
+    }
   }
 
   source {

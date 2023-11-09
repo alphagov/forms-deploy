@@ -1,0 +1,90 @@
+module "artifact_bucket" {
+  source = "../secure-bucket"
+  name   = "pipeline-e2e-image"
+}
+
+resource "aws_codepipeline" "main" {
+  #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
+  name     = "e2e-image"
+  role_arn = aws_iam_role.this.arn
+
+  artifact_store {
+    type     = "S3"
+    location = module.artifact_bucket.name
+  }
+
+  stage {
+    name = "Source"
+    action {
+      name             = "get-forms-e2e-tests"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
+      version          = "1"
+      output_artifacts = ["forms_e2e_tests"]
+
+      configuration = {
+        ConnectionArn    = var.github_connection_arn
+        FullRepositoryId = "alphagov/forms-e2e-tests"
+        BranchName       = var.forms_e2e_tests_branch
+        DetectChanges    = true
+      }
+    }
+  }
+
+  stage {
+    name = "Build-test-and-push"
+
+    action {
+      name            = "Build"
+      namespace       = "Build"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_e2e_tests"]
+      configuration = {
+        ProjectName = module.docker_build.name
+      }
+    }
+  }
+}
+
+module "docker_build" {
+  source                         = "../code-build-docker-build"
+  project_name                   = "docker-build-e2e-tests"
+  project_description            = "Build the image used to run the end to end tests"
+  image_name                     = "end-to-end-tests"
+  image_tag                      = "future"
+  docker_username_parameter_path = "/development/dockerhub/username"
+  docker_password_parameter_path = "/development/dockerhub/password"
+  artifact_store_arn             = module.artifact_bucket.arn
+  build_directory                = "."
+
+  # Selenium is not compatible with aarch64.
+  code_build_project_compute_arch = "LINUX_CONTAINER"
+  code_build_project_image        = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+
+  extra_env_vars = [
+    {
+      name  = "FORMS_ADMIN_URL"
+      value = "https://admin.dev.forms.service.gov.uk"
+      type  = "PLAINTEXT"
+    },
+    {
+      name  = "AUTH0_EMAIL_USERNAME"
+      value = "/dev/smoketests/auth0/email-username"
+      type  = "PARAMETER_STORE"
+    },
+    {
+      name  = "AUTH0_USER_PASSWORD"
+      value = "/dev/smoketests/auth0/auth0-user-password"
+      type  = "PARAMETER_STORE"
+    },
+    {
+      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
+      value = "/dev/smoketests/notify/api-key"
+      type  = "PARAMETER_STORE"
+    },
+  ]
+}
