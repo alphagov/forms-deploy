@@ -17,7 +17,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
                     [ { "expression": "100*(m2/m6)", "id": "e2", "label": "forms-api", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m3/m7)", "id": "e1", "label": "forms-runner", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m4/m8)", "id": "e4", "label": "forms-product-page", "region": "eu-west-2" } ],
-                    [ "ECS/ContainerInsights", "CpuReserved", "ServiceName", "forms-product-page", "ClusterName", "forms-dev", { "id": "m23", "label": "forms-product-page CpuReserved [last: ${LAST}]", "yAxis": "right", "region": "eu-west-2", "visible": false } ],
+                    [ "ECS/ContainerInsights", "CpuReserved", "ServiceName", "forms-product-page", "ClusterName", "forms-dev", { "id": "m23", "label": "forms-product-page CpuReserved [last: $${LAST}]", "yAxis": "right", "region": "eu-west-2", "visible": false } ],
                     [ ".", "CpuUtilized", "TaskDefinitionFamily", "production_forms-runner", ".", "forms-production", { "id": "m3", "region": "eu-west-2", "visible": false } ],
                     [ "...", "production_forms-admin", ".", ".", { "id": "m1", "region": "eu-west-2", "visible": false } ],
                     [ "...", "production_forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
@@ -66,10 +66,10 @@ resource "aws_cloudwatch_dashboard" "overview" {
                     [ "...", "forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
-                    [ ".", "MemoryReserved", ".", "forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "label": "forms-admin MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
-                    [ "...", "forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "label": "forms-api MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
-                    [ "...", "forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "label": "forms-runner MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
-                    [ "...", "forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "label": "forms-product-page MemoryReserved [last: ${LAST}]", "yAxis": "right" } ]
+                    [ ".", "MemoryReserved", ".", "forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "label": "forms-admin MemoryReserved [last: $${LAST}]", "yAxis": "right" } ],
+                    [ "...", "forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "label": "forms-api MemoryReserved [last: $${LAST}]", "yAxis": "right" } ],
+                    [ "...", "forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "label": "forms-runner MemoryReserved [last: $${LAST}]", "yAxis": "right" } ],
+                    [ "...", "forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "label": "forms-product-page MemoryReserved [last: $${LAST}]", "yAxis": "right" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
