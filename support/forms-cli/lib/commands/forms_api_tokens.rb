@@ -9,13 +9,6 @@ require "uri"
 
 # Manages API Tokens for authenticating with forms-api service
 class FormsApiTokens
-  FORMS_API_DOMAINS = {
-    "dev" => "api.dev.forms.service.gov.uk",
-    "staging" => "api.staging.forms.service.gov.uk",
-    "production" => "api.forms.service.gov.uk",
-    "user-research" => "api.research.forms.service.gov.uk",
-  }.freeze
-
   include Helpers
 
   def run

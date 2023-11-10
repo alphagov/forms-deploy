@@ -12,6 +12,13 @@ module Helpers
     "619109835131" => "user-research",
   }.freeze
 
+  FORMS_API_DOMAINS = {
+    "dev" => "api.dev.forms.service.gov.uk",
+    "staging" => "api.staging.forms.service.gov.uk",
+    "production" => "api.forms.service.gov.uk",
+    "user-research" => "api.research.forms.service.gov.uk",
+  }.freeze
+
   def aws_authenticated?
     return true if expected_aws_environment_variable
 
