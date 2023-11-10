@@ -46,9 +46,9 @@ module "ecs_service" {
   scaling_rules = {
     min_capacity         = var.min_capacity
     max_capacity         = var.max_capacity
-    cpu_usage_target_pct = 60
+    cpu_usage_target_pct = 40 # It takes time for new instances to start, so being aggressive with when to start scaling should give us time
     scale_in_cooldown    = 180
-    scale_out_cooldown   = 60
+    scale_out_cooldown   = 45 # Metrics are per-60-seconds, but we're not necessarily aligned to the times CloudWatch provides them
   }
 
   ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
