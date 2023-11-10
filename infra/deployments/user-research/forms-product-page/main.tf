@@ -11,4 +11,6 @@ module "forms_product_page" {
   desired_task_count = 2
   cpu                = 256
   memory             = 512
+  admin_base_url     = "https://admin.research.forms.service.gov.uk"
+
 }
