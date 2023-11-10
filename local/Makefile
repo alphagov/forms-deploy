@@ -40,6 +40,9 @@ bundle-%:
 
 setup-all: setup-forms-api setup-forms-admin setup-forms-runner
 
+setup-forms-product-page: bundle-forms-product-page
+	docker-compose run forms-product-page bin/setup
+
 setup-forms-runner: bundle-forms-runner
 	docker-compose run forms-runner bin/setup
 

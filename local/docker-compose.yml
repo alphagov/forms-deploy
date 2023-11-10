@@ -59,6 +59,34 @@ services:
     command: >
       rails s --restart --port 9292
 
+  forms-product-page:
+    build:
+      context: "../../forms-product-page"
+      target: build
+      args:
+        - RAILS_ENV=development
+        - NODE_ENV=development
+    environment:
+      - BINDING=0.0.0.0
+      - PORT=3002
+      - NODE_ENV=development
+      - RACK_ENV=development
+      - RAILS_ENV=development
+      - RAILS_LOG_TO_STDOUT=1
+      - RAILS_SERVE_STATIC_FILES=1
+      - SECRET_KEY_BASE=dummyvalue
+    volumes:
+      - ../../forms-product-page:/app:delegated
+      - forms-product-page-bundle:/usr/local/bundle
+      - forms-product-page-node-modules:/app/node_modules
+      - forms-product-page-tmp:/app/tmp
+    ports:
+      - 3002:3002
+    init: true
+    tty: true
+    command: >
+      rails s --restart
+
   forms-runner:
     build:
       context: "../../forms-runner"
@@ -115,6 +143,9 @@ volumes:
   forms-admin-tmp:
   forms-api-bundle:
   forms-api-tmp:
+  forms-product-page-bundle:
+  forms-product-page-node-modules:
+  forms-product-page-tmp:
   forms-runner-bundle:
   forms-runner-node-modules:
   forms-runner-tmp:
