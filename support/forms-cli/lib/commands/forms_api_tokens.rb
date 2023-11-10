@@ -40,8 +40,8 @@ private
   end
 
   def create_token(owner, description)
-    domain = FORMS_API_DOMAINS[@environment]
-    uri = URI "https://#{domain}/api/v1/access-tokens"
+    forms_api_host = forms_app_host "api"
+    uri = URI "https://#{forms_api_host}/api/v1/access-tokens"
     headers = { "Authorization" => "Token #{@options[:token]}" }
 
     form_params = "owner=#{owner}&description=#{description}"
