@@ -19,7 +19,7 @@ module "ecs_service" {
   scaling_rules = {
     min_capacity         = var.min_capacity
     max_capacity         = var.max_capacity
-    cpu_usage_target_pct = 10
+    cpu_usage_target_pct = 50
     scale_in_cooldown    = 180
     scale_out_cooldown   = 60
   }
