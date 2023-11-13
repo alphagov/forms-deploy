@@ -7,9 +7,10 @@ module "forms_admin" {
   source                           = "../../../modules/forms-admin"
   env_name                         = "staging"
   image_tag                        = var.image_tag
-  desired_task_count               = 3
   cpu                              = 256
   memory                           = 512
+  min_capacity                     = 3
+  max_capacity                     = 3
   api_base_url                     = "https://api.staging.forms.service.gov.uk"
   runner_base                      = "https://submit.staging.forms.service.gov.uk"
   govuk_app_domain                 = "staging.publishing.service.gov.uk"

@@ -249,4 +249,37 @@ data "aws_iam_policy_document" "deployer" {
     ]
     effect = "Allow"
   }
+
+  statement {
+    sid = "ManageApplicationAutoScaling"
+    actions = [
+      "application-autoscaling:*"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+
+  statement {
+    sid = "ManageServiceLinkedRoleForAutoscaling"
+    actions = [
+      "iam:CreateServiceLinkedRole"
+    ]
+    resources = ["arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+    ]
+    effect = "Allow"
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["ecs.application-autoscaling.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid = "ManageCloudWatchAlarms"
+    actions = [
+      "cloudwatch:*Alarms"
+    ]
+    resources = ["arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*"]
+    effect    = "Allow"
+  }
 }

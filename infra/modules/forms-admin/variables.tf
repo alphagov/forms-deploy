@@ -20,12 +20,6 @@ variable "memory" {
   type = number
 }
 
-variable "desired_task_count" {
-  description = "How many tasks should run"
-  type        = number
-  default     = 2
-}
-
 variable "api_base_url" {
   description = "The url for connecting to forms-api"
   type        = string
@@ -75,4 +69,14 @@ variable "forms_product_page_support_url" {
   description = "Sets the support URL for the product page"
   type        = string
   default     = ""
+}
+
+variable "min_capacity" {
+  description = "Sets the minimum number of instances"
+  type        = number
+}
+
+variable "max_capacity" {
+  description = "Sets the maximum number of instances"
+  type        = number
 }

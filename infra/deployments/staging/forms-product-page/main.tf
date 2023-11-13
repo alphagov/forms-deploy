@@ -4,12 +4,12 @@ variable "image_tag" {
 }
 
 module "forms_product_page" {
-  source             = "../../../modules/forms-product-page"
-  env_name           = "staging"
-  image_tag          = var.image_tag
-  desired_task_count = 3
-  cpu                = 256
-  memory             = 512
-  admin_base_url     = "https://admin.staging.forms.service.gov.uk"
-
+  source         = "../../../modules/forms-product-page"
+  env_name       = "staging"
+  image_tag      = var.image_tag
+  cpu            = 256
+  memory         = 512
+  admin_base_url = "https://admin.staging.forms.service.gov.uk"
+  min_capacity   = 3
+  max_capacity   = 3
 }

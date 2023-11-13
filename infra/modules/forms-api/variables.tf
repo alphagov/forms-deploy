@@ -20,8 +20,12 @@ variable "memory" {
   type = number
 }
 
-variable "desired_task_count" {
-  description = "How many tasks should run"
+variable "min_capacity" {
+  description = "Sets the minimum number of instances"
   type        = number
-  default     = 2
+}
+
+variable "max_capacity" {
+  description = "Sets the maximum number of instances"
+  type        = number
 }

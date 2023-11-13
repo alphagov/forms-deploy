@@ -36,13 +36,20 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-runner"
   sub_domain             = "submit"
-  desired_task_count     = var.desired_task_count
   image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 3000
   permit_internet_egress = true
   permit_redis_egress    = true
+
+  scaling_rules = {
+    min_capacity         = var.min_capacity
+    max_capacity         = var.max_capacity
+    cpu_usage_target_pct = 40 # It takes time for new instances to start, so being aggressive with when to start scaling should give us time
+    scale_in_cooldown    = 180
+    scale_out_cooldown   = 45 # Metrics are per-60-seconds, but we're not necessarily aligned to the times CloudWatch provides them
+  }
 
   ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
 
