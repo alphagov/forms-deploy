@@ -10,4 +10,6 @@ module "forms_product_page" {
   desired_task_count = 3
   cpu                = 256
   memory             = 512
+  admin_base_url     = "https://admin.staging.forms.service.gov.uk"
+
 }
