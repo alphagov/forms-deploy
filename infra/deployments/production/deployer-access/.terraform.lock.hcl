@@ -6,6 +6,7 @@ provider "registry.terraform.io/auth0/auth0" {
   constraints = "~> 1.0.0"
   hashes = [
     "h1:1q6OPUs3f99xnv/rT3R/BlyEtkKoJFQd+Re0YhZNB+I=",
+    "h1:eoXCM9E0JIiJn8rtfRpX7llPKvmtRR2jVp2tFTa48oU=",
     "h1:nVFEcEqI2lEQlS2ODRLaN8nKMu7CNqK5PFk1M21WtQc=",
     "h1:oVAk5k5pK424zbqwEszHE1uE3XSz9S0nU8vVuNS9i/w=",
     "h1:vijyv7biV2pjuibPs/xeHB3Q0hePKmH7fZJKIFt4kPY=",
@@ -33,6 +34,7 @@ provider "registry.terraform.io/hashicorp/aws" {
     "h1:+TO55ncXQ6/F7TMx6XCimQsE384t/XovHxVxmGkK6ws=",
     "h1:5kF6+4jUPI73O/uDvm/8/NiKRhiaOqMTqdo5l8uAygo=",
     "h1:6bCvCMCu8Al0/a+lyL05mS1JEkALWb6vEH9Ub3Jd8RE=",
+    "h1:tAteY6hnPFlxGx88cjNXQT3x5Of6lz0EUaZTn3wsjUA=",
     "h1:yTlcjBB/OfiBLuopjmKYFpbDlwk/+oZRJclRKotZ+Co=",
     "zh:164b4ac71c9fc6b991021dd6e829591b0c1a0ebfb5831da0a7eb4f10f92c76a7",
     "zh:22e85772a1767498796f160b54a156db8173c4e238469dad8328a65093e033e1",
