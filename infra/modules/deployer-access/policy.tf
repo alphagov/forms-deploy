@@ -285,7 +285,9 @@ data "aws_iam_policy_document" "autoscaling" {
   statement {
     sid = "ManageCloudWatchAlarms"
     actions = [
-      "cloudwatch:*Alarms"
+      "cloudwatch:*Alarms",
+      "cloudwatch:*Alarm",
+      "cloudwatch:ListTagsForResource"
     ]
     resources = ["arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*"]
     effect    = "Allow"
