@@ -275,6 +275,17 @@ data "aws_iam_policy_document" "deployer" {
   }
 
   statement {
+    sid = "AllowPassingServiceLinkedRole"
+    actions = [
+      "iam:PassRole"
+    ]
+    resources = [
+      "arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid = "ManageCloudWatchAlarms"
     actions = [
       "cloudwatch:*Alarms"
