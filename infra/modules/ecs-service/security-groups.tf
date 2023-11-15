@@ -15,6 +15,7 @@ data "aws_prefix_list" "private_s3" {
 }
 
 resource "aws_security_group" "baseline" {
+  #checkov:skip=CKV2_AWS_5:The security groups are attached in ecs.tf
   name        = "${var.application}-${var.env_name}"
   description = "Ingress from VPC, egress to VPC and S3"
   vpc_id      = data.aws_vpc.forms.id

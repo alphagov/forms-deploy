@@ -20,12 +20,6 @@ variable "memory" {
   type = number
 }
 
-variable "desired_task_count" {
-  description = "How many tasks should run"
-  type        = number
-  default     = 2
-}
-
 variable "admin_base_url" {
   description = "The url for redirecting to forms-admin"
   type        = string
@@ -56,4 +50,14 @@ variable "rails_max_threads" {
   description = "The number of request threads run by the Puma server"
   type        = number
   default     = 25
+}
+
+variable "min_capacity" {
+  description = "Sets the minimum number of instances"
+  type        = number
+}
+
+variable "max_capacity" {
+  description = "Sets the maximum number of instances"
+  type        = number
 }

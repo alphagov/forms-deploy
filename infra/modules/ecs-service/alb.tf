@@ -28,6 +28,11 @@ resource "aws_lb_target_group" "tg" {
     path     = "/ping"
     matcher  = "200"
     protocol = "HTTP"
+
+    interval            = 11
+    timeout             = 10
+    unhealthy_threshold = 3
+    healthy_threshold   = 2
   }
 }
 

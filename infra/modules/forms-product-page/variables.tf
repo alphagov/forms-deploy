@@ -20,13 +20,21 @@ variable "memory" {
   type = number
 }
 
-variable "desired_task_count" {
-  description = "How many tasks should run"
-  type        = number
-  default     = 2
-}
-
 variable "zendesk_subdomain" {
   description = "The Zendesk tenant the support form should create tickets on"
   default     = "govuk"
+}
+
+variable "admin_base_url" {
+  description = "The url for redirecting to forms-admin"
+  type        = string
+}
+variable "min_capacity" {
+  description = "Sets the minimum number of instances"
+  type        = number
+}
+
+variable "max_capacity" {
+  description = "Sets the maximum number of instances"
+  type        = number
 }

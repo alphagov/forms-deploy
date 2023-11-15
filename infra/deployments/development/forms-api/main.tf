@@ -4,10 +4,11 @@ variable "image_tag" {
 }
 
 module "forms_api" {
-  source             = "../../../modules/forms-api"
-  env_name           = "dev"
-  image_tag          = var.image_tag
-  desired_task_count = 3
-  cpu                = 256
-  memory             = 512
+  source       = "../../../modules/forms-api"
+  env_name     = "dev"
+  image_tag    = var.image_tag
+  cpu          = 256
+  memory       = 512
+  min_capacity = 3
+  max_capacity = 3
 }

@@ -7,9 +7,10 @@ module "forms_admin" {
   source                           = "../../../modules/forms-admin"
   env_name                         = "dev"
   image_tag                        = var.image_tag
-  desired_task_count               = 3
   cpu                              = 256
   memory                           = 512
+  min_capacity                     = 3
+  max_capacity                     = 3
   api_base_url                     = "https://api.dev.forms.service.gov.uk"
   runner_base                      = "https://submit.dev.forms.service.gov.uk"
   govuk_app_domain                 = "integration.publishing.service.gov.uk"

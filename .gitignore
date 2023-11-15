@@ -8,6 +8,9 @@
 # tfenv files outside infra dirs
 .terraform-version
 
+# terraform lock files where we don't want them
+infra/modules/*/.terraform.lock.hcl
+
 # Crash log files
 crash.log
 crash.*.log

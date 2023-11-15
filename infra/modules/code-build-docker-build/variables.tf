@@ -69,3 +69,9 @@ variable "github_connection_arn" {
   description = "The arn of the github connection to use"
   default     = "arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
 }
+
+variable "extra_env_vars" {
+  type        = list(map(string))
+  description = "Additinal environment variables to set in the container"
+  default     = []
+}
