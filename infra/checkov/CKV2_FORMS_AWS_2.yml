@@ -1,0 +1,23 @@
+---
+metadata:
+    name: "Check that ECS services that are the target of autoscaling have their desired count ignored"
+    id: "CKV2_FORMS_AWS_2"
+    category: "CONVENTION"
+scope:
+    provider: "AWS"
+definition:
+    and:
+        - cond_type: "connection"
+          resource_types:
+              - "aws_ecs_service"
+          connected_resource_types:
+              - "aws_appautoscaling_target"
+          operator: "exists"
+          
+        - cond_type: "attribute"
+          resource_types:
+              - "aws_ecs_service"
+          attribute: "lifecycle.ignore_changes"
+          operator: "contains"
+          value: "desired_count"
+    
