@@ -15,4 +15,5 @@ module "forms_runner" {
   admin_base_url              = "https://admin.staging.forms.service.gov.uk"
   enable_maintenance_mode     = false
   email_confirmations_enabled = true
+  cloudwatch_metrics_enabled  = true
 }
