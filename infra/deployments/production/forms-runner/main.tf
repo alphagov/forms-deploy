@@ -15,4 +15,5 @@ module "forms_runner" {
   admin_base_url              = "https://admin.forms.service.gov.uk"
   enable_maintenance_mode     = false
   email_confirmations_enabled = false
+  cloudwatch_metrics_enabled  = true
 }
