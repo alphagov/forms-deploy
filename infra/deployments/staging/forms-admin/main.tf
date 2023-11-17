@@ -20,4 +20,5 @@ module "forms_admin" {
   forms_product_page_support_url   = "https://www.staging.forms.service.gov.uk/support"
   auth_provider                    = "auth0"
   previous_auth_provider           = "gds_sso"
+  cloudwatch_metrics_enabled       = true
 }

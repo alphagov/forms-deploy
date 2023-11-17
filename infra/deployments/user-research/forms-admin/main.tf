@@ -19,4 +19,5 @@ module "forms_admin" {
   metrics_feature_flag             = true
   email_confirmations_feature_flag = true
   forms_product_page_support_url   = "https://www.research.forms.service.gov.uk/support"
+  cloudwatch_metrics_enabled       = false
 }

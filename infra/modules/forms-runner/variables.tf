@@ -61,3 +61,9 @@ variable "max_capacity" {
   description = "Sets the maximum number of instances"
   type        = number
 }
+
+variable "cloudwatch_metrics_enabled" {
+  description = "Enables metrics being sent to CloudWatch"
+  type        = bool
+  default     = false
+}

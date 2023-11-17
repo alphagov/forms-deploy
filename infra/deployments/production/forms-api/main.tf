@@ -9,6 +9,6 @@ module "forms_api" {
   image_tag    = var.image_tag
   cpu          = 512
   memory       = 1024
-  min_capacity = 9
+  min_capacity = 6
   max_capacity = 36
 }

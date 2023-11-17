@@ -9,8 +9,8 @@ module "forms_admin" {
   image_tag                        = var.image_tag
   cpu                              = 256
   memory                           = 512
-  min_capacity                     = 3
-  max_capacity                     = 9
+  min_capacity                     = 6
+  max_capacity                     = 12
   api_base_url                     = "https://api.forms.service.gov.uk"
   runner_base                      = "https://submit.forms.service.gov.uk"
   govuk_app_domain                 = "publishing.service.gov.uk"
@@ -20,4 +20,5 @@ module "forms_admin" {
   forms_product_page_support_url   = "https://www.forms.service.gov.uk/support"
   auth_provider                    = "auth0"
   previous_auth_provider           = "gds_sso"
+  cloudwatch_metrics_enabled       = true
 }

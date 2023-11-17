@@ -5,7 +5,7 @@ from checkov.terraform.checks.resource.base_resource_check import BaseResourceCh
 class CKV2_FORMS_AWS_3(BaseResourceCheck):
     def __init__(self):
         # This is the full description of your check
-        description = "Ensure ECS CPU and memory allocations are compatible"
+        description = "Check ECS CPU and memory allocations are compatible"
 
         # This is the Unique ID for your check
         id = "CKV2_FORMS_AWS_3"

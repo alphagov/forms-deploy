@@ -44,11 +44,11 @@ module "ecs_service" {
   permit_redis_egress    = true
 
   scaling_rules = {
-    min_capacity         = var.min_capacity
-    max_capacity         = var.max_capacity
-    cpu_usage_target_pct = 40 # It takes time for new instances to start, so being aggressive with when to start scaling should give us time
-    scale_in_cooldown    = 180
-    scale_out_cooldown   = 45 # Metrics are per-60-seconds, but we're not necessarily aligned to the times CloudWatch provides them
+    min_capacity                                = var.min_capacity
+    max_capacity                                = var.max_capacity
+    p95_response_time_scaling_threshold_seconds = 1
+    scale_in_cooldown                           = 180
+    scale_out_cooldown                          = 45
   }
 
   ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
@@ -109,6 +109,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__EMAIL_CONFIRMATIONS_ENABLED",
       value = var.email_confirmations_enabled
+    },
+    {
+      name  = "SETTINGS__CLOUDWATCH_METRICS_ENABLED",
+      value = var.cloudwatch_metrics_enabled
     }
   ]
 

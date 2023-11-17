@@ -99,10 +99,10 @@ EOF
 
 variable "scaling_rules" {
   type = object({
-    min_capacity         = number
-    max_capacity         = number
-    cpu_usage_target_pct = number
-    scale_in_cooldown    = number
-    scale_out_cooldown   = number
+    min_capacity                                = number
+    max_capacity                                = number
+    p95_response_time_scaling_threshold_seconds = number
+    scale_in_cooldown                           = number
+    scale_out_cooldown                          = number
   })
 }

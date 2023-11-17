@@ -6,8 +6,8 @@ resource "aws_appautoscaling_target" "scaling_target" {
   service_namespace  = "ecs"
 }
 
-resource "aws_appautoscaling_policy" "cpu_step_scale_out" {
-  name               = "${var.env_name}-${var.application}-cpu-scale-out-policy"
+resource "aws_appautoscaling_policy" "scale_out" {
+  name               = "${var.env_name}-${var.application}-scale-out-policy"
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.scaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.scaling_target.scalable_dimension
@@ -19,41 +19,25 @@ resource "aws_appautoscaling_policy" "cpu_step_scale_out" {
     min_adjustment_magnitude = 3
     metric_aggregation_type  = "Average"
 
-    # 0-5% above threshold
+    # 0-1000% above threshold
     # add 10%
     step_adjustment {
       metric_interval_lower_bound = 0
-      metric_interval_upper_bound = 5
+      metric_interval_upper_bound = 1000
       scaling_adjustment          = 10
     }
 
-    # 5-25% above threshold
-    # add 30%
-    step_adjustment {
-      metric_interval_lower_bound = 5
-      metric_interval_upper_bound = 25
-      scaling_adjustment          = 30
-    }
-
-    # 25-50% above threshold
-    # add 100%
-    step_adjustment {
-      metric_interval_lower_bound = 25
-      metric_interval_upper_bound = 50
-      scaling_adjustment          = 100
-    }
-
-    # 50-infinity% above threshold
+    # 1000-infinity% above threshold
     # add 300%
     step_adjustment {
-      metric_interval_lower_bound = 50
+      metric_interval_lower_bound = 1000
       scaling_adjustment          = 300
     }
   }
 }
 
-resource "aws_appautoscaling_policy" "cpu_step_scale_in" {
-  name               = "${var.env_name}-${var.application}-cpu-scale-in-policy"
+resource "aws_appautoscaling_policy" "scale_in" {
+  name               = "${var.env_name}-${var.application}-scale-in-policy"
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.scaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.scaling_target.scalable_dimension
@@ -74,7 +58,7 @@ resource "aws_appautoscaling_policy" "cpu_step_scale_in" {
     }
 
     # 25-infinity% below threshold
-    # sutract 50%
+    # subtract 50%
     step_adjustment {
       metric_interval_upper_bound = -25
       scaling_adjustment          = -50
@@ -82,42 +66,42 @@ resource "aws_appautoscaling_policy" "cpu_step_scale_in" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "service_cpu_high" {
-  alarm_name        = "${var.env_name}-${var.application}-cpu-high"
-  alarm_description = "Average CPU utilisation is >= ${var.scaling_rules.cpu_usage_target_pct}%"
+resource "aws_cloudwatch_metric_alarm" "service_target_response_time_high" {
+  alarm_name        = "${var.env_name}-${var.application}-target-response-time-high"
+  alarm_description = "P95 target response time >= ${var.scaling_rules.p95_response_time_scaling_threshold_seconds}s"
 
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  threshold           = var.scaling_rules.cpu_usage_target_pct
-  period              = 60
-  evaluation_periods  = 1
+  threshold           = var.scaling_rules.p95_response_time_scaling_threshold_seconds
+  period              = 10
+  evaluation_periods  = 2
 
-  namespace   = "AWS/ECS"
-  metric_name = "CPUUtilization"
-  statistic   = "Average"
+  namespace          = "AWS/ApplicationELB"
+  metric_name        = "TargetResponseTime"
+  extended_statistic = "p95"
   dimensions = {
-    "ClusterName" = "forms-${var.env_name}"
-    "ServiceName" = aws_ecs_service.app_service.name
+    "TargetGroup"  = aws_lb_target_group.tg.arn_suffix
+    "LoadBalancer" = data.aws_lb.alb.arn_suffix
   }
 
-  alarm_actions = [aws_appautoscaling_policy.cpu_step_scale_out.arn]
+  alarm_actions = [aws_appautoscaling_policy.scale_out.arn]
 }
 
-resource "aws_cloudwatch_metric_alarm" "service_cpu_low" {
-  alarm_name        = "${var.env_name}-${var.application}-cpu-low"
-  alarm_description = "Average CPU utilisation is <= 10%"
+resource "aws_cloudwatch_metric_alarm" "service_target_response_time_low" {
+  alarm_name        = "${var.env_name}-${var.application}-target-response-time-low"
+  alarm_description = "P95 target response time <= 0.5s"
 
   comparison_operator = "LessThanOrEqualToThreshold"
-  threshold           = 10
-  period              = 60
-  evaluation_periods  = 5
+  threshold           = 0.5
+  period              = 10
+  evaluation_periods  = 2
   dimensions = {
-    "ClusterName" = "forms-${var.env_name}"
-    "ServiceName" = aws_ecs_service.app_service.name
+    "TargetGroup"  = aws_lb_target_group.tg.arn_suffix
+    "LoadBalancer" = data.aws_lb.alb.arn_suffix
   }
 
-  namespace   = "AWS/ECS"
-  metric_name = "CPUUtilization"
-  statistic   = "Average"
+  namespace          = "AWS/ApplicationELB"
+  metric_name        = "TargetResponseTime"
+  extended_statistic = "p95"
 
-  alarm_actions = [aws_appautoscaling_policy.cpu_step_scale_in.arn]
+  alarm_actions = [aws_appautoscaling_policy.scale_in.arn]
 }
