@@ -17,7 +17,7 @@ resource "aws_elasticache_replication_group" "forms-runner" {
   transit_encryption_enabled = true
   engine_version             = var.engine_version
   port                       = local.redis_port
-  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group["redis6"].id
+  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group["redis7"].id
   subnet_group_name          = aws_elasticache_subnet_group.redis.id
   security_group_ids         = [aws_security_group.forms_runner_redis.id]
   apply_immediately          = var.apply_immediately
@@ -26,12 +26,6 @@ resource "aws_elasticache_replication_group" "forms-runner" {
   snapshot_retention_limit   = var.snapshot_retention_limit
   tags = {
     Name = "redis-${var.env_name}"
-  }
-
-  lifecycle {
-    ignore_changes = [
-      engine_version
-    ]
   }
 }
 
