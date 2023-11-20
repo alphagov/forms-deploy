@@ -9,13 +9,6 @@ require "uri"
 
 # Manages API Tokens for authenticating with forms-api service
 class FormsApiTokens
-  FORMS_API_DOMAINS = {
-    "dev" => "api.dev.forms.service.gov.uk",
-    "staging" => "api.stage.forms.service.gov.uk",
-    "production" => "api.prod-temp.forms.service.gov.uk",
-    "user-research" => "api.research.forms.service.gov.uk",
-  }.freeze
-
   include Helpers
 
   def run
@@ -47,8 +40,8 @@ private
   end
 
   def create_token(owner, description)
-    domain = FORMS_API_DOMAINS[@environment]
-    uri = URI "https://#{domain}/api/v1/access-tokens"
+    forms_api_host = forms_app_host "api"
+    uri = URI "https://#{forms_api_host}/api/v1/access-tokens"
     headers = { "Authorization" => "Token #{@options[:token]}" }
 
     form_params = "owner=#{owner}&description=#{description}"

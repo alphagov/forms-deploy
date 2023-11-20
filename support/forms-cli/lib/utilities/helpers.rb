@@ -12,6 +12,13 @@ module Helpers
     "619109835131" => "user-research",
   }.freeze
 
+  DOMAINS = {
+    "dev" => "dev.forms.service.gov.uk",
+    "staging" => "staging.forms.service.gov.uk",
+    "production" => "forms.service.gov.uk",
+    "user-research" => "research.forms.service.gov.uk",
+  }.freeze
+
   def aws_authenticated?
     return true if expected_aws_environment_variable
 
@@ -28,6 +35,19 @@ module Helpers
     else
       ENV["FORMS_ENV"]
     end
+  end
+
+  def forms_app_host(app, environment: nil)
+    environment ||= fetch_environment
+    domain = DOMAINS.fetch environment
+    subdomain = {
+      "admin" => "admin.",
+      "api" => "api.",
+      "product-page" => "",
+      "runner" => "submit.",
+    }.fetch app
+
+    "#{subdomain}#{domain}"
   end
 
 private
