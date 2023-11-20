@@ -18,6 +18,8 @@ services:
       - RAILS_SERVE_STATIC_FILES=1
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
+      - SETTINGS__GOVUK_NOTIFY__API_KEY=${SETTINGS__GOVUK_NOTIFY__API_KEY}
+      - SETTINGS__MAINTENANCE_MODE__ENABLED=${SETTINGS__MAINTENANCE_MODE__ENABLED:-false}
     volumes:
       - ../../forms-admin:/app:delegated
       - forms-admin-bundle:/usr/local/bundle
@@ -104,6 +106,8 @@ services:
       - REDIS_URL=redis://redis/
       - SECRET_KEY_BASE=dummyvalue
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
+      - SETTINGS__GOVUK_NOTIFY__API_KEY=${SETTINGS__GOVUK_NOTIFY__API_KEY}
+      - SETTINGS__MAINTENANCE_MODE__ENABLED=${SETTINGS__MAINTENANCE_MODE__ENABLED:-false}
     volumes:
       - ../../forms-runner:/app:delegated
       - forms-runner-bundle:/usr/local/bundle
