@@ -24,7 +24,7 @@ resource "aws_codebuild_project" "smoke_tests" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/end-to-end-tests:latest"
+    image        = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/end-to-end-tests:future"
     type         = "LINUX_CONTAINER"
 
     image_pull_credentials_type = "SERVICE_ROLE"
