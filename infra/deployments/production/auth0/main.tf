@@ -7,16 +7,17 @@ module "auth0" {
 
   allowed_email_domains = [
     ".gov.uk",
-    "cefas.co.uk",
-    "certoffice.org",
-    "ddc-mod.uk",
-    "hs2.org.uk",
-    "innovateuk.ukri.org",
-    "mod.uk",
-    "nationalhighways.co.uk",
-    "naturalengland.co.uk",
-    "slc.co.uk",
-    "ukces.org.uk",
-    "ukri.org",
+    ".mod.uk",
+    "@cefas.co.uk",
+    "@certoffice.org",
+    "@ddc-mod.uk",
+    "@hs2.org.uk",
+    "@innovateuk.ukri.org",
+    "@mod.uk",
+    "@nationalhighways.co.uk",
+    "@naturalengland.co.uk",
+    "@slc.co.uk",
+    "@ukces.org.uk",
+    "@ukri.org",
   ]
 }
