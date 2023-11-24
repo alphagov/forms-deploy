@@ -22,7 +22,7 @@ services:
         condition: service_started
     environment:
       - BINDING=0.0.0.0
-      - DATABASE_URL=postgres://forms_admin:forms_admin@postgres/forms_admin
+      - DATABASE_URL=postgres://forms_admin:forms_admin@postgres
       - GDS_SSO_OAUTH_ID=example.org
       - GDS_SSO_OAUTH_SECRET=secret
       - GDS_SSO_STRATEGY=mock
@@ -59,7 +59,7 @@ services:
         condition: service_healthy
     environment:
       - BINDING=0.0.0.0
-      - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
+      - DATABASE_URL=postgres://forms_api:forms_api@postgres
       - RACK_ENV=development
       - SECRET_KEY_BASE=dummy_value
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
