@@ -14,7 +14,7 @@ services:
         bundle install &&
         rails db:setup &&
         rails db:seed &&
-        rails s
+        exec rails s
       "
     depends_on:
       postgres:
@@ -43,6 +43,7 @@ services:
     volumes:
       - ../../forms-admin:/app:cached
       - forms-admin-bundle:/usr/local/bundle
+      - forms-admin-tmp:/app/tmp
 
   forms-api:
     build:
@@ -51,7 +52,7 @@ services:
     command: >
       sh -c "
         rails db:migrate &&
-        rails s -p 9292
+        exec rails s -p 9292
       "
     depends_on:
       postgres:
@@ -67,6 +68,7 @@ services:
     volumes:
       - ../../forms-api:/app:cached
       - forms-api-bundle:/usr/local/bundle
+      - forms-api-tmp:/app/tmp
 
   forms-runner:
     build:
@@ -76,7 +78,7 @@ services:
       context: ../../forms-runner
       target: build
     command: >
-      rails s -p 3001
+      exec rails s -p 3001
     depends_on:
       redis:
         condition: service_started
@@ -96,6 +98,7 @@ services:
     volumes:
       - ../../forms-runner:/app:cached
       - forms-runner-bundle:/usr/local/bundle
+      - forms-runner-tmp:/app/tmp
 
   postgres:
     environment:
@@ -123,7 +126,10 @@ services:
 
 volumes:
   forms-admin-bundle:
+  forms-admin-tmp:
   forms-api-bundle:
+  forms-api-tmp:
   forms-runner-bundle:
+  forms-runner-tmp:
   postgres:
   redis-data:
