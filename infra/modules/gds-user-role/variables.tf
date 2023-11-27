@@ -6,8 +6,9 @@ variable "iam_policy_arns" {
   type = list(any)
 }
 
-variable "restrict_to_gds_ips" {
-  default = false
+variable "ip_restrictions" {
+  type    = list(string)
+  default = []
 }
 
 variable "max_session_duration" {

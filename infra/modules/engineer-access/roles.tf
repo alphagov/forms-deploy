@@ -1,11 +1,19 @@
+module "common_values" {
+  source = "../common-values"
+}
+
+locals {
+  vpn_ip_restrictions = var.vpn ? module.common_values.vpn_ip_addresses : []
+}
+
 module "admin_roles" {
   for_each = toset(var.admins)
 
-  source              = "../gds-user-role/"
-  email               = "${each.value}@digital.cabinet-office.gov.uk"
-  role_suffix         = "admin"
-  iam_policy_arns     = ["arn:aws:iam::aws:policy/AdministratorAccess"]
-  restrict_to_gds_ips = var.vpn
+  source          = "../gds-user-role/"
+  email           = "${each.value}@digital.cabinet-office.gov.uk"
+  role_suffix     = "admin"
+  iam_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+  ip_restrictions = local.vpn_ip_restrictions
 }
 
 module "support_role" {
@@ -21,17 +29,17 @@ module "support_role" {
     var.env_name == "deploy" ? [aws_iam_policy.manage_deployments[0].arn] : [],
     var.env_name != "deploy" ? [aws_iam_policy.query_rds_with_data_api[0].arn, aws_iam_policy.run_task[0].arn, aws_iam_policy.stop_task[0].arn] : []
   ])
-  restrict_to_gds_ips = var.vpn
+  ip_restrictions = local.vpn_ip_restrictions
 }
 
 module "readonly_roles" {
   for_each = toset(concat(var.admins, var.support, var.readonly))
 
-  source              = "../gds-user-role/"
-  email               = "${each.value}@digital.cabinet-office.gov.uk"
-  role_suffix         = "readonly"
-  iam_policy_arns     = ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
-  restrict_to_gds_ips = var.vpn
+  source          = "../gds-user-role/"
+  email           = "${each.value}@digital.cabinet-office.gov.uk"
+  role_suffix     = "readonly"
+  iam_policy_arns = ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
+  ip_restrictions = local.vpn_ip_restrictions
 }
 
 module "pentester_role" {
@@ -45,6 +53,6 @@ module "pentester_role" {
     "arn:aws:iam::aws:policy/SecurityAudit",
     aws_iam_policy.deny_parameter_store.arn
   ]
-  restrict_to_gds_ips = var.vpn
+  ip_restrictions = var.pentester_cidrs
 }
 
