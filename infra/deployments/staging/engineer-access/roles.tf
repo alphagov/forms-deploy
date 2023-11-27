@@ -18,4 +18,10 @@ module "engineer_access" {
     "catalina.garcia@digital.cabinet-office.gov.uk", # To help debugging if necessary.
     "dan.worth@digital.cabinet-office.gov.uk"        # To help debugging if necessary.
   ]
+
+  pentester_cidrs = [
+    "212.38.169.64/27",  #Temp: Pentest Partners For Testing
+    "78.129.217.224/27", #Temp: Pentest Partners For Testing
+    "91.238.238.0/25",   #Temp: Pentest Partners For Testing
+  ]
 }
