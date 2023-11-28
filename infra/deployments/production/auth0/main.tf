@@ -19,5 +19,7 @@ module "auth0" {
     "@slc.co.uk",
     "@ukces.org.uk",
     "@ukri.org",
+    "@dounreay.com",
+    "@MarineManagement.org.uk",
   ]
 }
