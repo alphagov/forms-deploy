@@ -1,6 +1,13 @@
 variable "allowed_email_domains" {
   type        = set(string)
   description = "Allowed email domains"
+
+  validation {
+    condition = alltrue([
+      for domain in var.allowed_email_domains : startswith(domain, ".") || startswith(domain, "@")
+    ])
+    error_message = "Allowed email domains must start with a dot (.) or an at symbol (@) to prevent name collisions."
+  }
 }
 
 variable "admin_base_url" {
