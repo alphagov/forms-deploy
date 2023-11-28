@@ -29,7 +29,7 @@ aws ecs wait tasks-stopped --tasks "${RUNNING_TASK_ARN}" --cluster "${ECS_CLUSTE
 # Any failures: 1
 EXIT_CODE=$(\
     aws ecs describe-tasks --tasks "${RUNNING_TASK_ARN}" --cluster "${ECS_CLUSTER_ARN}" \
-    | jq -r 'if (.failures|length) == 0 then 0 else 1 end'
+    | jq -r '.tasks[0].containers[0].exitCode'
 )
 
 exit "${EXIT_CODE}"

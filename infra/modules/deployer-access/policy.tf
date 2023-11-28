@@ -1,36 +1,15 @@
-data "aws_iam_policy_document" "deployer" {
+resource "aws_iam_policy" "ecs" {
+  policy = data.aws_iam_policy_document.ecs.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs" {
+  policy_arn = aws_iam_policy.ecs.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "ecs" {
   #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
   #checkov:skip=CKV_AWS_356: allow resource * when needed
-  statement {
-    sid = "CreateLogs"
-    actions = [
-      "logs:PutLogEvents",
-      "logs:CreateLogStream",
-      "logs:CreateLogGroup",
-      "logs:DescribeSubscriptionFilters",
-      "logs:PutSubscriptionFilter",
-      "logs:DeleteSubscriptionFilter",
-      "logs:ListTagsLogGroup"
-    ]
-    resources = [
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-admin-${var.env_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-api-${var.env_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-runner-${var.env_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-product-page-${var.env_name}:*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeLogGroups"
-    actions = [
-      "logs:DescribeLogGroups"
-    ]
-    resources = [
-      "*"
-    ]
-    effect = "Allow"
-  }
 
   statement {
     sid = "ManageS3"
@@ -163,6 +142,62 @@ data "aws_iam_policy_document" "deployer" {
     effect = "Allow"
   }
 
+
+  statement {
+    sid = "ManageSecurityGroups"
+    actions = [
+      "ec2:CreateSecurityGroup",
+      "ec2:DeleteSecurityGroup",
+      "ec2:ModifySecurityGroupRules",
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:AuthorizeSecurityGroupEgress",
+      "ec2:RevokeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
+      "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+    ]
+    resources = [
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*/*"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "DescribeEC2"
+    actions = [
+      "ec2:Describe*"
+    ]
+    resources = [
+      "*"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "DescribeElasticache"
+    actions = [
+      "elasticache:DescribeReplicationGroups"
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:replicationgroup:forms-runner-${var.env_name}"
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "alb" {
+  policy = data.aws_iam_policy_document.alb.json
+}
+
+resource "aws_iam_role_policy_attachment" "alb" {
+  policy_arn = aws_iam_policy.alb.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "alb" {
+  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
+  #checkov:skip=CKV_AWS_356: allow resource * when needed
+
   statement {
     sid = "ManageAlb"
     actions = [
@@ -208,44 +243,107 @@ data "aws_iam_policy_document" "deployer" {
     ]
     effect = "Allow"
   }
+}
+
+resource "aws_iam_policy" "autoscaling" {
+  policy = data.aws_iam_policy_document.autoscaling.json
+}
+
+resource "aws_iam_role_policy_attachment" "autoscaling" {
+  policy_arn = aws_iam_policy.autoscaling.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "autoscaling" {
+  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
+  #checkov:skip=CKV_AWS_356: allow resource * when needed
 
   statement {
-    sid = "ManageSecurityGroups"
+    sid = "ManageApplicationAutoScaling"
     actions = [
-      "ec2:CreateSecurityGroup",
-      "ec2:DeleteSecurityGroup",
-      "ec2:ModifySecurityGroupRules",
-      "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:AuthorizeSecurityGroupEgress",
-      "ec2:RevokeSecurityGroupIngress",
-      "ec2:RevokeSecurityGroupEgress",
-      "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-      "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+      "application-autoscaling:*"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+
+  statement {
+    sid = "ManageServiceLinkedRoleForAutoscaling"
+    actions = [
+      "iam:CreateServiceLinkedRole"
+    ]
+    resources = ["arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+    ]
+    effect = "Allow"
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["ecs.application-autoscaling.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid = "AllowPassingServiceLinkedRole"
+    actions = [
+      "iam:PassRole"
     ]
     resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*/*"
+      "arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
     ]
     effect = "Allow"
   }
 
   statement {
-    sid = "DescribeEC2"
+    sid = "ManageCloudWatchAlarms"
     actions = [
-      "ec2:Describe*"
+      "cloudwatch:*Alarms",
+      "cloudwatch:*Alarm",
+      "cloudwatch:ListTagsForResource"
+    ]
+    resources = ["arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*"]
+    effect    = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "logs" {
+  policy = data.aws_iam_policy_document.logs.json
+}
+
+resource "aws_iam_role_policy_attachment" "logs" {
+  policy_arn = aws_iam_policy.logs.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "logs" {
+  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
+  #checkov:skip=CKV_AWS_356: allow resource * when needed
+  statement {
+    sid = "CreateLogs"
+    actions = [
+      "logs:PutLogEvents",
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup",
+      "logs:DescribeSubscriptionFilters",
+      "logs:PutSubscriptionFilter",
+      "logs:DeleteSubscriptionFilter",
+      "logs:ListTagsLogGroup"
+    ]
+    resources = [
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-admin-${var.env_name}:*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-api-${var.env_name}:*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-runner-${var.env_name}:*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-product-page-${var.env_name}:*"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "DescribeLogGroups"
+    actions = [
+      "logs:DescribeLogGroups"
     ]
     resources = [
       "*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeElasticache"
-    actions = [
-      "elasticache:DescribeReplicationGroups"
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:replicationgroup:forms-runner-${var.env_name}"
     ]
     effect = "Allow"
   }

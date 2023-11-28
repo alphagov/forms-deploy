@@ -36,13 +36,20 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-runner"
   sub_domain             = "submit"
-  desired_task_count     = var.desired_task_count
   image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 3000
   permit_internet_egress = true
   permit_redis_egress    = true
+
+  scaling_rules = {
+    min_capacity                                = var.min_capacity
+    max_capacity                                = var.max_capacity
+    p95_response_time_scaling_threshold_seconds = 1
+    scale_in_cooldown                           = 180
+    scale_out_cooldown                          = 45
+  }
 
   ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
 
@@ -102,6 +109,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__EMAIL_CONFIRMATIONS_ENABLED",
       value = var.email_confirmations_enabled
+    },
+    {
+      name  = "SETTINGS__CLOUDWATCH_METRICS_ENABLED",
+      value = var.cloudwatch_metrics_enabled
     }
   ]
 

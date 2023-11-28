@@ -8,9 +8,10 @@ module "forms_admin" {
   source                           = "../../../modules/forms-admin"
   env_name                         = "user-research"
   image_tag                        = var.image_tag
-  desired_task_count               = 2
   cpu                              = 256
   memory                           = 512
+  min_capacity                     = 3
+  max_capacity                     = 3
   api_base_url                     = "https://api.research.forms.service.gov.uk"
   runner_base                      = "https://submit.research.forms.service.gov.uk"
   auth_provider                    = "basic_auth"
@@ -18,4 +19,5 @@ module "forms_admin" {
   metrics_feature_flag             = true
   email_confirmations_feature_flag = true
   forms_product_page_support_url   = "https://www.research.forms.service.gov.uk/support"
+  cloudwatch_metrics_enabled       = false
 }

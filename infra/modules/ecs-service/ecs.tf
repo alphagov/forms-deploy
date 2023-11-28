@@ -68,7 +68,6 @@ resource "aws_ecs_service" "app_service" {
   name                               = var.application
   cluster                            = data.aws_ecs_cluster.forms.id
   task_definition                    = "${aws_ecs_task_definition.task.family}:${aws_ecs_task_definition.task.revision}"
-  desired_count                      = var.desired_task_count
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
 
@@ -83,6 +82,7 @@ resource "aws_ecs_service" "app_service" {
 
   lifecycle {
     prevent_destroy = true # ECS services cannot be destructively replaced without downtime. This helps to avoid accidentally doing so.
+    ignore_changes  = [desired_count]
   }
 
   network_configuration {

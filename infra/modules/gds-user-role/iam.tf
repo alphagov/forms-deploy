@@ -5,10 +5,6 @@ locals {
   trust_principal = "arn:aws:iam::622626885786:user/${var.email}"
 }
 
-module "common_values" {
-  source = "../common-values"
-}
-
 resource "aws_iam_role" "gds_user_role" {
   name = local.role_name
 
@@ -36,10 +32,10 @@ data "aws_iam_policy_document" "assume_role" {
 
 
     dynamic "condition" {
-      for_each = var.restrict_to_gds_ips ? [1] : []
+      for_each = length(var.ip_restrictions) > 0 ? [1] : []
       content {
         test     = "IpAddress"
-        values   = module.common_values.vpn_ip_addresses
+        values   = var.ip_restrictions
         variable = "aws:SourceIp"
       }
     }

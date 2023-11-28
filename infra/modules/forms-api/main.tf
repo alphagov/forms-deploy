@@ -9,13 +9,20 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-api"
   sub_domain             = "api"
-  desired_task_count     = var.desired_task_count
   image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 9292
   permit_internet_egress = true # Required for Sentry.io and AWS SSM
   permit_postgres_egress = true
+
+  scaling_rules = {
+    min_capacity                                = var.min_capacity
+    max_capacity                                = var.max_capacity
+    p95_response_time_scaling_threshold_seconds = 1
+    scale_in_cooldown                           = 180
+    scale_out_cooldown                          = 45
+  }
 
   environment_variables = [
     {

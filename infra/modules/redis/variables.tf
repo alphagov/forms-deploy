@@ -25,7 +25,7 @@ variable "availability_zones" {
 }
 
 variable "engine_version" {
-  default     = "6.2"
+  default     = "7.0"
   description = "The version of Redis to use"
 }
 
