@@ -1,15 +1,11 @@
 version: 0.2
 phases:
   install:
-    run-as: codebuild
     commands:
       - set -e
-      - HOME='/home/codebuild' #Codebuild tries to set HOME=/root/ despite run-as value
       - ruby -v
       - bundle -v
       - bundle install
   build:
-    run-as: codebuild
     commands:
-      - HOME='/home/codebuild' #Codebuild tries to set HOME=/root/ despite run-as value
       - bundle exec rspec
