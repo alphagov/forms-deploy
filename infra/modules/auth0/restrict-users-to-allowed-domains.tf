@@ -1,5 +1,5 @@
-resource "auth0_action" "restrict_users_to_govuk_domains" {
-  name = "restrict-users-to-govuk-domain"
+resource "auth0_action" "restrict_users_to_allowed_domains" {
+  name = "restrict-users-to-allowed-domains"
 
   runtime = "node18"
   code    = <<-EOT
@@ -12,7 +12,7 @@ resource "auth0_action" "restrict_users_to_govuk_domains" {
     let domains = ${jsonencode(var.allowed_email_domains)}
     exports.onExecutePreUserRegistration = async (event, api) => {
       if (event.user.email && !domains.some((domain) => event.user.email.endsWith(domain))) {
-        api.access.deny("unauthorised_email_domain", 'You must have an email address that ends with ".gov.uk".');
+        api.access.deny("unauthorised_email_domain", "Use your government email address.");
       }
     };
   EOT
@@ -29,7 +29,12 @@ resource "auth0_trigger_actions" "pre_user_registration_flow" {
   trigger = "pre-user-registration"
 
   actions {
-    id           = auth0_action.restrict_users_to_govuk_domains.id
-    display_name = auth0_action.restrict_users_to_govuk_domains.name
+    id           = auth0_action.restrict_users_to_allowed_domains.id
+    display_name = auth0_action.restrict_users_to_allowed_domains.name
   }
+}
+
+moved {
+  from = auth0_action.restrict_users_to_govuk_domains
+  to   = auth0_action.restrict_users_to_allowed_domains
 }

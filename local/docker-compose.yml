@@ -4,11 +4,11 @@ services:
   forms-admin:
     build:
       context: ../../forms-admin
+      target: build
       args:
         - RAILS_ENV=development
         - NODE_ENV=development
     environment:
-      - API_BASE=${API_BASE}
       - DATABASE_URL=postgres://forms_admin:forms_admin@postgres/forms_admin
       - GDS_SSO_OAUTH_ID=example.org
       - GDS_SSO_OAUTH_SECRET=secret
@@ -19,9 +19,12 @@ services:
       - RAILS_LOG_TO_STDOUT=1
       - RAILS_SERVE_STATIC_FILES=1
       - SECRET_KEY_BASE=assets
-      - RUNNER_BASE=http://localhost:3001
+      - SETTINGS__FORMS_API__AUTH_KEY=development_key
+      - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
+      - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     volumes:
       - "../../forms-admin:/app:cached"
+      - forms-admin-bundle:/usr/local/bundle
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,13 +35,21 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: >
-      sh -c "rails db:setup &&
-      rails db:seed &&
-      rails s -b 0.0.0.0"
+      sh -c "
+        bundle config unset --local without &&
+        bundle install &&
+        rails db:setup &&
+        rails db:seed &&
+        rails s -b 0.0.0.0
+      "
 
   forms-api:
     build:
       context: ../../forms-api
+      target: build
+    command: >
+      sh -c "rake db:migrate &&
+      rails s -b 0.0.0.0 -p 9292"
     environment:
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
       - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
@@ -46,6 +57,7 @@ services:
       - SECRET_KEY_BASE=dummy_value
     volumes:
       - "../../forms-api:/app:cached"
+      - forms-api-bundle:/usr/local/bundle
     depends_on:
       postgres:
         condition: service_healthy
@@ -55,18 +67,22 @@ services:
   forms-runner:
     build:
       context: "../../forms-runner"
+      target: build
       args:
         - RAILS_ENV=development
         - NODE_ENV=development
+    command: >
+      rails s -b 0.0.0.0 -p 3000
     environment:
-      - API_BASE=${API_BASE}
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
       - RAILS_LOG_TO_STDOUT=1
       - RAILS_SERVE_STATIC_FILES=1
-      - SECRET_KEY_BASE=dummyvalue
       - REDIS_URL=redis://redis/
+      - SECRET_KEY_BASE=dummyvalue
+      - SETTINGS__FORMS_API__AUTH_KEY=development_key
+      - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
     depends_on:
       redis:
         condition: service_started
@@ -74,6 +90,7 @@ services:
       - 3001:3000
     volumes:
       - "../../forms-runner:/app:cached"
+      - forms-runner-bundle:/usr/local/bundle
 
   redis:
     image: redis:latest
@@ -100,5 +117,8 @@ services:
       retries: 5
 
 volumes:
+  forms-admin-bundle:
+  forms-api-bundle:
+  forms-runner-bundle:
   redis-data:
   postgres:
