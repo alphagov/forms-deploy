@@ -44,7 +44,8 @@ resource "aws_codepipeline" "main" {
       version         = "1"
       input_artifacts = ["forms_e2e_tests"]
       configuration = {
-        ProjectName = module.docker_build.name
+        ProjectName          = module.docker_build.name
+        EnvironmentVariables = jsonencode([{ "name" : "GIT_SHA", "value" : "#{get-forms-e2e-tests.CommitId}", "type" : "PLAINTEXT" }])
       }
     }
   }
