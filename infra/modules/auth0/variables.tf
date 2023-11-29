@@ -8,6 +8,13 @@ variable "allowed_email_domains" {
     ])
     error_message = "Allowed email domains must start with a dot (.) or an at symbol (@) to prevent name collisions."
   }
+
+  validation {
+    condition = alltrue([
+      for domain in var.allowed_email_domains : lower(domain) == domain
+    ])
+    error_message = "Allowed email domains must be lowercase characters only."
+  }
 }
 
 variable "admin_base_url" {
