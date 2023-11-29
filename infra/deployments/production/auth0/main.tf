@@ -20,6 +20,6 @@ module "auth0" {
     "@ukces.org.uk",
     "@ukri.org",
     "@dounreay.com",
-    "@MarineManagement.org.uk",
+    "@marinemanagement.org.uk",
   ]
 }
