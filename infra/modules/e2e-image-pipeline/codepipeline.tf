@@ -17,6 +17,7 @@ resource "aws_codepipeline" "main" {
     name = "Source"
     action {
       name             = "get-forms-e2e-tests"
+      namespace        = "get-forms-e2e-tests"
       category         = "Source"
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
