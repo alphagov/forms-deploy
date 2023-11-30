@@ -20,11 +20,14 @@ phases:
       - cd "${BUILD_DIRECTORY}"
       - ls
       - docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+      - if [ "${TAG_LATEST}" = true ]; then echo "Adding the 'latest' tag"; docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"; fi
   post_build:
     commands:
       - if test -f bin/dockerfile_test.sh; then echo 'Running test'; ./bin/dockerfile_test.sh "${IMAGE_NAME}:${IMAGE_TAG}"; else echo 'No test file found'; fi
       - docker tag "${IMAGE_NAME}:"${IMAGE_TAG} "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:"${IMAGE_TAG}
+      - if [ "${TAG_LATEST}" = true ]; then docker tag "${IMAGE_NAME}:"${IMAGE_TAG} "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:latest"; fi
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com
       - docker push "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:"${IMAGE_TAG}
+      - if [ "${TAG_LATEST}" = true ]; then docker push "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:latest"; fi
 
