@@ -200,3 +200,30 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
 output "cloudfront_dns_name" {
   value = aws_cloudfront_distribution.main.domain_name
 }
+
+resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
+  provider = aws.us-east-1
+
+  alarm_name        = "${var.env_name}-reached-ip-rate-limit"
+  alarm_description = "The number of blocked requests is greater than 1 in a 5-min window"
+
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = 1
+  period              = 300
+  evaluation_periods  = 1
+
+  namespace   = "AWS/WAFV2"
+  metric_name = "BlockedRequests"
+  statistic   = "Sum"
+
+  dimensions = {
+    WebACL = "cloudfront_waf_${var.env_name}"
+    Rule   = "OriginIPRateLimit"
+  }
+
+  alarm_actions = [aws_sns_topic.cloudwatch_alarms.arn]
+
+  depends_on = [aws_sns_topic.cloudwatch_alarms]
+}
+
+
