@@ -5,6 +5,7 @@ phases:
   install:
     commands:
       # install terraform
+      - "# shellcheck disable=SC2155"
       - set -e
       - uname -a
       - yum install -y yum-utils
@@ -16,17 +17,17 @@ phases:
     commands:
       - echo "Assuming role ${DEPLOYER_ROLE_ARN}"
       - aws sts get-caller-identity
-      - sts="$(aws sts assume-role --role-arn "$DEPLOYER_ROLE_ARN" --role-session-name "deployer" --external-id "$EXTERNAL_ID")"
-      - export AWS_ACCESS_KEY_ID="$(echo "$sts" | jq '.Credentials.AccessKeyId' -r )"
-      - export AWS_SECRET_ACCESS_KEY="$(echo "$sts" | jq '.Credentials.SecretAccessKey' -r )"
-      - export AWS_SESSION_TOKEN="$(echo "$sts" | jq '.Credentials.SessionToken' -r )"
+      - sts="$(aws sts assume-role --role-arn "${DEPLOYER_ROLE_ARN}" --role-session-name "deployer" --external-id "${EXTERNAL_ID}")"
+      - export AWS_ACCESS_KEY_ID="$(echo "${sts}" | jq '.Credentials.AccessKeyId' -r )"
+      - export AWS_SECRET_ACCESS_KEY="$(echo "${sts}" | jq '.Credentials.SecretAccessKey' -r )"
+      - export AWS_SESSION_TOKEN="$(echo "${sts}" | jq '.Credentials.SessionToken' -r )"
       - aws sts get-caller-identity
       - cd "${DEPLOY_DIRECTORY}"
       - terraform init
       - terraform apply --auto-approve --var image_tag="${IMAGE_TAG}"
   post_build:
     commands:
-      - '[ ${CODEBUILD_BUILD_SUCCEEDING:-0} -eq 1 ] || exit 1'
+      - '[ "${CODEBUILD_BUILD_SUCCEEDING:-0}" -eq 1 ] || exit 1'
       - echo "Waiting for ECS to finish updating"
       - cd "${CODEBUILD_SRC_DIR}/infra/modules/code-build-deploy-ecs/scripts"
       - pwd
