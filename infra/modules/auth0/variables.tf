@@ -45,7 +45,7 @@ variable "idle_session_lifetime" {
 
 variable "otp_expiry_length" {
   type        = number
-  default     = 180
+  default     = 900
   description = "Number of seconds that a one time password is valid for."
 }
 
