@@ -78,7 +78,7 @@ services:
       context: ../../forms-runner
       target: build
     command: >
-      exec rails s -p 3001
+      rails s -p 3001
     depends_on:
       redis:
         condition: service_started
