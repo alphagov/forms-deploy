@@ -205,7 +205,7 @@ resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
   provider = aws.us-east-1
 
   alarm_name        = "${var.env_name}-reached-ip-rate-limit"
-  alarm_description = "The number of blocked requests is greater than 1 in a 5-min window"
+  alarm_description = "The number of blocked requests is greater than 1 in a 5-min window. Check Splunk to find the attacking IP and add it to the blocked list"
 
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
@@ -226,4 +226,14 @@ resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
   depends_on = [aws_sns_topic.cloudwatch_alarms]
 }
 
+resource "aws_sns_topic" "cloudwatch_alarms" {
+  provider = aws.us-east-1
+  name     = "cloudwatch-alarms"
+}
 
+resource "aws_sns_topic_subscription" "slack_via_email" {
+  provider  = aws.us-east-1
+  topic_arn = aws_sns_topic.cloudwatch_alarms.arn
+  protocol  = "email"
+  endpoint  = var.alarm_subscription_endpoint
+}
