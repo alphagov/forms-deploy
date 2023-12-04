@@ -93,6 +93,17 @@ resource "aws_wafv2_ip_set" "system_egress_ips" {
   addresses = [for ngw in data.aws_nat_gateway.each_nat_gateway : "${ngw.public_ip}/32"]
 }
 
+resource "aws_wafv2_ip_set" "ips_to_block" {
+  provider = aws.us-east-1
+
+  name               = "${var.env_name}-ips-to-block"
+  description        = "Origin IPs to block for ${var.env_name} environment"
+  scope              = "CLOUDFRONT"
+  ip_address_version = "IPV4"
+
+  addresses = var.ips_to_block
+}
+
 resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -152,6 +163,28 @@ resource "aws_wafv2_web_acl" "this" {
       metric_name                = "OriginIPRateLimit"
       sampled_requests_enabled   = false
     }
+  }
+
+  rule {
+    name     = "OriginIPBlock"
+    priority = 110
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.ips_to_block.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.env_name}_ips_blocked"
+      sampled_requests_enabled   = false
+    }
+
   }
 }
 
