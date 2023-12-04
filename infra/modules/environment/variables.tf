@@ -18,3 +18,9 @@ variable "enable_cloudfront" {
   description = "If true then a cloudfront distribution is created."
   default     = true
 }
+
+variable "ips_to_block" {
+  type    = list(string)
+  description = "List of Origin IPs to block"
+  default = []
+}

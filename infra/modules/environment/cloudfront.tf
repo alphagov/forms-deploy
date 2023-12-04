@@ -10,6 +10,7 @@ module "cloudfront" {
   domain_name   = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   alb_dns_name  = aws_lb.alb.dns_name
   ip_rate_limit = var.ip_rate_limit
+  ips_to_block  = var.ips_to_block
 
   subject_alternative_names   = lookup(local.subject_alternative_names, var.env_name)
   alarm_subscription_endpoint = data.aws_ssm_parameter.email_slack_alerts.value

@@ -35,5 +35,6 @@ variable "alarm_subscription_endpoint" {
 
 variable "ips_to_block" {
   type    = list(string)
+  description = "List of Origin IPs to block"
   default = []
 }
