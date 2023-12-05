@@ -1,3 +1,7 @@
+data "aws_lb" "alb" {
+  name = "forms-${var.env_name}"
+}
+
 # The Certificate for CloudFront must be in us-east-1
 module "acm_certificate_with_validation" {
   source = "../acm-cert-with-dns-validation"
@@ -238,6 +242,11 @@ resource "aws_wafv2_web_acl" "alb" {
     }
 
   }
+}
+
+resource "aws_wafv2_web_acl_association" "alb_waf" {
+  resource_arn = data.aws_lb.alb.arn
+  web_acl_arn  = aws_wafv2_web_acl.alb.arn
 }
 
 resource "aws_cloudwatch_log_group" "waf" {
