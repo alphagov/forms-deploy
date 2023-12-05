@@ -16,7 +16,7 @@ module "forms_admin" {
   govuk_app_domain                 = "publishing.service.gov.uk"
   enable_maintenance_mode          = false
   metrics_feature_flag             = true
-  email_confirmations_feature_flag = false
+  email_confirmations_feature_flag = true
   forms_product_page_support_url   = "https://www.forms.service.gov.uk/support"
   auth_provider                    = "auth0"
   previous_auth_provider           = "gds_sso"

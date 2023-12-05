@@ -17,6 +17,7 @@ resource "aws_codepipeline" "main" {
     name = "Source"
     action {
       name             = "get-forms-e2e-tests"
+      namespace        = "get-forms-e2e-tests"
       category         = "Source"
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
@@ -44,7 +45,8 @@ resource "aws_codepipeline" "main" {
       version         = "1"
       input_artifacts = ["forms_e2e_tests"]
       configuration = {
-        ProjectName = module.docker_build.name
+        ProjectName          = module.docker_build.name
+        EnvironmentVariables = jsonencode([{ "name" : "GIT_SHA", "value" : "#{get-forms-e2e-tests.CommitId}", "type" : "PLAINTEXT" }])
       }
     }
   }
@@ -55,7 +57,6 @@ module "docker_build" {
   project_name                   = "docker-build-e2e-tests"
   project_description            = "Build the image used to run the end to end tests"
   image_name                     = "end-to-end-tests"
-  image_tag                      = "future"
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
   artifact_store_arn             = module.artifact_bucket.arn

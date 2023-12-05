@@ -25,6 +25,12 @@ variable "pentesters" {
   description = "user names for engineers to have pen testing access"
 }
 
+variable "pentester_cidrs" {
+  type        = list(string)
+  default     = []
+  description = "CIDR blocks from which pentester IPs will come"
+}
+
 variable "support" {
   type        = list(string)
   default     = []

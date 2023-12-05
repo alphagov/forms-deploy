@@ -1,6 +1,20 @@
 variable "allowed_email_domains" {
   type        = set(string)
   description = "Allowed email domains"
+
+  validation {
+    condition = alltrue([
+      for domain in var.allowed_email_domains : startswith(domain, ".") || startswith(domain, "@")
+    ])
+    error_message = "Allowed email domains must start with a dot (.) or an at symbol (@) to prevent name collisions."
+  }
+
+  validation {
+    condition = alltrue([
+      for domain in var.allowed_email_domains : lower(domain) == domain
+    ])
+    error_message = "Allowed email domains must be lowercase characters only."
+  }
 }
 
 variable "admin_base_url" {
@@ -31,7 +45,7 @@ variable "idle_session_lifetime" {
 
 variable "otp_expiry_length" {
   type        = number
-  default     = 180
+  default     = 900
   description = "Number of seconds that a one time password is valid for."
 }
 

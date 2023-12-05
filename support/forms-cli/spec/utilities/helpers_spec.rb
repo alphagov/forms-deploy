@@ -3,9 +3,9 @@
 require "utilities/helpers"
 
 describe Helpers do
-  describe ".aws_authenticated?" do
-    let(:dummy_class) { Class.new { include Helpers } }
+  let(:dummy_class) { Class.new { include Helpers } }
 
+  describe ".aws_authenticated?" do
     context "when not authenticated" do
       it "returns false" do
         expect(dummy_class.new.aws_authenticated?).to be false
@@ -26,6 +26,18 @@ describe Helpers do
                      "AWS_SECRET_ACCESS_KEY" => "test_secret_key",
                    })
         expect(dummy_class.new.aws_authenticated?).to be true
+      end
+    end
+  end
+
+  describe "forms_app_host" do
+    [
+      ["admin", "dev", "admin.dev.forms.service.gov.uk"],
+      ["product-page", "production", "forms.service.gov.uk"],
+      ["api", "staging", "api.staging.forms.service.gov.uk"],
+    ].each do |app, environment, expected|
+      it "returns the #{app} host name in #{environment}" do
+        expect(dummy_class.new.forms_app_host(app, environment:)).to eq expected
       end
     end
   end
