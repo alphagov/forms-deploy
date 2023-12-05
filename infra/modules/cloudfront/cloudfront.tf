@@ -79,7 +79,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   aliases    = concat([var.domain_name], var.subject_alternative_names)
-  web_acl_id = aws_wafv2_web_acl.this.arn
+  web_acl_id = aws_wafv2_web_acl.cloudfront.arn
 }
 
 resource "aws_wafv2_ip_set" "system_egress_ips" {
@@ -93,18 +93,29 @@ resource "aws_wafv2_ip_set" "system_egress_ips" {
   addresses = [for ngw in data.aws_nat_gateway.each_nat_gateway : "${ngw.public_ip}/32"]
 }
 
-resource "aws_wafv2_ip_set" "ips_to_block" {
+resource "aws_wafv2_ip_set" "ips_to_block_cf" {
   provider = aws.us-east-1
 
-  name               = "${var.env_name}-ips-to-block"
-  description        = "Origin IPs to block for ${var.env_name} environment"
+  name               = "${var.env_name}-ips-to-block-cf"
+  description        = "Origin IPs to block for cf in ${var.env_name} environment"
   scope              = "CLOUDFRONT"
   ip_address_version = "IPV4"
 
   addresses = var.ips_to_block
 }
 
-resource "aws_wafv2_web_acl" "this" {
+resource "aws_wafv2_ip_set" "ips_to_block_alb" {
+  provider = aws.us-east-1
+
+  name               = "${var.env_name}-ips-to-block-alb"
+  description        = "Origin IPs to block for alb in ${var.env_name} environment"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+
+  addresses = var.ips_to_block
+}
+
+resource "aws_wafv2_web_acl" "cloudfront" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
 
@@ -175,13 +186,54 @@ resource "aws_wafv2_web_acl" "this" {
 
     statement {
       ip_set_reference_statement {
-        arn = aws_wafv2_ip_set.ips_to_block.arn
+        arn = aws_wafv2_ip_set.ips_to_block_cf.arn
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "${var.env_name}_ips_blocked"
+      metric_name                = "${var.env_name}_ips_blocked_cf"
+      sampled_requests_enabled   = false
+    }
+
+  }
+}
+
+resource "aws_wafv2_web_acl" "alb" {
+  #checkov:skip=CKV_AWS_192:We don't use log4j
+  provider = aws.us-east-1
+
+  name        = "alb_waf_${var.env_name}"
+  description = "AWS WAF for the load balancer"
+  scope       = "REGIONAL"
+
+  default_action {
+    allow {}
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "OriginIPBlock"
+    sampled_requests_enabled   = false
+  }
+
+  rule {
+    name     = "OriginIPBlock"
+    priority = 110
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.ips_to_block_alb.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.env_name}_ips_blocked_alb"
       sampled_requests_enabled   = false
     }
 
@@ -207,7 +259,7 @@ resource "aws_cloudwatch_log_subscription_filter" "waf_csls_log_subscription" {
 resource "aws_wafv2_web_acl_logging_configuration" "this" {
   provider                = aws.us-east-1
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
-  resource_arn            = aws_wafv2_web_acl.this.arn
+  resource_arn            = aws_wafv2_web_acl.cloudfront.arn
 
   logging_filter {
     default_behavior = "DROP"
