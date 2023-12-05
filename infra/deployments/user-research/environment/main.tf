@@ -7,6 +7,6 @@ module "environment" {
     aws.us-east-1 = aws.us-east-1
   }
 
-  ips_to_block = compact(split("\n", file("../../../ips_to_block.txt")))
+  ips_to_block = []
 }
 
