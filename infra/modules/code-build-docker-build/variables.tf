@@ -31,6 +31,12 @@ variable "tag_prefix" {
   default     = ""
 }
 
+variable "tag_latest" {
+  type        = bool
+  description = "If true, the 'latest' tag will be applied and pushed alongside the the regular image tag"
+  default     = false
+}
+
 variable "artifact_store_arn" {
   type        = string
   description = "An S3 bucket arn where artifacts can be stored"

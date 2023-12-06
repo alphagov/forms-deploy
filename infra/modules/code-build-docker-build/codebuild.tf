@@ -52,6 +52,11 @@ resource "aws_codebuild_project" "main" {
     }
 
     environment_variable {
+      name  = "TAG_LATEST"
+      value = var.tag_latest
+    }
+
+    environment_variable {
       name  = "AWS_ACCOUNT_ID"
       value = local.aws_account_id
     }

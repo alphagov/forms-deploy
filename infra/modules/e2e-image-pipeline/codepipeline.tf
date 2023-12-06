@@ -57,6 +57,7 @@ module "docker_build" {
   project_name                   = "docker-build-e2e-tests"
   project_description            = "Build the image used to run the end to end tests"
   image_name                     = "end-to-end-tests"
+  tag_latest                     = true
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
   artifact_store_arn             = module.artifact_bucket.arn

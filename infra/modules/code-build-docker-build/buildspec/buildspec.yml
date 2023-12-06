@@ -7,7 +7,7 @@ phases:
     commands:
       - set -e
       - docker --version
-      - echo "$DOCKER_PASSWORD" | docker login -u $(echo $DOCKER_USERNAME) --password-stdin
+      - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
@@ -15,16 +15,21 @@ phases:
       - EPOCH_SECONDS="$(date '+%s')"
       - IMAGE_TAG="${IMAGE_TAG:-${TAG_PREFIX}${GIT_SHA}-${EPOCH_SECONDS}}"
       - echo "Image tag is ${IMAGE_TAG}"
+      - echo "Image name is ${IMAGE_NAME}"
+      - echo "Image will be ${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
   build:
     commands:
       - cd "${BUILD_DIRECTORY}"
       - ls
       - docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+      - if [ "${TAG_LATEST}" = true ]; then echo "Adding the 'latest' tag"; docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"; fi
   post_build:
     commands:
       - if test -f bin/dockerfile_test.sh; then echo 'Running test'; ./bin/dockerfile_test.sh "${IMAGE_NAME}:${IMAGE_TAG}"; else echo 'No test file found'; fi
-      - docker tag "${IMAGE_NAME}:"${IMAGE_TAG} "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:"${IMAGE_TAG}
+      - docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+      - if [ "${TAG_LATEST}" = true ]; then docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:latest"; fi
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com
-      - docker push "$AWS_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:"${IMAGE_TAG}
+      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
+      - docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+      - if [ "${TAG_LATEST}" = true ]; then docker push "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:latest"; fi
 
