@@ -260,7 +260,7 @@ resource "aws_sns_topic" "cloudwatch_alarms" {
   name     = "cloudwatch-alarms"
 }
 
-resource "aws_sns_topic_subscription" "slack_via_email" {
+resource "aws_sns_topic_subscription" "email" {
   provider  = aws.us-east-1
   topic_arn = aws_sns_topic.cloudwatch_alarms.arn
   protocol  = "email"

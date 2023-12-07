@@ -13,14 +13,14 @@ module "cloudfront" {
   ips_to_block  = var.ips_to_block
 
   subject_alternative_names   = lookup(local.subject_alternative_names, var.env_name)
-  alarm_subscription_endpoint = data.aws_ssm_parameter.email_slack_alerts.value
+  alarm_subscription_endpoint = data.aws_ssm_parameter.email_zendesk.value
 }
 
-resource "aws_ssm_parameter" "email_slack_alerts" {
+resource "aws_ssm_parameter" "email_zendesk" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
-  description = "Email for govuk-forms-alerts slack channel"
-  name        = "/email_slack_alerts"
+  description = "Support email for GOV.UK Forms Zendesk"
+  name        = "/alerting/email-zendesk"
   type        = "SecureString"
   value       = "email@email.com"
 
@@ -31,8 +31,8 @@ resource "aws_ssm_parameter" "email_slack_alerts" {
   }
 }
 
-data "aws_ssm_parameter" "email_slack_alerts" {
-  name = "/email_slack_alerts"
+data "aws_ssm_parameter" "email_zendesk" {
+  name = "/alerting/email-zendesk"
 
-  depends_on = [aws_ssm_parameter.email_slack_alerts]
+  depends_on = [aws_ssm_parameter.email_zendesk]
 }
