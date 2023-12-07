@@ -1,7 +1,3 @@
-data "aws_lb" "alb" {
-  name = "forms-${var.env_name}"
-}
-
 # The Certificate for CloudFront must be in us-east-1
 module "acm_certificate_with_validation" {
   source = "../acm-cert-with-dns-validation"
@@ -108,17 +104,6 @@ resource "aws_wafv2_ip_set" "ips_to_block_cf" {
   addresses = var.ips_to_block
 }
 
-resource "aws_wafv2_ip_set" "ips_to_block_alb" {
-  provider = aws.us-east-1
-
-  name               = "${var.env_name}-ips-to-block-alb"
-  description        = "Origin IPs to block for alb in ${var.env_name} environment"
-  scope              = "REGIONAL"
-  ip_address_version = "IPV4"
-
-  addresses = var.ips_to_block
-}
-
 resource "aws_wafv2_web_acl" "cloudfront" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -203,52 +188,6 @@ resource "aws_wafv2_web_acl" "cloudfront" {
   }
 }
 
-resource "aws_wafv2_web_acl" "alb" {
-  #checkov:skip=CKV_AWS_192:We don't use log4j
-  provider = aws.us-east-1
-
-  name        = "alb_waf_${var.env_name}"
-  description = "AWS WAF for the load balancer"
-  scope       = "REGIONAL"
-
-  default_action {
-    allow {}
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "OriginIPBlock"
-    sampled_requests_enabled   = false
-  }
-
-  rule {
-    name     = "OriginIPBlock"
-    priority = 110
-
-    action {
-      block {}
-    }
-
-    statement {
-      ip_set_reference_statement {
-        arn = aws_wafv2_ip_set.ips_to_block_alb.arn
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "${var.env_name}_ips_blocked_alb"
-      sampled_requests_enabled   = false
-    }
-
-  }
-}
-
-resource "aws_wafv2_web_acl_association" "alb_waf" {
-  resource_arn = data.aws_lb.alb.arn
-  web_acl_arn  = aws_wafv2_web_acl.alb.arn
-}
-
 resource "aws_cloudwatch_log_group" "waf" {
   #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
   #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
@@ -291,10 +230,6 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
   }
 }
 
-output "cloudfront_dns_name" {
-  value = aws_cloudfront_distribution.main.domain_name
-}
-
 resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
   provider = aws.us-east-1
 
@@ -330,4 +265,8 @@ resource "aws_sns_topic_subscription" "slack_via_email" {
   topic_arn = aws_sns_topic.cloudwatch_alarms.arn
   protocol  = "email"
   endpoint  = var.alarm_subscription_endpoint
+}
+
+output "cloudfront_dns_name" {
+  value = aws_cloudfront_distribution.main.domain_name
 }
