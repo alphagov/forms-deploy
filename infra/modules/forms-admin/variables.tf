@@ -59,12 +59,6 @@ variable "metrics_feature_flag" {
   default     = false
 }
 
-variable "email_confirmations_feature_flag" {
-  description = "Toggles on/off the email confirmations feature"
-  type        = bool
-  default     = false
-}
-
 variable "forms_product_page_support_url" {
   description = "Sets the support URL for the product page"
   type        = string

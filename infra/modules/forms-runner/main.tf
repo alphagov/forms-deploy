@@ -107,10 +107,6 @@ module "ecs_service" {
       value = var.env_name
     },
     {
-      name  = "SETTINGS__FEATURES__EMAIL_CONFIRMATIONS_ENABLED",
-      value = var.email_confirmations_enabled
-    },
-    {
       name  = "SETTINGS__CLOUDWATCH_METRICS_ENABLED",
       value = var.cloudwatch_metrics_enabled
     }
