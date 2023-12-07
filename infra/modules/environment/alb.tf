@@ -151,7 +151,7 @@ resource "aws_lb_listener" "listener" {
   }
 }
 
-
+# Setup WAF for alb
 resource "aws_wafv2_ip_set" "ips_to_block_alb" {
   name               = "${var.env_name}-ips-to-block-alb"
   description        = "Origin IPs to block for alb in ${var.env_name} environment"
@@ -204,4 +204,30 @@ resource "aws_wafv2_web_acl" "alb" {
 resource "aws_wafv2_web_acl_association" "alb_waf" {
   resource_arn = aws_lb.alb.arn
   web_acl_arn  = aws_wafv2_web_acl.alb.arn
+}
+
+# Send waf logs to our existing log bucket for alb logs
+resource "aws_wafv2_web_acl_logging_configuration" "this" {
+  log_destination_configs = [module.logs_bucket.arn]
+  resource_arn            = aws_wafv2_web_acl.alb.arn
+
+  logging_filter {
+    default_behavior = "DROP"
+
+    filter {
+      behavior    = "KEEP"
+      requirement = "MEETS_ANY"
+
+      condition {
+        action_condition {
+          action = "BLOCK"
+        }
+      }
+      condition {
+        action_condition {
+          action = "COUNT"
+        }
+      }
+    }
+  }
 }
