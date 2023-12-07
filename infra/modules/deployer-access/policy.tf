@@ -210,6 +210,7 @@ data "aws_iam_policy_document" "alb" {
       "elasticloadbalancing:DeleteListener",
       "elasticloadbalancing:ModifyListener",
       "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:ModifyRule",
       "elasticloadbalancing:DeleteRule",
       "elasticloadbalancing:DescribeRules",
       "elasticloadbalancing:CreateLoadBalancer",
