@@ -41,11 +41,6 @@ variable "maintenance_mode_bypass_ips" {
   default     = "213.86.153.211/32, 213.86.153.212/32, 213.86.153.213/32,213.86.153.214/32, 213.86.153.231/32, 213.86.153.235/32, 213.86.153.236/32, 213.86.153.237/32, 51.149.8.0/25, 51.149.8.128/29, 51.149.9.112/29, 51.149.9.240/29"
 }
 
-variable "email_confirmations_enabled" {
-  description = "Toggles on/off the email confirmations feature"
-  type        = bool
-}
-
 variable "rails_max_threads" {
   description = "The number of request threads run by the Puma server"
   type        = number
