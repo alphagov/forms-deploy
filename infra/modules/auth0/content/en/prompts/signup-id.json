@@ -1,8 +1,8 @@
 {
   "signup-id": {
     "pageTitle": "Create an account for GOV\u2060.\u2060UK Forms",
-    "title": "Create an account",
-    "description": "Create an account for GOV\u2060.\u2060UK Forms",
+    "title": "Create an account for GOV\u2060.\u2060UK Forms",
+    "description": "You must use your government email address.",
     "footerLinkText": "sign in",
     "footerText": "If you already have an account,",
     "email-in-use": "This email address already has an account",

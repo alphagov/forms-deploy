@@ -1,8 +1,8 @@
 {
   "login": {
     "pageTitle": "Sign in to GOV\u2060.\u2060UK Forms",
-    "title": "Sign in",
-    "description": "Sign in to GOV\u2060.\u2060UK Forms",
+    "title": "Sign in to GOV\u2060.\u2060UK Forms",
+    "description": " ",
     "footerLinkText": "Create an account",
     "invitationTitle": "You've been invited!",
     "invitationDescription": "Sign in to accept ${inviterName}'s invitation to join ${companyName} on ${clientName}.",

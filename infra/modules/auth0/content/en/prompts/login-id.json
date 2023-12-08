@@ -1,8 +1,8 @@
 {
   "login-id": {
     "pageTitle": "Sign in to GOV\u2060.\u2060UK Forms",
-    "title": "Sign in",
-    "description": "Sign in to GOV\u2060.\u2060UK Forms",
+    "title": "Sign in to GOV\u2060.\u2060UK Forms",
+    "description": " ",
     "invalid-email-format": "Enter your email address in the correct format",
     "authentication-failure": "We are sorry, something went wrong when attempting to sign in",
     "ip-blocked": "We have detected suspicious sign in behaviour and further attempts will be blocked. Please contact the GOV\u2060.\u2060UK Forms team.",
