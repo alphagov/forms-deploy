@@ -81,6 +81,16 @@ resource "aws_codebuild_project" "smoke_tests" {
       name  = "FORMS_ADMIN_URL"
       value = var.forms_admin_url
     }
+
+    environment_variable {
+      name  = "LOG_LEVEL"
+      value = "debug"
+    }
+
+    environment_variable {
+      name  = "TRACE"
+      value = "1"
+    }
   }
 
   source {
