@@ -51,6 +51,7 @@ services:
       target: build
     command: >
       sh -c "
+        bundle install &&
         rails db:migrate &&
         exec rails s -p 9292
       "
@@ -78,7 +79,10 @@ services:
       context: ../../forms-runner
       target: build
     command: >
-      exec rails s -p 3001
+      sh -c "
+        bundle install &&
+        rails s -p 3001
+      "
     depends_on:
       redis:
         condition: service_started
