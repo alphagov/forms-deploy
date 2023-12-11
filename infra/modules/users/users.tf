@@ -62,9 +62,9 @@ locals {
       user_research = "admin"
     },
     "james.sheppard" = {
-      #deploy        = "readonly" # Temporarily remove access whilst at AWS re:Invent
-      staging = "readonly"
-      #production    = "readonly" # Temporarily remove access whilst at AWS re:Invent
+      deploy        = "readonly"
+      staging       = "readonly"
+      production    = "readonly"
       dev           = "admin"
       user_research = "admin"
     },
