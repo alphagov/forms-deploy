@@ -81,7 +81,7 @@ services:
     command: >
       sh -c "
         bundle install &&
-        rails s -p 3001
+        exec rails s -p 3001
       "
     depends_on:
       redis:
