@@ -16,10 +16,8 @@ services:
         exec rails s
       "
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - postgres
+      - redis
     environment:
       - BINDING=0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@postgres
@@ -55,8 +53,7 @@ services:
         exec rails s -p 9292
       "
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       - BINDING=0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@postgres
@@ -83,8 +80,7 @@ services:
         exec rails s -p 3001
       "
     depends_on:
-      redis:
-        condition: service_started
+      - redis
     environment:
       - BINDING=0.0.0.0
       - NODE_ENV=development
@@ -106,11 +102,6 @@ services:
   postgres:
     environment:
       POSTGRES_PASSWORD: postgres
-    healthcheck:
-      interval: 5s
-      retries: 5
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      timeout: 5s
     image: postgres
     ports:
       - "5432:5432"
