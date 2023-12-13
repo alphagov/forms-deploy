@@ -13,6 +13,7 @@ services:
         bundle config unset --local without &&
         bundle install &&
         rails db:prepare &&
+        npm install &&
         exec rails s
       "
     depends_on:
@@ -25,6 +26,7 @@ services:
       - GDS_SSO_OAUTH_SECRET=secret
       - GDS_SSO_STRATEGY=mock
       - GOVUK_APP_DOMAIN=example.org
+      - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
       - RAILS_LOG_TO_STDOUT=1
@@ -78,6 +80,7 @@ services:
     command: >
       sh -c "
         bundle install &&
+        npm install &&
         exec rails s -p 3001
       "
     depends_on:
