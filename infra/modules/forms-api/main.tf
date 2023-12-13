@@ -23,6 +23,7 @@ module "ecs_service" {
     scale_in_cooldown                           = 180
     scale_out_cooldown                          = 45
   }
+  deploy_maximum_percent = "134" # Roll 34% of the capacity at a time during deployments
 
   environment_variables = [
     {
