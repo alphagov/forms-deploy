@@ -201,7 +201,7 @@ resource "aws_cloudwatch_log_subscription_filter" "waf_csls_log_subscription" {
   name            = "waf_csls_log_subscription"
   log_group_name  = "aws-waf-logs-${var.env_name}"
   filter_pattern  = ""
-  destination_arn = "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+  destination_arn = "arn:aws:logs:us-east-1:885513274347:destination:csls_cw_logs_destination_prodpython"
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "this" {
