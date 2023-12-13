@@ -14,6 +14,7 @@ services:
         bundle install &&
         rails db:prepare &&
         npm install &&
+        bin/vite build &&
         exec rails s
       "
     depends_on:
@@ -81,6 +82,7 @@ services:
       sh -c "
         bundle install &&
         npm install &&
+        bin/vite build &&
         exec rails s -p 3001
       "
     depends_on:
