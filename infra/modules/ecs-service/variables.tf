@@ -106,3 +106,16 @@ variable "scaling_rules" {
     scale_out_cooldown                          = number
   })
 }
+
+variable "deploy_maximum_percent" {
+  type        = string
+  description = <<EOF
+Upper limit (as a percentage of the service's current count) of the number of running tasks that can be running in a service during a deployment
+
+See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-draining.html#draining-service-behavior
+
+Defaulting to 200% allows ECS to start as many new instances as there are old instances before draining the old ones.
+EOF
+
+  default = "200"
+}

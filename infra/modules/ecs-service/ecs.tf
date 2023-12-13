@@ -68,7 +68,7 @@ resource "aws_ecs_service" "app_service" {
   name                               = var.application
   cluster                            = data.aws_ecs_cluster.forms.id
   task_definition                    = "${aws_ecs_task_definition.task.family}:${aws_ecs_task_definition.task.revision}"
-  deployment_maximum_percent         = "200"
+  deployment_maximum_percent         = var.deploy_maximum_percent
   deployment_minimum_healthy_percent = "100"
 
   launch_type      = "FARGATE"
