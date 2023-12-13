@@ -79,7 +79,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   aliases    = concat([var.domain_name], var.subject_alternative_names)
-  web_acl_id = aws_wafv2_web_acl.cloudfront.arn
+  web_acl_id = aws_wafv2_web_acl.this.arn
 }
 
 resource "aws_wafv2_ip_set" "system_egress_ips" {
@@ -104,7 +104,7 @@ resource "aws_wafv2_ip_set" "ips_to_block_cf" {
   addresses = var.ips_to_block
 }
 
-resource "aws_wafv2_web_acl" "cloudfront" {
+resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
 
@@ -207,7 +207,7 @@ resource "aws_cloudwatch_log_subscription_filter" "waf_csls_log_subscription" {
 resource "aws_wafv2_web_acl_logging_configuration" "this" {
   provider                = aws.us-east-1
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
-  resource_arn            = aws_wafv2_web_acl.cloudfront.arn
+  resource_arn            = aws_wafv2_web_acl.this.arn
 
   logging_filter {
     default_behavior = "DROP"
