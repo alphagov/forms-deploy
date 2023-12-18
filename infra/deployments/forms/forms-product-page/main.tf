@@ -5,11 +5,11 @@ variable "image_tag" {
 
 module "forms_product_page" {
   source         = "../../../modules/forms-product-page"
-  env_name       = "production"
+  env_name       = var.environment_name
   image_tag      = var.image_tag
-  cpu            = 256
-  memory         = 512
+  cpu            = var.forms_product_page_settings.cpu
+  memory         = var.forms_product_page_settings.memory
   admin_base_url = "https://admin.forms.service.gov.uk"
-  min_capacity   = 3
-  max_capacity   = 9
+  min_capacity   = var.forms_product_page_settings.min_capacity
+  max_capacity   = var.forms_product_page_settings.max_capacity
 }

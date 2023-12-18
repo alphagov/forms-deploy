@@ -1,5 +1,5 @@
 module "redis" {
   source   = "../../../modules/redis"
-  env_name = "production"
+  env_name = var.environment_name
 }
 

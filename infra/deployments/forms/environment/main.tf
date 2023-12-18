@@ -1,6 +1,6 @@
 module "environment" {
   source   = "../../../modules/environment"
-  env_name = "production"
+  env_name = var.environment_name
 
   providers = {
     aws           = aws

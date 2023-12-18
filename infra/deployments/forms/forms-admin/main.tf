@@ -5,19 +5,19 @@ variable "image_tag" {
 
 module "forms_admin" {
   source                         = "../../../modules/forms-admin"
-  env_name                       = "production"
+  env_name                       = var.environment_name
   image_tag                      = var.image_tag
-  cpu                            = 256
-  memory                         = 512
-  min_capacity                   = 6
-  max_capacity                   = 12
-  api_base_url                   = "https://api.forms.service.gov.uk"
-  runner_base                    = "https://submit.forms.service.gov.uk"
+  cpu                            = var.forms_admin_settings.cpu
+  memory                         = var.forms_admin_settings.memory
+  min_capacity                   = var.forms_admin_settings.min_capacity
+  max_capacity                   = var.forms_admin_settings.max_capacity
+  api_base_url                   = "https://api.${var.root_domain}"
+  runner_base                    = "https://submit.${var.root_domain}"
   govuk_app_domain               = "publishing.service.gov.uk"
-  enable_maintenance_mode        = false
-  metrics_feature_flag           = true
+  enable_maintenance_mode        = var.forms_admin_settings.enable_maintenance_mode
+  metrics_feature_flag           = var.forms_admin_settings.metrics_feature_flag
   forms_product_page_support_url = "https://www.forms.service.gov.uk/support"
-  auth_provider                  = "auth0"
-  previous_auth_provider         = "gds_sso"
-  cloudwatch_metrics_enabled     = true
+  auth_provider                  = var.forms_admin_settings.auth_provider
+  previous_auth_provider         = var.forms_admin_settings.previous_auth_provider
+  cloudwatch_metrics_enabled     = var.forms_admin_settings.cloudwatch_metrics_enabled
 }

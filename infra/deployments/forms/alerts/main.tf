@@ -1,6 +1,6 @@
 module "alerts" {
   source      = "../../../modules/alerts"
-  environment = "production"
+  environment = var.environment_name
 
   minimum_healthy_host_count = 3
 }

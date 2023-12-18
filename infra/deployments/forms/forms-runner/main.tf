@@ -5,14 +5,14 @@ variable "image_tag" {
 
 module "forms_runner" {
   source                     = "../../../modules/forms-runner"
-  env_name                   = "production"
+  env_name                   = var.environment_name
   image_tag                  = var.image_tag
-  cpu                        = 1024
-  memory                     = 2048
-  min_capacity               = 6
-  max_capacity               = 36
-  api_base_url               = "https://api.forms.service.gov.uk"
-  admin_base_url             = "https://admin.forms.service.gov.uk"
-  enable_maintenance_mode    = false
-  cloudwatch_metrics_enabled = true
+  cpu                        = var.forms_runner_settings.cpu
+  memory                     = var.forms_runner_settings.memory
+  min_capacity               = var.forms_runner_settings.min_capacity
+  max_capacity               = var.forms_runner_settings.max_capacity
+  api_base_url               = "https://api.${var.root_domain}"
+  admin_base_url             = "https://admin.${var.root_domain}"
+  enable_maintenance_mode    = var.forms_runner_settings.enable_maintenance_mode
+  cloudwatch_metrics_enabled = var.forms_runner_settings.cloudwatch_metrics_enabled
 }
