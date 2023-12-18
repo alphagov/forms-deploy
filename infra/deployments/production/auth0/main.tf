@@ -15,7 +15,7 @@ module "auth0" {
     "@innovateuk.ukri.org",
     "@mod.uk",
     "@nationalhighways.co.uk",
-    "@naturalengland.co.uk",
+    "@naturalengland.org.uk",
     "@slc.co.uk",
     "@ukces.org.uk",
     "@ukri.org",
