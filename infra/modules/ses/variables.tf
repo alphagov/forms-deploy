@@ -1,10 +1,6 @@
 variable "environment" {
   type        = string
   description = "The name of the environment to be used in resource names."
-  validation {
-    condition     = contains(["user-research", "dev", "staging", "production"], var.environment)
-    error_message = "Valid values for env_name are: user-research, dev, staging, production"
-  }
 }
 
 variable "email_domain" {
