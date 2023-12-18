@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "gds-forms-production-tfstate"
+    bucket = "gds-forms-${var.environment_name}-tfstate"
     key    = "monitoring.tfstate"
     region = "eu-west-2"
   }

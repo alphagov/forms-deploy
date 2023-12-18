@@ -1,7 +1,7 @@
 terraform {
   # Comment out when bootstrapping
   backend "s3" {
-    bucket = "gds-forms-production-tfstate"
+    bucket = "gds-forms-${var.environment_name}-tfstate"
     key    = "engineers_access.tfstate"
     region = "eu-west-2"
   }
@@ -23,7 +23,7 @@ provider "aws" {
 module "state_bucket" {
   source = "../../../modules/state-bucket"
 
-  bucket_name = "gds-forms-production-tfstate"
+  bucket_name = "gds-forms-${var.environment_name}-tfstate"
 }
 
 
