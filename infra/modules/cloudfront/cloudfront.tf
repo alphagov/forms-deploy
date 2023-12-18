@@ -15,6 +15,14 @@ data "aws_cloudfront_response_headers_policy" "cors" {
   name = "Managed-SimpleCORS"
 }
 
+data "aws_cloudfront_cache_policy" "caching_policy" {
+  name = "Managed-CachingOptimized"
+}
+
+data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
+  name = "Managed-CORS-S3Origin"
+}
+
 resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
   #checkov:skip=CKV2_AWS_32:Checkov error, response headers policy is set.
@@ -28,6 +36,18 @@ resource "aws_cloudfront_distribution" "main" {
       https_port             = 443
       http_port              = 80
       origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  origin {
+    domain_name = module.error_page_bucket.website_url
+    origin_id   = "error_page"
+
+    custom_origin_config {
+      https_port             = 443
+      http_port              = 80
+      origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
@@ -68,6 +88,22 @@ resource "aws_cloudfront_distribution" "main" {
 
   aliases    = concat([var.domain_name], var.subject_alternative_names)
   web_acl_id = aws_wafv2_web_acl.this.arn
+
+  custom_error_response {
+    error_code         = 504
+    response_page_path = "/cloudfront/error_page.html"
+    response_code      = 200
+  }
+
+  ordered_cache_behavior {
+    path_pattern             = "/cloudfront/error_page.html"
+    allowed_methods          = ["GET", "HEAD", "OPTIONS"]
+    cached_methods           = ["GET", "HEAD"]
+    target_origin_id         = "error_page"
+    viewer_protocol_policy   = "allow-all"
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_policy.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.origin_request_policy.id
+  }
 }
 
 resource "aws_wafv2_web_acl" "this" {
