@@ -7,6 +7,7 @@ environment_type = "user_research"
 environmental_settings = {
   pause_databases_on_inactivity            = true
   pause_databases_after_inactivity_seconds = 3600
+  database_backup_retention_period_days    = 1
   allow_authentication_from_email_domains  = [] # user-reserch environment uses basic auth
 }
 root_domain                = "research.forms.service.gov.uk"

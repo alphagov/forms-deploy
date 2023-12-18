@@ -7,6 +7,7 @@ environment_type = "staging"
 environmental_settings = {
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 300
+  database_backup_retention_period_days    = 30
   allow_authentication_from_email_domains  = [".gov.uk"]
 }
 root_domain                = "staging.forms.service.gov.uk"

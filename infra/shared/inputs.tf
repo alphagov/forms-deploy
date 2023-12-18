@@ -119,6 +119,7 @@ variable "environmental_settings" {
   type = object({
     pause_databases_on_inactivity            = bool
     pause_databases_after_inactivity_seconds = number
+    database_backup_retention_period_days    = number
     allow_authentication_from_email_domains  = list(string)
   })
 }
