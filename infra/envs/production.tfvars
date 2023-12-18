@@ -25,7 +25,8 @@ environmental_settings = {
     "@marinemanagement.org.uk",
   ]
 }
-root_domain = "forms.service.gov.uk"
+root_domain                = "forms.service.gov.uk"
+cloudfront_distribution_id = "EXITHSOVYUXHW"
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512

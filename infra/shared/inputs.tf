@@ -56,6 +56,12 @@ variable "root_domain" {
   nullable    = false
 }
 
+variable "cloudfront_distribution_id" {
+  description = "The ID of the cloudfront distribution to point the domins at"
+  type        = string
+  nullable    = false
+}
+
 ##
 # Settings
 ##

@@ -9,7 +9,8 @@ environmental_settings = {
   pause_databases_after_inactivity_seconds = 3600
   allow_authentication_from_email_domains  = [] # user-reserch environment uses basic auth
 }
-root_domain = "research.forms.service.gov.uk"
+root_domain                = "research.forms.service.gov.uk"
+cloudfront_distribution_id = "E5E6WGJ976UCF"
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512

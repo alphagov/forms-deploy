@@ -9,7 +9,8 @@ environmental_settings = {
   pause_databases_after_inactivity_seconds = 300
   allow_authentication_from_email_domains  = [".gov.uk"]
 }
-root_domain = "dev.forms.service.gov.uk"
+root_domain                = "dev.forms.service.gov.uk"
+cloudfront_distribution_id = "E2BI70XAWS5P2T"
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512
