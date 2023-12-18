@@ -17,9 +17,9 @@ resource "aws_s3_bucket" "this" {
   #checkov:skip=CKV_AWS_145:S3-SSE mode using AES256 is sufficient.
   #checkov:skip=CKV2_AWS_61:Lifecycle rules are not needed at this time
   #checkov:skip=CKV2_AWS_62:Notification are not needed at this time
+  #checkov:skip=CKV2_AWS_6:Ensure that S3 bucket has a Public Access block
 
   bucket = var.name
-
   tags = {
     Name = var.name
   }
@@ -27,11 +27,15 @@ resource "aws_s3_bucket" "this" {
 
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  #checkov:skip=CKV_AWS_55:Ensure S3 bucket has ignore public ACLs enabled
+  #checkov:skip=CKV_AWS_54:Ensure S3 bucket has block public policy enabled
+  #checkov:skip=CKV_AWS_53:Ensure S3 bucket has block public ACLS enabled
+  #checkov:skip=CKV_AWS_56:Ensure S3 bucket has 'restrict_public_bucket' enabled
+  #checkov:skip=CKV2_AWS_6:Ensure that S3 bucket has a Public Access block
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_versioning" "this" {
@@ -52,30 +56,22 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   }
 }
 
-data "aws_iam_policy_document" "https_only" {
+data "aws_iam_policy_document" "allow_public_access" {
   statement {
     principals {
       type        = "*"
       identifiers = ["*"]
     }
-    sid     = "https_only"
-    effect  = "Deny"
-    actions = ["s3:*"]
-    resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*"
-    ]
-    condition {
-      test     = "Bool"
-      values   = ["false"]
-      variable = "aws:SecureTransport"
-    }
+    sid       = "allow_public_access"
+    effect    = "Allow"
+    actions   = ["s3:GetObject"]
+    resources = ["arn:aws:s3:::govuk-forms-dev-error-page/*"]
   }
 }
 
 data "aws_iam_policy_document" "s3_combined_policy" {
   source_policy_documents = flatten([
-    data.aws_iam_policy_document.https_only.json,
+    data.aws_iam_policy_document.allow_public_access.json,
   var.extra_bucket_policies])
 }
 
@@ -92,10 +88,21 @@ resource "aws_s3_bucket_ownership_controls" "owner" {
   }
 }
 
+resource "aws_s3_bucket_website_configuration" "bucket_website_configuration" {
+  bucket = aws_s3_bucket.this.id
+  index_document {
+    suffix = "index.html"
+  }
+}
+
 output "name" {
   value = aws_s3_bucket.this.id
 }
 
 output "arn" {
   value = aws_s3_bucket.this.arn
+}
+
+output "website_url" {
+  value = aws_s3_bucket_website_configuration.bucket_website_configuration.website_endpoint
 }
