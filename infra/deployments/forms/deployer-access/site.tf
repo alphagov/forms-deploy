@@ -7,15 +7,15 @@ terraform {
 }
 
 provider "aws" {
-  allowed_account_ids = ["443944947292"]
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
-    tags = {
-      Environment = "production"
-      Deployment  = "production/deployer-access"
-    }
+    tags = merge(var.default_tags.tags,
+      {
+        Deployment = "${var.environment_name}/deployer-access"
+      }
+    )
   }
 }
-
 
 

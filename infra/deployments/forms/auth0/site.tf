@@ -22,12 +22,13 @@ provider "auth0" {
 }
 
 provider "aws" {
-  allowed_account_ids = ["443944947292"]
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
-    tags = {
-      Environment = "production"
-      Deployment  = "production/auth0"
-    }
+    tags = merge(var.default_tags.tags,
+      {
+        Deployment = "${var.environment_name}/auth0"
+      }
+    )
   }
 }

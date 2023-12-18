@@ -7,28 +7,29 @@ terraform {
 }
 
 provider "aws" {
-  allowed_account_ids = ["443944947292"]
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
-    tags = {
-      Environment = "production"
-      Deployment  = "production/environment"
-    }
+    tags = merge(var.default_tags.tags,
+      {
+        Deployment = "${var.environment_name}/environment"
+      }
+    )
   }
 }
 
 provider "aws" {
-  allowed_account_ids = ["443944947292"]
+  allowed_account_ids = var.allowed_account_ids
 
   region = "us-east-1"
   alias  = "us-east-1"
 
   default_tags {
-    tags = {
-      Environment = "production"
-      Deployment  = "production/environment"
-    }
+    tags = merge(var.default_tags.tags,
+      {
+        Deployment = "${var.environment_name}/environment"
+      }
+    )
   }
 }
-
 
