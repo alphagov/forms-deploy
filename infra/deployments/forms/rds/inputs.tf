@@ -1,1 +1,1 @@
-../../../shared/inputs.tf
+../inputs.tf
