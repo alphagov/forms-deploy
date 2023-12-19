@@ -71,6 +71,36 @@ services:
       - forms-api-bundle:/usr/local/bundle
       - forms-api-tmp:/app/tmp
 
+  forms-product-page:
+    build:
+      args:
+        - NODE_ENV=development
+        - RAILS_ENV=development
+      context: ../../forms-product-page
+      target: build
+    command: >
+      sh -c "
+        bundle install &&
+        npm install &&
+        bin/vite build &&
+        exec rails s -p 3002
+      "
+    environment:
+      - BINDING=0.0.0.0
+      - NODE_ENV=development
+      - RACK_ENV=development
+      - RAILS_ENV=development
+      - RAILS_LOG_TO_STDOUT=1
+      - RAILS_SERVE_STATIC_FILES=1
+      - SECRET_KEY_BASE=dummyvalue
+    ports:
+      - "3002:3002"
+    volumes:
+      - ../../forms-product-page:/app:cached
+      - forms-product-page-bundle:/usr/local/bundle
+      - forms-product-page-node-modules:/app/node_modules
+      - forms-product-page-tmp:/app/tmp
+
   forms-runner:
     build:
       args:
@@ -130,6 +160,9 @@ volumes:
   forms-admin-tmp:
   forms-api-bundle:
   forms-api-tmp:
+  forms-product-page-bundle:
+  forms-product-page-node-modules:
+  forms-product-page-tmp:
   forms-runner-bundle:
   forms-runner-node-modules:
   forms-runner-tmp:
