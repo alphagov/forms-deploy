@@ -65,9 +65,10 @@ resource "aws_codepipeline" "main" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["source_repo"]
+      input_artifacts = ["source_repo", "forms_deploy"]
       configuration = {
         ProjectName          = module.docker_build.name
+        PrimarySource        = "source_repo"
         EnvironmentVariables = jsonencode([{ "name" : "GIT_SHA", "value" : "#{get-${var.app_name}.CommitId}", "type" : "PLAINTEXT" }])
       }
     }

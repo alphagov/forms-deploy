@@ -21,6 +21,7 @@ phases:
     commands:
       - cd "${BUILD_DIRECTORY}"
       - ls
+      - if [[ -d "${CODEBUILD_SRC_DIR_forms_deploy}/config/data" ]]; then cp -rv "${CODEBUILD_SRC_DIR_forms_deploy}/config/data" "config"; ls "config/data"; fi
       - docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
       - if [ "${TAG_LATEST}" = true ]; then echo "Adding the 'latest' tag"; docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"; fi
   post_build:
