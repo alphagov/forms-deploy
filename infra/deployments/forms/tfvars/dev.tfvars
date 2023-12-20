@@ -3,7 +3,7 @@ default_tags = {
   Environment = "development"
 }
 environment_name = "development"
-environment_type = "dev"
+environment_type = "development"
 environmental_settings = {
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 300
