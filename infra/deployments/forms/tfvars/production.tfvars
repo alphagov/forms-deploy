@@ -26,6 +26,7 @@ environmental_settings = {
     "@marinemanagement.org.uk",
   ]
 }
+hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"
 cloudfront_distribution_id = "EXITHSOVYUXHW"
 forms_admin_settings = {

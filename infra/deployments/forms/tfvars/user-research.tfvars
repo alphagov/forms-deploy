@@ -10,6 +10,7 @@ environmental_settings = {
   database_backup_retention_period_days    = 1
   allow_authentication_from_email_domains  = [] # user-reserch environment uses basic auth
 }
+hosted_zone_id             = "Z011139325A6VARFKUQ54"
 root_domain                = "research.forms.service.gov.uk"
 cloudfront_distribution_id = "E5E6WGJ976UCF"
 forms_admin_settings = {

@@ -6,7 +6,7 @@ variable "environment_type" {
   type        = string
   nullable    = false
   validation {
-    condition     = contains(["dev", "staging", "production", "user_research", "ithc"], var.environment_type)
+    condition     = contains(["development", "staging", "production", "user_research", "ithc"], var.environment_type)
     error_message = "variable 'environment_type' must be one of dev, staging, production, user_research, or ithc"
   }
 }
@@ -60,6 +60,12 @@ variable "cloudfront_distribution_id" {
   description = "The ID of the cloudfront distribution to point the domins at"
   type        = string
   nullable    = false
+}
+
+variable "hosted_zone_id" {
+  description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
+  type        = string
+  nullable     = false
 }
 
 ##

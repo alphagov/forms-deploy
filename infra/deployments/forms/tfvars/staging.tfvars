@@ -10,6 +10,7 @@ environmental_settings = {
   database_backup_retention_period_days    = 30
   allow_authentication_from_email_domains  = [".gov.uk"]
 }
+hosted_zone_id             = "Z05508474P9CXBK9UAH3"
 root_domain                = "staging.forms.service.gov.uk"
 cloudfront_distribution_id = "E3PQV6DYYCB9KW"
 forms_admin_settings = {
