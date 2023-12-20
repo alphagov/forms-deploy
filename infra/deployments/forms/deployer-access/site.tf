@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "gds-forms-${var.environment_name}-tfstate"
+    # bucket set in backend config file
     key    = "deployer_access.tfstate"
     region = "eu-west-2"
   }
