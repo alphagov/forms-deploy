@@ -141,6 +141,10 @@ module "ecs_service" {
       value = var.metrics_feature_flag
     },
     {
+      name  = "SETTINGS__FEATURES__NOTIFY_ORIGINAL_SUBMISSION_EMAIL_OF_CHANGE",
+      value = var.submission_email_changed_feature_flag
+    },
+    {
       name  = "SETTINGS__FORMS_PRODUCT_PAGE__SUPPORT_URL",
       value = var.forms_product_page_support_url
     },

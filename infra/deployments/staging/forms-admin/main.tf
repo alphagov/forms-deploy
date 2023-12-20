@@ -20,4 +20,5 @@ module "forms_admin" {
   auth_provider                  = "auth0"
   previous_auth_provider         = "gds_sso"
   cloudwatch_metrics_enabled     = true
+  submission_email_changed_feature_flag = true
 }
