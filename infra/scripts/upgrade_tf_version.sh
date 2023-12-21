@@ -3,6 +3,8 @@
 __dir__=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 __repo_root__=$(readlink -f "${__dir__}/../../")
 
+allow_prerelease_versions=${ALLOW_PRERELEASE:-false}
+
 if ! command -v tfenv >/dev/null; then
     echo "You must have tfenv installed"
     exit 1
@@ -38,20 +40,20 @@ echo "Current Terraform version constraint: ${current_tf_version_constraint}"
 current_aws_version_constraint=$(jq -r '.terraform.required_providers.aws' "${__repo_root__}/infra/shared/versions.tf.json")
 echo "Current AWS provider version constraint: ${current_aws_version_constraint}"
 
-latest_tf_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform/releases" | jq -rf "${__dir__}/latest-release.jq" | tr -d 'v')
+latest_tf_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform/releases" | jq -r --argjson "allow_prerelease" "${allow_prerelease_versions}" -f "${__dir__}/latest-release.jq" | tr -d 'v')
 echo "Latest Terraform version: ${latest_tf_version}"
 
-tf_major=$(echo "${latest_tf_version}" | cut -d. -f1)
-tf_minor=$(echo "${latest_tf_version}" | cut -d. -f2)
-tf_patch=$(echo "${latest_tf_version}" | cut -d. -f3)
+tf_major=$(echo "${latest_tf_version}" | sed -nE 's#^([0-9]+)\.([0-9]+)\.([0-9]+).*#\1#p')
+tf_minor=$(echo "${latest_tf_version}" | sed -nE 's#^([0-9]+)\.([0-9]+)\.([0-9]+).*#\2#p')
+tf_patch=$(echo "${latest_tf_version}" | sed -nE 's#^([0-9]+)\.([0-9]+)\.([0-9]+).*#\3#p')
 new_tf_constraint="~>${tf_major}.${tf_minor}.${tf_patch}"
 
-latest_aws_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform-provider-aws/releases" | jq -rf "${__dir__}/latest-release.jq" | tr -d 'v')
+latest_aws_version=$(curl -sL "https://api.github.com/repos/hashicorp/terraform-provider-aws/releases" | jq -r --argjson "allow_prerelease" "${allow_prerelease_versions}" -f "${__dir__}/latest-release.jq" | tr -d 'v')
 echo "Latest AWS provider version: ${latest_aws_version}"
 
-aws_major=$(echo "${latest_aws_version}" | cut -d. -f1)
-aws_minor=$(echo "${latest_aws_version}" | cut -d. -f2)
-aws_patch=$(echo "${latest_aws_version}" | cut -d. -f3)
+aws_major=$(echo "${latest_aws_version}" | sed -nE 's#^([0-9]+)\.([0-9]+)\.([0-9]+).*#\1#p')
+aws_minor=$(echo "${latest_aws_version}" | sed -nE 's#^([0-9]+)\.([0-9]+)\.([0-9]+).*#\2#p')
+aws_patch=$(echo "${latest_aws_version}" | sed -nE 's#^([0-9]+)\.([0-9]+)\.([0-9]+).*#\3#p')
 new_aws_constraint="~>${aws_major}.${aws_minor}.${aws_patch}"
 
 if [[ "${current_tf_version_constraint}" == "${new_tf_constraint}" ]] && [[ "${current_aws_version_constraint}" == "${new_aws_constraint}" ]]; then
@@ -120,7 +122,7 @@ do
           -platform=darwin_amd64 \
           -platform=windows_amd64 >/dev/null
     popd >/dev/null || exit
-done <   <(find "${deployments_path}" -type d -depth 2 -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
+done <   <(find "${deployments_path}" -type d -depth 2 -not -path "*/tfvars" -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
 
 echo "Setting version constraint in GitHub Actions workflows"
 yq -i ".env.TF_VERSION=\"${new_tf_constraint}\"" "${__repo_root__}/.github/workflows/infra-ci.yml"
