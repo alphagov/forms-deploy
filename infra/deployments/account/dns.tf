@@ -10,9 +10,9 @@ resource "aws_route53_zone" "public" {
 
 resource "aws_route53_record" "domain_delegations" {
   for_each = var.dns_delegation_records
-  zone_id = aws_route53_zone.public.id
-  name    = each.key
-  type    = "NS"
-  ttl     = 60
-  records = each.value
+  zone_id  = aws_route53_zone.public.id
+  name     = each.key
+  type     = "NS"
+  ttl      = 60
+  records  = each.value
 }

@@ -35,7 +35,7 @@ variable "apex_domain" {
 }
 
 variable "dns_delegation_records" {
-  type = map(list(string))
+  type        = map(list(string))
   description = <<EOF
 Any DNS delegation records to set within the apex domain's zone. T
 his is used to allow the account hosting 'forms.service.gov.uk' to delegate subdomains to other accounts
@@ -49,4 +49,9 @@ The value is a map of string => list(string)
 EOF
   default     = {}
   nullable    = false
+}
+
+variable "imports" {
+  type        = map(string)
+  description = "A map of resource path to resource ID to import into Terraform. This will be removed later."
 }
