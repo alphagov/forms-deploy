@@ -16,3 +16,8 @@ resource "aws_route53_record" "domain_delegations" {
   ttl      = 60
   records  = each.value
 }
+
+import {
+  to = aws_route53_zone.public
+  id = var.existing_hosted_zone_id
+}
