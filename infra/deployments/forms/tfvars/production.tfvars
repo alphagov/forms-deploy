@@ -31,6 +31,7 @@ environmental_settings = {
   ]
   forms_product_page_support_url = "https://www.forms.service.gov.uk/support"
   rds_maintenance_window         = "wed:04:00-wed:04:30"
+  ips_to_block                   = []
 }
 hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"
