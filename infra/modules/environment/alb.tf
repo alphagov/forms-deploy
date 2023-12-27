@@ -245,7 +245,10 @@ module "s3_waf_log_shipping" {
 module "waf_logs_bucket" {
   source = "../secure-bucket"
   # the bucket name must start with "aws-waf-logs-"
-  name   = "aws-waf-logs-alb-govuk-forms-${var.env_name}"
+  name = "aws-waf-logs-alb-govuk-forms-${var.env_name}"
+  bucket_config = {
+    force_destroy = true
+  }
 
   extra_bucket_policies = [data.aws_iam_policy_document.allow_waf_logs.json, module.s3_waf_log_shipping.s3_policy]
 }

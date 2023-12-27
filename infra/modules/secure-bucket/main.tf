@@ -2,6 +2,17 @@ variable "name" {
   type = string
 }
 
+variable "bucket_config" {
+  description = "Additional arguments for bucket configuration"
+  type = object({
+    force_destroy = bool
+  })
+
+  default = {
+    force_destroy = false
+  }
+}
+
 variable "extra_bucket_policies" {
   type        = list(string)
   description = "extra bucket policies to apply to this bucket. List of json policies"
@@ -23,6 +34,8 @@ resource "aws_s3_bucket" "this" {
   tags = {
     Name = var.name
   }
+
+  force_destroy = var.bucket_config.force_destroy
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
