@@ -162,6 +162,7 @@ resource "aws_wafv2_ip_set" "ips_to_block_alb" {
 
 resource "aws_wafv2_web_acl" "alb" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
+  #checkov:skip=CKV2_AWS_31:We cannot set it up without help from cyber. We're working on it
 
   name        = "alb_${var.env_name}"
   description = "AWS WAF for the load balancer"
