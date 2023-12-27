@@ -28,3 +28,9 @@ variable "alarm_subscription_endpoint" {
   type        = string
   description = "Endpoint for alarm notifications from Cloudwatch"
 }
+
+variable "ips_to_block" {
+  type        = list(string)
+  description = "List of Origin IPs to block"
+  default     = []
+}

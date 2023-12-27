@@ -144,5 +144,6 @@ variable "environmental_settings" {
     forms_product_page_support_url           = string
     rds_maintenance_window                   = string
     redis_backup_retention_period_days       = optional(number)
+    ips_to_block                             = list(string)
   })
 }
