@@ -8,4 +8,5 @@ module "engineer_access" {
   admins   = module.users.with_role["${var.environment_type}_admin"]
   support  = module.users.with_role["${var.environment_type}_support"]
   readonly = module.users.with_role["${var.environment_type}_readonly"]
+  vpn      = var.require_vpn_to_access
 }

@@ -28,6 +28,13 @@ variable "environment_type" {
   }
 }
 
+variable "require_vpn_to_access" {
+  type        = bool
+  description = "Whether this AWS account will require users to be on the VPN to access it"
+  nullable    = false
+  default     = true
+}
+
 variable "apex_domain" {
   type        = string
   description = "The apex domain that will be hosted in the account. For example 'forms.service.gov.uk', 'staging.forms.service.gov.uk'"
@@ -52,6 +59,6 @@ EOF
 }
 
 variable "existing_hosted_zone_id" {
-  type = string
+  type        = string
   description = "The ID of the existing hosted zone for the account. This is a temporary requirement and will be removed after it has been imported."
 }

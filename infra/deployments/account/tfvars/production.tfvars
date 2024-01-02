@@ -1,7 +1,8 @@
-account_name     = "production"
-aws_account_id   = "443944947292"
-environment_type = "production"
-apex_domain      = "forms.service.gov.uk"
+account_name          = "production"
+aws_account_id        = "443944947292"
+environment_type      = "production"
+require_vpn_to_access = true
+apex_domain           = "forms.service.gov.uk"
 dns_delegation_records = {
   "dev.forms.service.gov.uk" = [
     "ns-124.awsdns-15.com",
