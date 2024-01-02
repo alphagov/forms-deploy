@@ -36,7 +36,7 @@ resource "aws_route53_record" "product-page" {
 
 resource "aws_route53_record" "apex-domain" {
   #checkov:skip=CKV2_AWS_23:Not applicable to alias records
-  zone_id = aws_route53_zone.public.id
+  zone_id = var.hosted_zone_id
   name    = var.root_domain
   type    = "A"
 
@@ -44,5 +44,34 @@ resource "aws_route53_record" "apex-domain" {
     name                   = data.aws_cloudfront_distribution.main.domain_name
     zone_id                = data.aws_cloudfront_distribution.main.hosted_zone_id
     evaluate_target_health = true
+  }
+}
+
+removed {
+  from = aws_route53_zone.public
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_route53_record.delegate_staging_domain
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_route53_record.delegate_research_domain
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_route53_record.delegate_dev_domain
+  lifecycle {
+    destroy = false
   }
 }
