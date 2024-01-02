@@ -9,6 +9,7 @@ environmental_settings = {
   pause_databases_after_inactivity_seconds = 3600
   database_backup_retention_period_days    = 1
   allow_authentication_from_email_domains  = [] # user-reserch environment uses basic auth
+  enable_alert_actions                     = false
 }
 hosted_zone_id             = "Z011139325A6VARFKUQ54"
 root_domain                = "research.forms.service.gov.uk"

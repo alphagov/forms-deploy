@@ -8,6 +8,7 @@ environmental_settings = {
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 60 * 60 * 24 # Set to 24 hours for inactivity just in case the pause_database_on_inactivity flag is inverted or ignored
   database_backup_retention_period_days    = 30
+  enable_alert_actions                     = true
   allow_authentication_from_email_domains = [
     ".gov.uk",
     ".mod.uk",

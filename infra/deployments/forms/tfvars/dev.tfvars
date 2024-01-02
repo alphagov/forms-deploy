@@ -9,6 +9,7 @@ environmental_settings = {
   pause_databases_after_inactivity_seconds = 300
   database_backup_retention_period_days    = 30
   allow_authentication_from_email_domains  = [".gov.uk"]
+  enable_alert_actions                     = false
 }
 hosted_zone_id             = "Z03210831GH1QDMJ7N5C8"
 root_domain                = "dev.forms.service.gov.uk"
