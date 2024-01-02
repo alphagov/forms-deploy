@@ -219,6 +219,7 @@ module "smoke_tests_staging" {
   app_name           = var.app_name
   environment        = "staging"
   forms_admin_url    = "https://admin.staging.forms.service.gov.uk"
+  product_pages_url  = "https://staging.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
 }
 
@@ -234,6 +235,7 @@ module "smoke_tests_production" {
   app_name           = var.app_name
   environment        = "production"
   forms_admin_url    = "https://admin.forms.service.gov.uk"
+  product_pages_url  = "https://forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
 }
 
@@ -249,6 +251,7 @@ module "smoke_tests_dev" {
   app_name           = var.app_name
   environment        = "dev"
   forms_admin_url    = "https://admin.dev.forms.service.gov.uk"
+  product_pages_url  = "https://dev.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
 }
 

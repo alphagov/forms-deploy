@@ -83,6 +83,11 @@ resource "aws_codebuild_project" "smoke_tests" {
     }
 
     environment_variable {
+      name  = "PRODUCT_PAGES_URL"
+      value = var.product_pages_url
+    }
+
+    environment_variable {
       name  = "LOG_LEVEL"
       value = "debug"
     }
