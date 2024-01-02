@@ -1,8 +1,8 @@
 allowed_account_ids = ["498160065950"]
 default_tags = {
-  Environment = "development"
+  Environment = "dev"
 }
-environment_name = "development"
+environment_name = "dev"
 environment_type = "development"
 environmental_settings = {
   pause_databases_on_inactivity            = false

@@ -16,17 +16,9 @@ variable "environment_name" {
   type        = string
   nullable    = false
   validation {
-    condition     = can(regex("^[a-zA-Z0-9_-]+%", var.environment_name))
+    condition     = can(regex("^[a-zA-Z0-9_-]+$", var.environment_name))
     error_message = "variable 'environment_name' must contain only alphanumeric characters, underscores, and hyphens; it must be a valid part of a DNS name"
   }
-}
-
-variable "deployment" {
-  description = <<EOF
-The name of the compoment being deployed. You should expect this to be set in the deployment, not at the environment level.
-EOF
-  type        = string
-  nullable    = false
 }
 
 ##
@@ -43,7 +35,7 @@ EOF
 
 variable "default_tags" {
   description = "The set of tags which should be attached to every resource by default."
-  type        = object({ tags = map(string) })
+  type        = map(string)
   nullable    = false
 }
 
