@@ -16,14 +16,3 @@ resource "aws_route53_record" "domain_delegations" {
   ttl      = 60
   records  = each.value
 }
-
-import {
-  to = aws_route53_zone.public
-  id = var.existing_hosted_zone_id
-}
-
-import {
-  for_each = var.dns_delegation_records
-  to = aws_route53_record.domain_delegations[each.key]
-  id = "${var.existing_hosted_zone_id}_${each.key}_NS"
-}

@@ -25,6 +25,3 @@ dns_delegation_records = {
     "ns-950.awsdns-54.net",
   ]
 }
-
-# Remove this once the zone has been imported
-existing_hosted_zone_id = "Z029841414A29LF7J7EDY"
