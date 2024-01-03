@@ -5,7 +5,7 @@ on:
   merge_group:
     types: [checks_requested]
 env:
-  TF_VERSION: "~>1.6.3"
+  TF_VERSION: "1.7.0-rc1"
 jobs:
   run_tests:
     runs-on: ubuntu-latest
