@@ -41,8 +41,8 @@ data "aws_iam_policy_document" "encryption_key_policy" {
     principals {
       type = "AWS"
       identifiers = toset(concat(
-        [for admin in module.users.with_role["${var.environment}_admin"] : "arn:aws:iam::${local.account_id}:role/${admin}-admin"],
-        [for admin in module.users.with_role["${var.environment}_support"] : "arn:aws:iam::${local.account_id}:role/${admin}-support"]
+        [for admin in module.users.with_role["${var.environment_type}_admin"] : "arn:aws:iam::${local.account_id}:role/${admin}-admin"],
+        [for admin in module.users.with_role["${var.environment_type}_support"] : "arn:aws:iam::${local.account_id}:role/${admin}-support"]
       ))
     }
 
@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "encryption_key_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [for admin in module.users.with_role["${var.environment}_admin"] : "arn:aws:iam::${local.account_id}:role/${admin}-admin"]
+      identifiers = [for admin in module.users.with_role["${var.environment_type}_admin"] : "arn:aws:iam::${local.account_id}:role/${admin}-admin"]
     }
 
     actions = [

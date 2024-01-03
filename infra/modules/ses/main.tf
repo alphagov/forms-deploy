@@ -48,11 +48,6 @@ resource "aws_ses_configuration_set" "ses_bounces_and_complaints_topic" {
   name = "ses_bounces_and_complaints_topic"
 }
 
-# this zone should be managed in the dns deployment module for the environment
-data "aws_route53_zone" "public" {
-  name = "${var.email_domain}."
-}
-
 resource "aws_ses_domain_identity" "ses" {
   domain = var.email_domain
 }
@@ -63,7 +58,7 @@ resource "aws_ses_domain_dkim" "ses" {
 
 resource "aws_route53_record" "ses" {
   count   = 3
-  zone_id = data.aws_route53_zone.public.id
+  zone_id = var.hosted_zone_id
   name    = "${aws_ses_domain_dkim.ses.dkim_tokens[count.index]}._domainkey"
   type    = "CNAME"
   ttl     = 600
@@ -71,7 +66,7 @@ resource "aws_route53_record" "ses" {
 }
 
 resource "aws_route53_record" "ses_email_receiving" {
-  zone_id = data.aws_route53_zone.public.id
+  zone_id = var.hosted_zone_id
   name    = aws_ses_domain_identity.ses.domain
   type    = "MX"
   records = ["10 inbound-smtp.eu-west-2.amazonaws.com"]

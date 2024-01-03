@@ -10,7 +10,7 @@ resource "aws_sns_topic" "alert_topic" {
 }
 
 data "aws_ssm_parameter" "pager_duty_integration_url" {
-  name = "/alerting/${var.environment}/pager-duty-integration-url"
+  name       = "/alerting/${var.environment}/pager-duty-integration-url"
   depends_on = [aws_ssm_parameter.pagerduty_integration_url]
 }
 

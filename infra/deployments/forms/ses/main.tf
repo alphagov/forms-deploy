@@ -5,10 +5,11 @@ module "users" {
 module "ses" {
   source = "../../../modules/ses"
 
-  environment = var.environment_name
+  environment_type = var.environment_type
 
-  email_domain = "forms.service.gov.uk"
-  from_address = "no-reply@forms.service.gov.uk"
+  hosted_zone_id = var.hosted_zone_id
+  email_domain   = var.root_domain
+  from_address   = "no-reply@${var.root_domain}"
   verified_email_addresses = concat(
     [
       for user in module.users.for_env[var.environment_type] : "${user}@digital.cabinet-office.gov.uk"
