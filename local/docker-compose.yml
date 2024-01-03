@@ -12,18 +12,15 @@ services:
       sh -c "
         bundle config unset --local without &&
         bundle install &&
-        rails db:setup &&
-        rails db:seed &&
+        rails db:prepare &&
         exec rails s
       "
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - postgres
+      - redis
     environment:
       - BINDING=0.0.0.0
-      - DATABASE_URL=postgres://forms_admin:forms_admin@postgres/forms_admin
+      - DATABASE_URL=postgres://postgres:postgres@postgres
       - GDS_SSO_OAUTH_ID=example.org
       - GDS_SSO_OAUTH_SECRET=secret
       - GDS_SSO_STRATEGY=mock
@@ -52,15 +49,14 @@ services:
     command: >
       sh -c "
         bundle install &&
-        rails db:migrate &&
+        rails db:prepare &&
         exec rails s -p 9292
       "
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       - BINDING=0.0.0.0
-      - DATABASE_URL=postgres://forms_api:forms_api@postgres/forms_api
+      - DATABASE_URL=postgres://postgres:postgres@postgres
       - RACK_ENV=development
       - SECRET_KEY_BASE=dummy_value
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
@@ -81,11 +77,10 @@ services:
     command: >
       sh -c "
         bundle install &&
-        rails s -p 3001
+        exec rails s -p 3001
       "
     depends_on:
-      redis:
-        condition: service_started
+      - redis
     environment:
       - BINDING=0.0.0.0
       - NODE_ENV=development
@@ -107,18 +102,12 @@ services:
   postgres:
     environment:
       POSTGRES_PASSWORD: postgres
-    healthcheck:
-      interval: 5s
-      retries: 5
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      timeout: 5s
     image: postgres
     ports:
       - "5432:5432"
     restart: always
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./postgres/initdb.d:/docker-entrypoint-initdb.d/
 
   redis:
     command: ["redis-server", "--appendonly", "yes"]
