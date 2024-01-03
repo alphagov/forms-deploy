@@ -15,7 +15,7 @@ data "aws_ssm_parameter" "auth0_client_secret" {
 }
 
 provider "auth0" {
-  domain = "govuk-forms.uk.auth0.com"
+  domain = var.environmental_settings.auth0_domain
 
   client_id     = data.aws_ssm_parameter.auth0_client_id.value
   client_secret = data.aws_ssm_parameter.auth0_client_secret.value

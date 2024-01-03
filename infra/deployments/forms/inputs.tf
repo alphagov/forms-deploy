@@ -117,6 +117,7 @@ variable "forms_runner_settings" {
 variable "environmental_settings" {
   description = "Configuration values for the environment. The types of settings that affect the environment as a whole, and aren't specific to one application."
   type = object({
+    auth0_domain                             = string
     pause_databases_on_inactivity            = bool
     pause_databases_after_inactivity_seconds = number
     database_backup_retention_period_days    = number

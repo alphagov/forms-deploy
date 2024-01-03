@@ -5,6 +5,7 @@ default_tags = {
 environment_name = "dev"
 environment_type = "development"
 environmental_settings = {
+  auth0_domain                             = "govuk-forms-dev.uk.auth0.com"
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 300
   database_backup_retention_period_days    = 30
