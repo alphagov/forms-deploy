@@ -9,8 +9,9 @@ phases:
       - set -e
       - uname -a
       - yum install -y yum-utils
-      - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-      - yum -y install "terraform-${TERRAFORM_VERSION}"
+      - curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o "terraform-${TERRAFORM_VERSION}.zip"
+      - unzip "terraform-${TERRAFORM_VERSION}.zip"
+      - mv terraform /usr/local/bin/terraform
     finally:
       - terraform --version
   build:
