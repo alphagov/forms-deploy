@@ -13,7 +13,7 @@ module "forms_admin" {
   max_capacity                   = var.forms_admin_settings.max_capacity
   api_base_url                   = "https://api.${var.root_domain}"
   runner_base                    = "https://submit.${var.root_domain}"
-  govuk_app_domain               = "publishing.service.gov.uk"
+  govuk_app_domain               = var.forms_admin_settings.govuk_app_domain
   enable_maintenance_mode        = var.forms_admin_settings.enable_maintenance_mode
   metrics_feature_flag           = var.forms_admin_settings.metrics_feature_flag
   forms_product_page_support_url = "https://www.forms.service.gov.uk/support"

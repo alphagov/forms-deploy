@@ -24,6 +24,7 @@ forms_admin_settings = {
   auth_provider              = "basic_auth"
   previous_auth_provider     = null
   cloudwatch_metrics_enabled = false
+  govuk_app_domain           = ""
 }
 forms_api_settings = {
   cpu          = 256
