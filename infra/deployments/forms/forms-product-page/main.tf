@@ -9,7 +9,7 @@ module "forms_product_page" {
   image_tag      = var.image_tag
   cpu            = var.forms_product_page_settings.cpu
   memory         = var.forms_product_page_settings.memory
-  admin_base_url = "https://admin.forms.service.gov.uk"
+  admin_base_url = "https://admin.${var.root_domain}"
   min_capacity   = var.forms_product_page_settings.min_capacity
   max_capacity   = var.forms_product_page_settings.max_capacity
 }
