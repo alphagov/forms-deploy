@@ -4,7 +4,7 @@
     "terraform_version": {
       "type": "string",
       "description": "The version of terraform to use",
-      "default": "1.6.3"
+      "default": "1.7.0-rc1"
     }
   }
 }
