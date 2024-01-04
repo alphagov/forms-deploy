@@ -10,7 +10,20 @@ resource "aws_sns_topic" "alert_topic" {
 }
 
 data "aws_ssm_parameter" "pager_duty_integration_url" {
-  name = "/alerting/${var.environment}/pager-duty-integration-url"
+  name       = "/alerting/${var.environment}/pager-duty-integration-url"
+  depends_on = [aws_ssm_parameter.pagerduty_integration_url]
+}
+
+resource "aws_ssm_parameter" "pagerduty_integration_url" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+  # Value is set externally.
+  name  = "/alerting/${var.environment}/pager-duty-integration-url"
+  type  = "SecureString"
+  value = "https://example.org/"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 resource "aws_sns_topic_subscription" "pager_duty_subscription" {

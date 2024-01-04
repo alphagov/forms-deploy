@@ -18,14 +18,14 @@ phases:
     commands:
       - echo "Assuming role ${DEPLOYER_ROLE_ARN}"
       - aws sts get-caller-identity
-      - sts="$(aws sts assume-role --role-arn "${DEPLOYER_ROLE_ARN}" --role-session-name "deployer" --external-id "${EXTERNAL_ID}")"
+      - sts="$(aws sts assume-role --role-arn "${DEPLOYER_ROLE_ARN}" --role-session-name "deployer" --external-id "${ENVIRONMENT}")"
       - export AWS_ACCESS_KEY_ID="$(echo "${sts}" | jq '.Credentials.AccessKeyId' -r )"
       - export AWS_SECRET_ACCESS_KEY="$(echo "${sts}" | jq '.Credentials.SecretAccessKey' -r )"
       - export AWS_SESSION_TOKEN="$(echo "${sts}" | jq '.Credentials.SessionToken' -r )"
       - aws sts get-caller-identity
-      - cd "${DEPLOY_DIRECTORY}"
-      - terraform init
-      - terraform apply --auto-approve --var image_tag="${IMAGE_TAG}"
+      - cd "infra/deployments/forms/${SERVICE_NAME}"
+      - terraform init --backend-config "../../account/tfvars/backends/${ENVIRONMENT}.tfvars"
+      - terraform apply --auto-approve -var-file "../tfvars/${ENVIRONMENT}.tfvars" --var image_tag="${IMAGE_TAG}"
   post_build:
     commands:
       - '[ "${CODEBUILD_BUILD_SUCCEEDING:-0}" -eq 1 ] || exit 1'

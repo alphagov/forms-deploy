@@ -1,10 +1,5 @@
 variable "environment" {
   type = string
-
-  validation {
-    condition     = contains(["user-research", "dev", "staging", "production"], var.environment)
-    error_message = "Valid values for environment are: user-research, dev, staging, production"
-  }
 }
 
 variable "app_name" {

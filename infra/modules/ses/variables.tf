@@ -1,10 +1,6 @@
-variable "environment" {
+variable "environment_type" {
   type        = string
-  description = "The name of the environment to be used in resource names."
-  validation {
-    condition     = contains(["user-research", "dev", "staging", "production"], var.environment)
-    error_message = "Valid values for env_name are: user-research, dev, staging, production"
-  }
+  description = "The type of environment to be used."
 }
 
 variable "email_domain" {
@@ -21,4 +17,10 @@ variable "verified_email_addresses" {
   type        = set(string)
   description = "Email addresses to verify. In SES sandbox emails can only be sent to verified email addresses and domains."
   default     = []
+}
+
+variable "hosted_zone_id" {
+  description = "The ID of the AWS hosted zone in the account, to which DNS records live"
+  type        = string
+  nullable    = false
 }

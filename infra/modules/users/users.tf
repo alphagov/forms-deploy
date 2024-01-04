@@ -15,7 +15,7 @@ locals {
   # All GOV.UK Forms developers can have admin access to the development
   # and user research accounts.
 
-  envs  = ["deploy", "staging", "production", "dev", "user_research"]
+  envs  = ["deploy", "staging", "production", "development", "user_research"]
   roles = ["admin", "support", "readonly"]
 
   users = {
@@ -23,91 +23,91 @@ locals {
       deploy        = "admin" # Admin whilst setting up the deploy account
       staging       = "admin" # Required whilst setting up environments
       production    = "admin" # Required whilst setting up environments
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "alistair.laing" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "andy.hunt" = {
       deploy        = "admin"
       staging       = "admin"
       production    = "admin"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
       staging       = "admin" # Required whilst setting up environments
       production    = "admin" # Required whilst setting up environments
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "dan.worth" = {
       deploy        = "admin" # Admin whilst setting up the deploy account
       staging       = "admin" # Required whilst setting up environments
       production    = "admin" # Required whilst setting up environments
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "david.biddle" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "james.sheppard" = {
       deploy        = "readonly"
       staging       = "readonly"
       production    = "readonly"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "jamie.wilkinson" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "kelvin.gan" = {
       deploy        = "admin" # Feature Team Tech lead
       staging       = "admin" # Feature Team Tech lead
       production    = "admin" # Feature Team Tech lead
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "laurence.debruxelles" = {
       deploy        = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
       staging       = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
       production    = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "radha.kotyankar" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
-      dev           = "admin"
+      development   = "admin"
       user_research = "support"
     },
     "samuel.culley" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
     "tom.iles" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
-      dev           = "admin"
+      development   = "admin"
       user_research = "admin"
     },
   }
