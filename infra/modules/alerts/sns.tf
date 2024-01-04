@@ -15,6 +15,7 @@ data "aws_ssm_parameter" "pager_duty_integration_url" {
 }
 
 resource "aws_ssm_parameter" "pagerduty_integration_url" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
   # Value is set externally.
   name  = "/alerting/${var.environment}/pager-duty-integration-url"
   type  = "SecureString"

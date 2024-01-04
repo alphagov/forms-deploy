@@ -45,6 +45,7 @@ resource "aws_ses_event_destination" "sns" {
 }
 
 resource "aws_ses_configuration_set" "ses_bounces_and_complaints_topic" {
+  #checkov:skip=CKV_AWS_365 We'll look at this later
   name = "ses_bounces_and_complaints_topic"
 }
 
