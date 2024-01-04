@@ -40,10 +40,6 @@ resource "aws_codebuild_project" "terraform" {
       value = lookup(local.deployer_roles, var.environment)
     }
     environment_variable {
-      name  = "DEPLOY_DIRECTORY"
-      value = "infra/deployments/${lookup(local.deploy_directory, var.environment, var.environment)}/${var.app_name}"
-    }
-    environment_variable {
       name  = "TERRAFORM_VERSION"
       value = var.terraform_version
     }
@@ -56,7 +52,7 @@ resource "aws_codebuild_project" "terraform" {
       value = var.app_name
     }
     environment_variable {
-      name  = "EXTERNAL_ID"
+      name  = "ENVIRONMENT"
       value = var.environment
     }
     environment_variable {
