@@ -2,7 +2,7 @@ allowed_account_ids = ["619109835131"]
 default_tags = {
   Environment = "user-research"
 }
-environment_name = "research"
+environment_name = "user-research"
 environment_type = "user_research"
 environmental_settings = {
   auth0_domain                             = null
@@ -24,7 +24,7 @@ forms_admin_settings = {
   enable_maintenance_mode        = false
   metrics_feature_flag           = true
   auth_provider                  = "basic_auth"
-  previous_auth_provider         = null
+  previous_auth_provider         = "basic_auth"
   cloudwatch_metrics_enabled     = false
   govuk_app_domain               = ""
   forms_product_page_support_url = "https://www.research.forms.service.gov.uk/support"
