@@ -6,6 +6,7 @@ environment_name = "staging"
 environment_type = "staging"
 environmental_settings = {
   auth0_domain                             = "govuk-forms-staging.uk.auth0.com"
+  disable_auth0                            = false
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 300
   database_backup_retention_period_days    = 30
