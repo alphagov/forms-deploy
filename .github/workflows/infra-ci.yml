@@ -82,6 +82,10 @@ jobs:
               shellcheck -s bash "${file}"
             popd >/dev/null || exit
           done <  <(find "." -type f \( -name "buildspec.yml" -or -name "buildspec.yaml" \) -print0)
+      - name: Check Terraform style
+        id: tf_fmt
+        run: |
+          terraform fmt -write=false -diff=true -list=true -recursive -check
       - name: Terraform init
         env:
           TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
@@ -95,10 +99,6 @@ jobs:
             echo "Initialising ${deployment}"
             terraform -chdir="${deployment}" init -backend=false || exit
           done <  <(find "infra/deployments" -type d -mindepth 2 -maxdepth 2 -print0)
-      - name: Check Terraform style
-        id: tf_fmt
-        run: |
-          terraform fmt -write=false -diff=true -list=true -recursive -check
       - name: Validate Terraform syntax
         env:
           BASE_REF: ${{github.event.pull_request.base.sha}}
