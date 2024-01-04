@@ -57,14 +57,20 @@ update_ruby_version () {
   echo "Running 'bundle install' to update Gemfile.lock"
   bundle install > /dev/null
 
-  echo "Updating version in Dockerfile"
-  sed -i '' 's/^FROM '"${DOCKER_IMAGE_NAME}"':.* AS/FROM '"${DOCKER_BASE_IMAGE}"' AS/' Dockerfile
-
-  echo "Committing changes"
   git add .ruby-version
-  git add Dockerfile
   git add Gemfile
   git add Gemfile.lock
+}
+
+update_dockerfile_base_image () {
+  echo "Updating Dockerfile base image"
+  sed -i '' 's/^FROM '"${DOCKER_IMAGE_NAME}"':.* AS/FROM '"${DOCKER_BASE_IMAGE}"' AS/' Dockerfile
+
+  git add Dockerfile
+}
+
+commit_changes () {
+  echo "Committing changes"
   git commit -S -m "${GIT_COMMIT_MSG}" \
     && git push -u origin "${GIT_BRANCH_NAME}" \
     || echo "There are no commits, perhaps you've already run this script?"
@@ -83,6 +89,10 @@ for app in "${APPS[@]}"; do
   setup_git_branch
 
   update_ruby_version
+
+  update_dockerfile_base_image
+
+  commit_changes
 
   echo -e "****** FINISHED UPDATING ${app} ********\n\n"
   cd - > /dev/null
