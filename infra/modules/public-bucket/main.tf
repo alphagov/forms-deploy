@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "allow_public_access" {
     sid       = "allow_public_access"
     effect    = "Allow"
     actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::govuk-forms-dev-error-page/*"]
+    resources = ["${aws_s3_bucket.this.arn}/*"]
   }
 }
 
