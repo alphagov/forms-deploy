@@ -75,11 +75,48 @@ update_ruby_version () {
   append_commit_msg "- Bumps Ruby from ${OLD_RUBY_VERSION} to ${NEW_RUBY_VERSION}"
 }
 
+# Versions of Alpine generally have only one version of Node.js in the repository at a time
+get_new_nodejs_version () {
+  docker run --rm "$DOCKER_BASE_IMAGE" sh -c 'apk update && apk search -x nodejs' \
+    | sed -E -n 's/^nodejs-([0-9.]+).*$/\1/p'
+}
+
+update_nodejs_version () {
+  if [ ! -f .nvmrc ]; then
+    return
+  fi
+
+  OLD_NODEJS_VERSION="$(tr -d ' ' < .nvmrc)"
+
+  if [ "$OLD_NODEJS_VERSION" = "$NEW_NODEJS_VERSION" ]; then
+    return
+  fi
+
+  echo "Updating .nvmrc file"
+  echo "$NEW_NODEJS_VERSION" > .nvmrc
+
+  echo "Running 'npm install' to update package-lock.json"
+  npm install > /dev/null
+
+  git add .nvmrc
+  git add package.json
+  git add package-lock.json
+
+  append_commit_msg "- Bumps Node.js from $OLD_NODEJS_VERSION to $NEW_NODEJS_VERSION"
+}
+
 update_dockerfile_base_image () {
   OLD_ALPINE_VERSION="$(sed -E -n 's/^FROM '${DOCKER_IMAGE_NAME}':[0-9.]+-alpine([0-9.]+).*$/\1/p' Dockerfile | head -n 1)"
 
   echo "Updating Dockerfile base image"
   sed -i '' 's/^FROM '"${DOCKER_IMAGE_NAME}"':.* AS/FROM '"${DOCKER_BASE_IMAGE}"' AS/' Dockerfile
+
+  OLD_NODEJS_MAJOR_VERSION="$(echo "$OLD_NODEJS_VERSION" | cut -d. -f 1)"
+  NEW_NODEJS_MAJOR_VERSION="$(echo "$NEW_NODEJS_VERSION" | cut -d. -f 1)"
+
+  if [ "$OLD_NODEJS_MAJOR_VERSION" != "$NEW_NODEJS_MAJOR_VERSION" ]; then
+    sed -E -i '' '/apk add/ s/nodejs=~[0-9]+/nodejs=~'"${NEW_NODEJS_MAJOR_VERSION}"'/' Dockerfile
+  fi
 
   git add Dockerfile
 
@@ -99,6 +136,8 @@ commit_changes () {
 NEW_DOCKER_IMAGE_DIGEST="$(get_new_docker_image_digest)"
 DOCKER_BASE_IMAGE="${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}@${NEW_DOCKER_IMAGE_DIGEST}"
 
+NEW_NODEJS_VERSION="$(get_new_nodejs_version)"
+
 echo "Updating to ${DOCKER_BASE_IMAGE}"
 
 for app in "${APPS[@]}"; do
@@ -108,6 +147,8 @@ for app in "${APPS[@]}"; do
   setup_git_branch
 
   update_ruby_version
+
+  update_nodejs_version
 
   update_dockerfile_base_image
 
