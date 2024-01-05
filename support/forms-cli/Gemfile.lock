@@ -1380,7 +1380,7 @@ GEM
     aws-sigv2 (1.1.0)
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
-    colorize (0.8.1)
+    colorize (1.1.0)
     concurrent-ruby (1.2.2)
     debug (1.9.1)
       irb (~> 1.10)
