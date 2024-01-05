@@ -3,6 +3,7 @@ locals {
   deploy_account_id           = "711966560482"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
   auth_credentials = {
+    _ = [], # just in case we have a "null" previous auth provider
     basic_auth = [
       {
         name      = "SETTINGS__BASIC_AUTH__USERNAME",
@@ -172,7 +173,7 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/secret-key-base"
     },
     lookup(local.auth_credentials, var.auth_provider, []),
-    lookup(local.auth_credentials, var.previous_auth_provider, [])
+    lookup(local.auth_credentials, coalesce(var.previous_auth_provider, "_"), [])
   ])
 
   pre_deploy_script = abspath("${path.module}/../shared/scripts/db-migrations-pre-deploy.sh")
