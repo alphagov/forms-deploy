@@ -2,28 +2,58 @@
 
 ### Introduction
 
-All infrastructure for GOV.UK Forms is managed within this directory using Terraform. The `infra/deployments` directory contains all of the Terraform deployments from which the `terraform` commands should be run. The structure of the `deployments` directory is:
+All infrastructure for GOV.UK Forms is managed within this directory using Terraform. The `infra/deployments` directory contains all of the Terraform deployments from which the `terraform` commands should be run. The `deployments` directory contains 3 distinct deployments:
 
-`deployments/<environment>/<deployment>`
+* `account`, which lays the groundwork in an AWS account, and should only ever be run by a human. It does things like configuring engineer access, and ensuring DNS hosted zones exist.
+* `deploy`, which configures all of the pipelines and continer repositories in the central `deploy` AWS account
+* `forms`, which configures a full deployment of the GOV.UK Forms service; this deployment is parameterised to support different environments from the same codebase.
 
 The `modules` directory contains reusable Terraform modules which are referenced by the various deployments.
 
+### Terminology
+
+**root:** a Terraform root module, with its own state file. When applied, it manages infrastructure for a subset of the overall deployment.
+
+**deployment:** a set of one or more roots that, in combination, describe a full set of infrastructure for some purpose.
+
+**module:** a (reusable) Terraform module. It cannot be independently deployed. 
+
 ### How to manage the deployments
 
-Most of the deployments need to be applied by an engineer from their machine; this will likely change in future as our deployment pipelines are extended to manage all deployments.
+Most of the roots need to be applied by an engineer from their machine; this will likely change in future as our deployment pipelines are extended to manage all deployments.
 
-The following deployments manage the three GOV.UK Forms applications and are automatically applied by CodePipeline when the application code is updated in Github. These should only be run by an engineer from their machine in exceptional circumstances (see deployment pipelines section below).
-- `deployments/*/forms-admin`
-- `deployments/*/forms-api`
-- `deployments/*/forms-runner`
+The following roots manage the three GOV.UK Forms applications and are automatically applied by CodePipeline when the application code is updated in Github. These should only be run by an engineer from their machine in exceptional circumstances (see deployment pipelines section below).
+- `deployments/forms/forms-admin`
+- `deployments/forms/forms-api`
+- `deployments/forms/forms-runner`
 
-The remaining deployments should be applied by running the `terraform` command from the necessary deployment directory. When running the `terraform` commands the shell must be authenticated with a role that has the necessary AWS permissions to manage the resources being modified. The simplest way is to use `aws-vault` or `gds-cli`.
+The remaining roots should be applied by running the Terraform locally. The simplest way to do this is to use the Makefile tooling in the root of this repository.
 
-For example to apply the `redis` deployment to the `development` environment:
-- `cd` into `infra/deployments/development/redis`
-- Run `aws-vault exec dev-admin -- terraform init`
-- Run `aws-vault exec dev-admin -- terraform apply`
+To apply a Terraform root (such as `forms/forms-api`) in an environment (such as `dev`):
 
+1. Use the [GDS CLI](https://github.com/alphgov/gds-cli) to assume a role in the right account
+    ```shell
+   gds aws forms-dev-admin --shell
+    ```
+2. Invoke `make` like
+
+    ```shell
+    make dev forms/forms-api apply
+    ```
+    with the environment, root, and action (`init`, `plan`, or `apply`) in that order
+
+
+> [!TIP]
+> If you need to invoke Terraform directly, you should look at what arguments the Makefile is providing
+
+> [!TIP]
+> You can get proper tab completion for the Makefile by sourcing the `./support/makefile_completion.(ba|z)sh` file, at the root of this repository, in your shell profile.
+
+### Maintaining separate environments
+> [!NOTE]
+> This section does not apply to the `deploy` deployment, because it is a singular environment.
+
+Our Terraform deployments are structured to accept the differences between environments as Terraform variables defined in the `inputs.tf` file of each deployment, and their distinct values are defined in a set of `*.tfvars` files in the `tfvars/` directories.  
 
 ### Deployment order and dependencies
 
@@ -31,9 +61,10 @@ The following provides a high-level overview of the deployments and in which ord
 
 #### Development, Staging or Production Environment
 In the unlikely event of needing to recreate an entire GOV.UK Forms environment the following order should be followed.
-- `engineer-access` to grant access to engineers to perform the following. If necessary ask an AWS admin to create a bootstrap role to provide authorization to apply the `engineer-access` deployment.
-- `dns` to create a Route53 hosted zone and records which resolve the environment's domain to the Application Load Balancer created by the `environment` deployment. If this is not production environment then copy the name server addresses from the output and update the `deployments/production/dns/main.ts` file to use the new name server addresses.
+- `account` deployment should be applied to ready the AWS account. This will configure engineer access, and create a new Route53 hosted zone.
+- update the `production` vars file in the `account` deployment with the nameservers from the previous step, so that the domain is correctly delegated
 - `environment` to create the networking and common components for each GOV.UK Forms application.
+- `dns` to create the DNS records which resolve the environment's domain to the Application Load Balancer created by the `environment` root.
 - `rds` to create the Postgres database cluster used by `forms-admin` and `forms-api`.
 - `redis` to create the Redis cluster used by `forms-runner`.
 - `deployer-access` to create a role that can be used by the deployment pipelines in the `deploy` environment to deploy the GOV.UK Forms applications.
@@ -50,7 +81,7 @@ To recreate the `deploy` environment.
 
 ### DNS For GOV.UK Forms
 
-The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `deployments/production/dns` deployment manages records to delegate the `dev.` and `staging.` subdomains to Route53 Hosted Zones in the development and staging environments respectively. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output by the `deployments/development/dns` and `deployments/staging/dns` deployments.
+The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `production` configuration of the `account` deployment manages records to delegate the `dev.`, `staging.`, and `research.` subdomains to Route53 Hosted Zones in their respective environments. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output when applying the `account` deployment in each environment.
 
 
 ### Linting and Static Analysis
