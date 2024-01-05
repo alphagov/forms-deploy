@@ -27,7 +27,12 @@ APPS=(forms-api forms-admin forms-runner forms-product-page forms-e2e-tests)
 DOCKER_IMAGE_NAME=ruby
 DOCKER_IMAGE_TAG="${NEW_RUBY_VERSION}-alpine${NEW_ALPINE_VERSION}"
 GIT_BRANCH_NAME="bump_base_image_to_${DOCKER_IMAGE_TAG}"
-GIT_COMMIT_MSG="Bump base image"
+GIT_COMMIT_MSG=$'Bump base image\n\nBumps core dependencies and base image in Dockerfile.'
+
+append_commit_msg () {
+  GIT_COMMIT_MSG+=$'\n'
+  GIT_COMMIT_MSG+="$*"
+}
 
 # Checks out main branch and pulls latests. Then creates a new
 # branch for the updates. If the branch already exists it continues
@@ -48,6 +53,12 @@ get_new_docker_image_digest () {
 }
 
 update_ruby_version () {
+  OLD_RUBY_VERSION="$(tr -d ' ' < .ruby-version)"
+
+  if [ "$OLD_RUBY_VERSION" = "$NEW_RUBY_VERSION" ]; then
+    return
+  fi
+
   echo "Updating .ruby-version file"
   echo "$NEW_RUBY_VERSION" > .ruby-version
 
@@ -60,13 +71,21 @@ update_ruby_version () {
   git add .ruby-version
   git add Gemfile
   git add Gemfile.lock
+
+  append_commit_msg "- Bumps Ruby from ${OLD_RUBY_VERSION} to ${NEW_RUBY_VERSION}"
 }
 
 update_dockerfile_base_image () {
+  OLD_ALPINE_VERSION="$(sed -E -n 's/^FROM '${DOCKER_IMAGE_NAME}':[0-9.]+-alpine([0-9.]+).*$/\1/p' Dockerfile | head -n 1)"
+
   echo "Updating Dockerfile base image"
   sed -i '' 's/^FROM '"${DOCKER_IMAGE_NAME}"':.* AS/FROM '"${DOCKER_BASE_IMAGE}"' AS/' Dockerfile
 
   git add Dockerfile
+
+  if [ "$OLD_ALPINE_VERSION" != "$NEW_ALPINE_VERSION" ]; then
+    append_commit_msg "- Bumps Alpine Linux from ${OLD_ALPINE_VERSION} to ${NEW_ALPINE_VERSION}"
+  fi
 }
 
 commit_changes () {
