@@ -18,7 +18,7 @@ jobs:
         working-directory: support/forms-cli
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@54a18e26dbbb1eabc604f317ade9a5788dddef81 # v1.159.0
         with:
