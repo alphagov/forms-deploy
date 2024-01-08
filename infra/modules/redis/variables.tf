@@ -62,8 +62,8 @@ variable "redis_node_type" {
 
 variable "redis_maintenance_window" {
   type        = string
-  default     = "mon:06:00-mon:07:00"
-  description = "When planned maintenance will take place such as minor version upgardes"
+  default     = "tue:03:00-tue:04:00"
+  description = "When planned maintenance will take place such as minor and major version upgrades"
 }
 
 variable "redis_snapshot_window" {
