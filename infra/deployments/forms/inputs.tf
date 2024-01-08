@@ -66,17 +66,18 @@ variable "hosted_zone_id" {
 variable "forms_admin_settings" {
   description = "Forms Admin configuration values"
   type = object({
-    cpu                            = number
-    memory                         = number
-    min_capacity                   = number
-    max_capacity                   = number
-    enable_maintenance_mode        = bool
-    metrics_feature_flag           = bool
-    auth_provider                  = string
-    previous_auth_provider         = string
-    cloudwatch_metrics_enabled     = bool
-    govuk_app_domain               = string
-    forms_product_page_support_url = string
+    cpu                                   = number
+    memory                                = number
+    min_capacity                          = number
+    max_capacity                          = number
+    enable_maintenance_mode               = bool
+    metrics_feature_flag                  = bool
+    submission_email_changed_feature_flag = bool
+    auth_provider                         = string
+    previous_auth_provider                = string
+    cloudwatch_metrics_enabled            = bool
+    govuk_app_domain                      = string
+    forms_product_page_support_url        = string
   })
   nullable = false
 }
