@@ -57,8 +57,3 @@ EOF
   default     = {}
   nullable    = false
 }
-
-variable "existing_hosted_zone_id" {
-  type        = string
-  description = "The ID of the existing hosted zone for the account. This is a temporary requirement and will be removed after it has been imported."
-}
