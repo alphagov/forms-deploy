@@ -9,7 +9,8 @@
                 "name": ($CONTAINER_DEFINITION_JSON | .name),
                 "command": ["rake", "db:migrate"],
                 "environment": [
-                    { "name": "VERBOSE", "value": "true" }
+                    { "name": "VERBOSE", "value": "true" },
+                    { "name": "CONFIG_DATA_DOMAINS", "value": $CONFIG_DATA_DOMAINS }
                 ]
             }
         ]

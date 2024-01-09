@@ -2,6 +2,7 @@
 set -e -u -o pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+DEPLOY_DIR=$( cd "${SCRIPT_DIR}/../../../.." && pwd)
 
 # Generate the JSON for the request
 jq -nrM -f \
@@ -9,8 +10,11 @@ jq -nrM -f \
     --argjson "ECS_TASK_NETWORK_CONFIGURATION" "${ECS_TASK_NETWORK_CONFIGURATION}" \
     --arg "ECS_CLUSTER_ARN" "${ECS_CLUSTER_ARN}" \
     --arg "ECS_TASK_DEFINITION_ARN" "${ECS_TASK_DEFINITION_ARN}" \
+    --rawfile "CONFIG_DATA_DOMAINS" "${DEPLOY_DIR}/config/data/production/domains.yml" \
     "${SCRIPT_DIR}/db-migrations-ecs-run-task-input.jq" \
     > "${SCRIPT_DIR}/run-task-input.tmp.json"
+
+cat ${SCRIPT_DIR}/run-task-input.tmp.json
 
 # Start the task and get the task ARN
 RUNNING_TASK_ARN=$( \
