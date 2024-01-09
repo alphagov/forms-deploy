@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "tg" {
   deregistration_delay = "60"
 
   health_check {
-    path     = "/ping"
+    path     = "/up"
     matcher  = "200"
     protocol = "HTTP"
 
