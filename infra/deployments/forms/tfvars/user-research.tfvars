@@ -12,6 +12,7 @@ environmental_settings = {
   database_backup_retention_period_days    = 1
   allow_authentication_from_email_domains  = [] # user-reserch environment uses basic auth
   enable_alert_actions                     = false
+  forms_product_page_support_url           = "https://www.research.forms.service.gov.uk/support"
 }
 hosted_zone_id             = "Z011139325A6VARFKUQ54"
 root_domain                = "research.forms.service.gov.uk"
@@ -28,7 +29,6 @@ forms_admin_settings = {
   previous_auth_provider                = null
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = ""
-  forms_product_page_support_url        = "https://www.research.forms.service.gov.uk/support"
 }
 forms_api_settings = {
   cpu          = 256

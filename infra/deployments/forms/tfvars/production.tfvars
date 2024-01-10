@@ -28,6 +28,7 @@ environmental_settings = {
     "@dounreay.com",
     "@marinemanagement.org.uk",
   ]
+  forms_product_page_support_url = "https://www.forms.service.gov.uk/support"
 }
 hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"
@@ -44,7 +45,6 @@ forms_admin_settings = {
   previous_auth_provider                = "gds_sso"
   cloudwatch_metrics_enabled            = true
   govuk_app_domain                      = "publishing.service.gov.uk"
-  forms_product_page_support_url        = "https://www.forms.service.gov.uk/support"
 }
 forms_api_settings = {
   cpu          = 512
