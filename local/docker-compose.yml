@@ -13,6 +13,8 @@ services:
         bundle config unset --local without &&
         bundle install &&
         rails db:prepare &&
+        npm install &&
+        bin/vite build &&
         exec rails s
       "
     depends_on:
@@ -25,6 +27,7 @@ services:
       - GDS_SSO_OAUTH_SECRET=secret
       - GDS_SSO_STRATEGY=mock
       - GOVUK_APP_DOMAIN=example.org
+      - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
       - RAILS_LOG_TO_STDOUT=1
@@ -40,6 +43,7 @@ services:
     volumes:
       - ../../forms-admin:/app:cached
       - forms-admin-bundle:/usr/local/bundle
+      - forms-admin-node-modules:/app/node_modules
       - forms-admin-tmp:/app/tmp
 
   forms-api:
@@ -77,6 +81,8 @@ services:
     command: >
       sh -c "
         bundle install &&
+        npm install &&
+        bin/vite build &&
         exec rails s -p 3001
       "
     depends_on:
@@ -97,6 +103,7 @@ services:
     volumes:
       - ../../forms-runner:/app:cached
       - forms-runner-bundle:/usr/local/bundle
+      - forms-runner-node-modules:/app/node_modules
       - forms-runner-tmp:/app/tmp
 
   postgres:
@@ -119,10 +126,12 @@ services:
 
 volumes:
   forms-admin-bundle:
+  forms-admin-node-modules:
   forms-admin-tmp:
   forms-api-bundle:
   forms-api-tmp:
   forms-runner-bundle:
+  forms-runner-node-modules:
   forms-runner-tmp:
   postgres:
   redis-data:
