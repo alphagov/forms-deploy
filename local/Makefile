@@ -19,11 +19,13 @@ down:
 all:
 	docker-compose up -d
 admin:
-	docker-compose up -d redis postgres forms-runner forms-api
+	docker-compose up -d redis postgres forms-runner forms-api forms-product-page
 api:
-	SETTINGS__FORMS_API__BASE_URL=http://host.docker.internal:9292 docker-compose up -d redis postgres forms-runner forms-admin
+	SETTINGS__FORMS_API__BASE_URL=http://host.docker.internal:9292 docker-compose up -d redis postgres forms-runner forms-admin forms-product-page
+product-page:
+	docker-compose up -d redis postgres forms-runner forms-api forms-admin
 runner:
-	docker-compose up -d redis postgres forms-admin forms-api
+	docker-compose up -d redis postgres forms-admin forms-api forms-product-page
 ps:
 	docker-compose ps
 logs:
