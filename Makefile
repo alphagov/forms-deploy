@@ -7,8 +7,8 @@ target_environment_set:
 	$(if ${TARGET_ENVIRONMENT},,$(error Target environment is not set. Try adding an environment target, such as 'dev' or 'production', before the final target. (e.g. 'make dev apply')))
 	@true
 
-.PHONY: dev
-dev:
+.PHONY: development
+dev development:
 	$(eval export TARGET_ENVIRONMENT = dev)
 	$(eval export TFVARS_FILE = dev.tfvars)
 	$(eval export BACKEND_TFVARS_FILE = dev.tfvars)
@@ -22,7 +22,7 @@ staging:
 	@true
 	
 .PHONY: production
-production:
+prod production:
 	$(eval export TARGET_ENVIRONMENT = production)
 	$(eval export TFVARS_FILE = production.tfvars)
 	$(eval export BACKEND_TFVARS_FILE = production.tfvars)
