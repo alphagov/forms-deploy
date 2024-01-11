@@ -17,7 +17,7 @@ module "forms_admin" {
   enable_maintenance_mode               = var.forms_admin_settings.enable_maintenance_mode
   metrics_feature_flag                  = var.forms_admin_settings.metrics_feature_flag
   submission_email_changed_feature_flag = var.forms_admin_settings.submission_email_changed_feature_flag
-  forms_product_page_support_url        = var.forms_admin_settings.forms_product_page_support_url
+  forms_product_page_support_url        = var.environmental_settings.forms_product_page_support_url
   auth_provider                         = var.forms_admin_settings.auth_provider
   previous_auth_provider                = var.forms_admin_settings.previous_auth_provider
   cloudwatch_metrics_enabled            = var.forms_admin_settings.cloudwatch_metrics_enabled

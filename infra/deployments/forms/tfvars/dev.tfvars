@@ -12,6 +12,7 @@ environmental_settings = {
   database_backup_retention_period_days    = 30
   allow_authentication_from_email_domains  = [".gov.uk"]
   enable_alert_actions                     = false
+  forms_product_page_support_url           = "https://www.dev.forms.service.gov.uk/support"
 }
 hosted_zone_id             = "Z03210831GH1QDMJ7N5C8"
 root_domain                = "dev.forms.service.gov.uk"
@@ -28,7 +29,6 @@ forms_admin_settings = {
   previous_auth_provider                = "gds_sso"
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = "integration.publishing.service.gov.uk"
-  forms_product_page_support_url        = "https://www.dev.forms.service.gov.uk/support"
 }
 forms_api_settings = {
   cpu          = 256

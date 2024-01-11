@@ -76,3 +76,8 @@ variable "smtp_from_address" {
   type        = string
   description = "The email address you want to send from."
 }
+
+variable "support_url" {
+  type        = string
+  description = "URL of the support page"
+}

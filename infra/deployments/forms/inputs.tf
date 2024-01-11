@@ -77,7 +77,6 @@ variable "forms_admin_settings" {
     previous_auth_provider                = string
     cloudwatch_metrics_enabled            = bool
     govuk_app_domain                      = string
-    forms_product_page_support_url        = string
   })
   nullable = false
 }
@@ -125,5 +124,6 @@ variable "environmental_settings" {
     database_backup_retention_period_days    = number
     allow_authentication_from_email_domains  = list(string)
     enable_alert_actions                     = bool
+    forms_product_page_support_url           = string
   })
 }

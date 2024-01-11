@@ -5,4 +5,5 @@ resource "auth0_tenant" "tenant" {
   picture_url           = "${var.admin_base_url}${var.app_logo_path}"
   idle_session_lifetime = var.idle_session_lifetime
   session_lifetime      = var.session_lifetime
+  support_url           = var.support_url
 }

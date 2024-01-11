@@ -7,6 +7,8 @@ module "auth0" {
   smtp_from_address = "no-reply@${var.root_domain}"
 
   allowed_email_domains = var.environmental_settings.allow_authentication_from_email_domains
+
+  support_url = var.environmental_settings.forms_product_page_support_url
 }
 
 moved {
