@@ -62,6 +62,7 @@ services:
       - BINDING=0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@postgres
       - RACK_ENV=development
+      - RAILS_ENV=development
       - SECRET_KEY_BASE=dummy_value
       - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
     ports:
