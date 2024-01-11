@@ -57,8 +57,12 @@ aws_credentials_available:
 	@true
 	
 show_info:
-	@echo "Target environment: $${TARGET_ENVIRONMENT}"
-	@echo "Terraform root: $${TARGET_TF_ROOT}"
+	@echo ""
+	@echo "========[Terraform target information]"
+	@echo "=> Target environment:     $${TARGET_ENVIRONMENT}"
+	@echo "=> Terraform root:         $${TARGET_TF_ROOT}"
+	@echo "========"
+	@echo ""
 	
 .PHONY: init
 init: target_environment_set target_tf_root_set aws_credentials_available show_info
