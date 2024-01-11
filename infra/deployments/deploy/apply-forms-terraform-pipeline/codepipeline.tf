@@ -32,4 +32,31 @@ resource "aws_codepipeline" "main" {
       }
     }
   }
+
+  stage {
+    name = "terraform-plan"
+
+    action {
+      name            = "terraform-plan"
+      category        = "Build"
+      run_order       = "1"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName = module.terraform_plan.name
+      }
+    }
+  }
+}
+
+
+module "terraform_plan" {
+  source                = "../../../modules/code-build-build"
+  environment_variables = {}
+  service_name          = "rds"
+  environment           = var.environment_name
+  artifact_store_arn    = module.artifact_bucket.arn
+  buildspec             = file("${path.root}/buildspec/terraform-plan-buildspec.yml")
 }
