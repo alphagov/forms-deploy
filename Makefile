@@ -7,32 +7,24 @@ target_environment_set:
 	$(if ${TARGET_ENVIRONMENT},,$(error Target environment is not set. Try adding an environment target, such as 'dev' or 'production', before the final target. (e.g. 'make dev apply')))
 	@true
 
-.PHONY: development
+.PHONY: dev development
 dev development:
 	$(eval export TARGET_ENVIRONMENT = dev)
-	$(eval export TFVARS_FILE = dev.tfvars)
-	$(eval export BACKEND_TFVARS_FILE = dev.tfvars)
 	@true
 	
 .PHONY: staging
 staging:
 	$(eval export TARGET_ENVIRONMENT = staging)
-	$(eval export TFVARS_FILE = staging.tfvars)
-	$(eval export BACKEND_TFVARS_FILE = staging.tfvars)
 	@true
 	
-.PHONY: production
+.PHONY: prod production
 prod production:
 	$(eval export TARGET_ENVIRONMENT = production)
-	$(eval export TFVARS_FILE = production.tfvars)
-	$(eval export BACKEND_TFVARS_FILE = production.tfvars)
 	@true
 	
 .PHONY: user-research
 user-research:
 	$(eval export TARGET_ENVIRONMENT = user-research)
-	$(eval export TFVARS_FILE = user-research.tfvars)
-	$(eval export BACKEND_TFVARS_FILE = user-research.tfvars)
 	@true	
 
 ##
@@ -45,8 +37,8 @@ target_tf_root_set:
 	@true
 	
 $(FORMS_TF_ROOTS):
-	$(eval export TARGET_TF_ROOT = $@)
-	$(eval export TFVARS_DIR = ${ROOT_DIR}/infra/deployments/forms/tfvars)
+	$(eval export TARGET_DEPLOYMENT = forms)
+	$(eval export TARGET_TF_ROOT = $(@:forms/%=%))
 	@true
 	
 ##
@@ -60,31 +52,22 @@ show_info:
 	@echo ""
 	@echo "========[Terraform target information]"
 	@echo "=> Target environment:     $${TARGET_ENVIRONMENT}"
+	@echo "=> Target deployment:      $${TARGET_DEPLOYMENT}"
 	@echo "=> Terraform root:         $${TARGET_TF_ROOT}"
 	@echo "========"
 	@echo ""
 	
 .PHONY: init
 init: target_environment_set target_tf_root_set aws_credentials_available show_info
-	@terraform \
-		-chdir="${ROOT_DIR}/infra/deployments/$${TARGET_TF_ROOT}" \
-		init \
-		-backend-config "${ROOT_DIR}/infra/deployments/account/tfvars/backends/$${BACKEND_TFVARS_FILE}" \
-		-reconfigure
+	@./support/invoke-terraform.sh -a init -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: plan
 plan: init
-	@terraform \
-		-chdir="${ROOT_DIR}/infra/deployments/$${TARGET_TF_ROOT}" \
-		plan \
-		-var-file "$${TFVARS_DIR}/$${TFVARS_FILE}"
+	@./support/invoke-terraform.sh -a plan -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: apply
 apply: init
-	@terraform \
-		-chdir="${ROOT_DIR}/infra/deployments/$${TARGET_TF_ROOT}" \
-		apply \
-		-var-file "$${TFVARS_DIR}/$${TFVARS_FILE}"
+	@./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 		
 ##
 # Utility targets
