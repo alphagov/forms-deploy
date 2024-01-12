@@ -25,20 +25,34 @@ prod production:
 .PHONY: user-research
 user-research:
 	$(eval export TARGET_ENVIRONMENT = user-research)
-	@true	
+	@true
+
+.PHONY: deploy
+deploy:
+	$(eval export TARGET_ENVIRONMENT = deploy)
+	@true
 
 ##
 # Terraform root targets
 ##
 FORMS_TF_ROOTS = $(shell cd infra/deployments; find forms -type d -depth 1 -not -path "*/tfvars" -not -path "*/.terraform")
+DEPLOY_TF_ROOTS = $(shell cd infra/deployments; find deploy -type d -depth 1 -not -path "*/tfvars" -not -path "*/.terraform")
 
 target_tf_root_set:
 	$(if ${TARGET_TF_ROOT},,$(error Target Terraform root is not set. Try adding an Terraform root target before the final target. Terraform root targets are directories relative to 'infra/deployments/', such as 'forms/dns'.))
 	@true
 	
+# "$(@:forms/%=%)" is removing the "forms/" prefix from the chosen root.
+# The prefix is useful for a user, but when scripting we want only the
+# name of the directory.
 $(FORMS_TF_ROOTS):
 	$(eval export TARGET_DEPLOYMENT = forms)
 	$(eval export TARGET_TF_ROOT = $(@:forms/%=%))
+	@true
+
+$(DEPLOY_TF_ROOTS):
+	$(eval export TARGET_DEPLOYMENT = deploy)
+	$(eval export TARGET_TF_ROOT = $(@:deploy/%=%))
 	@true
 	
 ##
