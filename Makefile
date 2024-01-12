@@ -55,6 +55,10 @@ $(DEPLOY_TF_ROOTS):
 	$(eval export TARGET_TF_ROOT = $(@:deploy/%=%))
 	@true
 	
+account:
+	$(eval export TARGET_DEPLOYMENT = account)
+	$(eval export TARGET_TF_ROOT = account)
+	@true
 ##
 # Action targets
 ##

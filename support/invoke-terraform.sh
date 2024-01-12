@@ -62,15 +62,29 @@ fi
 # Set source directory
 src_dir="${deployments_dir}/${deployment}"
 
-if [ -n "${tf_root}" ]; then
-    src_dir="${src_dir}/${tf_root}"
-fi
+## Account for special combinations of deployment, environment, and root
+case "${deployment}+${tf_root}" in
+    "account+account")
+        # Account deployment is its own root, so doesn't need an extra directory appending
+        ;;
+    *)
+        src_dir="${src_dir}/${tf_root}"
+        ;;
+esac
+
+case "${environment}+${deployment}" in
+    "deploy+account")
+        # The deploy environment has its own account root module
+        echo "To configure the deploy account, use the 'deploy/account' root"
+        exit 2
+        ;;
+esac
 
 # Handlers
 init(){
     extra_args=""
 
-    if [ "${deployment}" == "forms" ]; then
+    if [ "${deployment}" == "forms" ] || [ "${deployment}" == "account" ]; then
         extra_args="${extra_args} -backend-config ${deployments_dir}/account/tfvars/backends/${environment}.tfvars"
     fi
 
@@ -88,6 +102,10 @@ plan_or_apply(){
 
     if [ "${deployment}" == "forms" ]; then
         extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars";
+    fi
+
+    if [ "${deployment}" == "account" ]; then
+        extra_args="${extra_args} -var-file ${deployments_dir}/account/tfvars/${environment}.tfvars";
     fi
 
     # shellcheck disable=SC2086
