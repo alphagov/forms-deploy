@@ -14,7 +14,7 @@ module "forms-runner" {
 }
 
 module "forms-product-page" {
-  source        = "../../../modules/main-branch-pipeline-no-smoke-tests"
+  source        = "../../../modules/main-branch-pipeline"
   app_name      = "forms-product-page"
   source_branch = "main"
 }
