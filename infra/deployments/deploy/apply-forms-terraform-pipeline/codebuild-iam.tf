@@ -1,5 +1,11 @@
-data "aws_caller_identity" "current" {}
-
+locals {
+  deployer_roles = {
+    "user-research" = "arn:aws:iam::619109835131:role/deployer-user-research"
+    "dev"           = "arn:aws:iam::498160065950:role/deployer-dev"
+    "staging"       = "arn:aws:iam::972536609845:role/deployer-staging"
+    "production"    = "arn:aws:iam::443944947292:role/deployer-production"
+  }
+}
 data "aws_iam_policy_document" "codebuild" {
   statement {
     actions = [
@@ -8,8 +14,7 @@ data "aws_iam_policy_document" "codebuild" {
       "logs:CreateLogGroup"
     ]
     resources = [
-      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.project_name}:*",
-      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:codebuild/${local.project_name}:*"
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:codebuild/*-deploy-${var.environment_name}:*"
     ]
     effect = "Allow"
   }
@@ -21,8 +26,8 @@ data "aws_iam_policy_document" "codebuild" {
       "s3:ListBucket"
     ]
     resources = [
-      "${var.artifact_store_arn}/*",
-      "${var.artifact_store_arn}"
+      "${module.artifact_bucket.arn}/*",
+      "${module.artifact_bucket.arn}"
     ]
     effect = "Allow"
   }
@@ -43,12 +48,12 @@ data "aws_iam_policy_document" "codebuild" {
   statement {
     actions   = ["sts:AssumeRole"]
     effect    = "Allow"
-    resources = [lookup(local.deployer_roles, var.environment)]
+    resources = [lookup(local.deployer_roles, var.environment_name)]
   }
 }
 
 resource "aws_iam_policy" "codebuild" {
-  name   = "codebuild-${local.project_name}"
+  name   = "codebuild-apply-terraform-${var.environment_name}"
   path   = "/"
   policy = data.aws_iam_policy_document.codebuild.json
 }
@@ -67,7 +72,7 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
 }
 
 resource "aws_iam_role" "codebuild" {
-  name = "codebuild-${local.project_name}"
+  name = "codebuild-apply-terraform-${var.environment_name}"
 
   assume_role_policy = data.aws_iam_policy_document.codebuild_assume_role.json
 }
@@ -76,4 +81,3 @@ resource "aws_iam_role_policy_attachment" "codebuild" {
   policy_arn = aws_iam_policy.codebuild.arn
   role       = aws_iam_role.codebuild.id
 }
-

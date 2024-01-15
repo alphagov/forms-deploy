@@ -1,10 +1,18 @@
-variable "environment" {
-  type = string
+variable "project_name" {
+  type        = string
+  nullable    = false
+  description = "The name to give to the CodeBuild project"
 }
 
-variable "service_name" {
+variable "project_description" {
   type        = string
-  description = "The name of the service"
+  nullable    = false
+  description = "Description of the purpose of the CodeBuild project"
+}
+
+
+variable "environment" {
+  type = string
 }
 
 variable "artifact_store_arn" {
@@ -27,4 +35,21 @@ variable "environment_variables" {
 variable "buildspec" {
   type        = string
   description = "The path to the build specification (buildspec file)"
+}
+
+variable "codebuild_service_role_arn" {
+  type        = string
+  nullable    = false
+  description = "ARN of the role which CodeBuild will assume"
+}
+
+variable "log_group_name" {
+  type        = string
+  nullable    = false
+  description = "The name to give the log group which will hold the logs of the codebuild project"
+
+  validation {
+    condition     = can(regex("^codebuild/.*$", var.log_group_name))
+    error_message = "Log group names must start with 'codebuild/'"
+  }
 }

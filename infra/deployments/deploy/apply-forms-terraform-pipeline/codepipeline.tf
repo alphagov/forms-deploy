@@ -1,3 +1,15 @@
+locals {
+  roots = toset([
+    "alerts",
+    "auth0",
+    "dns",
+    "environment",
+    "monitoring",
+    "rds",
+    "redis",
+    "ses",
+  ])
+}
 module "artifact_bucket" {
   source = "../../../modules/secure-bucket"
   name   = "codepipline-apply-forms-terraform-${var.environment_name}"
@@ -36,16 +48,20 @@ resource "aws_codepipeline" "main" {
   stage {
     name = "terraform-plan"
 
-    action {
-      name            = "terraform-plan"
-      category        = "Build"
-      run_order       = "1"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      input_artifacts = ["forms_deploy"]
-      configuration = {
-        ProjectName = module.terraform_plan.name
+    dynamic "action" {
+      for_each = local.roots
+
+      content {
+        name            = "terraform-plan-${action.value}"
+        category        = "Build"
+        run_order       = "1"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        input_artifacts = ["forms_deploy"]
+        configuration = {
+          ProjectName = module.terraform_plan[action.value].name
+        }
       }
     }
   }
@@ -53,10 +69,18 @@ resource "aws_codepipeline" "main" {
 
 
 module "terraform_plan" {
-  source                = "../../../modules/code-build-build"
-  environment_variables = {}
-  service_name          = "rds"
-  environment           = var.environment_name
-  artifact_store_arn    = module.artifact_bucket.arn
-  buildspec             = file("${path.root}/buildspec/terraform-plan-buildspec.yml")
+  # All roots under `infra/deployments/forms/`, excluding the roots which
+  # deploy one of the apps. They have their own pipelines.
+  for_each            = local.roots
+  source              = "../../../modules/code-build-build"
+  project_name        = "${each.value}-deploy-${var.environment_name}"
+  project_description = "Terraform plan forms/${each.value} in ${var.environment_name}"
+  environment_variables = {
+    "ROOT_NAME" = each.value
+  }
+  environment                = var.environment_name
+  artifact_store_arn         = module.artifact_bucket.arn
+  buildspec                  = file("${path.root}/buildspec/terraform-plan-buildspec.yml")
+  log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
+  codebuild_service_role_arn = aws_iam_role.codebuild.arn
 }

@@ -10,10 +10,7 @@ locals {
     "DEPLOYER_ROLE_ARN" = lookup(local.deployer_roles, var.environment)
     "ENVIRONMENT"       = var.environment
     "TERRAFORM_VERSION" = var.terraform_version
-    "SERVICE_NAME"      = var.service_name
   }
-
-  project_name = "${var.service_name}-deploy-${var.environment}"
 
   deploy_directory = {
     "dev" = "development"
@@ -22,9 +19,9 @@ locals {
 
 resource "aws_codebuild_project" "this" {
   #checkov:skip=CKV_AWS_147:Amazon Managed SSE is sufficient.
-  name         = local.project_name
-  description  = "Run buildspec provided for ${var.service_name} in ${var.environment}"
-  service_role = aws_iam_role.codebuild.arn
+  name         = var.project_name
+  description  = var.project_description
+  service_role = var.codebuild_service_role_arn
 
   logs_config {
     cloudwatch_logs {

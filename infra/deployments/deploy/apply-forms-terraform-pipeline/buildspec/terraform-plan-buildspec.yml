@@ -23,6 +23,6 @@ phases:
       - export AWS_SECRET_ACCESS_KEY="$(echo "${sts}" | jq '.Credentials.SecretAccessKey' -r )"
       - export AWS_SESSION_TOKEN="$(echo "${sts}" | jq '.Credentials.SessionToken' -r )"
       - aws sts get-caller-identity
-      - cd "infra/deployments/forms/${SERVICE_NAME}"
+      - cd "infra/deployments/forms/${ROOT_NAME}"
       - terraform init --backend-config "../../account/tfvars/backends/${ENVIRONMENT}.tfvars"
       - terraform plan -var-file "../tfvars/${ENVIRONMENT}.tfvars"

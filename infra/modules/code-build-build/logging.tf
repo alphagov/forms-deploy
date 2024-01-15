@@ -2,6 +2,6 @@ resource "aws_cloudwatch_log_group" "log_group" {
   #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
   #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
 
-  name              = "codebuild/${local.project_name}"
+  name              = var.log_group_name
   retention_in_days = 14
 }
