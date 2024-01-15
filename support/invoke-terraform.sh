@@ -62,10 +62,10 @@ fi
 # Set source directory
 src_dir="${deployments_dir}/${deployment}"
 
-## Account for special combinations of deployment, environment, and root
+## Consider special combinations of deployment, environment, and root
 case "${deployment}+${tf_root}" in
     "account+account")
-        # Account deployment is its own root, so doesn't need an extra directory appending
+        # The `account` deployment is its own root, so doesn't need an extra directory appending
         ;;
     *)
         src_dir="${src_dir}/${tf_root}"
@@ -74,8 +74,8 @@ esac
 
 case "${environment}+${deployment}" in
     "deploy+account")
-        # The deploy environment has its own account root module
-        echo "To configure the deploy account, use the 'deploy/account' root"
+        # The 'deploy' environment has its own 'account' root module
+        echo "The 'deploy' environment has its own 'account' root module. To configure it, use the 'deploy/account' root"
         exit 2
         ;;
 esac
