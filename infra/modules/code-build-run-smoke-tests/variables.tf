@@ -21,6 +21,10 @@ variable "forms_admin_url" {
   description = "The url for forms admin"
 }
 
+variable "product_pages_url" {
+  type        = string
+  description = "The url for the product pages"
+}
 
 variable "github_connection_arn" {
   type        = string

@@ -74,6 +74,11 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
+      name  = "PRODUCT_PAGES_URL"
+      value = "https://dev.forms.service.gov.uk"
+      type  = "PLAINTEXT"
+    },
+    {
       name  = "AUTH0_EMAIL_USERNAME"
       value = "/dev/smoketests/auth0/email-username"
       type  = "PARAMETER_STORE"

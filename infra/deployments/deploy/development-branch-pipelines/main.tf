@@ -17,10 +17,9 @@ module "forms-api-dev-pipeline" {
 }
 
 module "forms-product-page-dev-pipeline" {
-  source        = "../../../modules/development-branch-pipeline"
-  app_name      = "forms-product-page"
-  environment   = "dev"
-  source_branch = "main"
+  source      = "../../../modules/development-branch-pipeline"
+  app_name    = "forms-product-page"
+  environment = "dev"
 }
 
 module "forms-runner-user-research-pipeline" {
@@ -42,8 +41,7 @@ module "forms-api-user-research-pipeline" {
 }
 
 module "forms-product-page-user-research-pipeline" {
-  source        = "../../../modules/development-branch-pipeline"
-  app_name      = "forms-product-page"
-  environment   = "user-research"
-  source_branch = "main"
+  source      = "../../../modules/development-branch-pipeline"
+  app_name    = "forms-product-page"
+  environment = "user-research"
 }
