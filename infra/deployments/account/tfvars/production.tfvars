@@ -1,5 +1,6 @@
 account_name          = "production"
 aws_account_id        = "443944947292"
+environment_name      = "production"
 environment_type      = "production"
 require_vpn_to_access = true
 apex_domain           = "forms.service.gov.uk"
