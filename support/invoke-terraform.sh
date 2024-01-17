@@ -26,15 +26,8 @@ EOF
 while getopts "a:d:e:r:" opt; do
     case "${opt}" in
         a)
-            case "${OPTARG}" in
-                apply|init|plan)
-                    action="${OPTARG}"
-                    ;;
-                *)
-                    echo "Action (-a) must be one of apply, init, or plan." >&2
-                    exit 2
-                    ;;
-            esac
+            action="${OPTARG}"
+            [[ $action == "apply" || $action == "init" || $action == "plan" ]] ||  usage 
             ;;
         d)
             deployment="${OPTARG}"
