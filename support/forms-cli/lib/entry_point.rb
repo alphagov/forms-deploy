@@ -27,6 +27,6 @@ if !command.nil? && COMMANDS.key?(command.to_sym)
   COMMANDS[command.to_sym].call
 else
   puts "Available commands:".blue
-  COMMANDS.each_key { |name| puts name.to_s }
+  COMMANDS.each_key { |name| puts name }
   puts "\n\nFor individual command usage: '<command> --help'"
 end
