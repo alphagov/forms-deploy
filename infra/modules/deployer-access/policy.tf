@@ -348,3 +348,111 @@ data "aws_iam_policy_document" "logs" {
     effect = "Allow"
   }
 }
+
+# One policy per module
+resource "aws_iam_policy" "redis" {
+  policy = data.aws_iam_policy_document.redis.json
+}
+
+resource "aws_iam_role_policy_attachment" "redis" {
+  policy_arn = aws_iam_policy.redis.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "redis" {
+  statement {
+    sid = "ManageElasticacheClusters"
+    actions = [
+      "elasticache:DescribeCacheClusters"
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:cluster:forms-runner-${var.env_name}-*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageElasticacheReplicationGroups"
+    actions = [
+      "elasticache:AddTagsToResource",
+      "elasticache:CreateReplicationGroup",
+      "elasticache:DeleteReplicationGroup",
+      "elasticache:DescribeReplicationGroups",
+      "elasticache:ListTagsForResource",
+      "elasticache:ModifyReplicationGroup",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:replicationgroup:forms-runner-${var.env_name}",
+    ]
+  }
+
+  statement {
+    sid = "DescribeElasticacheParameterGroups"
+    actions = [
+      "elasticache:DescribeCacheParameterGroups",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:parametergroup:*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageElasticacheParameterGroup"
+    actions = [
+      "elasticache:AddTagsToResource",
+      "elasticache:CreateCacheParameterGroup",
+      "elasticache:DeleteCacheParameterGroup",
+      "elasticache:DescribeCacheParameters",
+      "elasticache:ListTagsForResource",
+      "elasticache:ModifyCacheParameterGroup",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:parametergroup:forms-runner-*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "DescribeElasticacheSubnetGroups"
+    actions = [
+      "elasticache:DescribeCacheSubnetGroups",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:subnetgroup:*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageElasticacheSubnetGroups"
+    actions = [
+      "elasticache:AddTagsToResource",
+      "elasticache:CreateCacheSubnetGroup",
+      "elasticache:DeleteCacheSubnetGroup",
+      "elasticache:ListTagsForResource",
+      "elasticache:ModifyCacheSubnetGroup",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:subnetgroup:redis-${var.env_name}",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageElasticacheSecurityGroups"
+    actions = [
+      "elasticache:AddTagsToResource",
+      "elasticache:AuthorizeCacheSecurityGroupIngress",
+      "elasticache:CreateCacheSecurityGroup",
+      "elasticache:DeleteCacheSecurityGroup",
+      "elasticache:DescribeCacheSecurityGroups",
+      "elasticache:ListTagsForResource",
+      "elasticache:RevokeCacheSecurityGroupIngress",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:securitygroup:forms-runner-redis",
+    ]
+    effect = "Allow"
+  }
+}
