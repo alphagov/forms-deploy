@@ -41,6 +41,7 @@ resource "aws_iam_policy" "manage_deployments" {
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-api-main-branch/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-runner-main-branch/*",
           "arn:aws:codepipeline:eu-west-2:711966560482:forms-product-page-main-branch/*",
+          "arn:aws:codepipeline:eu-west-2:711966560482:apply-forms-terraform-*/*"
         ]
       },
       {
