@@ -29,7 +29,7 @@ The following roots manage the three GOV.UK Forms applications and are automatic
 
 The remaining roots should be applied by running the Terraform locally. The simplest way to do this is to use the Makefile tooling in the root of this repository.
 
-To apply a Terraform root (such as `forms/forms-api`) in an environment (such as `dev`):
+To apply a Terraform root (such as `forms-api` in the `forms` deployment) in an environment (such as `dev`):
 
 1. Use the [GDS CLI](https://github.com/alphgov/gds-cli) to assume a role in the right account
     ```shell
@@ -40,7 +40,7 @@ To apply a Terraform root (such as `forms/forms-api`) in an environment (such as
     ```shell
     make dev forms/forms-api apply
     ```
-    with the environment, root, and action (`init`, `plan`, or `apply`) in that order
+    with the environment, deployment/root, and action (`init`, `plan`, or `apply`) in that order
 
 
 > [!TIP]
