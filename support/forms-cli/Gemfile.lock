@@ -1534,10 +1534,7 @@ GEM
       reline (>= 0.3.8)
     jmespath (1.6.2)
     json (2.6.3)
-    jwt (2.7.0)
     minitest (5.18.0)
-    notifications-ruby-client (5.4.0)
-      jwt (>= 1.5, < 3)
     parallel (1.23.0)
     parser (3.2.2.3)
       ast (~> 2.4.1)
@@ -1613,7 +1610,6 @@ DEPENDENCIES
   aws-sdk (~> 3)
   colorize
   debug
-  notifications-ruby-client
   rspec
   rubocop-govuk
 
