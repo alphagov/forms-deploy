@@ -22,7 +22,7 @@ jobs:
         with:
           bundler-cache: true
           working-directory: infra/
-      - uses: hashicorp/setup-terraform@v2
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{env.TF_VERSION}}
       - name: Lint Terraform
