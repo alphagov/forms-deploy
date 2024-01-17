@@ -456,3 +456,101 @@ data "aws_iam_policy_document" "redis" {
     effect = "Allow"
   }
 }
+
+resource "aws_iam_policy" "alerts" {
+  policy = data.aws_iam_policy_document.alerts.json
+}
+
+resource "aws_iam_role_policy_attachment" "alerts" {
+  policy_arn = aws_iam_policy.alerts.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "alerts" {
+  statement {
+    sid = "ManageKMSKeys"
+    actions = [
+      "kms:CreateKey",
+      "kms:DescribeKey",
+      "kms:EnableKeyRotation",
+      "kms:GetKeyPolicy",
+      "kms:GetKeyRotationStatus",
+      "kms:ListResourceTags",
+      "kms:PutKeyPolicy",
+      "kms:TagResource",
+      "kms:UntagResource",
+    ]
+    resources = [
+      # TODO: be more specific?
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "DescribeSSMParameters"
+    actions = [
+      "ssm:DescribeParameters",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageSSMParameters"
+    actions = [
+      "ssm:AddTagsToResource",
+      "ssm:DeleteParameter",
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:ListTagsForResource",
+      "ssm:PutParameter",
+      "ssm:RemoveTagsFromResource",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pager-duty-integration-url",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageSNS"
+    actions = [
+      "sns:CreateTopic",
+      "sns:DeleteTopic",
+      "sns:GetTopicAttributes",
+      "sns:GetSubscriptionAttributes",
+      "sns:ListTagsForResource",
+      "sns:Subscribe",
+      "sns:TagResource",
+      "sns:Unsubscribe",
+      "sns:UntagResource",
+    ]
+    resources = [
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:pager_duty_integration_${var.env_name}",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageCloudwatchMetricAlarms"
+    actions = [
+      "cloudwatch:DeleteAlarms",
+      "cloudwatch:DisableAlarmActions",
+      "cloudwatch:EnableAlarmActions",
+      "cloudwatch:GetMetricData",
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:TagResource",
+      "cloudwatch:UntagResource",
+    ]
+    resources = [
+      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:alarm:alb_healthy_host_count_*",
+
+    ]
+    effect = "Allow"
+  }
+
+
+}
