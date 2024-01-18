@@ -583,3 +583,41 @@ data "aws_iam_policy_document" "auth0" {
     effect = "Allow"
   }
 }
+
+resource "aws_iam_policy" "dns" {
+  policy = data.aws_iam_policy_document.dns.json
+}
+
+resource "aws_iam_role_policy_attachment" "dns" {
+  policy_arn = aws_iam_policy.dns.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "dns" {
+  statement {
+    sid = "GetCloudfrontDistribution"
+    actions = [
+      "cloudfront:GetDistribution",
+      "cloudfront:GetDistributionConfig",
+      "cloudfront:ListTagsForResource",
+    ]
+    # TODO: do we need to specify a distribution?
+    resources = [
+      "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:distribution/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageRoute53RecordSets"
+    actions = [
+      "route53:ChangeResourceRecordSets",
+      "route53:GetHostedZone",
+      "route53:ListResourceRecordSets",
+      "route53:ListTagsForResource",
+    ]
+    resources = [
+      "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+    ]
+  }
+}
