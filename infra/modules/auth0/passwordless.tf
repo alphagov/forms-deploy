@@ -4,7 +4,7 @@ locals {
       passwordless_email = merge(
         jsondecode(templatefile("${path.module}/content/en/email_templates/passwordless_email.json.tftpl", { from_address = var.smtp_from_address })),
         {
-          body = file("${path.module}/content/en/email_templates/passwordless_email_body.html")
+          body = templatefile("${path.module}/content/en/email_templates/passwordless_email_body.html", { otp_expiry_minutes = floor(var.otp_expiry_length / 60) })
         }
       )
     }
