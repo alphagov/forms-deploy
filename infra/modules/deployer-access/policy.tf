@@ -551,6 +551,35 @@ data "aws_iam_policy_document" "alerts" {
     ]
     effect = "Allow"
   }
+}
 
 
+resource "aws_iam_policy" "auth0" {
+  policy = data.aws_iam_policy_document.auth0.json
+}
+
+resource "aws_iam_role_policy_attachment" "auth0" {
+  policy_arn = aws_iam_policy.auth0.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "auth0" {
+  statement {
+    sid = "ManageSSMParameters"
+    actions = [
+      "ssm:AddTagsToResource",
+      "ssm:DeleteParameter",
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:ListTagsForResource",
+      "ssm:PutParameter",
+      "ssm:RemoveTagsFromResource",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/ses/auth0/*",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/terraform/auth0-access/*",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-admin-${var.env_name}/auth0/*",
+    ]
+    effect = "Allow"
+  }
 }
