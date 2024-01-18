@@ -621,3 +621,29 @@ data "aws_iam_policy_document" "dns" {
     ]
   }
 }
+
+resource "aws_iam_policy" "monitoring" {
+  policy = data.aws_iam_policy_document.monitoring.json
+}
+
+resource "aws_iam_role_policy_attachment" "monitoring" {
+  policy_arn = aws_iam_policy.monitoring.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "monitoring" {
+  statement {
+    sid = "ManageCloudwatchDashboards"
+    actions = [
+      "cloudwatch:GetDashboard",
+      "cloudwatch:DeleteDashboards",
+      "cloudwatch:ListTagsForResource",
+      "cloudwatch:PutDashboard",
+      "cloudwatch:TagResource",
+      "cloudwatch:UntagResource",
+    ]
+    resources = [
+      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:dashboard/*"
+    ]
+  }
+}
