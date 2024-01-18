@@ -349,16 +349,7 @@ data "aws_iam_policy_document" "logs" {
   }
 }
 
-# One policy per module
-resource "aws_iam_policy" "redis" {
-  policy = data.aws_iam_policy_document.redis.json
-}
-
-resource "aws_iam_role_policy_attachment" "redis" {
-  policy_arn = aws_iam_policy.redis.arn
-  role       = aws_iam_role.deployer.id
-}
-
+# One policy document per root
 data "aws_iam_policy_document" "redis" {
   statement {
     sid = "ManageElasticacheClusters"
@@ -457,15 +448,6 @@ data "aws_iam_policy_document" "redis" {
   }
 }
 
-resource "aws_iam_policy" "alerts" {
-  policy = data.aws_iam_policy_document.alerts.json
-}
-
-resource "aws_iam_role_policy_attachment" "alerts" {
-  policy_arn = aws_iam_policy.alerts.arn
-  role       = aws_iam_role.deployer.id
-}
-
 data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageKMSKeys"
@@ -553,19 +535,9 @@ data "aws_iam_policy_document" "alerts" {
   }
 }
 
-
-resource "aws_iam_policy" "auth0" {
-  policy = data.aws_iam_policy_document.auth0.json
-}
-
-resource "aws_iam_role_policy_attachment" "auth0" {
-  policy_arn = aws_iam_policy.auth0.arn
-  role       = aws_iam_role.deployer.id
-}
-
 data "aws_iam_policy_document" "auth0" {
   statement {
-    sid = "ManageSSMParameters"
+    sid = "ManageSSMParametersAuth0"
     actions = [
       "ssm:AddTagsToResource",
       "ssm:DeleteParameter",
@@ -582,15 +554,6 @@ data "aws_iam_policy_document" "auth0" {
     ]
     effect = "Allow"
   }
-}
-
-resource "aws_iam_policy" "dns" {
-  policy = data.aws_iam_policy_document.dns.json
-}
-
-resource "aws_iam_role_policy_attachment" "dns" {
-  policy_arn = aws_iam_policy.dns.arn
-  role       = aws_iam_role.deployer.id
 }
 
 data "aws_iam_policy_document" "dns" {
@@ -622,15 +585,6 @@ data "aws_iam_policy_document" "dns" {
   }
 }
 
-resource "aws_iam_policy" "monitoring" {
-  policy = data.aws_iam_policy_document.monitoring.json
-}
-
-resource "aws_iam_role_policy_attachment" "monitoring" {
-  policy_arn = aws_iam_policy.monitoring.arn
-  role       = aws_iam_role.deployer.id
-}
-
 data "aws_iam_policy_document" "monitoring" {
   statement {
     sid = "ManageCloudwatchDashboards"
@@ -647,15 +601,6 @@ data "aws_iam_policy_document" "monitoring" {
     ]
     effect = "Allow"
   }
-}
-
-resource "aws_iam_policy" "rds" {
-  policy = data.aws_iam_policy_document.rds.json
-}
-
-resource "aws_iam_role_policy_attachment" "rds" {
-  policy_arn = aws_iam_policy.rds.arn
-  role       = aws_iam_role.deployer.id
 }
 
 data "aws_iam_policy_document" "rds" {
@@ -746,4 +691,39 @@ data "aws_iam_policy_document" "rds" {
       "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:security-group/*"
     ]
   }
+}
+
+data "aws_iam_policy_document" "forms-infra" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.alerts.json,
+    data.aws_iam_policy_document.auth0.json,
+    data.aws_iam_policy_document.dns.json,
+    data.aws_iam_policy_document.monitoring.json,
+    data.aws_iam_policy_document.rds.json,
+  ]
+}
+
+resource "aws_iam_policy" "forms-infra" {
+  policy = data.aws_iam_policy_document.forms-infra.json
+}
+
+resource "aws_iam_role_policy_attachment" "forms-infra" {
+  policy_arn = aws_iam_policy.forms-infra.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "forms-infra-1" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.redis.json,
+    data.aws_iam_policy_document.ses.json,
+  ]
+}
+
+resource "aws_iam_policy" "forms-infra-1" {
+  policy = data.aws_iam_policy_document.forms-infra-1.json
+}
+
+resource "aws_iam_role_policy_attachment" "forms-infra-1" {
+  policy_arn = aws_iam_policy.forms-infra-1.arn
+  role       = aws_iam_role.deployer.id
 }
