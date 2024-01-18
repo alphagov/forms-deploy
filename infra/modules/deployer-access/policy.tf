@@ -643,7 +643,107 @@ data "aws_iam_policy_document" "monitoring" {
       "cloudwatch:UntagResource",
     ]
     resources = [
-      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:dashboard/*"
+      "arn:aws:cloudwatch:*:${lookup(local.account_ids, var.env_name)}:dashboard/*"
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "rds" {
+  policy = data.aws_iam_policy_document.rds.json
+}
+
+resource "aws_iam_role_policy_attachment" "rds" {
+  policy_arn = aws_iam_policy.rds.arn
+  role       = aws_iam_role.deployer.id
+}
+
+data "aws_iam_policy_document" "rds" {
+  statement {
+    sid = "ManageRDSSubnets"
+    actions = [
+      "rds:AddTagsToResource",
+      "rds:CreateDBSubnetGroup",
+      "rds:DeleteDBSubnetGroup",
+      "rds:DescribeDBSubnetGroups",
+      "rds:ListTagsForResource",
+      "rds:ModifyDBSubnetGroup",
+      "rds:RemoveTagsFromResource",
+    ]
+    resources = [
+      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:subgrp:rds-${var.env_name}"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid    = "GetSSMParams"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/database/master-password"
+    ]
+  }
+
+  statement {
+    sid    = "ManageRDSParameterGroups"
+    effect = "Allow"
+    actions = [
+      "rds:AddTagsToResource",
+      "rds:CreateDBClusterParameterGroup",
+      "rds:CreateDBCluster",
+      "rds:DeleteDBClusterParameterGroup",
+      "rds:DescribeDBClusterParameterGroups",
+      "rds:DescribeDBClusterParameters",
+      "rds:ListTagsForResource",
+      "rds:ModifyDBCluster",
+      "rds:ModifyDBClusterParameterGroup",
+      "rds:RemoveTagsFromResource",
+    ]
+    resources = [
+      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:cluster-pg:forms-${var.env_name}*"
+    ]
+  }
+
+  statement {
+    sid    = "ManageRDSCluster"
+    effect = "Allow"
+    actions = [
+      "rds:AddTagsToResource",
+      "rds:CreateDBCluster",
+      "rds:CreateDBClusterEndpoint",
+      "rds:CreateDBClusterSnapshot",
+      "rds:DeleteDBCluster",
+      "rds:ListTagsForResource",
+      "rds:ModifyDBCluster",
+      "rds:DescribeDBClusters",
+      "rds:RemoveTagsFromResource",
+    ]
+    resources = [
+      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:cluster:aurora-cluster-${var.env_name}"
+    ]
+  }
+
+  statement {
+    sid    = "ManageSecurityGroups"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateTags",
+      "ec2:CreateTags",
+      "ec2:CreateSecurityGroup",
+      "ec2:DeleteSecurityGroup",
+      "ec2:ModifySecurityGroupRules",
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:AuthorizeSecurityGroupEgress",
+      "ec2:RevokeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
+      "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+    ]
+    resources = [
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:security-group/*"
     ]
   }
 }
