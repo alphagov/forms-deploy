@@ -450,7 +450,7 @@ data "aws_iam_policy_document" "redis" {
 
 data "aws_iam_policy_document" "alerts" {
   statement {
-    sid = "ManageKMSKeys"
+    sid = "ManageKMSKeyAlerts"
     actions = [
       "kms:CreateKey",
       "kms:DescribeKey",
@@ -691,6 +691,146 @@ data "aws_iam_policy_document" "rds" {
       "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:security-group/*"
     ]
   }
+}
+
+
+data "aws_iam_policy_document" "ses" {
+  #checkov:skip=CKV_AWS_111:We use SES v1 which doesn't let us be more specific than *
+  #checkov:skip=CKV_AWS_356:We use SES v1 which doesn't let us be more specific than *
+  statement {
+    sid    = "GetUser"
+    effect = "Allow"
+    actions = [
+      "iam:GetUser",
+      "iam:AttachUserPolicy",
+      "iam:DeleteUserPolicy",
+      "iam:DetachUserPolicy",
+      "iam:GetUserPolicy",
+      "iam:ListAccessKeys",
+      "iam:ListAttachedUserPolicies",
+      "iam:ListUserTags",
+      "iam:UntagUser",
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:user/auth0"
+    ]
+  }
+
+  statement {
+    sid    = "ManageSESPolicies"
+    effect = "Allow"
+    actions = [
+      "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicy",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyTags",
+      "iam:TagPolicy",
+      "iam:UntagPolicy",
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/ses_sender"
+    ]
+  }
+
+  statement {
+    sid    = "ManageSESVerification"
+    effect = "Allow"
+    actions = [
+      "ses:GetIdentityVerificationAttributes",
+      "ses:ListVerifiedEmailAddresses",
+      "ses:GetIdentityDkimAttributes",
+      "ses:VerifyDomainDkim",
+      "ses:VerifyEmailAddress",
+      "ses:VerifyDomainIdentity",
+      "ses:VerifyEmailIdentity",
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    sid    = "ManageSESEmailIdentity"
+    effect = "Allow"
+    actions = [
+      "ses:CreateEmailIdentity",
+      "ses:DeleteEmailIdentity",
+      "ses:TagResource",
+      "ses:UntagResource",
+    ]
+    resources = [
+      "arn:aws:ses:eu-west-2:${lookup(local.account_ids, var.env_name)}:identity/*"
+    ]
+  }
+
+  # We use SES v1 (I think?)... in v2 you can specify resources
+  statement {
+    sid    = "ManageSESConfigurationSet"
+    effect = "Allow"
+    actions = [
+      "ses:CreateConfigurationSet",
+      "ses:CreateConfigurationSetEventDestination",
+      "ses:DeleteConfigurationSet",
+      "ses:DeleteConfigurationSetEventDestination",
+      "ses:DescribeConfigurationSet",
+      "ses:ListConfigurationSets",
+      "ses:UpdateConfigurationSetEventDestination",
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    sid    = "ManageKMSKeySES"
+    effect = "Allow"
+    actions = [
+      "kms:CreateKey",
+      "kms:DescribeKey",
+      "kms:EnableKeyRotation",
+      "kms:GetKeyPolicy",
+      "kms:GetKeyRotationStatus",
+      "kms:ListResourceTags",
+      "kms:PutKeyPolicy",
+      "kms:TagResource",
+      "kms:UntagResource",
+    ]
+    # TODO: why doesn't kms:DescribeKey work? I've tried with different resources ("*", "arn...:key/*", "arn...:*" AND the exact resource arn)
+    resources = [
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
+    ]
+  }
+
+  statement {
+    sid    = "ManageSQS"
+    effect = "Allow"
+    actions = [
+      "sqs:*queue*"
+    ]
+    resources = [
+      "arn:aws:sqs:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+    ]
+  }
+
+  statement {
+    sid = "ManageSNS"
+    actions = [
+      "sns:*Topic*",
+      "sns:GetSubscriptionAttributes",
+      "sns:*Tag*",
+      "sns:*Subscrib*",
+      "sns:Unsubscribe",
+      "sns:UntagResource",
+    ]
+    resources = [
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:ses_bounces_and_complaints_topic",
+    ]
+    effect = "Allow"
+  }
+
+
 }
 
 data "aws_iam_policy_document" "forms-infra" {
