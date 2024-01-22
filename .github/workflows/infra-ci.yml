@@ -18,7 +18,7 @@ jobs:
           # very likely that two commits involved will be inside the last 50
           fetch-depth: 50
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby@b203567269b5bbc256dbc1c84f7495913f977353 # v1.167.0
+        uses: ruby/setup-ruby@432702e864cadc1b56247e31aa341be5be3e129a # v1.168.0
         with:
           bundler-cache: true
           working-directory: infra/
