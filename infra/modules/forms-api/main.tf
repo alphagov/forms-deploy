@@ -52,11 +52,6 @@ module "ecs_service" {
       name      = "SETTINGS__FORMS_API__AUTH_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/forms-api-key"
     },
-    # TODO: remove SETTINGS__FORMS_API__AUTHENTICATION_KEY once forms-api#391 has been deployed
-    {
-      name      = "SETTINGS__FORMS_API__AUTHENTICATION_KEY",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/forms-api-key"
-    },
     {
       name      = "DATABASE_URL",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/database/url"
