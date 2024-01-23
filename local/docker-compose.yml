@@ -33,7 +33,6 @@ services:
       - RAILS_LOG_TO_STDOUT=1
       - RAILS_SERVE_STATIC_FILES=1
       - SECRET_KEY_BASE=assets
-      - SETTINGS__FORMS_API__AUTH_KEY=development_key
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     extra_hosts:
@@ -64,7 +63,6 @@ services:
       - RACK_ENV=development
       - RAILS_ENV=development
       - SECRET_KEY_BASE=dummy_value
-      - SETTINGS__FORMS_API__AUTHENTICATION_KEY=development_key
     ports:
       - "9292:9292"
     volumes:
@@ -127,7 +125,6 @@ services:
       - RAILS_SERVE_STATIC_FILES=1
       - REDIS_URL=redis://redis/
       - SECRET_KEY_BASE=dummyvalue
-      - SETTINGS__FORMS_API__AUTH_KEY=development_key
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
     ports:
       - "3001:3001"
