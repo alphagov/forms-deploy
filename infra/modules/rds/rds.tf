@@ -12,7 +12,12 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgres" {
   name_prefix = "forms-${var.env_name}"
   family      = "aurora-postgresql11"
   description = "RDS cluster parameter group for Aurora Serverless"
+}
 
+resource "aws_rds_cluster_parameter_group" "aurora_postgres_v13" {
+  name_prefix = "forms-${var.env_name}-pg13"
+  family      = "aurora-postgresql13"
+  description = "RDS cluster parameter group for Aurora Serverless for PostgreSQL 13"
 }
 
 resource "aws_rds_cluster" "forms" {
@@ -35,14 +40,14 @@ resource "aws_rds_cluster" "forms" {
 
   engine         = "aurora-postgresql"
   engine_mode    = "serverless"
-  engine_version = "11.18"
+  engine_version = "13.12"
 
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.rds.id
 
   enable_http_endpoint = true
 
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgres.id
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgres_v13.id
 
   apply_immediately            = var.apply_immediately
   preferred_maintenance_window = var.rds_maintenance_window
@@ -73,8 +78,15 @@ resource "aws_rds_cluster" "forms" {
     #
     # When we want to perform major version upgrdes, we can remove this lifecycle
     # configuration, and replace it once the upgrade is complete.
-    ignore_changes = [engine_version]
+    # ignore_changes = [engine_version]
   }
+  allow_major_version_upgrade = true
+
+  # Ensure resources that the cluster depends on are
+  # handled before/after when creating/destroying
+  depends_on = [
+    aws_rds_cluster_parameter_group.aurora_postgres_v13
+  ]
 
 }
 
