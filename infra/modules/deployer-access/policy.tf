@@ -26,27 +26,23 @@ data "aws_iam_policy_document" "ecs" {
   }
 
   statement {
-    sid = "CreateEcsClusters"
+    sid = "DescribeECSClustersAndServices"
     actions = [
-      "ecs:DescribeClusters",
-      "ecs:DescribeServices"
+      "ecs:Describe*",
+      "ecs:List*",
     ]
     resources = ["*"]
     effect    = "Allow"
   }
 
   statement {
-    sid = "ManageEcs"
+    sid = "ManageECSClustersAndServices"
     actions = [
-      "ecs:CreateCluster",
-      "ecs:DeleteCluster",
-      "ecs:UpdateCluster",
-      "ecs:CreateService",
-      "ecs:DeleteService",
-      "ecs:UpdateService",
+      "ecs:*Cluster",
+      "ecs:*Service",
       "ecs:TagResource",
       "ecs:UntagResource",
-      "ecs:ListTagsForResource"
+      "ecs:ListTagsForResource",
     ]
     resources = ["arn:aws:ecs:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"]
     effect    = "Allow"
@@ -55,14 +51,8 @@ data "aws_iam_policy_document" "ecs" {
   statement {
     sid = "ManageEcsTaskDefinitions"
     actions = [
-      "ecs:RegisterTaskDefinition",
-      "ecs:DeregisterTaskDefinition",
-      "ecs:DescribeTaskDefinition",
-      "ecs:CreateTaskSet",
-      "ecs:DeleteTaskSet",
-      "ecs:DescribeTaskSets",
-      "ecs:UpdateServicePrimaryTaskSet",
-      "ecs:UpdateTaskSet",
+      "ecs:*TaskDefinition",
+      "ecs:*TaskSet",
       "ecs:RunTask",
       "ecs:DescribeTasks"
     ]
@@ -146,15 +136,7 @@ data "aws_iam_policy_document" "ecs" {
   statement {
     sid = "ManageSecurityGroups"
     actions = [
-      "ec2:CreateSecurityGroup",
-      "ec2:DeleteSecurityGroup",
-      "ec2:ModifySecurityGroupRules",
-      "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:AuthorizeSecurityGroupEgress",
-      "ec2:RevokeSecurityGroupIngress",
-      "ec2:RevokeSecurityGroupEgress",
-      "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-      "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+      "ec2:*SecurityGroup*",
     ]
     resources = [
       "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*/*"
@@ -169,17 +151,6 @@ data "aws_iam_policy_document" "ecs" {
     ]
     resources = [
       "*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeElasticache"
-    actions = [
-      "elasticache:DescribeReplicationGroups"
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:replicationgroup:forms-runner-${var.env_name}"
     ]
     effect = "Allow"
   }
@@ -201,24 +172,12 @@ data "aws_iam_policy_document" "alb" {
   statement {
     sid = "ManageAlb"
     actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:CreateTargetGroup",
-      "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroup",
+      "elasticloadbalancing:*Tags",
+      "elasticloadbalancing:*TargetGroup*",
       "elasticloadbalancing:RegisterTargets",
-      "elasticloadbalancing:CreateListener",
-      "elasticloadbalancing:DeleteListener",
-      "elasticloadbalancing:ModifyListener",
-      "elasticloadbalancing:CreateRule",
-      "elasticloadbalancing:DeleteRule",
-      "elasticloadbalancing:DescribeRules",
-      "elasticloadbalancing:CreateLoadBalancer",
-      "elasticloadbalancing:CreateLoadBalancerListeners",
-      "elasticloadbalancing:DeleteLoadBalancerListeners",
-      "elasticloadbalancing:DescribeLoadBalancerListeners",
-      "elasticloadbalancing:DeleteLoadBalancer",
-      "elasticloadbalancing:ModifyLoadBalancerAttributes",
-      "elasticloadbalancing:ModifyTargetGroupAttributes"
+      "elasticloadbalancing:*Listener",
+      "elasticloadbalancing:*Rule*",
+      "elasticloadbalancing:*LoadBalancer*",
     ]
     resources = [
       "arn:aws:elasticloadbalancing:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
@@ -229,14 +188,7 @@ data "aws_iam_policy_document" "alb" {
   statement {
     sid = "ListAlbResources"
     actions = [
-      "elasticloadbalancing:DescribeLoadBalancers",
-      "elasticloadbalancing:DescribeListeners",
-      "elasticloadbalancing:DescribeTargetGroups",
-      "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "elasticloadbalancing:DescribeTargetHealth",
-      "elasticloadbalancing:DescribeRules",
-      "elasticloadbalancing:DescribeLoadBalancerAttributes",
-      "elasticloadbalancing:DescribeTags"
+      "elasticloadbalancing:Describe*",
     ]
     resources = [
       "*"
@@ -320,13 +272,10 @@ data "aws_iam_policy_document" "logs" {
   statement {
     sid = "CreateLogs"
     actions = [
-      "logs:PutLogEvents",
-      "logs:CreateLogStream",
-      "logs:CreateLogGroup",
-      "logs:DescribeSubscriptionFilters",
-      "logs:PutSubscriptionFilter",
-      "logs:DeleteSubscriptionFilter",
-      "logs:ListTagsLogGroup"
+      "logs:*LogEvents",
+      "logs:*LogStream",
+      "logs:*SubscriptionFilters",
+      "logs:*LogGroup"
     ]
     resources = [
       "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-admin-${var.env_name}:*",
@@ -352,99 +301,18 @@ data "aws_iam_policy_document" "logs" {
 # One policy document per root
 data "aws_iam_policy_document" "redis" {
   statement {
-    sid = "ManageElasticacheClusters"
+    sid = "ManageElasticache"
     actions = [
-      "elasticache:DescribeCacheClusters"
+      "elasticache:*CacheCluster*",
+      "elasticache:*CacheParameter*",
+      "elasticache:*CacheSubnetGroup*",
+      "elasticache:*CacheSecurityGroup*",
+      "elasticache:*ReplicationGroup*",
+      "elasticache:*Tags*",
     ]
     resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:cluster:forms-runner-${var.env_name}-*",
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:*",
     ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageElasticacheReplicationGroups"
-    actions = [
-      "elasticache:AddTagsToResource",
-      "elasticache:CreateReplicationGroup",
-      "elasticache:DeleteReplicationGroup",
-      "elasticache:DescribeReplicationGroups",
-      "elasticache:ListTagsForResource",
-      "elasticache:ModifyReplicationGroup",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:replicationgroup:forms-runner-${var.env_name}",
-    ]
-  }
-
-  statement {
-    sid = "DescribeElasticacheParameterGroups"
-    actions = [
-      "elasticache:DescribeCacheParameterGroups",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:parametergroup:*",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageElasticacheParameterGroup"
-    actions = [
-      "elasticache:AddTagsToResource",
-      "elasticache:CreateCacheParameterGroup",
-      "elasticache:DeleteCacheParameterGroup",
-      "elasticache:DescribeCacheParameters",
-      "elasticache:ListTagsForResource",
-      "elasticache:ModifyCacheParameterGroup",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:parametergroup:forms-runner-*",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeElasticacheSubnetGroups"
-    actions = [
-      "elasticache:DescribeCacheSubnetGroups",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:subnetgroup:*",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageElasticacheSubnetGroups"
-    actions = [
-      "elasticache:AddTagsToResource",
-      "elasticache:CreateCacheSubnetGroup",
-      "elasticache:DeleteCacheSubnetGroup",
-      "elasticache:ListTagsForResource",
-      "elasticache:ModifyCacheSubnetGroup",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:subnetgroup:redis-${var.env_name}",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageElasticacheSecurityGroups"
-    actions = [
-      "elasticache:AddTagsToResource",
-      "elasticache:AuthorizeCacheSecurityGroupIngress",
-      "elasticache:CreateCacheSecurityGroup",
-      "elasticache:DeleteCacheSecurityGroup",
-      "elasticache:DescribeCacheSecurityGroups",
-      "elasticache:ListTagsForResource",
-      "elasticache:RevokeCacheSecurityGroupIngress",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:securitygroup:forms-runner-redis",
-    ]
-    effect = "Allow"
   }
 }
 
@@ -500,13 +368,10 @@ data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageSNS"
     actions = [
-      "sns:CreateTopic",
-      "sns:DeleteTopic",
-      "sns:GetTopicAttributes",
+      "sns:*Topic*",
       "sns:GetSubscriptionAttributes",
-      "sns:ListTagsForResource",
-      "sns:Subscribe",
-      "sns:TagResource",
+      "sns:*Tag*",
+      "sns:*Subscrib*",
       "sns:Unsubscribe",
       "sns:UntagResource",
     ]
@@ -519,11 +384,8 @@ data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageCloudwatchMetricAlarms"
     actions = [
-      "cloudwatch:DeleteAlarms",
-      "cloudwatch:DisableAlarmActions",
-      "cloudwatch:EnableAlarmActions",
-      "cloudwatch:GetMetricData",
-      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:*Alarm*",
+      "cloudwatch:*Metric*",
       "cloudwatch:TagResource",
       "cloudwatch:UntagResource",
     ]
@@ -539,13 +401,8 @@ data "aws_iam_policy_document" "auth0" {
   statement {
     sid = "ManageSSMParametersAuth0"
     actions = [
-      "ssm:AddTagsToResource",
-      "ssm:DeleteParameter",
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:ListTagsForResource",
-      "ssm:PutParameter",
-      "ssm:RemoveTagsFromResource",
+      "ssm:*Tag*",
+      "ssm:*Parameter*",
     ]
     resources = [
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/ses/auth0/*",
@@ -605,18 +462,15 @@ data "aws_iam_policy_document" "monitoring" {
 
 data "aws_iam_policy_document" "rds" {
   statement {
-    sid = "ManageRDSSubnets"
+    sid = "ManageRDS"
     actions = [
-      "rds:AddTagsToResource",
-      "rds:CreateDBSubnetGroup",
-      "rds:DeleteDBSubnetGroup",
-      "rds:DescribeDBSubnetGroups",
-      "rds:ListTagsForResource",
-      "rds:ModifyDBSubnetGroup",
-      "rds:RemoveTagsFromResource",
+      "rds:*DBCluster*",
+      "rds:*SecurityGroup*",
+      "rds:*SubnetGroup*",
+      "rds:*Tag*",
     ]
     resources = [
-      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:subgrp:rds-${var.env_name}"
+      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
     ]
     effect = "Allow"
   }
@@ -631,68 +485,7 @@ data "aws_iam_policy_document" "rds" {
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/database/master-password"
     ]
   }
-
-  statement {
-    sid    = "ManageRDSParameterGroups"
-    effect = "Allow"
-    actions = [
-      "rds:AddTagsToResource",
-      "rds:CreateDBClusterParameterGroup",
-      "rds:CreateDBCluster",
-      "rds:DeleteDBClusterParameterGroup",
-      "rds:DescribeDBClusterParameterGroups",
-      "rds:DescribeDBClusterParameters",
-      "rds:ListTagsForResource",
-      "rds:ModifyDBCluster",
-      "rds:ModifyDBClusterParameterGroup",
-      "rds:RemoveTagsFromResource",
-    ]
-    resources = [
-      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:cluster-pg:forms-${var.env_name}*"
-    ]
-  }
-
-  statement {
-    sid    = "ManageRDSCluster"
-    effect = "Allow"
-    actions = [
-      "rds:AddTagsToResource",
-      "rds:CreateDBCluster",
-      "rds:CreateDBClusterEndpoint",
-      "rds:CreateDBClusterSnapshot",
-      "rds:DeleteDBCluster",
-      "rds:ListTagsForResource",
-      "rds:ModifyDBCluster",
-      "rds:DescribeDBClusters",
-      "rds:RemoveTagsFromResource",
-    ]
-    resources = [
-      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:cluster:aurora-cluster-${var.env_name}"
-    ]
-  }
-
-  statement {
-    sid    = "ManageSecurityGroups"
-    effect = "Allow"
-    actions = [
-      "ec2:CreateTags",
-      "ec2:CreateTags",
-      "ec2:CreateSecurityGroup",
-      "ec2:DeleteSecurityGroup",
-      "ec2:ModifySecurityGroupRules",
-      "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:AuthorizeSecurityGroupEgress",
-      "ec2:RevokeSecurityGroupIngress",
-      "ec2:RevokeSecurityGroupEgress",
-      "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
-      "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
-    ]
-    resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:security-group/*"
-    ]
-  }
 }
-
 
 data "aws_iam_policy_document" "ses" {
   #checkov:skip=CKV_AWS_111:We use SES v1 which doesn't let us be more specific than *
@@ -739,29 +532,13 @@ data "aws_iam_policy_document" "ses" {
     effect = "Allow"
     actions = [
       "ses:GetIdentityVerificationAttributes",
-      "ses:ListVerifiedEmailAddresses",
-      "ses:GetIdentityDkimAttributes",
-      "ses:VerifyDomainDkim",
-      "ses:VerifyEmailAddress",
-      "ses:VerifyDomainIdentity",
+      "ses:*Dkim*",
+      "ses:*EmailAddress*",
+      "ses:*Domain*",
       "ses:VerifyEmailIdentity",
     ]
     resources = [
       "*"
-    ]
-  }
-
-  statement {
-    sid    = "ManageSESEmailIdentity"
-    effect = "Allow"
-    actions = [
-      "ses:CreateEmailIdentity",
-      "ses:DeleteEmailIdentity",
-      "ses:TagResource",
-      "ses:UntagResource",
-    ]
-    resources = [
-      "arn:aws:ses:eu-west-2:${lookup(local.account_ids, var.env_name)}:identity/*"
     ]
   }
 
@@ -770,13 +547,7 @@ data "aws_iam_policy_document" "ses" {
     sid    = "ManageSESConfigurationSet"
     effect = "Allow"
     actions = [
-      "ses:CreateConfigurationSet",
-      "ses:CreateConfigurationSetEventDestination",
-      "ses:DeleteConfigurationSet",
-      "ses:DeleteConfigurationSetEventDestination",
-      "ses:DescribeConfigurationSet",
-      "ses:ListConfigurationSets",
-      "ses:UpdateConfigurationSetEventDestination",
+      "ses:*ConfigurationSet*",
     ]
     resources = [
       "*"

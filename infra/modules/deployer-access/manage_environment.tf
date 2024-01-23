@@ -21,12 +21,7 @@ data "aws_iam_policy_document" "acm-cert-with-dns-validation" {
     sid    = "ManageCertificates"
     effect = "Allow"
     actions = [
-      "acm:AddTagsToCertificate",
-      "acm:DeleteCertificate",
-      "acm:DescribeCertificate",
-      "acm:GetCertificate",
-      "acm:ListTagsForCertificate",
-      "acm:RemoveTagsFromCertificate",
+      "acm:*Certificate*",
     ]
     resources = [
       # TODO: Why does it need both regions?
@@ -68,13 +63,9 @@ data "aws_iam_policy_document" "cloudfront" {
     effect = "Allow"
     actions = [
       "cloudfront:AssociateAlias",
-      "cloudfront:CreateDistribution",
-      "cloudfront:DeleteDistribution",
-      "cloudfront:GetDistribution",
-      "cloudfront:GetDistributionConfig",
       "cloudfront:TagResource",
       "cloudfront:UntagResource",
-      "cloudfront:UpdateDistribution",
+      "cloudfront:*Distribution*",
     ]
     resources = [
       "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:distribution/*"
@@ -93,7 +84,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "cloudfront:ListOriginRequestPolicies",
     ]
     resources = [
-      "*"
+      "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:*"
     ]
   }
 
@@ -101,16 +92,11 @@ data "aws_iam_policy_document" "cloudfront" {
     sid    = "ManageWAFv2WebACL"
     effect = "Allow"
     actions = [
-      "wafv2:CreateWebACL",
-      "wafv2:GetWebACL",
-      "wafv2:DeleteLoggingConfiguration",
-      "wafv2:DeleteWebACL",
-      "wafv2:GetLoggingConfiguration",
+      "wafv2:*WebACL",
+      "wafv2:*LoggingConfiguration",
       "wafv2:ListTagsForResource",
-      "wafv2:PutLoggingConfiguration",
       "wafv2:TagResource",
       "wafv2:UntagResource",
-      "wafv2:UpdateWebACL",
     ]
     # TODO: The scope of this should be cloudfront but for some reason it needs global
     resources = [
@@ -122,46 +108,15 @@ data "aws_iam_policy_document" "cloudfront" {
     sid    = "ManageCloudwatchLogsWAF"
     effect = "Allow"
     actions = [
-      "logs:CreateLogGroup",
-      "logs:DeleteLogGroup",
-      "logs:DeleteLogGroup",
-      "logs:ListTagsLogGroup",
-      "logs:TagLogGroup",
-      "logs:UntagLogGroup",
+      "logs:*LogEvents",
+      "logs:*LogStream",
+      "logs:*SubscriptionFilters",
+      "logs:*LogGroup"
     ]
     resources = [
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}"
+      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}*"
     ]
   }
-
-  statement {
-    sid    = "ManageCloudwatchLogStreamsWAF"
-    effect = "Allow"
-    actions = [
-      "logs:ListTagsLogGroup",
-      "logs:TagLogGroup",
-      "logs:UntagLogGroup",
-    ]
-    resources = [
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}:log-stream:*"
-    ]
-  }
-
-
-  statement {
-    sid    = "ManageCloudwatchLogSubscriptionFiltersWAF"
-    effect = "Allow"
-    actions = [
-      "logs:DeleteSubscriptionFilter",
-      "logs:DescribeSubscriptionFilters",
-      "logs:PutSubscriptionFilter",
-    ]
-    resources = [
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}:*"
-
-    ]
-  }
-
 }
 
 data "aws_iam_policy_document" "public-bucket" {
@@ -169,42 +124,12 @@ data "aws_iam_policy_document" "public-bucket" {
     sid    = "ManageErrorPageBucket"
     effect = "Allow"
     actions = [
-      "s3:CreateBucket",
-      "s3:DeleteBucket",
-      "s3:DeleteBucketPolicy",
-      "s3:DeleteBucketWebsite",
-      "s3:GetAccelerateConfiguration",
-      "s3:GetAnalyticsConfiguration",
-      "s3:GetBucket*",
-      "s3:GetEncryptionConfiguration",
-      "s3:GetInventoryConfiguration",
-      "s3:GetLifecycleConfiguration",
-      "s3:GetMetricsConfiguration",
-      "s3:GetReplicationConfiguration",
-      "s3:ListBucket",
-      "s3:PutBucketOwnershipControls",
-      "s3:PutBucketPolicy",
-      "s3:PutBucketPublicAccessBlock",
-      "s3:PutBucketTagging",
-      "s3:PutBucketVersioning",
-      "s3:PutBucketWebsite",
-      "s3:PutEncryptionConfiguration",
+      "s3:*Configuration",
+      "s3:*Bucket*",
+      "s3:*Object*",
     ]
     resources = [
-      "arn:aws:s3:::govuk-forms-${var.env_name}-error-page"
-    ]
-  }
-
-  statement {
-    sid = "ManageErrorPageBucketObjects"
-    effect = "Allow"
-    actions = [
-      "s3:DeleteOject*",
-      "s3:GetObject*",
-      "s3:PutObject*",
-    ]
-    resources = [
-      "arn:aws:s3:::govuk-forms-${var.env_name}-error-page/*"
+      "arn:aws:s3:::govuk-forms-${var.env_name}-error-page*"
     ]
   }
 }
@@ -214,41 +139,12 @@ data "aws_iam_policy_document" "secure-bucket" {
     sid    = "ManageALBLogsBucket"
     effect = "Allow"
     actions = [
-      "s3:CreateBucket",
-      "s3:DeleteBucket",
-      "s3:DeleteBucketPolicy",
-      "s3:DeleteBucketWebsite",
-      "s3:GetAccelerateConfiguration",
-      "s3:GetAnalyticsConfiguration",
-      "s3:GetBucket*",
-      "s3:GetEncryptionConfiguration",
-      "s3:GetInventoryConfiguration",
-      "s3:GetLifecycleConfiguration",
-      "s3:GetMetricsConfiguration",
-      "s3:GetReplicationConfiguration",
-      "s3:ListBucket",
-      "s3:PutBucketOwnershipControls",
-      "s3:PutBucketPolicy",
-      "s3:PutBucketPublicAccessBlock",
-      "s3:PutBucketTagging",
-      "s3:PutBucketVersioning",
-      "s3:PutBucketWebsite",
+      "s3:*Configuration",
+      "s3:*Bucket*",
+      "s3:*Object*",
     ]
     resources = [
-      "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}"
-    ]
-  }
-
-  statement {
-    sid = "ManageALBLogsBucketObjects"
-    effect = "Allow"
-    actions = [
-      "s3:DeleteOject*",
-      "s3:GetObject*",
-      "s3:PutObject*",
-    ]
-    resources = [
-      "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}"
+      "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*"
     ]
   }
 }
