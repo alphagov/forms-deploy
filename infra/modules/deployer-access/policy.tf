@@ -1,319 +1,36 @@
-resource "aws_iam_policy" "ecs" {
-  policy = data.aws_iam_policy_document.ecs.json
+data "aws_iam_policy_document" "forms-infra" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.alerts.json,
+    data.aws_iam_policy_document.auth0.json,
+    data.aws_iam_policy_document.dns.json,
+    data.aws_iam_policy_document.monitoring.json,
+    data.aws_iam_policy_document.rds.json,
+  ]
 }
 
-resource "aws_iam_role_policy_attachment" "ecs" {
-  policy_arn = aws_iam_policy.ecs.arn
+data "aws_iam_policy_document" "forms-infra-1" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.redis.json,
+    data.aws_iam_policy_document.ses.json,
+  ]
+}
+
+resource "aws_iam_policy" "forms-infra" {
+  policy = data.aws_iam_policy_document.forms-infra.json
+}
+
+resource "aws_iam_role_policy_attachment" "forms-infra" {
+  policy_arn = aws_iam_policy.forms-infra.arn
   role       = aws_iam_role.deployer.id
 }
 
-data "aws_iam_policy_document" "ecs" {
-  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
-  #checkov:skip=CKV_AWS_356: allow resource * when needed
-
-  statement {
-    sid = "ManageS3"
-    actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:ListBucket"
-    ]
-    resources = [
-      "arn:aws:s3:::gds-forms-${var.env_name != "dev" ? var.env_name : "development"}-tfstate/*",
-      "arn:aws:s3:::gds-forms-${var.env_name != "dev" ? var.env_name : "development"}-tfstate",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeECSClustersAndServices"
-    actions = [
-      "ecs:Describe*",
-      "ecs:List*",
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-
-  statement {
-    sid = "ManageECSClustersAndServices"
-    actions = [
-      "ecs:*Cluster",
-      "ecs:*Service",
-      "ecs:TagResource",
-      "ecs:UntagResource",
-      "ecs:ListTagsForResource",
-    ]
-    resources = ["arn:aws:ecs:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"]
-    effect    = "Allow"
-  }
-
-  statement {
-    sid = "ManageEcsTaskDefinitions"
-    actions = [
-      "ecs:*TaskDefinition",
-      "ecs:*TaskSet",
-      "ecs:RunTask",
-      "ecs:DescribeTasks"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-
-  statement {
-    sid = "ManageTaskAndTaskExecutionRoles"
-    actions = [
-      "iam:AttachRolePolicy",
-      "iam:CreateRole",
-      "iam:DeleteRolePolicy",
-      "iam:DetachRolePolicy",
-      "iam:PassRole",
-      "iam:PutRolePermissionsBoundary",
-      "iam:PutRolePolicy",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies"
-    ]
-    resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-admin-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-api-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-runner-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-product-page-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-admin-ecs-task-execution",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-api-ecs-task-execution",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-runner-ecs-task-execution",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-product-page-ecs-task-execution"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageEcsExecutionPolicies"
-    actions = [
-      "iam:CreatePolicy",
-      "iam:CreatePolicyVersion",
-      "iam:GetRolePolicy",
-      "iam:GetPolicy",
-      "iam:TagPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyVersions",
-      "iam:DeletePolicy",
-      "iam:DeletePolicyVersion"
-    ]
-    resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-execution-additional",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-api-ecs-task-execution-additional",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-runner-ecs-task-execution-additional",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-product-page-ecs-task-execution-additional"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageEcsTaskPolicies"
-    actions = [
-      "iam:CreatePolicy",
-      "iam:CreatePolicyVersion",
-      "iam:GetRolePolicy",
-      "iam:GetPolicy",
-      "iam:TagPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyVersions",
-      "iam:DeletePolicy",
-      "iam:DeletePolicyVersion"
-    ]
-    resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-policy",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-api-ecs-task-policy",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-runner-ecs-task-policy",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-product-page-ecs-task-policy"
-    ]
-    effect = "Allow"
-  }
-
-
-  statement {
-    sid = "ManageSecurityGroups"
-    actions = [
-      "ec2:*SecurityGroup*",
-    ]
-    resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*/*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeEC2"
-    actions = [
-      "ec2:Describe*"
-    ]
-    resources = [
-      "*"
-    ]
-    effect = "Allow"
-  }
+resource "aws_iam_policy" "forms-infra-1" {
+  policy = data.aws_iam_policy_document.forms-infra-1.json
 }
 
-resource "aws_iam_policy" "alb" {
-  policy = data.aws_iam_policy_document.alb.json
-}
-
-resource "aws_iam_role_policy_attachment" "alb" {
-  policy_arn = aws_iam_policy.alb.arn
+resource "aws_iam_role_policy_attachment" "forms-infra-1" {
+  policy_arn = aws_iam_policy.forms-infra-1.arn
   role       = aws_iam_role.deployer.id
-}
-
-data "aws_iam_policy_document" "alb" {
-  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
-  #checkov:skip=CKV_AWS_356: allow resource * when needed
-
-  statement {
-    sid = "ManageAlb"
-    actions = [
-      "elasticloadbalancing:*Tags",
-      "elasticloadbalancing:*TargetGroup*",
-      "elasticloadbalancing:RegisterTargets",
-      "elasticloadbalancing:*Listener",
-      "elasticloadbalancing:*Rule*",
-      "elasticloadbalancing:*LoadBalancer*",
-    ]
-    resources = [
-      "arn:aws:elasticloadbalancing:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ListAlbResources"
-    actions = [
-      "elasticloadbalancing:Describe*",
-    ]
-    resources = [
-      "*"
-    ]
-    effect = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "autoscaling" {
-  policy = data.aws_iam_policy_document.autoscaling.json
-}
-
-resource "aws_iam_role_policy_attachment" "autoscaling" {
-  policy_arn = aws_iam_policy.autoscaling.arn
-  role       = aws_iam_role.deployer.id
-}
-
-data "aws_iam_policy_document" "autoscaling" {
-  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
-  #checkov:skip=CKV_AWS_356: allow resource * when needed
-
-  statement {
-    sid = "ManageApplicationAutoScaling"
-    actions = [
-      "application-autoscaling:*"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-
-  statement {
-    sid = "ManageServiceLinkedRoleForAutoscaling"
-    actions = [
-      "iam:CreateServiceLinkedRole"
-    ]
-    resources = ["arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
-    ]
-    effect = "Allow"
-    condition {
-      test     = "StringLike"
-      variable = "iam:AWSServiceName"
-      values   = ["ecs.application-autoscaling.amazonaws.com"]
-    }
-  }
-
-  statement {
-    sid = "AllowPassingServiceLinkedRole"
-    actions = [
-      "iam:PassRole"
-    ]
-    resources = [
-      "arn:aws:iam::*:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageCloudWatchAlarms"
-    actions = [
-      "cloudwatch:*Alarms",
-      "cloudwatch:*Alarm",
-      "cloudwatch:ListTagsForResource"
-    ]
-    resources = ["arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*"]
-    effect    = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "logs" {
-  policy = data.aws_iam_policy_document.logs.json
-}
-
-resource "aws_iam_role_policy_attachment" "logs" {
-  policy_arn = aws_iam_policy.logs.arn
-  role       = aws_iam_role.deployer.id
-}
-
-data "aws_iam_policy_document" "logs" {
-  #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
-  #checkov:skip=CKV_AWS_356: allow resource * when needed
-  statement {
-    sid = "CreateLogs"
-    actions = [
-      "logs:*LogEvents",
-      "logs:*LogStream",
-      "logs:*SubscriptionFilters",
-      "logs:*LogGroup"
-    ]
-    resources = [
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-admin-${var.env_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-api-${var.env_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-runner-${var.env_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:forms-product-page-${var.env_name}:*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "DescribeLogGroups"
-    actions = [
-      "logs:DescribeLogGroups"
-    ]
-    resources = [
-      "*"
-    ]
-    effect = "Allow"
-  }
-}
-
-# One policy document per root
-data "aws_iam_policy_document" "redis" {
-  statement {
-    sid = "ManageElasticache"
-    actions = [
-      "elasticache:*CacheCluster*",
-      "elasticache:*CacheParameter*",
-      "elasticache:*CacheSubnetGroup*",
-      "elasticache:*CacheSecurityGroup*",
-      "elasticache:*ReplicationGroup*",
-      "elasticache:*Tags*",
-    ]
-    resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:*",
-    ]
-  }
 }
 
 data "aws_iam_policy_document" "alerts" {
@@ -413,6 +130,7 @@ data "aws_iam_policy_document" "auth0" {
   }
 }
 
+# This relates to the `dns` root and is different from what is covered in by the permissions in the `environment` module
 data "aws_iam_policy_document" "dns" {
   statement {
     sid = "GetCloudfrontDistribution"
@@ -483,6 +201,23 @@ data "aws_iam_policy_document" "rds" {
     ]
     resources = [
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/database/master-password"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "redis" {
+  statement {
+    sid = "ManageElasticache"
+    actions = [
+      "elasticache:*CacheCluster*",
+      "elasticache:*CacheParameter*",
+      "elasticache:*CacheSubnetGroup*",
+      "elasticache:*CacheSecurityGroup*",
+      "elasticache:*ReplicationGroup*",
+      "elasticache:*Tags*",
+    ]
+    resources = [
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:*",
     ]
   }
 }
@@ -599,41 +334,5 @@ data "aws_iam_policy_document" "ses" {
     ]
     effect = "Allow"
   }
-
-
 }
 
-data "aws_iam_policy_document" "forms-infra" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.alerts.json,
-    data.aws_iam_policy_document.auth0.json,
-    data.aws_iam_policy_document.dns.json,
-    data.aws_iam_policy_document.monitoring.json,
-    data.aws_iam_policy_document.rds.json,
-  ]
-}
-
-resource "aws_iam_policy" "forms-infra" {
-  policy = data.aws_iam_policy_document.forms-infra.json
-}
-
-resource "aws_iam_role_policy_attachment" "forms-infra" {
-  policy_arn = aws_iam_policy.forms-infra.arn
-  role       = aws_iam_role.deployer.id
-}
-
-data "aws_iam_policy_document" "forms-infra-1" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.redis.json,
-    data.aws_iam_policy_document.ses.json,
-  ]
-}
-
-resource "aws_iam_policy" "forms-infra-1" {
-  policy = data.aws_iam_policy_document.forms-infra-1.json
-}
-
-resource "aws_iam_role_policy_attachment" "forms-infra-1" {
-  policy_arn = aws_iam_policy.forms-infra-1.arn
-  role       = aws_iam_role.deployer.id
-}
