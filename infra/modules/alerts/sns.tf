@@ -44,6 +44,8 @@ data "aws_iam_policy_document" "key_policy" {
   #checkov:skip=CKV_AWS_111:AWS suggest the EnableIamAccess statement for key policies.
   #checkov:skip=CKV_AWS_109:AWS suggest the EnableIamAccess statement for key policies.
   #checkov:skip=CKV_AWS_356:Resource "*" is OK here because the only resource it can refer to is the key to which the policy is attached
+
+  # https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
   statement {
     sid    = "EnableIamAccess"
     effect = "Allow"

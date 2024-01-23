@@ -10,9 +10,23 @@ module "users" {
 }
 
 data "aws_iam_policy_document" "encryption_key_policy" {
+  # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
   #checkov:skip=CKV_AWS_111: This is applied directly to the key and we cannot specify the key in the resources.
   #checkov:skip=CKV_AWS_109: This is applied directly to the key and we cannot specify the key in the resources.
   #checkov:skip=CKV_AWS_356: This is applied directly to the key and we cannot specify the key in the resources.
+
+  # https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
+  statement {
+    sid    = "EnableIamAccess"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+
   statement {
     sid    = "Allow SQS, SNS and SES to use the key"
     effect = "Allow"

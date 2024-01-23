@@ -797,7 +797,6 @@ data "aws_iam_policy_document" "ses" {
       "kms:TagResource",
       "kms:UntagResource",
     ]
-    # TODO: why doesn't kms:DescribeKey work? I've tried with different resources ("*", "arn...:key/*", "arn...:*" AND the exact resource arn)
     resources = [
       "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
     ]
