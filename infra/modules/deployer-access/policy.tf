@@ -12,6 +12,7 @@ data "aws_iam_policy_document" "forms-infra-1" {
   source_policy_documents = [
     data.aws_iam_policy_document.redis.json,
     data.aws_iam_policy_document.ses.json,
+    data.aws_iam_policy_document.code-build-modules.json,
   ]
 }
 
@@ -336,3 +337,66 @@ data "aws_iam_policy_document" "ses" {
   }
 }
 
+data "aws_iam_policy_document" "code-build-modules" {
+  # These are needed for: 
+  # code-build-build
+  # code-build-run-docker-build
+  # code-build-run-smoke-tests
+  statement {
+    sid    = "ManageLogs"
+    effect = "Allow"
+    actions = [
+      "logs:*LogEvents",
+      "logs:*LogStream",
+      "logs:*SubscriptionFilters",
+      "logs:*LogGroup",
+    ]
+    resources = [
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:/aws/codebuild/*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:codebuild/*"
+    ]
+  }
+  statement {
+    sid    = "ManageCodebuild"
+    effect = "Allow"
+    actions = [
+      "codebuild:*Project*",
+    ]
+    resources = [
+      "arn:aws:codebuild:eu-west-2:${lookup(local.account_ids, var.env_name)}:project/*"
+    ]
+  }
+  statement {
+    sid    = "ManageCodebuildRoles"
+    effect = "Allow"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:CreateRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:DeleteRole",
+      "iam:PassRole",
+      "iam:PutRolePermissionsBoundary",
+      "iam:PutRolePolicy",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies"
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
+    ]
+  }
+  statement {
+    sid    = "ManageCodebuildPolicies"
+    effect = "Allow"
+    actions = [
+      "iam:CreatePolicy",
+      "iam:DeletePolicy",
+      "iam:GetPolicy"
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*"
+    ]
+  }
+}
