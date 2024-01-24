@@ -4,6 +4,7 @@ data "aws_iam_policy_document" "environment" {
     data.aws_iam_policy_document.cloudfront.json,
     data.aws_iam_policy_document.public-bucket.json,
     data.aws_iam_policy_document.secure-bucket.json,
+    data.aws_iam_policy_document.network.json,
   ]
 }
 
@@ -145,6 +146,39 @@ data "aws_iam_policy_document" "secure-bucket" {
     ]
     resources = [
       "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "network" {
+  statement {
+    sid    = "ManageNetwork"
+    effect = "Allow"
+    actions = [
+      "ec2:*VpcEndpoint*",
+      "ec2:*SecurityGroup*",
+      "ec2:*NatGateway*",
+      "ec2:*Address",
+      "ec2:*Subnet*",
+      "ec2:*RouteTable",
+      "ec2:*RouteTableAssociation",
+      "ec2:*Vpc",
+      "ec2:*InternetGateway*",
+    ]
+    resources = [
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+    ]
+  }
+
+  statement {
+    sid = "DenyTransitGateway"
+    # because we don't want it doing transit gateway things
+    effect = "Deny"
+    actions = [
+      "ec2:*TransitGatewayRouteTable",
+    ]
+    resources = [
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
     ]
   }
 }
