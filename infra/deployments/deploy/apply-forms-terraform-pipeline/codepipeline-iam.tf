@@ -8,7 +8,7 @@ data "aws_iam_policy_document" "codepipeline" {
   }
   statement {
     actions   = ["codebuild:*"]
-    resources = [for _, val in module.terraform_plan : val.arn]
+    resources = [for _, val in module.terraform_apply : val.arn]
     effect    = "Allow"
   }
   statement {

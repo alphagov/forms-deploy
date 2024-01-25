@@ -46,13 +46,13 @@ resource "aws_codepipeline" "main" {
   }
 
   stage {
-    name = "terraform-plan"
+    name = "terraform-apply"
 
     dynamic "action" {
       for_each = local.roots
 
       content {
-        name            = "terraform-plan-${action.value}"
+        name            = "terraform-apply-${action.value}"
         category        = "Build"
         run_order       = "1"
         owner           = "AWS"
@@ -60,7 +60,7 @@ resource "aws_codepipeline" "main" {
         version         = "1"
         input_artifacts = ["forms_deploy"]
         configuration = {
-          ProjectName = module.terraform_plan[action.value].name
+          ProjectName = module.terraform_apply[action.value].name
         }
       }
     }
@@ -68,19 +68,19 @@ resource "aws_codepipeline" "main" {
 }
 
 
-module "terraform_plan" {
+module "terraform_apply" {
   # All roots under `infra/deployments/forms/`, excluding the roots which
   # deploy one of the apps. They have their own pipelines.
   for_each            = local.roots
   source              = "../../../modules/code-build-build"
   project_name        = "${each.value}-deploy-${var.environment_name}"
-  project_description = "Terraform plan forms/${each.value} in ${var.environment_name}"
+  project_description = "Terraform apply forms/${each.value} in ${var.environment_name}"
   environment_variables = {
     "ROOT_NAME" = each.value
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buildspec/terraform-plan-buildspec.yml")
+  buildspec                  = file("${path.root}/buildspec/terraform-apply-buildspec.yml")
   log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
   codebuild_service_role_arn = aws_iam_role.codebuild.arn
 }
