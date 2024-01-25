@@ -4,15 +4,20 @@ data "aws_iam_policy_document" "forms-infra" {
     data.aws_iam_policy_document.auth0.json,
     data.aws_iam_policy_document.dns.json,
     data.aws_iam_policy_document.monitoring.json,
-    data.aws_iam_policy_document.rds.json,
   ]
 }
 
 data "aws_iam_policy_document" "forms-infra-1" {
   source_policy_documents = [
+    data.aws_iam_policy_document.rds.json,
     data.aws_iam_policy_document.redis.json,
-    data.aws_iam_policy_document.ses.json,
     data.aws_iam_policy_document.code-build-modules.json,
+  ]
+}
+
+data "aws_iam_policy_document" "forms-infra-2" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.ses.json,
   ]
 }
 
@@ -31,6 +36,15 @@ resource "aws_iam_policy" "forms-infra-1" {
 
 resource "aws_iam_role_policy_attachment" "forms-infra-1" {
   policy_arn = aws_iam_policy.forms-infra-1.arn
+  role       = aws_iam_role.deployer.id
+}
+
+resource "aws_iam_policy" "forms-infra-2" {
+  policy = data.aws_iam_policy_document.forms-infra-2.json
+}
+
+resource "aws_iam_role_policy_attachment" "forms-infra-2" {
+  policy_arn = aws_iam_policy.forms-infra-2.arn
   role       = aws_iam_role.deployer.id
 }
 
