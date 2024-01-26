@@ -7,6 +7,12 @@ variable "env_name" {
   }
 }
 
+variable "hosted_zone_id" {
+  description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
+  type        = string
+  nullable    = false
+}
+
 locals {
   deploy_account_id = "711966560482"
 
@@ -31,11 +37,16 @@ locals {
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-product-page-deploy-${var.env_name}-dev-branches"
   ]
 
+  deploy_account_terraform_apply = [ #
+    for env in ["dev"] :
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-apply-terraform-${env}"
+  ]
+
   deployer_roles_per_env = {
-    "user-research" = concat(local.deploy_account_main_branch_roles, local.deploy_account_development_branches_roles),
-    "dev"           = concat(local.deploy_account_main_branch_roles, local.deploy_account_development_branches_roles),
-    "staging"       = local.deploy_account_main_branch_roles,
-    "production"    = local.deploy_account_main_branch_roles
+    "user-research" = concat(local.deploy_account_main_branch_roles, local.deploy_account_development_branches_roles, local.deploy_account_terraform_apply),
+    "dev"           = concat(local.deploy_account_main_branch_roles, local.deploy_account_development_branches_roles, local.deploy_account_terraform_apply),
+    "staging"       = concat(local.deploy_account_main_branch_roles, local.deploy_account_terraform_apply),
+    "production"    = concat(local.deploy_account_main_branch_roles, local.deploy_account_terraform_apply)
   }
 }
 
