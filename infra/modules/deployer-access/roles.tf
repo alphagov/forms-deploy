@@ -13,6 +13,11 @@ variable "hosted_zone_id" {
   nullable    = false
 }
 
+variable "codestar_connection_arn" {
+  type        = string
+  description = "ARN of the CodeStar connection in the account"
+}
+
 locals {
   deploy_account_id = "711966560482"
 
@@ -63,6 +68,18 @@ data "aws_iam_policy_document" "assume_role" {
       variable = "sts:ExternalId"
 
       values = [var.env_name]
+    }
+  }
+
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "codepipeline.amazonaws.com",
+        "codebuild.amazonaws.com"
+      ]
     }
   }
 }

@@ -1,8 +1,9 @@
-account_name           = "staging"
-aws_account_id         = "972536609845"
-environment_name       = "staging"
-environment_type       = "staging"
-hosted_zone_id         = "Z05508474P9CXBK9UAH3"
-require_vpn_to_access  = true
-apex_domain            = "staging.forms.service.gov.uk"
-dns_delegation_records = {}
+account_name            = "staging"
+aws_account_id          = "972536609845"
+environment_name        = "staging"
+environment_type        = "staging"
+hosted_zone_id          = "Z05508474P9CXBK9UAH3"
+require_vpn_to_access   = true
+apex_domain             = "staging.forms.service.gov.uk"
+dns_delegation_records  = {}
+codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:972536609845:connection/de05d028-2cbd-4d06-8946-0e4aca60f4ca"

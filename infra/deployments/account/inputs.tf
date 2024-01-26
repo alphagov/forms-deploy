@@ -73,3 +73,9 @@ variable "hosted_zone_id" {
   type        = string
   nullable    = false
 }
+
+variable "codestar_connection_arn" {
+  description = "It isn't possible to automate the creation of a CodeStar connection, so we must create it by hand once in each account and hardcode its ARN."
+  type        = string
+  nullable    = false
+}
