@@ -18,6 +18,7 @@ environmental_settings = {
 hosted_zone_id             = "Z03210831GH1QDMJ7N5C8"
 root_domain                = "dev.forms.service.gov.uk"
 cloudfront_distribution_id = "E2BI70XAWS5P2T"
+codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
 forms_admin_settings = {
   cpu                                   = 256
   memory                                = 512
