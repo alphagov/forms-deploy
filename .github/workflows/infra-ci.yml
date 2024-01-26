@@ -18,7 +18,7 @@ jobs:
           # very likely that two commits involved will be inside the last 50
           fetch-depth: 50
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby@5daca165445f0ae10478593083f72ca2625e241d # v1.169.0
+        uses: ruby/setup-ruby@bd03e04863f52d169e18a2b190e8fa6b84938215 # v1.170.0
         with:
           bundler-cache: true
           working-directory: infra/
@@ -27,7 +27,7 @@ jobs:
           terraform_version: ${{env.TF_VERSION}}
       - name: Lint Terraform
         id: checkov
-        uses: bridgecrewio/checkov-action@db8f32093c4e33c2cd54678403ec2ab1944059e7 #v12.2648.0
+        uses: bridgecrewio/checkov-action@8c66b89720750729664226ae360f6c8d82e190d5 #v12.2649.0
         with:
           directory: infra/
           framework: terraform
