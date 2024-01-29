@@ -37,9 +37,8 @@ locals {
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-product-page-deploy-${var.env_name}-dev-branches"
   ]
 
-  deploy_account_terraform_apply = [ #
-    for env in ["dev"] :
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-apply-terraform-${env}"
+  deploy_account_terraform_apply = [
+    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-apply-terraform-${var.env_name}"
   ]
 
   deployer_roles_per_env = {
