@@ -29,6 +29,7 @@ environmental_settings = {
     "@marinemanagement.org.uk",
   ]
   forms_product_page_support_url = "https://www.forms.service.gov.uk/support"
+  rds_maintenance_window         = "mon:02:15-mon:02:45"
 }
 hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"

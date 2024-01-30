@@ -125,5 +125,6 @@ variable "environmental_settings" {
     allow_authentication_from_email_domains  = list(string)
     enable_alert_actions                     = bool
     forms_product_page_support_url           = string
+    rds_maintenance_window                   = string
   })
 }

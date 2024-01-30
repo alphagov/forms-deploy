@@ -44,7 +44,8 @@ resource "aws_rds_cluster" "forms" {
 
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgres.id
 
-  apply_immediately = var.apply_immediately
+  apply_immediately            = var.apply_immediately
+  preferred_maintenance_window = var.rds_maintenance_window
 
   skip_final_snapshot       = false
   final_snapshot_identifier = "forms-${var.env_name}-${local.timestamp_sanitized}"
