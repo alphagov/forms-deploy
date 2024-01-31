@@ -35,7 +35,9 @@ resource "auth0_connection" "passwordless_email" {
   }
 }
 
-resource "auth0_connection_client" "forms_admin_passwordless_email" {
+resource "auth0_connection_clients" "passwordless_email_connection_clients" {
   connection_id = auth0_connection.passwordless_email.id
-  client_id     = auth0_client.forms_admin.id
+  enabled_clients = [
+    auth0_client.forms_admin.id,
+  ]
 }

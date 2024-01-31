@@ -44,6 +44,14 @@ locals {
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/client-secret"
       },
       {
+        name      = "SETTINGS__AUTH0__E2E_CLIENT_ID",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/e2e-client-id"
+      },
+      {
+        name      = "SETTINGS__AUTH0__E2E_CLIENT_SECRET",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/e2e-client-secret"
+      },
+      {
         name      = "SETTINGS__AUTH0__DOMAIN",
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth0/domain"
       }
