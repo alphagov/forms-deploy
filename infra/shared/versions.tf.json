@@ -1,8 +1,8 @@
 {
   "terraform": {
-    "required_version": "~>1.7.0",
+    "required_version": "~>1.7.2",
     "required_providers": {
-      "aws": "~>5.31.0",
+      "aws": "~>5.34.0",
       "auth0": {
         "source": "auth0/auth0",
         "version": "~> 1.0.0"
