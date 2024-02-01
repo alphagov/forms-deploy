@@ -27,7 +27,7 @@ jobs:
           terraform_version: ${{env.TF_VERSION}}
       - name: Lint Terraform
         id: checkov
-        uses: bridgecrewio/checkov-action@8c66b89720750729664226ae360f6c8d82e190d5 #v12.2649.0
+        uses: bridgecrewio/checkov-action@a278b88ae3e0966b9fc062317c8b739aa91ed52d #v12.2657.0
         with:
           directory: infra/
           framework: terraform
