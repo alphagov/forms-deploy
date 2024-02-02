@@ -94,6 +94,7 @@ init(){
         -chdir="${src_dir}" \
         init \
         -reconfigure \
+        -upgrade \
         ${extra_args}
 }
 
@@ -108,6 +109,12 @@ plan_or_apply(){
     if [ "${deployment}" == "account" ]; then
         extra_args="${extra_args} -var-file ${deployments_dir}/account/tfvars/${environment}.tfvars";
     fi
+
+    case "${deployment}+${tf_root}" in
+        "forms+pipelines")
+            extra_args="${extra_args} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars";
+            ;;
+    esac
 
     # shellcheck disable=SC2086
     terraform \
