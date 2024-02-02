@@ -1,11 +1,11 @@
 locals {
   deployer_roles = [
     for acct, id in {
-      "user-research": "619109835131",
-      "dev": "498160065950",
-      "staging": "972536609845",
-      "production": "443944947292"
-    }:
+      "user-research" : "619109835131",
+      "dev" : "498160065950",
+      "staging" : "972536609845",
+      "production" : "443944947292"
+    } :
     "arn:aws:iam::${id}:role/deployer-${acct}"
   ]
 }
@@ -81,6 +81,23 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
       ])
     }
   }
+
+  statement {
+    sid    = "AllowDeployerRolesToPushImages"
+    effect = "Allow"
+    actions = [
+      "ecr:CompleteLayerUpload",
+      "ecr:GetAuthorizationToken",
+      "ecr:UploadLayerPart",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage"
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = local.deployer_roles
+    }
+  }
 }
 
 
@@ -107,6 +124,23 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
         "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
       ])
+    }
+  }
+
+  statement {
+    sid    = "AllowDeployerRolesToPushImages"
+    effect = "Allow"
+    actions = [
+      "ecr:CompleteLayerUpload",
+      "ecr:GetAuthorizationToken",
+      "ecr:UploadLayerPart",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage"
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = local.deployer_roles
     }
   }
 }
@@ -137,12 +171,28 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
       ])
     }
   }
+
+  statement {
+    sid    = "AllowDeployerRolesToPushImages"
+    effect = "Allow"
+    actions = [
+      "ecr:CompleteLayerUpload",
+      "ecr:GetAuthorizationToken",
+      "ecr:UploadLayerPart",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage"
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = local.deployer_roles
+    }
+  }
 }
 
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_product_page" {
   repository = aws_ecr_repository.forms_product_page.name
   policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_product_page_document.json
-
 }
 
 data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document" {
@@ -163,6 +213,23 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
         "arn:aws:iam::972536609845:role/staging-forms-product-page-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-product-page-ecs-task-execution"
       ])
+    }
+  }
+
+  statement {
+    sid    = "AllowDeployerRolesToPushImages"
+    effect = "Allow"
+    actions = [
+      "ecr:CompleteLayerUpload",
+      "ecr:GetAuthorizationToken",
+      "ecr:UploadLayerPart",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage"
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = local.deployer_roles
     }
   }
 }
