@@ -1,3 +1,15 @@
+locals {
+  deployer_roles = [
+    for acct, id in {
+      "user-research": "619109835131",
+      "dev": "498160065950",
+      "staging": "972536609845",
+      "production": "443944947292"
+    }:
+    "arn:aws:iam::${id}:role/deployer-${acct}"
+  ]
+}
+
 resource "aws_ecr_repository" "forms_api" {
   #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
   name                 = "forms-api-deploy"
@@ -61,12 +73,12 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
 
     principals {
       type = "AWS"
-      identifiers = [
+      identifiers = concat(local.deployer_roles, [
         "arn:aws:iam::619109835131:role/user-research-forms-api-ecs-task-execution",
         "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
         "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-api-ecs-task-execution"
-      ]
+      ])
     }
   }
 }
@@ -89,12 +101,12 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
 
     principals {
       type = "AWS"
-      identifiers = [
+      identifiers = concat(local.deployer_roles, [
         "arn:aws:iam::619109835131:role/user-research-forms-admin-ecs-task-execution",
         "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
         "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
-      ]
+      ])
     }
   }
 }
@@ -117,12 +129,12 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
 
     principals {
       type = "AWS"
-      identifiers = [
+      identifiers = concat(local.deployer_roles, [
         "arn:aws:iam::619109835131:role/user-research-forms-runner-ecs-task-execution",
         "arn:aws:iam::498160065950:role/dev-forms-runner-ecs-task-execution",
         "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-runner-ecs-task-execution"
-      ]
+      ])
     }
   }
 }
@@ -145,12 +157,12 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
 
     principals {
       type = "AWS"
-      identifiers = [
+      identifiers = concat(local.deployer_roles, [
         "arn:aws:iam::619109835131:role/user-research-forms-product-page-ecs-task-execution",
         "arn:aws:iam::498160065950:role/dev-forms-product-page-ecs-task-execution",
         "arn:aws:iam::972536609845:role/staging-forms-product-page-ecs-task-execution",
         "arn:aws:iam::443944947292:role/production-forms-product-page-ecs-task-execution"
-      ]
+      ])
     }
   }
 }
