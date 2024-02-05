@@ -117,6 +117,23 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
         PollForSourceChanges = false
       }
     }
+
+    action {
+      name             = "get-forms-e2e-tests"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
+      version          = "1"
+      output_artifacts = ["forms_e2e_tests"]
+
+      configuration = {
+        ConnectionArn        = var.codestar_connection_arn
+        FullRepositoryId     = "alphagov/forms-e2e-tests"
+        BranchName           = "main" # TODO: we should version this repository appropriately, so we can pick specific versions
+        DetectChanges        = false
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
+      }
+    }
   }
 
   stage {
@@ -159,6 +176,23 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
       }
     }
   }
+
+  stage {
+    name = "test"
+
+    action {
+      name            = "run-end-to-end-tests"
+      category        = "Build"
+      run_order       = "2"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_e2e_tests"]
+      configuration = {
+        ProjectName = module.deploy_product_pages_end_to_end_tests.name
+      }
+    }
+  }
 }
 
 
@@ -174,4 +208,13 @@ module "generate_forms_product_pages_container_image_defs" {
   buildspec                  = file("${path.root}/buiidspecs/generate-container-image-defs/generate-container-image-defs.yml")
   log_group_name             = "codebuild/generate_forms_product_pages_container_image_defs_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+}
+
+module "deploy_product_pages_end_to_end_tests" {
+  source             = "../../../modules/code-build-run-smoke-tests"
+  app_name           = "forms-product-page"
+  environment        = var.environment_name
+  forms_admin_url    = "https://admin.${var.root_domain}"
+  product_pages_url  = "https://${var.root_domain}"
+  artifact_store_arn = module.artifact_bucket.arn
 }
