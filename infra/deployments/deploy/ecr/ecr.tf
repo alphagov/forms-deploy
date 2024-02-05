@@ -1,11 +1,13 @@
 locals {
+  accounts = {
+    "user-research" : "619109835131",
+    "dev" : "498160065950",
+    "staging" : "972536609845",
+    "production" : "443944947292"
+  }
+
   deployer_roles = [
-    for acct, id in {
-      "user-research" : "619109835131",
-      "dev" : "498160065950",
-      "staging" : "972536609845",
-      "production" : "443944947292"
-    } :
+    for acct, id in local.accounts :
     "arn:aws:iam::${id}:role/deployer-${acct}"
   ]
 }
@@ -64,21 +66,19 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
 
 data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
   statement {
+    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability"
     ]
-    effect = "Allow"
-
     principals {
       type = "AWS"
-      identifiers = concat(local.deployer_roles, [
-        "arn:aws:iam::619109835131:role/user-research-forms-api-ecs-task-execution",
-        "arn:aws:iam::498160065950:role/dev-forms-api-ecs-task-execution",
-        "arn:aws:iam::972536609845:role/staging-forms-api-ecs-task-execution",
-        "arn:aws:iam::443944947292:role/production-forms-api-ecs-task-execution"
-      ])
+      identifiers = [
+        for _, id in local.accounts:
+        "arn:aws:iam::${id}:root"
+      ]
     }
   }
 
@@ -109,21 +109,19 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {
 
 data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
   statement {
+    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability"
     ]
-    effect = "Allow"
-
     principals {
       type = "AWS"
-      identifiers = concat(local.deployer_roles, [
-        "arn:aws:iam::619109835131:role/user-research-forms-admin-ecs-task-execution",
-        "arn:aws:iam::498160065950:role/dev-forms-admin-ecs-task-execution",
-        "arn:aws:iam::972536609845:role/staging-forms-admin-ecs-task-execution",
-        "arn:aws:iam::443944947292:role/production-forms-admin-ecs-task-execution"
-      ])
+      identifiers = [
+        for _, id in local.accounts:
+        "arn:aws:iam::${id}:root"
+      ]
     }
   }
 
@@ -154,21 +152,19 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_runner" {
 data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
 
   statement {
+    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability"
     ]
-    effect = "Allow"
-
     principals {
       type = "AWS"
-      identifiers = concat(local.deployer_roles, [
-        "arn:aws:iam::619109835131:role/user-research-forms-runner-ecs-task-execution",
-        "arn:aws:iam::498160065950:role/dev-forms-runner-ecs-task-execution",
-        "arn:aws:iam::972536609845:role/staging-forms-runner-ecs-task-execution",
-        "arn:aws:iam::443944947292:role/production-forms-runner-ecs-task-execution"
-      ])
+      identifiers = [
+        for _, id in local.accounts:
+        "arn:aws:iam::${id}:root"
+      ]
     }
   }
 
@@ -198,21 +194,19 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_product_page" {
 data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document" {
 
   statement {
+    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability"
     ]
-    effect = "Allow"
-
     principals {
       type = "AWS"
-      identifiers = concat(local.deployer_roles, [
-        "arn:aws:iam::619109835131:role/user-research-forms-product-page-ecs-task-execution",
-        "arn:aws:iam::498160065950:role/dev-forms-product-page-ecs-task-execution",
-        "arn:aws:iam::972536609845:role/staging-forms-product-page-ecs-task-execution",
-        "arn:aws:iam::443944947292:role/production-forms-product-page-ecs-task-execution"
-      ])
+      identifiers = [
+        for _, id in local.accounts:
+        "arn:aws:iam::${id}:root"
+      ]
     }
   }
 
@@ -233,3 +227,27 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
     }
   }
 }
+
+data "aws_iam_policy_document" "aws_ecr_repository_policy_end_to_end_tests" {
+
+  statement {
+    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    effect = "Allow"
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability"
+    ]
+    principals {
+      type = "AWS"
+      identifiers = [
+        for _, id in local.accounts:
+        "arn:aws:iam::${id}:root"
+      ]
+    }
+  }
+}
+
+  ## TODO
+  ## Allow arn:aws:iam::ACCOUNT_ID:root to read repository images
+  ## so that the IAM roles of that account can all pull images
