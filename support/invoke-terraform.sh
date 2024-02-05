@@ -60,6 +60,14 @@ case "${deployment}+${tf_root}" in
     "account+account")
         # The `account` deployment is its own root, so doesn't need an extra directory appending
         ;;
+    "forms+rds")
+        if [ "${TF_VAR_apply_immediately:=false}" == true ]; then
+            echo "Database changes will be applied immediately"
+        else
+            echo "Database changes will be applied at the next maintenance window"
+            echo "To apply changes immediately, set the environment variable 'TF_VAR_apply_immediately' to 'true'"
+        fi
+        ;& #fallthrough
     *)
         src_dir="${src_dir}/${tf_root}"
         ;;
