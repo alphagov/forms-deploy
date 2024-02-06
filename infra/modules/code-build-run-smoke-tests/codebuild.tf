@@ -1,15 +1,16 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  aws_account_id = data.aws_caller_identity.current.account_id
-  project_name   = "${var.app_name}-smoke-tests-${var.environment}"
+  deploy_account_id = "711966560482"
+  aws_account_id    = data.aws_caller_identity.current.account_id
+  project_name      = "${var.app_name}-smoke-tests-${var.environment}"
 }
 
 resource "aws_codebuild_project" "smoke_tests" {
   #checkov:skip=CKV_AWS_147:Amazon Managed SSE is sufficient.
   name         = local.project_name
   description  = "Run smoke tests for ${var.app_name} in ${var.environment}"
-  service_role = aws_iam_role.codebuild.arn
+  service_role = coalesce(var.service_role_arn, try(aws_iam_role.codebuild[0].arn, null))
 
   logs_config {
     cloudwatch_logs {

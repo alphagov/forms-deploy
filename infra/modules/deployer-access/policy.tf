@@ -17,6 +17,7 @@ data "aws_iam_policy_document" "forms-infra-1" {
 
 data "aws_iam_policy_document" "forms-infra-2" {
   source_policy_documents = [
+    data.aws_iam_policy_document.smoketests.json,
     data.aws_iam_policy_document.ses.json,
     data.aws_iam_policy_document.pipelines.json,
   ]
@@ -417,6 +418,39 @@ data "aws_iam_policy_document" "code-build-modules" {
   }
 }
 
+data "aws_iam_policy_document" "smoketests" {
+  statement {
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
+    ]
+    resources = [
+      "arn:aws:ecr:eu-west-2:${local.deploy_account_id}:repository/end-to-end-tests",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageSSMParameters"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters"
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/smoketests/*",
+    ]
+    effect = "Allow"
+  }
+}
+
 data "aws_iam_policy_document" "pipelines" {
   statement {
     actions = [
@@ -435,9 +469,9 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
-    sid = "ManageArtifactBuckets"
-    effect = "Allow"
-    actions = ["s3:*"]
+    sid       = "ManageArtifactBuckets"
+    effect    = "Allow"
+    actions   = ["s3:*"]
     resources = ["arn:aws:s3:::pipeline-*", "arn:aws:s3:::pipeline-*/*"]
   }
 }

@@ -66,7 +66,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
 
 data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
   statement {
-    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    sid    = "AllowEveryRoleInOtherAccountsToPullImages"
     effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts:
+        for _, id in local.accounts :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -109,7 +109,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {
 
 data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
   statement {
-    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    sid    = "AllowEveryRoleInOtherAccountsToPullImages"
     effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
@@ -119,7 +119,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts:
+        for _, id in local.accounts :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -152,7 +152,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_runner" {
 data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
 
   statement {
-    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    sid    = "AllowEveryRoleInOtherAccountsToPullImages"
     effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
@@ -162,7 +162,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts:
+        for _, id in local.accounts :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -194,7 +194,7 @@ resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_product_page" {
 data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document" {
 
   statement {
-    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    sid    = "AllowEveryRoleInOtherAccountsToPullImages"
     effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
@@ -204,7 +204,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts:
+        for _, id in local.accounts :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -228,26 +228,49 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
   }
 }
 
+resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_end_to_end_tests" {
+  repository = aws_ecr_repository.end_to_end_tests.name
+  policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_end_to_end_tests.json
+}
+
 data "aws_iam_policy_document" "aws_ecr_repository_policy_end_to_end_tests" {
 
   statement {
-    sid = "AllowEveryRoleInOtherAccountsToPullImages"
+    sid    = "AllowEveryRoleInOtherAccountsToPullImages"
     effect = "Allow"
     actions = [
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability"
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetAuthorizationToken",
     ]
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts:
+        for _, id in local.accounts :
         "arn:aws:iam::${id}:root"
       ]
     }
   }
+
+  statement {
+    sid    = "AllowDeployerRolesToPushImages"
+    effect = "Allow"
+    actions = [
+      "ecr:CompleteLayerUpload",
+      "ecr:GetAuthorizationToken",
+      "ecr:UploadLayerPart",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage"
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = local.deployer_roles
+    }
+  }
 }
 
-  ## TODO
-  ## Allow arn:aws:iam::ACCOUNT_ID:root to read repository images
-  ## so that the IAM roles of that account can all pull images
+## TODO
+## Allow arn:aws:iam::ACCOUNT_ID:root to read repository images
+## so that the IAM roles of that account can all pull images
