@@ -12,7 +12,7 @@ tf_root=""
 
 usage() {
     cat <<EOF >&2
-Usage: $0 -a apply|init|plan -d deployment -e environment [-r terraform_root]
+Usage: $0 -a apply|init|plan|validate -d deployment -e environment [-r terraform_root]
 
 This helper script invokes Terraform in the correct manner, given the deployment,
 environment, and root. It encodes the different arguments required for different
@@ -27,7 +27,7 @@ while getopts "a:d:e:r:" opt; do
     case "${opt}" in
         a)
             action="${OPTARG}"
-            [[ $action == "apply" || $action == "init" || $action == "plan" ]] ||  usage 
+            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" ]] ||  usage
             ;;
         d)
             deployment="${OPTARG}"
@@ -98,7 +98,7 @@ init(){
         ${extra_args}
 }
 
-plan_or_apply(){
+plan_apply_validate(){
     action="$1"
     extra_args=""
 
@@ -121,17 +121,21 @@ plan_or_apply(){
 		-chdir="${src_dir}" \
 		${action} \
 		${extra_args}
-} 
+}
 
 case "${action}" in
     apply)
-        plan_or_apply "apply"
+        plan_apply_validate "apply"
         ;;
     init)
         init
         ;;
     plan)
-        plan_or_apply "plan"
+        plan_apply_validate "plan"
+        ;;
+
+    validate)
+        plan_apply_validate "validate"
         ;;
 esac
 

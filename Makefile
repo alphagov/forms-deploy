@@ -90,6 +90,9 @@ plan: init
 apply: init
 	@./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 		
+.PHONY:
+validate: init
+	@./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 ##
 # Utility targets
 ##
