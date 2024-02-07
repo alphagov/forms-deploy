@@ -20,6 +20,7 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.smoketests.json,
     data.aws_iam_policy_document.ses.json,
     data.aws_iam_policy_document.pipelines.json,
+    data.aws_iam_policy_document.ecr.json,
   ]
 }
 
@@ -420,25 +421,6 @@ data "aws_iam_policy_document" "code-build-modules" {
 
 data "aws_iam_policy_document" "smoketests" {
   statement {
-    actions = [
-      "ecr:GetAuthorizationToken",
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-  statement {
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage"
-    ]
-    resources = [
-      "arn:aws:ecr:eu-west-2:${local.deploy_account_id}:repository/end-to-end-tests",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
     sid = "ManageSSMParameters"
     actions = [
       "ssm:GetParameter",
@@ -473,5 +455,27 @@ data "aws_iam_policy_document" "pipelines" {
     effect    = "Allow"
     actions   = ["s3:*"]
     resources = ["arn:aws:s3:::pipeline-*", "arn:aws:s3:::pipeline-*/*"]
+  }
+}
+
+data "aws_iam_policy_document" "ecr" {
+  statement {
+    actions = [
+      "ecr:*"
+    ]
+    resources = [
+      "arn:aws:ecr:eu-west-2:${local.deploy_account_id}:*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    # CodePipeline appears to peform GetAuthorizationToken
+    # with resource "*", and a statement with an ARN
+    # like "arn:aws:ecr::ACCT_ID:*" is insufficient to grant
+    # it permission
+    actions = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
+    effect = "Allow"
   }
 }
