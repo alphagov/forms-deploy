@@ -183,13 +183,30 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
     action {
       name            = "run-end-to-end-tests"
       category        = "Build"
-      run_order       = "2"
+      run_order       = "1"
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
       input_artifacts = ["forms_e2e_tests"]
       configuration = {
         ProjectName = module.deploy_product_pages_end_to_end_tests.name
+      }
+    }
+  }
+
+  stage {
+    name = "promote-image"
+
+    action {
+      name            = "pull-image-retag-and-push"
+      category        = "Build"
+      run_order       = "1"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["image-defs-json"]
+      configuration = {
+        ProjectName = module.pull_forms_product_page_image_retag_and_push.name
       }
     }
   }
@@ -217,4 +234,22 @@ module "deploy_product_pages_end_to_end_tests" {
   forms_admin_url    = "https://admin.${var.root_domain}"
   product_pages_url  = "https://${var.root_domain}"
   artifact_store_arn = module.artifact_bucket.arn
+  service_role_arn   = data.aws_iam_role.deployer-role.arn
+}
+
+module "pull_forms_product_page_image_retag_and_push" {
+  source                     = "../../../modules/code-build-build"
+  project_name               = "pull_forms_product_page_image_retag_and_push_${var.environment_name}"
+  project_description        = "Pull the latest image, retag it, and push it back up"
+  environment                = var.environment_name
+  artifact_store_arn         = module.artifact_bucket.arn
+  buildspec                  = file("${path.root}/buiidspecs/pull-image-retag-and-push/pull-image-retag-and-push.yml")
+  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+  log_group_name             = "codebuild/pull_forms_product_page_image_retag_and_push_${var.environment_name}"
+  environment_variables = {
+    IMAGE_NAME           = "forms-product-page-deploy"
+    AWS_ACCOUNT_ID       = "711966560482" #TODO: don't hardcode this
+    RETAG                = var.deploy-forms-product-page-container.retag_image_on_success
+    RETAG_SED_EXPRESSION = var.deploy-forms-product-page-container.retagging_sed_expression
+  }
 }
