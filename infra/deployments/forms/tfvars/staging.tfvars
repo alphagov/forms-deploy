@@ -10,10 +10,13 @@ environmental_settings = {
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 300
   database_backup_retention_period_days    = 30
-  allow_authentication_from_email_domains  = [".gov.uk"]
-  enable_alert_actions                     = true
-  forms_product_page_support_url           = "https://www.staging.forms.service.gov.uk/support"
-  rds_maintenance_window                   = "mon:02:15-mon:02:45"
+  allow_authentication_from_email_domains = [
+    ".gov.uk",
+    "@digitalaccessibilitycentre.org"
+  ]
+  enable_alert_actions           = true
+  forms_product_page_support_url = "https://www.staging.forms.service.gov.uk/support"
+  rds_maintenance_window         = "mon:02:15-mon:02:45"
 }
 hosted_zone_id             = "Z05508474P9CXBK9UAH3"
 root_domain                = "staging.forms.service.gov.uk"
