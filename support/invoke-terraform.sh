@@ -116,11 +116,17 @@ plan_apply_validate(){
             ;;
     esac
 
+    if [ "${FORMS_TF_AUTO_APPROVE:-false}" = true ] && [ "${action}" = "apply" ]; then
+        echo "FORMS_TF_AUTO_APPROVE was set to true"
+        echo "Terraform will be automatically applied"
+        extra_args="${extra_args} -auto-approve";
+    fi
     # shellcheck disable=SC2086
     terraform \
 		-chdir="${src_dir}" \
 		${action} \
 		${extra_args}
+
 }
 
 case "${action}" in
