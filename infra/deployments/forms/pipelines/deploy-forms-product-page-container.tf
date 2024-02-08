@@ -2,7 +2,7 @@
 resource "aws_cloudwatch_event_rule" "product_pages_on_image_tag" {
   name        = "product-page-on-${var.environment_name}-image-tag"
   description = "Trigger the product pages pipeline when a new container image tag matching the desired pattern is pushed"
-  role_arn    = aws_iam_role.eventbridge_pipeline_invoker.arn
+  role_arn    = aws_iam_role.eventbridge_actor.arn
   event_pattern = jsonencode({
     source = ["aws.ecr", "uk.gov.service.forms"]
     detail = {
@@ -18,7 +18,7 @@ resource "aws_cloudwatch_event_rule" "product_pages_on_image_tag" {
 resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
   target_id = "product-page-${var.environment_name}-trigger-deploy-pipeline"
   rule      = aws_cloudwatch_event_rule.product_pages_on_image_tag.name
-  role_arn  = aws_iam_role.eventbridge_pipeline_invoker.arn
+  role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = aws_codepipeline.deploy_product_pages_container.arn
 
   input_transformer {

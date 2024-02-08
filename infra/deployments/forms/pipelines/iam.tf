@@ -4,8 +4,8 @@ data "aws_iam_role" "deployer-role" {
   name = "deployer-${var.environment_name}"
 }
 
-resource "aws_iam_role" "eventbridge_pipeline_invoker" {
-  name               = "event-bridge-pipeline-invoker"
+resource "aws_iam_role" "eventbridge_actor" {
+  name               = "event-bridge-actor"
   assume_role_policy = <<-JSON
 {
   "Version": "2012-10-17",
@@ -32,6 +32,23 @@ data "aws_iam_policy_document" "allow_pipeline_start_execution" {
 
 resource "aws_iam_role_policy" "allow_actor_to_invoke_pipelines" {
   name   = "allow-actor-to-invoke-pipelines"
-  role   = aws_iam_role.eventbridge_pipeline_invoker.name
+  role   = aws_iam_role.eventbridge_actor.name
   policy = data.aws_iam_policy_document.allow_pipeline_start_execution.json
+}
+
+data "aws_iam_policy_document" "allow_sending_events_to_deploy" {
+  statement {
+    sid    = "AllowEventsToDeploy"
+    effect = "Allow"
+    actions = [
+      "events:PutEvents"
+    ]
+    resources = ["arn:aws:events:eu-west-2:711966560482:event-bus/default"]
+  }
+}
+
+resource "aws_iam_role_policy" "allow_actor_to_send_events_to_deploy" {
+  name   = "allow-actor-to-send-events-to-deploy"
+  role   = aws_iam_role.eventbridge_actor.name
+  policy = data.aws_iam_policy_document.allow_sending_events_to_deploy.json
 }
