@@ -1,3 +1,4 @@
+## Default bus policy
 data "aws_cloudwatch_event_bus" "default" {
   name = "default"
 }
@@ -23,6 +24,7 @@ resource "aws_cloudwatch_event_bus_policy" "default_bus_policy" {
   event_bus_name = "default"
 }
 
+## Log ECR events
 resource "aws_cloudwatch_log_group" "ecr_push_events" {
   name              = "/aws/events/${var.environment_name}/ecr-events"
   retention_in_days = 14
@@ -70,4 +72,28 @@ data "aws_iam_policy_document" "log_group_policy" {
       ]
     }
   }
+}
+
+## Push pipeline successes to deploy account
+resource "aws_cloudwatch_event_rule" "pipeline_successes" {
+  name        = "all-pipeline-success-events-${var.environment_name}"
+  description = "Match all pipeline successes for ${var.environment_name}"
+  role_arn    = aws_iam_role.eventbridge_actor.arn
+  event_pattern = jsonencode({
+    source = ["aws.codepipeline"],
+    detail = {
+      state = ["SUCCEEDED"],
+      pipeline = [
+        { prefix = "dev-" },
+        { suffix = "-dev" }
+      ]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "deploy_defualt_bus" {
+  target_id = "${var.environment_name}-send-to-deploy-default-bus"
+  rule      = aws_cloudwatch_event_rule.pipeline_successes.name
+  role_arn  = aws_iam_role.eventbridge_actor.arn
+  arn       = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
 }
