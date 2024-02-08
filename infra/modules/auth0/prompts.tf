@@ -11,6 +11,11 @@ resource "auth0_prompt_custom_text" "content" {
   body     = file("${path.module}/${each.key}")
 }
 
+resource "auth0_branding" "govuk_brand" {
+  logo_url    = "${var.admin_base_url}${var.app_logo_path}"
+  favicon_url = "${var.admin_base_url}${var.favicon_url_path}"
+}
+
 resource "auth0_branding_theme" "govuk_theme" {
   borders {
     button_border_weight = 2
