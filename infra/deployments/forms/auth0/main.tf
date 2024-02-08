@@ -9,9 +9,7 @@ module "auth0" {
   allowed_email_domains = var.environmental_settings.allow_authentication_from_email_domains
 
   support_url = var.environmental_settings.forms_product_page_support_url
-}
-
-moved {
-  from = module.auth0
-  to   = module.auth0[0]
+  additional_username_and_password_client_ids = [
+    data.aws_ssm_parameter.auth0_client_id[0].value
+  ]
 }
