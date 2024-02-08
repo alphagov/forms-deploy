@@ -6,12 +6,19 @@ module "artifact_bucket" {
 
 resource "aws_codepipeline" "main" {
     #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
-    name     = local.name_suffix
-    role_arn = aws_iam_role.codepipeline.arn
+    name          = local.name_suffix
+    role_arn      = aws_iam_role.codepipeline.arn
+    pipeline_type = "V2"
 
     artifact_store {
         type     = "S3"
         location = module.artifact_bucket.name
+    }
+
+    variable {
+        name          = "tag_prefix"
+        description   = "The prefix which will be applied to the generated image tag. Prefixes are used to trigger different pipelines. To cause a deployment to dev, use the value \"dev-\""
+        default_value = "stg-"
     }
 
     stage {
@@ -48,7 +55,18 @@ resource "aws_codepipeline" "main" {
             input_artifacts = ["source_repo"]
             configuration = {
                 ProjectName          = module.docker_build.name
-                EnvironmentVariables = jsonencode([{ "name" : "GIT_SHA", "value" : "#{get-${var.application_name}.CommitId}", "type" : "PLAINTEXT" }])
+                EnvironmentVariables = jsonencode([
+                    {
+                        name:  "GIT_SHA",
+                        value: "#{get-${var.application_name}.CommitId}",
+                        type:  "PLAINTEXT"
+                    },
+                    {
+                        name:  "TAG_PREFIX",
+                        value: "#{variables.tag_prefix}",
+                        type:  "PLAINTEXT"
+                    }
+                ])
             }
         }
     }
