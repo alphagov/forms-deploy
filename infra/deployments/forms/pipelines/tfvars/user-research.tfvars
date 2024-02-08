@@ -3,3 +3,9 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
 }
+
+apply-terraform = {
+  pipeline_trigger    = "EVENT"
+  git_source_branch   = null
+  previous_stage_name = "apply-forms-terraform-staging"
+}

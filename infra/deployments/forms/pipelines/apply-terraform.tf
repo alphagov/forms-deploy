@@ -11,6 +11,30 @@ locals {
   ])
 }
 
+resource "aws_cloudwatch_event_rule" "apply_terraform_on_previous_stage" {
+  count = var.apply-terraform.pipeline_trigger == "EVENT" ? 1 : 0
+
+  name        = "apply-terraform-${var.environment_name}-on-previous-stage-success"
+  description = "Trigger the apply terraform pipeline for ${var.environment_name} when its previous stage completes"
+  role_arn    = aws_iam_role.eventbridge_actor.arn
+  event_pattern = jsonencode({
+    source = ["aws.codepipeline"],
+    detail = {
+      state    = ["SUCCEEDED"],
+      pipeline = [var.apply-terraform.previous_stage_name]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
+  count = var.apply-terraform.pipeline_trigger == "EVENT" ? 1 : 0
+
+  target_id = "apply-terraform-${var.environment_name}-trigger-deploy-pipeline"
+  rule      = aws_cloudwatch_event_rule.apply_terraform_on_previous_stage[0].name
+  role_arn  = aws_iam_role.eventbridge_actor.arn
+  arn       = aws_codepipeline.apply_terroform.arn
+}
+
 resource "aws_codepipeline" "apply_terroform" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
   name     = "apply-forms-terraform-${var.environment_name}"
@@ -34,8 +58,8 @@ resource "aws_codepipeline" "apply_terroform" {
       configuration = {
         ConnectionArn        = var.codestar_connection_arn
         FullRepositoryId     = "alphagov/forms-deploy"
-        BranchName           = "main"
-        DetectChanges        = false
+        BranchName           = var.apply-terraform.pipeline_trigger == "GIT" ? var.apply-terraform.git_source_branch : "main"
+        DetectChanges        = var.apply-terraform.pipeline_trigger == "GIT"
         OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }

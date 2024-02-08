@@ -6,3 +6,9 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
 }
+
+apply-terraform = {
+  pipeline_trigger    = "MANUAL"
+  git_source_branch   = "poc-pipelines-in-environments"
+  previous_stage_name = ""
+}

@@ -3,3 +3,9 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/stg-\\(.*\\)/prod-\\1/" # Staging -> Prod promotion
 }
+
+apply-terraform = {
+  pipeline_trigger    = "GIT"
+  git_source_branch   = "main"
+  previous_stage_name = null
+}
