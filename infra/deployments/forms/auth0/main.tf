@@ -13,8 +13,3 @@ module "auth0" {
     data.aws_ssm_parameter.auth0_client_id[0].value
   ]
 }
-
-moved {
-  from = module.auth0
-  to   = module.auth0[0]
-}
