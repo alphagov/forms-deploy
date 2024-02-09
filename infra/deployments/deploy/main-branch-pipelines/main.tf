@@ -13,11 +13,6 @@ module "forms-runner" {
   app_name = "forms-runner"
 }
 
-module "forms-product-page" {
-  source   = "../../../modules/main-branch-pipeline"
-  app_name = "forms-product-page"
-}
-
 module "forms-e2e-tests" {
   source = "../../../modules/e2e-image-pipeline"
 }
