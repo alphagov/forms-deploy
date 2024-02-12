@@ -6,6 +6,7 @@ on:
     types: [checks_requested]
 env:
   TF_VERSION: "~>1.7.2"
+  HCL2JSON_VERSION: "v0.6.1"
 jobs:
   run_tests:
     runs-on: ubuntu-latest
@@ -25,6 +26,14 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{env.TF_VERSION}}
+      - name: Install hcl2json
+        run: |
+          wget "https://github.com/tmccombs/hcl2json/releases/download/${HCL2JSON_VERSION}/hcl2json_linux_amd64"
+          chmod +x hcl2json_linux_amd64
+          sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json
+      - name: Run Terraform specs
+        working-directory: infra/
+        run: bundle exec rspec
       - name: Lint Terraform
         id: checkov
         uses: bridgecrewio/checkov-action@8c66b89720750729664226ae360f6c8d82e190d5 #v12.2649.0
@@ -152,6 +161,4 @@ jobs:
               terraform -chdir="${deployment}" validate
             fi
           done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
-      - name: Run Terraform specs
-        working-directory: infra/
-        run: bundle exec rspec
+         
