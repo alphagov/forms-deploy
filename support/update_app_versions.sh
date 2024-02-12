@@ -106,17 +106,16 @@ update_nodejs_version () {
 }
 
 update_dockerfile_base_image () {
-  OLD_ALPINE_VERSION="$(sed -E -n 's/^FROM '${DOCKER_IMAGE_NAME}':[0-9.]+-alpine([0-9.]+).*$/\1/p' Dockerfile | head -n 1)"
+  OLD_ALPINE_VERSION="$(sed -E -n 's/^ARG ALPINE_VERSION=(.*)$/\1/p' Dockerfile)"
 
   echo "Updating Dockerfile base image"
-  sed -i '' 's/^FROM '"${DOCKER_IMAGE_NAME}"':.* AS/FROM '"${DOCKER_BASE_IMAGE}"' AS/' Dockerfile
+  sed -i '' "s/^ARG ALPINE_VERSION=.*$/ARG ALPINE_VERSION=${NEW_ALPINE_VERSION}/" Dockerfile
+  sed -i '' "s/^ARG RUBY_VERSION=.*$/ARG RUBY_VERSION=${NEW_RUBY_VERSION}/" Dockerfile
 
-  OLD_NODEJS_MAJOR_VERSION="$(echo "$OLD_NODEJS_VERSION" | cut -d. -f 1)"
+  sed -i '' "s/^ARG DOCKER_IMAGE_DIGEST=.*$/ARG DOCKER_IMAGE_DIGEST=${NEW_DOCKER_IMAGE_DIGEST}/" Dockerfile
+
   NEW_NODEJS_MAJOR_VERSION="$(echo "$NEW_NODEJS_VERSION" | cut -d. -f 1)"
-
-  if [ "$OLD_NODEJS_MAJOR_VERSION" != "$NEW_NODEJS_MAJOR_VERSION" ]; then
-    sed -E -i '' '/apk add/ s/nodejs=~[0-9]+/nodejs=~'"${NEW_NODEJS_MAJOR_VERSION}"'/' Dockerfile
-  fi
+  sed -i '' "s/^ARG NODEJS_VERSION=.*$/ARG NODEJS_VERSION=${NEW_NODEJS_MAJOR_VERSION}/" Dockerfile
 
   git add Dockerfile
 
