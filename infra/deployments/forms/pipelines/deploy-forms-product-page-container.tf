@@ -18,8 +18,7 @@ resource "aws_cloudwatch_event_rule" "product_pages_on_image_tag" {
 resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
   target_id = "product-page-${var.environment_name}-trigger-deploy-pipeline"
   rule      = aws_cloudwatch_event_rule.product_pages_on_image_tag.name
-  role_arn  = aws_iam_role.eventbridge_actor.arn
-  arn       = aws_codepipeline.deploy_product_pages_container.arn
+  arn       = aws_lambda_function.pipeline_invoker.arn
 
   input_transformer {
     input_paths = {

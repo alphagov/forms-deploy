@@ -53,12 +53,23 @@ if [ -z "${action}" ] || [ -z "${deployment}" ] || [ -z "${environment}" ]; then
 fi
 
 # Set source directory
-src_dir="${deployments_dir}/${deployment}"
-
+src_dir="${deployments_dir}/${deployment}/${tf_root}"
 ## Consider special combinations of deployment, environment, and root
 case "${deployment}+${tf_root}" in
     "account+account")
         # The `account` deployment is its own root, so doesn't need an extra directory appending
+        src_dir="${deployments_dir}/${deployment}"
+        ;;
+    "forms+pipelines")
+        echo "Installing Ruby gems for infra/deployments/forms/pipelines/pipeline-invoker"
+        (
+            cd infra/deployments/forms/pipelines/pipeline-invoker;
+            echo "Setting bundler to install gems locally"
+            bundle config set --local path 'vendor/bundle'
+            bundle install
+            echo "Reverting bundler to install gems globally"
+            bundle config set --local system 'true'
+        )
         ;;
     "forms+rds")
         if [ "${TF_VAR_apply_immediately:=false}" == true ]; then
@@ -67,9 +78,6 @@ case "${deployment}+${tf_root}" in
             echo "Database changes will be applied at the next maintenance window"
             echo "To apply changes immediately, set the environment variable 'TF_VAR_apply_immediately' to 'true'"
         fi
-        ;& #fallthrough
-    *)
-        src_dir="${src_dir}/${tf_root}"
         ;;
 esac
 
