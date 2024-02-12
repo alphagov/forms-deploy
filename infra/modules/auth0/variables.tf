@@ -81,10 +81,3 @@ variable "support_url" {
   type        = string
   description = "URL of the support page"
 }
-
-variable "additional_username_and_password_client_ids" {
-  type        = list(string)
-  description = "Additional Auth0 client IDs to connect the username and password auth method too. Needed to allow us to maintain the Terraform connection, which is not managed inside Terraform."
-  default     = []
-
-}
