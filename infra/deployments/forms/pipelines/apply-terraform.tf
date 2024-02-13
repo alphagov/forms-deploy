@@ -37,8 +37,9 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
 
 resource "aws_codepipeline" "apply_terroform" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
-  name     = "apply-forms-terraform-${var.environment_name}"
-  role_arn = data.aws_iam_role.deployer-role.arn
+  name           = "apply-forms-terraform-${var.environment_name}"
+  role_arn       = data.aws_iam_role.deployer-role.arn
+  pipeline_type  = "V2"
 
   artifact_store {
     type     = "S3"
