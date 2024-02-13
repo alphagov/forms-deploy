@@ -289,6 +289,7 @@ data "aws_iam_policy_document" "ses" {
       "ses:*EmailAddress*",
       "ses:*Domain*",
       "ses:VerifyEmailIdentity",
+      "ses:*Identity*"
     ]
     resources = [
       "*"
