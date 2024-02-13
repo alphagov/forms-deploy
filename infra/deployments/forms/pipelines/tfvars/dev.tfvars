@@ -5,6 +5,7 @@ deploy-forms-product-page-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
+  disable_end_to_end_tests = false
 }
 
 apply-terraform = {

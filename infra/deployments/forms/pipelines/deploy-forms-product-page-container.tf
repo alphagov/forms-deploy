@@ -176,19 +176,31 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
     }
   }
 
-  stage {
-    name = "test"
+  # It isn't possible to conditionally skip or disable a stage or step in AWS CodePipeline
+  # but we need to be able to do so because we can't run the end-to-end tests in the user-research
+  # environment. We don't want to make the end-to-end tests module responsible for skipping itself
+  # because that's not its responsiblity, and CodePipeline doesn't give us a lightweight way to wrap
+  # something a little bit of Bash.
+  #
+  # So a dynamic block to omit the stage completely is the solution. We'd rather all the pipelines
+  # look the same, but this seems like the best solution given the trade-offs.
+  dynamic "stage" {
+    for_each = var.deploy-forms-product-page-container.disable_end_to_end_tests == false? [1] : []
 
-    action {
-      name            = "run-end-to-end-tests"
-      category        = "Build"
-      run_order       = "1"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      input_artifacts = ["forms_e2e_tests"]
-      configuration = {
-        ProjectName = module.deploy_product_pages_end_to_end_tests.name
+    content {
+      name = "test"
+
+      action {
+        name            = "run-end-to-end-tests"
+        category        = "Build"
+        run_order       = "1"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        input_artifacts = ["forms_e2e_tests"]
+        configuration = {
+          ProjectName = module.deploy_product_pages_end_to_end_tests.name
+        }
       }
     }
   }

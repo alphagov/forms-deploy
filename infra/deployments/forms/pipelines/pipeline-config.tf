@@ -10,6 +10,10 @@ variable "deploy-forms-product-page-container" {
     # Sed expression used to generate the new tag. This will be run against the tag that triggerd the pipeline.
     # The resulting tag can contain "${EPOCH_SECONDS}" and this will be replaced with the timestamp at runtime
     retagging_sed_expression = string
+
+    # It isn't possible to perform the end-to-end tests in the user-reseach environment because
+    # it doesn't have Auth0 configured. Therefore we need to be able disable that step there.
+    disable_end_to_end_tests = bool
   })
 }
 
