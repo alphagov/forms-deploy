@@ -34,9 +34,12 @@ deploy:
 
 ##
 # Terraform root targets
+#
+# You may be tempted to simplify "-mindepth 1 -maxdepth 1" to "-depth 1" but this will only work on developer machines,
+# and will break in CI/CD environments which use a newer version of find which has deprecate "-depth N".
 ##
-FORMS_TF_ROOTS = $(shell cd infra/deployments; find forms -type d -depth 1 -not -path "*/tfvars" -not -path "*/.terraform")
-DEPLOY_TF_ROOTS = $(shell cd infra/deployments; find deploy -type d -depth 1 -not -path "*/tfvars" -not -path "*/.terraform")
+FORMS_TF_ROOTS = $(shell cd infra/deployments; find forms -mindepth 1 -maxdepth 1 -type d -not -path "*/tfvars" -not -path "*/.terraform")
+DEPLOY_TF_ROOTS = $(shell cd infra/deployments; find deploy -mindepth 1 -maxdepth 1 -type d -not -path "*/tfvars" -not -path "*/.terraform")
 
 target_tf_root_set:
 	$(if ${TARGET_TF_ROOT},,$(error Target Terraform root is not set. Try adding an Terraform root target before the final target. Terraform root targets are directories relative to 'infra/deployments/', such as 'forms/dns'.))
