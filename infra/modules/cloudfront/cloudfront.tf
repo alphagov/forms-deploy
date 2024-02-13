@@ -24,6 +24,7 @@ data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
 }
 
 resource "aws_cloudfront_distribution" "main" {
+  #checkov:skip=CKV_AWS_34:viewer_protocol_policy is already redirect-to-https
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
   #checkov:skip=CKV2_AWS_32:Checkov error, response headers policy is set.
   #checkov:skip=CKV2_AWS_47:We don't use log4j
