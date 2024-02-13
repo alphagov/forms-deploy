@@ -21,6 +21,7 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.ses.json,
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
+    data.aws_iam_policy_document.eventbridge.json
   ]
 }
 
@@ -400,10 +401,12 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies"
+      "iam:ListAttachedRolePolicies",
+      "iam:TagRole"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*"
     ]
   }
   statement {
@@ -478,5 +481,29 @@ data "aws_iam_policy_document" "ecr" {
     actions = ["ecr:GetAuthorizationToken"]
     resources = ["*"]
     effect = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "eventbridge" {
+  statement {
+    sid = "AllowEventActions"
+    effect = "Allow"
+    actions = [
+      "events:*"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowPassRoleForEventBridge"
+    effect = "Allow"
+    actions = ["iam:PassRole"]
+    resources = ["arn:aws:iam::*:role/*"]
+
+    condition {
+      variable = "iam:PassedToService"
+      test = "StringLike"
+      values = ["events.amazonaws.com"]
+    }
   }
 }
