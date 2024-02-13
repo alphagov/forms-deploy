@@ -26,13 +26,6 @@ locals {
       development   = "admin"
       user_research = "admin"
     },
-    "alistair.laing" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
-      development   = "admin"
-      user_research = "admin"
-    },
     "andy.hunt" = {
       deploy        = "admin"
       staging       = "admin"
