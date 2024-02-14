@@ -1,0 +1,27 @@
+version: 0.2
+artifacts:
+  enable-symlinks: yes
+phases:
+  build:
+    commands:
+      - |
+        echo "Commit ID: ${COMMIT_ID}"
+        echo "Env name: ${ENV_NAME}"
+        echo "Event bus: ${TARGET_EVENT_BUS}"
+        
+        cat <<EOF > event.json
+        [{
+            "Time": "$(date --iso-8601=seconds)",
+            "Source": "uk.gov.service.forms",
+            "EventBusName": "${TARGET_EVENT_BUS}",
+            "DetailType": "Terraform application succesful",
+            "Detail": $(jq -n --arg commit_id "${COMMIT_ID}" --arg env "${ENV_NAME}" '{"environment": $env, "source-commit": $commit_id} | @json')
+        }]
+        EOF
+        
+        echo "Sending event"
+        cat event.json
+
+        aws events put-events --entries file://event.json
+        
+        

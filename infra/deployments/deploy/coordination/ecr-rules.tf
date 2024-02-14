@@ -32,17 +32,17 @@ resource "aws_cloudwatch_log_group" "ecr_push_events" {
 }
 
 resource "aws_cloudwatch_log_resource_policy" "allow_delivery_from_eventbridge" {
-  policy_document = data.aws_iam_policy_document.log_group_policy.json
+  policy_document = data.aws_iam_policy_document.ecr_events_log_group_policy.json
   policy_name     = "eventbridge-publishing-policy"
 }
 
-resource "aws_cloudwatch_event_target" "log_events_to_cloudwatch" {
+resource "aws_cloudwatch_event_target" "log_ecr_push_events_to_cloudwatch" {
   target_id = "log-to-cloudwatch"
   rule      = aws_cloudwatch_event_rule.log_ecr_events.name
   arn       = aws_cloudwatch_log_group.ecr_push_events.arn
 }
 
-data "aws_iam_policy_document" "log_group_policy" {
+data "aws_iam_policy_document" "ecr_events_log_group_policy" {
   statement {
     effect = "Allow"
     actions = [
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "log_group_policy" {
     ]
 
     resources = [
-      "${aws_cloudwatch_log_group.ecr_push_events.arn}:*"
+      "arn:aws:logs:eu-west-2:711966560482:log-group:/aws/events/*"
     ]
 
     principals {
