@@ -20,11 +20,19 @@ fi
 
 # Update these values as necessary and then run the script
 NEW_RUBY_VERSION="3.2.2"
-DOCKER_ALPINE_VERSION="3.18"
+NEW_ALPINE_VERSION="3.18"
 
 # Constants that should not need to be updated
-GIT_BRANCH_NAME="bump_ruby_to_${NEW_RUBY_VERSION}"
 APPS=(forms-api forms-admin forms-runner forms-product-page forms-e2e-tests)
+DOCKER_IMAGE_NAME=ruby
+DOCKER_IMAGE_TAG="${NEW_RUBY_VERSION}-alpine${NEW_ALPINE_VERSION}"
+GIT_BRANCH_NAME="bump_base_image_to_${DOCKER_IMAGE_TAG}"
+GIT_COMMIT_MSG=$'Bump base image\n\nBumps core dependencies and base image in Dockerfile.'
+
+append_commit_msg () {
+  GIT_COMMIT_MSG+=$'\n'
+  GIT_COMMIT_MSG+="$*"
+}
 
 # Checks out main branch and pulls latests. Then creates a new
 # branch for the updates. If the branch already exists it continues
@@ -37,21 +45,19 @@ setup_git_branch () {
 }
 
 # Find the manifest list sha for the version of ruby and alpine
-get_new_docker_base_image_sha () {
-  docker buildx imagetools inspect ruby:${NEW_RUBY_VERSION}-alpine${DOCKER_ALPINE_VERSION} \
+get_new_docker_image_digest () {
+  docker buildx imagetools inspect "${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}" \
     | grep Digest \
     | cut -d : -f 2-3 \
     | tr -d ' '
 }
 
-# Main script begins here
-echo "Updating to ${NEW_RUBY_VERSION}"
-MANIFEST_LIST_SHA="$(get_new_docker_base_image_sha)"
-for app in "${APPS[@]}"; do
-  echo -e "\n\n****** BEGINNING UPDATE OF ${app} ********"
-  cd "../../${app}"
+update_ruby_version () {
+  OLD_RUBY_VERSION="$(tr -d ' ' < .ruby-version)"
 
-  setup_git_branch
+  if [ "$OLD_RUBY_VERSION" = "$NEW_RUBY_VERSION" ]; then
+    return
+  fi
 
   echo "Updating .ruby-version file"
   echo "$NEW_RUBY_VERSION" > .ruby-version
@@ -62,17 +68,91 @@ for app in "${APPS[@]}"; do
   echo "Running 'bundle install' to update Gemfile.lock"
   bundle install > /dev/null
 
-  echo "Updating version in Dockerfile"
-  sed -i '' 's/^FROM ruby:.* AS/FROM ruby:'"${NEW_RUBY_VERSION}"'-alpine'"${DOCKER_ALPINE_VERSION}"'@'"${MANIFEST_LIST_SHA}"' AS/' Dockerfile
-
-  echo "Committing changes"
   git add .ruby-version
-  git add Dockerfile
   git add Gemfile
   git add Gemfile.lock
-  git commit -S -m "Bump Ruby to ${NEW_RUBY_VERSION}" \
+
+  append_commit_msg "- Bumps Ruby from ${OLD_RUBY_VERSION} to ${NEW_RUBY_VERSION}"
+}
+
+# Versions of Alpine generally have only one version of Node.js in the repository at a time
+get_new_nodejs_version () {
+  docker run --rm "$DOCKER_BASE_IMAGE" sh -c 'apk update && apk search -x nodejs' \
+    | sed -E -n 's/^nodejs-([0-9.]+).*$/\1/p'
+}
+
+update_nodejs_version () {
+  if [ ! -f .nvmrc ]; then
+    return
+  fi
+
+  OLD_NODEJS_VERSION="$(tr -d ' ' < .nvmrc)"
+
+  if [ "$OLD_NODEJS_VERSION" = "$NEW_NODEJS_VERSION" ]; then
+    return
+  fi
+
+  echo "Updating .nvmrc file"
+  echo "$NEW_NODEJS_VERSION" > .nvmrc
+
+  echo "Running 'npm install' to update package-lock.json"
+  npm install > /dev/null
+
+  git add .nvmrc
+  git add package.json
+  git add package-lock.json
+
+  append_commit_msg "- Bumps Node.js from $OLD_NODEJS_VERSION to $NEW_NODEJS_VERSION"
+}
+
+update_dockerfile_base_image () {
+  OLD_ALPINE_VERSION="$(sed -E -n 's/^ARG ALPINE_VERSION=(.*)$/\1/p' Dockerfile)"
+
+  echo "Updating Dockerfile base image"
+  sed -i '' "s/^ARG ALPINE_VERSION=.*$/ARG ALPINE_VERSION=${NEW_ALPINE_VERSION}/" Dockerfile
+  sed -i '' "s/^ARG RUBY_VERSION=.*$/ARG RUBY_VERSION=${NEW_RUBY_VERSION}/" Dockerfile
+
+  sed -i '' "s/^ARG DOCKER_IMAGE_DIGEST=.*$/ARG DOCKER_IMAGE_DIGEST=${NEW_DOCKER_IMAGE_DIGEST}/" Dockerfile
+
+  NEW_NODEJS_MAJOR_VERSION="$(echo "$NEW_NODEJS_VERSION" | cut -d. -f 1)"
+  sed -i '' "s/^ARG NODEJS_VERSION=.*$/ARG NODEJS_VERSION=${NEW_NODEJS_MAJOR_VERSION}/" Dockerfile
+
+  git add Dockerfile
+
+  if [ "$OLD_ALPINE_VERSION" != "$NEW_ALPINE_VERSION" ]; then
+    append_commit_msg "- Bumps Alpine Linux from ${OLD_ALPINE_VERSION} to ${NEW_ALPINE_VERSION}"
+  fi
+}
+
+commit_changes () {
+  echo "Committing changes"
+  git commit -S -m "${GIT_COMMIT_MSG}" \
     && git push -u origin "${GIT_BRANCH_NAME}" \
     || echo "There are no commits, perhaps you've already run this script?"
+}
+
+# Main script begins here
+NEW_DOCKER_IMAGE_DIGEST="$(get_new_docker_image_digest)"
+DOCKER_BASE_IMAGE="${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}@${NEW_DOCKER_IMAGE_DIGEST}"
+
+NEW_NODEJS_VERSION="$(get_new_nodejs_version)"
+
+echo "Updating to ${DOCKER_BASE_IMAGE}"
+
+for app in "${APPS[@]}"; do
+  echo -e "\n\n****** BEGINNING UPDATE OF ${app} ********"
+  cd "../../${app}"
+
+  setup_git_branch
+
+  update_ruby_version
+
+  update_nodejs_version
+
+  update_dockerfile_base_image
+
+  commit_changes
+
   echo -e "****** FINISHED UPDATING ${app} ********\n\n"
   cd - > /dev/null
 done
