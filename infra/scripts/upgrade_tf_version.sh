@@ -89,20 +89,26 @@ pushd "${__repo_root__}/infra" >/dev/null || exit
 popd >/dev/null || exit
 
 
-echo "Setting default Terraform version in CodePipeline configuration to '${latest_tf_version}'"
-jq -r --arg version "${latest_tf_version}" \
-    '.variable.terraform_version.default = $version' \
-    "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json" \
-> "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json.tmp"
-rm "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json"
-mv "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json.tmp" "${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json"
-echo "Written to '${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json.tmp'"
+echo "Setting default Terraform version in CodeBuild configurations to '${latest_tf_version}'"
+
+while IFS= read -r -d '' file
+do
+    jq -r --arg version "${latest_tf_version}" \
+        '.variable.terraform_version.default = $version' \
+        "${__repo_root__}/${file}" \
+    > "${__repo_root__}/${file}.tmp"
+
+    rm "${__repo_root__}/${file}"
+    mv "${__repo_root__}/${file}.tmp" "${__repo_root__}/${file}"
+    echo "Written to '${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json'"
+done <   <(find "$(readlink -f "${__repo_root__}/infra/modules")/" -type f -name "terraform_version.tf.json" -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
+
 
 deployments_path=$(readlink -f "${__repo_root__}/infra/deployments")
 echo "Upgrading Terraform and providers in each deployment"
 # while loop recommended by https://www.shellcheck.net/wiki/SC2044
 while IFS= read -r -d '' dir
-do
+do	
     deployment=${dir#"${deployments_path}/"}
     echo "${deployment} ..."
     pushd "${dir}" >/dev/null || exit
