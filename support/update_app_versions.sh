@@ -30,8 +30,8 @@ GIT_BRANCH_NAME="bump_base_image_to_${DOCKER_IMAGE_TAG}"
 GIT_COMMIT_MSG=$'Bump base image\n\nBumps core dependencies and base image in Dockerfile.'
 
 append_commit_msg () {
-  GIT_COMMIT_MSG+=$'\n'
-  GIT_COMMIT_MSG+="$*"
+  GIT_COMMIT_MSG_APPEND+=$'\n'
+  GIT_COMMIT_MSG_APPEND+="$*"
 }
 
 # Checks out main branch and pulls latests. Then creates a new
@@ -42,6 +42,8 @@ setup_git_branch () {
   git pull
   git branch "$GIT_BRANCH_NAME" || echo "Continuing with existing branch"
   git checkout "$GIT_BRANCH_NAME"
+
+  GIT_COMMIT_MSG_APPEND=""
 }
 
 # Find the manifest list sha for the version of ruby and alpine
@@ -53,6 +55,8 @@ get_new_docker_image_digest () {
 }
 
 update_ruby_version () {
+  local OLD_RUBY_VERSION
+
   OLD_RUBY_VERSION="$(tr -d ' ' < .ruby-version)"
 
   if [ "$OLD_RUBY_VERSION" = "$NEW_RUBY_VERSION" ]; then
@@ -86,6 +90,8 @@ update_nodejs_version () {
     return
   fi
 
+  local OLD_NODEJS_VERSION
+
   OLD_NODEJS_VERSION="$(tr -d ' ' < .nvmrc)"
 
   if [ "$OLD_NODEJS_VERSION" = "$NEW_NODEJS_VERSION" ]; then
@@ -106,6 +112,8 @@ update_nodejs_version () {
 }
 
 update_dockerfile_base_image () {
+  local OLD_ALPINE_VERSION NEW_NODEJS_MAJOR_VERSION
+
   OLD_ALPINE_VERSION="$(sed -E -n 's/^ARG ALPINE_VERSION=(.*)$/\1/p' Dockerfile)"
 
   echo "Updating Dockerfile base image"
@@ -126,7 +134,7 @@ update_dockerfile_base_image () {
 
 commit_changes () {
   echo "Committing changes"
-  git commit -S -m "${GIT_COMMIT_MSG}" \
+  git commit -S -m "${GIT_COMMIT_MSG}${GIT_COMMIT_MSG_APPEND}" \
     && git push -u origin "${GIT_BRANCH_NAME}" \
     || echo "There are no commits, perhaps you've already run this script?"
 }
