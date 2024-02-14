@@ -1,3 +1,9 @@
+##
+# When adding and editing policies for the deployer role,
+# you should focus on create, update, delete, or otherwise mutating
+# actions. The role has full read-only access.
+##
+
 data "aws_iam_policy_document" "forms-infra" {
   source_policy_documents = [
     data.aws_iam_policy_document.alerts.json,
@@ -17,7 +23,6 @@ data "aws_iam_policy_document" "forms-infra-1" {
 
 data "aws_iam_policy_document" "forms-infra-2" {
   source_policy_documents = [
-    data.aws_iam_policy_document.smoketests.json,
     data.aws_iam_policy_document.ses.json,
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
@@ -62,11 +67,7 @@ data "aws_iam_policy_document" "alerts" {
     sid = "ManageKMSKeyAlerts"
     actions = [
       "kms:CreateKey",
-      "kms:DescribeKey",
       "kms:EnableKeyRotation",
-      "kms:GetKeyPolicy",
-      "kms:GetKeyRotationStatus",
-      "kms:ListResourceTags",
       "kms:PutKeyPolicy",
       "kms:TagResource",
       "kms:UntagResource",
@@ -94,9 +95,6 @@ data "aws_iam_policy_document" "alerts" {
     actions = [
       "ssm:AddTagsToResource",
       "ssm:DeleteParameter",
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:ListTagsForResource",
       "ssm:PutParameter",
       "ssm:RemoveTagsFromResource",
     ]
@@ -110,7 +108,6 @@ data "aws_iam_policy_document" "alerts" {
     sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
-      "sns:GetSubscriptionAttributes",
       "sns:*Tag*",
       "sns:*Subscrib*",
       "sns:Unsubscribe",
@@ -157,26 +154,9 @@ data "aws_iam_policy_document" "auth0" {
 # This relates to the `dns` root and is different from what is covered in by the permissions in the `environment` module
 data "aws_iam_policy_document" "dns" {
   statement {
-    sid = "GetCloudfrontDistribution"
-    actions = [
-      "cloudfront:GetDistribution",
-      "cloudfront:GetDistributionConfig",
-      "cloudfront:ListTagsForResource",
-    ]
-    # TODO: do we need to specify a distribution?
-    resources = [
-      "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:distribution/*",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
     sid = "ManageRoute53RecordSets"
     actions = [
       "route53:ChangeResourceRecordSets",
-      "route53:GetHostedZone",
-      "route53:ListResourceRecordSets",
-      "route53:ListTagsForResource",
     ]
     resources = [
       "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
@@ -188,9 +168,7 @@ data "aws_iam_policy_document" "monitoring" {
   statement {
     sid = "ManageCloudwatchDashboards"
     actions = [
-      "cloudwatch:GetDashboard",
       "cloudwatch:DeleteDashboards",
-      "cloudwatch:ListTagsForResource",
       "cloudwatch:PutDashboard",
       "cloudwatch:TagResource",
       "cloudwatch:UntagResource",
@@ -253,14 +231,9 @@ data "aws_iam_policy_document" "ses" {
     sid    = "GetUser"
     effect = "Allow"
     actions = [
-      "iam:GetUser",
       "iam:AttachUserPolicy",
       "iam:DeleteUserPolicy",
       "iam:DetachUserPolicy",
-      "iam:GetUserPolicy",
-      "iam:ListAccessKeys",
-      "iam:ListAttachedUserPolicies",
-      "iam:ListUserTags",
       "iam:UntagUser",
     ]
     resources = [
@@ -275,9 +248,6 @@ data "aws_iam_policy_document" "ses" {
       "iam:CreatePolicy",
       "iam:CreatePolicyVersion",
       "iam:DeletePolicy",
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyTags",
       "iam:TagPolicy",
       "iam:UntagPolicy",
     ]
@@ -290,7 +260,6 @@ data "aws_iam_policy_document" "ses" {
     sid    = "ManageSESVerification"
     effect = "Allow"
     actions = [
-      "ses:GetIdentityVerificationAttributes",
       "ses:*Dkim*",
       "ses:*EmailAddress*",
       "ses:*Domain*",
@@ -319,11 +288,7 @@ data "aws_iam_policy_document" "ses" {
     effect = "Allow"
     actions = [
       "kms:CreateKey",
-      "kms:DescribeKey",
       "kms:EnableKeyRotation",
-      "kms:GetKeyPolicy",
-      "kms:GetKeyRotationStatus",
-      "kms:ListResourceTags",
       "kms:PutKeyPolicy",
       "kms:TagResource",
       "kms:UntagResource",
@@ -348,7 +313,6 @@ data "aws_iam_policy_document" "ses" {
     sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
-      "sns:GetSubscriptionAttributes",
       "sns:*Tag*",
       "sns:*Subscrib*",
       "sns:Unsubscribe",
@@ -403,10 +367,6 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:PassRole",
       "iam:PutRolePermissionsBoundary",
       "iam:PutRolePolicy",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies",
       "iam:TagRole"
     ]
     resources = [
@@ -420,7 +380,6 @@ data "aws_iam_policy_document" "code-build-modules" {
     actions = [
       "iam:CreatePolicy",
       "iam:DeletePolicy",
-      "iam:GetPolicy"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*"
@@ -428,33 +387,17 @@ data "aws_iam_policy_document" "code-build-modules" {
   }
 }
 
-data "aws_iam_policy_document" "smoketests" {
-  statement {
-    sid = "ManageSSMParameters"
-    actions = [
-      "ssm:GetParameter",
-      "ssm:GetParameters"
-    ]
-    resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/smoketests/*",
-    ]
-    effect = "Allow"
-  }
-}
-
 data "aws_iam_policy_document" "pipelines" {
   statement {
     actions = [
       "codestar-connections:UseConnection",
-      "codestar-connections:GetConnection",
-      "codestar-connections:ListConnections"
     ]
     resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
 
   statement {
-    actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
+    actions   = ["codecommit:GitPull"]
     resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
