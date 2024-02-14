@@ -408,6 +408,32 @@ data "aws_iam_policy_document" "pipelines" {
     actions   = ["s3:*"]
     resources = ["arn:aws:s3:::pipeline-*", "arn:aws:s3:::pipeline-*/*"]
   }
+
+  statement {
+    sid     = "ManageLambdaBuckets"
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker",
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker/*"
+    ]
+  }
+
+  statement {
+    sid     = "ManageLambdaFunctions"
+    effect  = "Allow"
+    actions = [
+      "lambda:*Function",
+      "lambda:*Permission",
+      "lambda:TagResource",
+      "lambda:UntagResource",
+      "lambda:UpdateFunctionCode",
+    ]
+
+    resources = [
+      "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*-pipeline-invoker"
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "ecr" {
