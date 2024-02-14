@@ -4,7 +4,9 @@ locals {
     "auth0",
     "dns",
     "environment",
+    "forms-product-page",
     "monitoring",
+    "pipelines",
     "rds",
     "redis",
     "ses",
@@ -67,10 +69,28 @@ resource "aws_codepipeline" "apply_terroform" {
   }
 
   stage {
+    name = "self-update-pipelines"
+
+    action {
+      name            = "self-update-pipelines"
+      category        = "Build"
+      run_order       = "1"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_deploy"]
+      configuration = {
+        ProjectName = module.terraform_apply["pipelines"].name
+      }
+    }
+  }
+
+  stage {
     name = "terraform-apply"
 
     dynamic "action" {
-      for_each = local.roots
+      # don't run pipelines because we did it in the previous stage
+      for_each = setsubtract(local.roots, ["pipelines"])
 
       content {
         name            = "terraform-apply-${action.value}"
