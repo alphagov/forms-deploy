@@ -52,6 +52,11 @@ resource "aws_iam_role_policy_attachment" "forms-infra-2" {
   role       = aws_iam_role.deployer.id
 }
 
+resource "aws_iam_role_policy_attachment" "full_read_only" {
+  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  role       = aws_iam_role.deployer.id
+}
+
 data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageKMSKeyAlerts"
