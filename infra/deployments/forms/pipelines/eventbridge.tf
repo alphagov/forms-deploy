@@ -38,7 +38,8 @@ data "aws_iam_policy_document" "log_group_policy" {
     ]
 
     resources = [
-      module.log_ecr_push_events.log_group_arn
+      module.log_ecr_push_events.log_group_arn,
+      module.log_terraform_application_success_events.log_group_arn
     ]
 
     principals {
@@ -67,25 +68,30 @@ module "log_ecr_push_events" {
 }
 
 ## Push pipeline successes to deploy account
-resource "aws_cloudwatch_event_rule" "pipeline_successes" {
-  name        = "all-pipeline-success-events-${var.environment_name}"
-  description = "Match all pipeline successes for ${var.environment_name}"
-  role_arn    = aws_iam_role.eventbridge_actor.arn
+module "log_terraform_application_success_events" {
+  source = "../../../modules/eventbridge-log-to-cloudwatch"
+
+  environment_name  = var.environment_name
+  log_group_subject = "terraform_application_success"
   event_pattern = jsonencode({
-    source = ["aws.codepipeline"],
-    detail = {
-      state = ["SUCCEEDED"],
-      pipeline = [
-        { prefix = "dev-" },
-        { suffix = "-dev" }
-      ]
-    }
+    source = ["uk.gov.service.forms"],
+    detail-type = ["Terraform application succesful"]
   })
 }
 
-resource "aws_cloudwatch_event_target" "deploy_defualt_bus" {
-  target_id = "${var.environment_name}-send-to-deploy-default-bus"
-  rule      = aws_cloudwatch_event_rule.pipeline_successes.name
+resource "aws_cloudwatch_event_rule" "terraform_application_succcesses" {
+  name        = "all-terraform-application-success-events-${var.environment_name}"
+  description = "Match all Terraform application successes for ${var.environment_name}"
+  role_arn    = aws_iam_role.eventbridge_actor.arn
+  event_pattern = jsonencode({
+    source = ["uk.gov.service.forms"],
+    detail-type = ["Terraform application succesful"]
+  })
+}
+
+resource "aws_cloudwatch_event_target" "forward_terraform_application_success_to_deploy_defualt_bus" {
+  target_id = "${var.environment_name}-forward-terraform-application-success-to-deploy-defualt-bus"
+  rule      = aws_cloudwatch_event_rule.terraform_application_succcesses.name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
 }
