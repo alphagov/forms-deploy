@@ -371,7 +371,9 @@ data "aws_iam_policy_document" "code-build-modules" {
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*"
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
+
     ]
   }
   statement {
