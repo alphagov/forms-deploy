@@ -422,8 +422,8 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
-    sid     = "ManageLambdaFunctions"
-    effect  = "Allow"
+    sid    = "ManageLambdaFunctions"
+    effect = "Allow"
     actions = [
       "lambda:*Function",
       "lambda:*Permission",
@@ -454,15 +454,15 @@ data "aws_iam_policy_document" "ecr" {
     # with resource "*", and a statement with an ARN
     # like "arn:aws:ecr::ACCT_ID:*" is insufficient to grant
     # it permission
-    actions = ["ecr:GetAuthorizationToken"]
+    actions   = ["ecr:GetAuthorizationToken"]
     resources = ["*"]
-    effect = "Allow"
+    effect    = "Allow"
   }
 }
 
 data "aws_iam_policy_document" "eventbridge" {
   statement {
-    sid = "AllowEventActions"
+    sid    = "AllowEventActions"
     effect = "Allow"
     actions = [
       "events:*"
@@ -471,15 +471,15 @@ data "aws_iam_policy_document" "eventbridge" {
   }
 
   statement {
-    sid = "AllowPassRoleForEventBridge"
-    effect = "Allow"
-    actions = ["iam:PassRole"]
+    sid       = "AllowPassRoleForEventBridge"
+    effect    = "Allow"
+    actions   = ["iam:PassRole"]
     resources = ["arn:aws:iam::*:role/*"]
 
     condition {
       variable = "iam:PassedToService"
-      test = "StringLike"
-      values = ["events.amazonaws.com"]
+      test     = "StringLike"
+      values   = ["events.amazonaws.com"]
     }
   }
 }

@@ -15,8 +15,8 @@ resource "aws_cloudwatch_event_rule" "terraform_applied" {
   role_arn    = aws_iam_role.eventbridge_actor.arn
 
   event_pattern = jsonencode({
-    source  = ["uk.gov.service.forms"],
-    account = [local.other_accounts[each.key]]
+    source      = ["uk.gov.service.forms"],
+    account     = [local.other_accounts[each.key]]
     detail-type = ["Terraform application succesful"]
   })
 }
@@ -109,7 +109,7 @@ resource "aws_cloudwatch_event_rule" "log_terraform_applied_events" {
   name        = "log-terraform-applied-events-in-cloudwatch"
   description = "Send events to CloudWatch"
   event_pattern = jsonencode({
-    source  = ["uk.gov.service.forms"],
+    source      = ["uk.gov.service.forms"],
     detail-type = ["Terraform application succesful"]
   })
 }

@@ -185,7 +185,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
   # So a dynamic block to omit the stage completely is the solution. We'd rather all the pipelines
   # look the same, but this seems like the best solution given the trade-offs.
   dynamic "stage" {
-    for_each = var.deploy-forms-product-page-container.disable_end_to_end_tests == false? [1] : []
+    for_each = var.deploy-forms-product-page-container.disable_end_to_end_tests == false ? [1] : []
 
     content {
       name = "test"

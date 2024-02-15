@@ -14,8 +14,8 @@ resource "aws_cloudwatch_event_rule" "distribute_ecr_events" {
 }
 
 resource "aws_cloudwatch_event_rule" "log_ecr_events" {
-  name        = "log-ecr-events-in-cloudwatch"
-  description = "Send ECR events to CloudWatch"
+  name          = "log-ecr-events-in-cloudwatch"
+  description   = "Send ECR events to CloudWatch"
   event_pattern = local.ecr_push_events_pattern
 }
 

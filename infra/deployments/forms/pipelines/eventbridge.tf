@@ -59,7 +59,7 @@ module "log_ecr_push_events" {
 
   environment_name  = var.environment_name
   log_group_subject = "ecr_push_events"
-  event_pattern     = jsonencode({
+  event_pattern = jsonencode({
     source = ["aws.ecr", "uk.gov.service.forms"]
     detail = {
       action-type = ["PUSH"]
@@ -74,7 +74,7 @@ module "log_terraform_application_success_events" {
   environment_name  = var.environment_name
   log_group_subject = "terraform_application_success"
   event_pattern = jsonencode({
-    source = ["uk.gov.service.forms"],
+    source      = ["uk.gov.service.forms"],
     detail-type = ["Terraform application succesful"]
   })
 }
@@ -84,7 +84,7 @@ resource "aws_cloudwatch_event_rule" "terraform_application_succcesses" {
   description = "Match all Terraform application successes for ${var.environment_name}"
   role_arn    = aws_iam_role.eventbridge_actor.arn
   event_pattern = jsonencode({
-    source = ["uk.gov.service.forms"],
+    source      = ["uk.gov.service.forms"],
     detail-type = ["Terraform application succesful"]
   })
 }
