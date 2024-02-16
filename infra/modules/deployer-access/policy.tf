@@ -227,6 +227,7 @@ data "aws_iam_policy_document" "redis" {
 data "aws_iam_policy_document" "ses" {
   #checkov:skip=CKV_AWS_111:We use SES v1 which doesn't let us be more specific than *
   #checkov:skip=CKV_AWS_356:We use SES v1 which doesn't let us be more specific than *
+  #checkov:skip=CKV_AWS_109:We have a plan to add a permissions boundary to the deployer
   statement {
     sid    = "GetUser"
     effect = "Allow"
@@ -427,6 +428,7 @@ data "aws_iam_policy_document" "pipelines" {
     actions = [
       "lambda:*Function",
       "lambda:*Permission",
+      "lambda:PutFunctionConcurrency",
       "lambda:TagResource",
       "lambda:UntagResource",
       "lambda:UpdateFunctionCode",
@@ -461,6 +463,11 @@ data "aws_iam_policy_document" "ecr" {
 }
 
 data "aws_iam_policy_document" "eventbridge" {
+  #checkov:skip=CKV_AWS_356: resource "*" is restricted to events actions
+  #checkov:skip=CKV_AWS_111: there are many event resources the deployer
+  #                          role will write to, and adding conditions for
+  #                          each will add a lot to an already constrained
+  #                          character count
   statement {
     sid    = "AllowEventActions"
     effect = "Allow"

@@ -115,6 +115,8 @@ resource "aws_cloudwatch_event_rule" "log_terraform_applied_events" {
 }
 
 resource "aws_cloudwatch_log_group" "terraform_applied_events" {
+  #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
+  #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
   name              = "/aws/events/terraform-applied-events"
   retention_in_days = 14
 }

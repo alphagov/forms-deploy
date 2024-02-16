@@ -1,4 +1,6 @@
 resource "aws_cloudwatch_log_group" "log_group" {
+  #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
+  #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
   name              = "/aws/events/${var.environment_name}/${var.log_group_subject}"
   retention_in_days = 14
 }

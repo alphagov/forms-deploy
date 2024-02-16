@@ -16,12 +16,18 @@ module "lambda_bucket" {
 }
 
 resource "aws_lambda_function" "pipeline_invoker" {
+  #checkov:skip=CKV_AWS_272:we're not doing code signing on this lambda at the moment
+  #checkov:skip=CKV_AWS_116:no dead letter queue at this time
+  #checkov:skip=CKV_AWS_117:lambda does not need access to things inside the VPC
+  #checkov:skip=CKV_AWS_50 :not using X-Ray
+
   function_name = "${var.environment_name}-pipeline-invoker"
   description   = "Receives events from AWS EventBridge and invokes AWS CodePipeline in turn. A replacement for missing functionality in AWS EventBridge"
   role          = aws_iam_role.lambda_pipeline_invoker.arn
 
-  runtime = "ruby3.2"
-  handler = "invoke.main"
+  runtime                        = "ruby3.2"
+  handler                        = "invoke.main"
+  reserved_concurrent_executions = 50
 
   s3_bucket = module.lambda_bucket.name
   s3_key    = "invoker-lambda.zip"
@@ -32,6 +38,8 @@ resource "aws_lambda_function" "pipeline_invoker" {
 }
 
 resource "aws_cloudwatch_log_group" "pipeline_invoker_log_group" {
+  #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
+  #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
   name              = "/aws/lambda/${aws_lambda_function.pipeline_invoker.function_name}"
   retention_in_days = 14
 }
@@ -70,7 +78,7 @@ data "aws_iam_policy_document" "allow_pipeline_inovcation" {
   statement {
     effect    = "Allow"
     actions   = ["codepipeline:StartPipelineExecution"]
-    resources = ["*"]
+    resources = ["arn:aws:codepipeline:eu-west-2:${data.aws_caller_identity.current.account_id}:*"]
   }
 }
 

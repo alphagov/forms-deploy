@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "allow_pipeline_start_execution" {
   statement {
     effect    = "Allow"
     actions   = ["codepipeline:StartPipelineExecution"]
-    resources = ["*"]
+    resources = ["arn:aws:codepipeline:eu-west-2:${data.aws_caller_identity.current.account_id}:*"]
   }
 }
 
