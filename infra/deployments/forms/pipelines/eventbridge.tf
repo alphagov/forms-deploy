@@ -39,7 +39,8 @@ data "aws_iam_policy_document" "log_group_policy" {
 
     resources = [
       module.log_ecr_push_events.log_group_arn,
-      module.log_terraform_application_success_events.log_group_arn
+      module.log_terraform_application_success_events.log_group_arn,
+      module.log_codepipeline_events.log_group_arn,
     ]
 
     principals {
@@ -67,7 +68,7 @@ module "log_ecr_push_events" {
   })
 }
 
-## Push pipeline successes to deploy account
+## Push terraform application successes to deploy account
 module "log_terraform_application_success_events" {
   source = "../../../modules/eventbridge-log-to-cloudwatch"
 
@@ -94,4 +95,38 @@ resource "aws_cloudwatch_event_target" "forward_terraform_application_success_to
   rule      = aws_cloudwatch_event_rule.terraform_application_succcesses.name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
+}
+
+## Push CodePipeline events to deploy account
+resource "aws_cloudwatch_event_rule" "codepipeline_events" {
+  name        = "all-codepipeline-events-${var.environment_name}"
+  description = "Match all Codepipeline events for ${var.environment_name}"
+  role_arn    = aws_iam_role.eventbridge_actor.arn
+  event_pattern = jsonencode({
+    source = ["aws.codepipeline"],
+    detail = {
+      pipeline = [
+        # We can have many envs in one account
+        # and we don't want to duplicate events
+        { "wildcard" : "*-${var.environment_name}" },
+        { "wildcard" : "${var.environment_name}-*" }
+      ]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "forward_codepipeline_events_to_deploy_defualt_bus" {
+  target_id = "${var.environment_name}-codepipeline-events-to-deploy-defualt-bus"
+  rule      = aws_cloudwatch_event_rule.codepipeline_events.name
+  role_arn  = aws_iam_role.eventbridge_actor.arn
+  arn       = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
+}
+
+module "log_codepipeline_events" {
+  source = "../../../modules/eventbridge-log-to-cloudwatch"
+
+  environment_name  = var.environment_name
+  log_group_subject = "codepipeline"
+
+  event_pattern = aws_cloudwatch_event_rule.codepipeline_events.event_pattern
 }

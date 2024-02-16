@@ -6,7 +6,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
 }
 
 resource "aws_cloudwatch_event_rule" "rule" {
-  name          = "${var.environment_name}-${var.log_group_subject}"
+  name          = "${var.environment_name}-${var.log_group_subject}-log-to-cloudwatch"
   event_pattern = var.event_pattern
 }
 
