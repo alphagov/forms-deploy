@@ -91,7 +91,7 @@ resource "aws_cloudwatch_event_rule" "terraform_application_succcesses" {
 }
 
 resource "aws_cloudwatch_event_target" "forward_terraform_application_success_to_deploy_defualt_bus" {
-  target_id = "${var.environment_name}-forward-terraform-application-success-to-deploy-defualt-bus"
+  target_id = "${var.environment_name}-forward-terraform-application-success"
   rule      = aws_cloudwatch_event_rule.terraform_application_succcesses.name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
