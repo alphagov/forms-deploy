@@ -33,7 +33,6 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
 
   target_id = "apply-terraform-${var.environment_name}-trigger-deploy-pipeline"
   rule      = aws_cloudwatch_event_rule.apply_terraform_on_previous_stage[0].name
-  role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = aws_lambda_function.pipeline_invoker.arn
 
   input_transformer {
