@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "codebuild" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      "arn:aws:ecr:eu-west-2:${data.aws_caller_identity.current.account_id}:repository/end-to-end-tests",
+      "arn:aws:ecr:eu-west-2:${local.deploy_account_id}:repository/end-to-end-tests",
     ]
     effect = "Allow"
   }
@@ -85,13 +85,15 @@ data "aws_iam_policy_document" "codebuild_assume_role" {
 }
 
 resource "aws_iam_role" "codebuild" {
-  name = "codebuild-${local.project_name}"
+  count = var.service_role_arn == null ? 1 : 0
+  name  = "codebuild-${local.project_name}"
 
   assume_role_policy = data.aws_iam_policy_document.codebuild_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild" {
+  count      = var.service_role_arn == null ? 1 : 0
   policy_arn = aws_iam_policy.codebuild.arn
-  role       = aws_iam_role.codebuild.id
+  role       = aws_iam_role.codebuild[0].id
 }
 

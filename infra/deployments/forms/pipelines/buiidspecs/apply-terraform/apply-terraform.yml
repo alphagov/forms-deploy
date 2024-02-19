@@ -1,0 +1,21 @@
+version: 0.2
+artifacts:
+  enable-symlinks: yes
+phases:
+  install:
+    commands:
+      # install terraform
+      - "# shellcheck disable=SC2155"
+      - set -e
+      - uname -a
+      - curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o "terraform-${TERRAFORM_VERSION}.zip"
+      - unzip "terraform-${TERRAFORM_VERSION}.zip"
+      - mv terraform /usr/local/bin/terraform
+    finally:
+      - terraform --version
+  build:
+    commands:
+      - aws sts get-caller-identity
+      - |
+         cd "${CODEBUILD_SRC_DIR}"
+         FORMS_TF_AUTO_APPROVE=true make "${ENVIRONMENT}" "forms/${ROOT_NAME}" plan

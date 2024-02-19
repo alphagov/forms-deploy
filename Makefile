@@ -1,4 +1,5 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CODEBUILD_CI ?= false
 
 ##
 # Environment targets
@@ -66,7 +67,14 @@ account:
 # Action targets
 ##
 aws_credentials_available:
-	$(if ${AWS_SESSION_TOKEN},, $(error 'AWS_SESSION_TOKEN' was not found among your environment variables. Make sure you've assumed a role in the AWS account you're targetting.))
+	@if [ "${CODEBUILD_CI}" = false ]; then \
+		if [ -z "${AWS_SESSION_TOKEN}" ]; then \
+		 	>&2 echo "'AWS_SESSION_TOKEN' was not found among your environment variables. Make sure you've assumed a role in the AWS account you're targetting."; \
+		 	false; \
+	 	fi; \
+ 	else \
+ 		>2& echo "CodeBuild detected. Assuming credentials are present in the environment."; \
+ 	fi;
 	@true
 	
 show_info:
@@ -90,6 +98,9 @@ plan: init
 apply: init
 	@./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 		
+.PHONY:
+validate: init
+	@./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 ##
 # Utility targets
 ##

@@ -15,9 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Grab the last 50 commits. Later on we need to a git diff, and it's
-          # very likely that two commits involved will be inside the last 50
-          fetch-depth: 50
+          # Grab the last 75 commits. Later on we need to a git diff, and it's
+          # very likely that two commits involved will be inside the last 75
+          fetch-depth: 75
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@22fdc77bf4148f810455b226c90fb81b5cbc00a7 # v1.171.0
         with:

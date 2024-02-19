@@ -27,3 +27,4 @@ dns_delegation_records = {
     "ns-950.awsdns-54.net",
   ]
 }
+codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"

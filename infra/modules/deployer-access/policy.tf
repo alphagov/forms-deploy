@@ -1,3 +1,9 @@
+##
+# When adding and editing policies for the deployer role,
+# you should focus on create, update, delete, or otherwise mutating
+# actions. The role has full read-only access.
+##
+
 data "aws_iam_policy_document" "forms-infra" {
   source_policy_documents = [
     data.aws_iam_policy_document.alerts.json,
@@ -18,6 +24,9 @@ data "aws_iam_policy_document" "forms-infra-1" {
 data "aws_iam_policy_document" "forms-infra-2" {
   source_policy_documents = [
     data.aws_iam_policy_document.ses.json,
+    data.aws_iam_policy_document.pipelines.json,
+    data.aws_iam_policy_document.ecr.json,
+    data.aws_iam_policy_document.eventbridge.json
   ]
 }
 
@@ -48,16 +57,17 @@ resource "aws_iam_role_policy_attachment" "forms-infra-2" {
   role       = aws_iam_role.deployer.id
 }
 
+resource "aws_iam_role_policy_attachment" "full_read_only" {
+  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  role       = aws_iam_role.deployer.id
+}
+
 data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageKMSKeyAlerts"
     actions = [
       "kms:CreateKey",
-      "kms:DescribeKey",
       "kms:EnableKeyRotation",
-      "kms:GetKeyPolicy",
-      "kms:GetKeyRotationStatus",
-      "kms:ListResourceTags",
       "kms:PutKeyPolicy",
       "kms:TagResource",
       "kms:UntagResource",
@@ -85,9 +95,6 @@ data "aws_iam_policy_document" "alerts" {
     actions = [
       "ssm:AddTagsToResource",
       "ssm:DeleteParameter",
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:ListTagsForResource",
       "ssm:PutParameter",
       "ssm:RemoveTagsFromResource",
     ]
@@ -101,7 +108,6 @@ data "aws_iam_policy_document" "alerts" {
     sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
-      "sns:GetSubscriptionAttributes",
       "sns:*Tag*",
       "sns:*Subscrib*",
       "sns:Unsubscribe",
@@ -139,7 +145,7 @@ data "aws_iam_policy_document" "auth0" {
     resources = [
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/ses/auth0/*",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/terraform/auth0-access/*",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-admin-${var.env_name}/auth0/*",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-admin-${var.env_name}/*",
     ]
     effect = "Allow"
   }
@@ -148,26 +154,9 @@ data "aws_iam_policy_document" "auth0" {
 # This relates to the `dns` root and is different from what is covered in by the permissions in the `environment` module
 data "aws_iam_policy_document" "dns" {
   statement {
-    sid = "GetCloudfrontDistribution"
-    actions = [
-      "cloudfront:GetDistribution",
-      "cloudfront:GetDistributionConfig",
-      "cloudfront:ListTagsForResource",
-    ]
-    # TODO: do we need to specify a distribution?
-    resources = [
-      "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:distribution/*",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
     sid = "ManageRoute53RecordSets"
     actions = [
       "route53:ChangeResourceRecordSets",
-      "route53:GetHostedZone",
-      "route53:ListResourceRecordSets",
-      "route53:ListTagsForResource",
     ]
     resources = [
       "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
@@ -179,9 +168,7 @@ data "aws_iam_policy_document" "monitoring" {
   statement {
     sid = "ManageCloudwatchDashboards"
     actions = [
-      "cloudwatch:GetDashboard",
       "cloudwatch:DeleteDashboards",
-      "cloudwatch:ListTagsForResource",
       "cloudwatch:PutDashboard",
       "cloudwatch:TagResource",
       "cloudwatch:UntagResource",
@@ -240,18 +227,14 @@ data "aws_iam_policy_document" "redis" {
 data "aws_iam_policy_document" "ses" {
   #checkov:skip=CKV_AWS_111:We use SES v1 which doesn't let us be more specific than *
   #checkov:skip=CKV_AWS_356:We use SES v1 which doesn't let us be more specific than *
+  #checkov:skip=CKV_AWS_109:We have a plan to add a permissions boundary to the deployer
   statement {
     sid    = "GetUser"
     effect = "Allow"
     actions = [
-      "iam:GetUser",
       "iam:AttachUserPolicy",
       "iam:DeleteUserPolicy",
       "iam:DetachUserPolicy",
-      "iam:GetUserPolicy",
-      "iam:ListAccessKeys",
-      "iam:ListAttachedUserPolicies",
-      "iam:ListUserTags",
       "iam:UntagUser",
     ]
     resources = [
@@ -266,9 +249,6 @@ data "aws_iam_policy_document" "ses" {
       "iam:CreatePolicy",
       "iam:CreatePolicyVersion",
       "iam:DeletePolicy",
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyTags",
       "iam:TagPolicy",
       "iam:UntagPolicy",
     ]
@@ -281,11 +261,11 @@ data "aws_iam_policy_document" "ses" {
     sid    = "ManageSESVerification"
     effect = "Allow"
     actions = [
-      "ses:GetIdentityVerificationAttributes",
       "ses:*Dkim*",
       "ses:*EmailAddress*",
       "ses:*Domain*",
       "ses:VerifyEmailIdentity",
+      "ses:*Identity*"
     ]
     resources = [
       "*"
@@ -309,11 +289,7 @@ data "aws_iam_policy_document" "ses" {
     effect = "Allow"
     actions = [
       "kms:CreateKey",
-      "kms:DescribeKey",
       "kms:EnableKeyRotation",
-      "kms:GetKeyPolicy",
-      "kms:GetKeyRotationStatus",
-      "kms:ListResourceTags",
       "kms:PutKeyPolicy",
       "kms:TagResource",
       "kms:UntagResource",
@@ -338,7 +314,6 @@ data "aws_iam_policy_document" "ses" {
     sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
-      "sns:GetSubscriptionAttributes",
       "sns:*Tag*",
       "sns:*Subscrib*",
       "sns:Unsubscribe",
@@ -375,6 +350,7 @@ data "aws_iam_policy_document" "code-build-modules" {
     effect = "Allow"
     actions = [
       "codebuild:*Project*",
+      "codebuild:*Build*",
     ]
     resources = [
       "arn:aws:codebuild:eu-west-2:${lookup(local.account_ids, var.env_name)}:project/*"
@@ -392,13 +368,13 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:PassRole",
       "iam:PutRolePermissionsBoundary",
       "iam:PutRolePolicy",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies"
+      "iam:TagRole"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
+
     ]
   }
   statement {
@@ -407,10 +383,110 @@ data "aws_iam_policy_document" "code-build-modules" {
     actions = [
       "iam:CreatePolicy",
       "iam:DeletePolicy",
-      "iam:GetPolicy"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*"
     ]
+  }
+}
+
+data "aws_iam_policy_document" "pipelines" {
+  statement {
+    actions = [
+      "codestar-connections:UseConnection",
+    ]
+    resources = [var.codestar_connection_arn]
+    effect    = "Allow"
+  }
+
+  statement {
+    actions   = ["codecommit:GitPull"]
+    resources = [var.codestar_connection_arn]
+    effect    = "Allow"
+  }
+
+  statement {
+    sid       = "ManageArtifactBuckets"
+    effect    = "Allow"
+    actions   = ["s3:*"]
+    resources = ["arn:aws:s3:::pipeline-*", "arn:aws:s3:::pipeline-*/*"]
+  }
+
+  statement {
+    sid     = "ManageLambdaBuckets"
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker",
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker/*"
+    ]
+  }
+
+  statement {
+    sid    = "ManageLambdaFunctions"
+    effect = "Allow"
+    actions = [
+      "lambda:*Function",
+      "lambda:*Permission",
+      "lambda:PutFunctionConcurrency",
+      "lambda:TagResource",
+      "lambda:UntagResource",
+      "lambda:UpdateFunctionCode",
+    ]
+
+    resources = [
+      "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*-pipeline-invoker"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "ecr" {
+  statement {
+    actions = [
+      "ecr:*"
+    ]
+    resources = [
+      "arn:aws:ecr:eu-west-2:${local.deploy_account_id}:*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    # CodePipeline appears to peform GetAuthorizationToken
+    # with resource "*", and a statement with an ARN
+    # like "arn:aws:ecr::ACCT_ID:*" is insufficient to grant
+    # it permission
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "eventbridge" {
+  #checkov:skip=CKV_AWS_356: resource "*" is restricted to events actions
+  #checkov:skip=CKV_AWS_111: there are many event resources the deployer
+  #                          role will write to, and adding conditions for
+  #                          each will add a lot to an already constrained
+  #                          character count
+  statement {
+    sid    = "AllowEventActions"
+    effect = "Allow"
+    actions = [
+      "events:*"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid       = "AllowPassRoleForEventBridge"
+    effect    = "Allow"
+    actions   = ["iam:PassRole"]
+    resources = ["arn:aws:iam::*:role/*"]
+
+    condition {
+      variable = "iam:PassedToService"
+      test     = "StringLike"
+      values   = ["events.amazonaws.com"]
+    }
   }
 }

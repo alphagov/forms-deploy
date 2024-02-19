@@ -13,6 +13,11 @@ variable "hosted_zone_id" {
   nullable    = false
 }
 
+variable "codestar_connection_arn" {
+  type        = string
+  description = "ARN of the CodeStar connection in the account"
+}
+
 locals {
   deploy_account_id = "711966560482"
 
@@ -27,14 +32,12 @@ locals {
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}-main-branch",
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}-main-branch",
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}-main-branch",
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-product-page-deploy-${var.env_name}-main-branch"
   ]
 
   deploy_account_development_branches_roles = [
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-api-deploy-${var.env_name}-dev-branches",
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-admin-deploy-${var.env_name}-dev-branches",
     "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-runner-deploy-${var.env_name}-dev-branches",
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-forms-product-page-deploy-${var.env_name}-dev-branches"
   ]
 
   deploy_account_terraform_apply = [
@@ -63,6 +66,18 @@ data "aws_iam_policy_document" "assume_role" {
       variable = "sts:ExternalId"
 
       values = [var.env_name]
+    }
+  }
+
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "codepipeline.amazonaws.com",
+        "codebuild.amazonaws.com"
+      ]
     }
   }
 }

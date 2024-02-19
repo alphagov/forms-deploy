@@ -22,6 +22,21 @@ variable "environment_name" {
 }
 
 ##
+# Infra
+##
+variable "codestar_connection_arn" {
+  description = "It isn't possible to automate the creation of a CodeStar connection, so we must create it by hand once in each account and hardcode its ARN."
+  type        = string
+  nullable    = false
+}
+
+variable "container_repository" {
+  description = "The container repository from which images should be pulled"
+  type        = string
+  nullable    = false
+}
+
+##
 # AWS provider
 ##
 variable "allowed_account_ids" {

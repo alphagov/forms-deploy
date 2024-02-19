@@ -2,6 +2,15 @@ data "aws_ecs_cluster" "forms" {
   cluster_name = "forms-${var.env_name}"
 }
 
+data "aws_ecs_task_definition" "active_task" {
+  task_definition = local.task_definition_family
+}
+
+data "aws_ecs_container_definition" "active_container" {
+  task_definition = data.aws_ecs_task_definition.active_task.id
+  container_name  = var.application
+}
+
 data "aws_subnets" "private" {
   filter {
     name = "tag:Name"
@@ -14,11 +23,15 @@ data "aws_subnets" "private" {
 }
 
 locals {
+  task_definition_family = "${var.env_name}_${var.application}"
+
+  image = coalesce(var.image, data.aws_ecs_container_definition.active_container.image)
+
   task_container_definition = {
     name        = var.application,
     environment = var.environment_variables,
     secrets     = var.secrets,
-    image       = var.image,
+    image       = local.image
     essential   = true,
     portMappings = [
       {
@@ -45,7 +58,7 @@ locals {
   }
 }
 resource "aws_ecs_task_definition" "task" {
-  family                = "${var.env_name}_${var.application}"
+  family                = local.task_definition_family
   container_definitions = jsonencode([local.task_container_definition])
 
   runtime_platform {

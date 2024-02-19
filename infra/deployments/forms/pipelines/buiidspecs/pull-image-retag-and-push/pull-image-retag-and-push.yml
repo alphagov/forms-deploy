@@ -1,0 +1,34 @@
+version: 0.2
+env:
+  exported-variables:
+    - PROMOTED_IMAGE_TAG
+phases:
+  pre_build:
+    commands:
+      - echo "Logging to Amazon ECR repository ${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
+      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
+
+      - |
+         CURRENT_IMAGE_URI="$(cat image-defs.json | jq -r '.[0].imageUri')"
+         CURRENT_IMAGE_TAG="$(cat image-defs.json | jq -r '.[0].imageUri' | cut -d':' -f2)"
+         echo "Current image uri is ${CURRENT_IMAGE_URI}"
+         echo "Current image tag is ${CURRENT_IMAGE_TAG}"
+         echo "Using sed expression ${RETAG_SED_EXPRESSION}"
+
+      - |
+         set -x
+         export EPOCH_SECONDS="$(date '+%s')"
+         PROMOTED_IMAGE_TAG="$(echo "${CURRENT_IMAGE_TAG}" | sed "${RETAG_SED_EXPRESSION}" | envsubst '${EPOCH_SECONDS}')"
+         PROMOTED_IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:${PROMOTED_IMAGE_TAG}"
+         echo "New image tag will be ${PROMOTED_IMAGE_TAG}"
+         echo "New image uri will be ${PROMOTED_IMAGE_URI}"
+  build:
+    commands:
+      - |
+         if [ "${RETAG}" = false ]; then
+            echo "Retagging has been disabled"
+         else
+            docker pull "${CURRENT_IMAGE_URI}"
+            docker tag "${CURRENT_IMAGE_URI}" "${PROMOTED_IMAGE_URI}"
+            docker push "${PROMOTED_IMAGE_URI}"
+         fi

@@ -2,6 +2,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   deploy_account_id = "711966560482"
+  image             = var.image_tag == null ? null : "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:${var.image_tag}"
 }
 
 module "ecs_service" {
@@ -9,7 +10,7 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-product-page"
   sub_domain             = "www"
-  image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:${var.image_tag}"
+  image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 3000
