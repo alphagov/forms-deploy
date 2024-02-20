@@ -39,8 +39,13 @@ data "aws_iam_policy_document" "log_group_policy" {
 
     resources = [
       module.log_ecr_push_events.log_group_arn,
+      "${module.log_ecr_push_events.log_group_arn}:*",
+
       module.log_terraform_application_success_events.log_group_arn,
+      "${module.log_terraform_application_success_events.log_group_arn}:*",
+
       module.log_codepipeline_events.log_group_arn,
+      "${module.log_codepipeline_events.log_group_arn}:*"
     ]
 
     principals {
