@@ -47,7 +47,7 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
         {
           "actionName": "get-forms-deploy",
           "revisionType": "COMMIT_ID",
-          "revisionValue": <source-commit>
+          "revisionValue": "<source-commit>"
         }
       ]
     }
