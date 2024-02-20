@@ -38,10 +38,10 @@ resource "aws_lambda_function" "pipeline_invoker" {
 }
 
 resource "aws_cloudwatch_log_group" "pipeline_invoker_log_group" {
-  #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
+  #checkov:skip=CKV_AWS_338:We're happy with 30 days retention for now
   #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
   name              = "/aws/lambda/${aws_lambda_function.pipeline_invoker.function_name}"
-  retention_in_days = 14
+  retention_in_days = 30
 }
 
 data "archive_file" "invoker" {

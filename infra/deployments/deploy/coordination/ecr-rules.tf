@@ -27,10 +27,10 @@ resource "aws_cloudwatch_event_target" "other_account_event_bus" {
 }
 
 resource "aws_cloudwatch_log_group" "ecr_push_events" {
-  #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
+  #checkov:skip=CKV_AWS_338:We're happy with 30 days retention for now
   #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
   name              = "/aws/events/ecr-events"
-  retention_in_days = 14
+  retention_in_days = 30
 }
 
 resource "aws_cloudwatch_log_resource_policy" "allow_delivery_from_eventbridge" {
