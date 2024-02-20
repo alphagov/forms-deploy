@@ -93,9 +93,9 @@ resource "aws_iam_role_policy" "allow_pipeline_invocation" {
 }
 
 resource "aws_lambda_permission" "allow_event_bridge" {
+  #checkov:skip=CKV_AWS_364:we WANT to allow every EventBridge target to invoke this Lambda
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.pipeline_invoker.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.product_pages_on_image_tag.arn
 }
