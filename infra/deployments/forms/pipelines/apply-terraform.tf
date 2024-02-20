@@ -153,7 +153,7 @@ resource "aws_codepipeline" "apply_terroform" {
           },
           {
             name  = "TARGET_EVENT_BUS"
-            value = data.aws_cloudwatch_event_bus.default.arn
+            value = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
             type  = "PLAINTEXT"
           }
         ])
