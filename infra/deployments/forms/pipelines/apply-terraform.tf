@@ -47,7 +47,7 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
         {
           "actionName": "get-forms-deploy",
           "revisionType": "COMMIT_ID",
-          "revisionValue": <source-commit>
+          "revisionValue": "<source-commit>"
         }
       ]
     }
@@ -153,7 +153,7 @@ resource "aws_codepipeline" "apply_terroform" {
           },
           {
             name  = "TARGET_EVENT_BUS"
-            value = data.aws_cloudwatch_event_bus.default.arn
+            value = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
             type  = "PLAINTEXT"
           }
         ])

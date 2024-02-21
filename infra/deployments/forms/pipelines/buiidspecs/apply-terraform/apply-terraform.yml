@@ -18,4 +18,4 @@ phases:
       - aws sts get-caller-identity
       - |
          cd "${CODEBUILD_SRC_DIR}"
-         FORMS_TF_AUTO_APPROVE=true make "${ENVIRONMENT}" "forms/${ROOT_NAME}" plan
+         FORMS_TF_AUTO_APPROVE=true make "${ENVIRONMENT}" "forms/${ROOT_NAME}" apply

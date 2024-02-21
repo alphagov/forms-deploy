@@ -21,4 +21,5 @@ module "forms_admin" {
   auth_provider                         = var.forms_admin_settings.auth_provider
   previous_auth_provider                = var.forms_admin_settings.previous_auth_provider
   cloudwatch_metrics_enabled            = var.forms_admin_settings.cloudwatch_metrics_enabled
+  payment_links                         = var.forms_admin_settings.payment_links
 }

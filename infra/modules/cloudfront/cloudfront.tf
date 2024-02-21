@@ -149,11 +149,11 @@ resource "aws_wafv2_web_acl" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "waf" {
-  #checkov:skip=CKV_AWS_338:We're happy with 14 days retention for now
+  #checkov:skip=CKV_AWS_338:We're happy with 30 days retention for now
   #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
   provider          = aws.us-east-1
   name              = "aws-waf-logs-${var.env_name}"
-  retention_in_days = 14
+  retention_in_days = 30
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "waf_csls_log_subscription" {

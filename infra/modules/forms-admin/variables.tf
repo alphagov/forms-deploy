@@ -81,3 +81,9 @@ variable "cloudwatch_metrics_enabled" {
   type        = bool
   default     = false
 }
+
+variable "payment_links" {
+  description = "Enables payment link task"
+  type        = bool
+  default     = false
+}

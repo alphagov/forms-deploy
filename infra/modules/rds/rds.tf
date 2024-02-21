@@ -78,7 +78,7 @@ resource "aws_rds_cluster" "forms" {
     #
     # When we want to perform major version upgrdes, we can remove this lifecycle
     # configuration, and replace it once the upgrade is complete.
-    ignore_changes = [engine_version]
+    ignore_changes = [engine_version, db_cluster_parameter_group_name]
   }
   allow_major_version_upgrade = true
 

@@ -37,6 +37,11 @@ variable "app_logo_path" {
   default = "/auth-widget-logo.svg"
 }
 
+variable "favicon_url_path" {
+  type    = string
+  default = "/auth-favicon.ico"
+}
+
 variable "idle_session_lifetime" {
   type        = number
   default     = 24
