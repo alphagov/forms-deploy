@@ -144,3 +144,12 @@ variable "environmental_settings" {
     rds_maintenance_window                   = string
   })
 }
+
+variable "scheduled_smoke_tests_settings" {
+  description = "Configuration for the scheduled smoke tests"
+  type = object({
+    enable_scheduled_smoke_tests  = bool
+    smoke_test_form_url           = string
+    smoke_tests_frequency_minutes = number
+  })
+}

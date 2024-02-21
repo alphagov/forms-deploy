@@ -54,3 +54,8 @@ forms_runner_settings = {
   enable_maintenance_mode    = false
   cloudwatch_metrics_enabled = false
 }
+scheduled_smoke_tests_settings = {
+  enable_scheduled_smoke_tests  = true
+  smoke_test_form_url           = "https://submit.dev.forms.service.gov.uk/preview-draft/10985/smoke-test-form"
+  smoke_tests_frequency_minutes = 10
+}
