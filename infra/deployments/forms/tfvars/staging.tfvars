@@ -62,3 +62,9 @@ forms_runner_settings = {
   cloudwatch_metrics_enabled = true
   reference_numbers_enabled  = true
 }
+scheduled_smoke_tests_settings = {
+  enable_scheduled_smoke_tests = true
+  form_url                     = "https://submit.staging.forms.service.gov.uk/form/12148/scheduled-smoke-test"
+  frequency_minutes            = 10
+  enable_alerting              = false
+}
