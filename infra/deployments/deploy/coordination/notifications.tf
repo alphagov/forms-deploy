@@ -2,7 +2,8 @@ locals {
   # We have configured AWS ChatBot for sending messages to Slack.
   # AWS ChatBot does not have an API we can use in Terraform, so we
   # configured it by hand in the one place and hardcoded the SNS topic here.
-  chatbot_sns_topic = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-deployments-c383f287ab987f0b12d32e4533a145b1c918167d"
+  chatbot_deployments_channel_sns_topic = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-deployments-c383f287ab987f0b12d32e4533a145b1c918167d"
+  chatbot_alerts_channel_sns_topic      = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
 
   chatbot_message_input_paths = {
     pipeline = "$.detail.pipeline"
@@ -26,7 +27,7 @@ resource "aws_cloudwatch_event_rule" "pipeline_completion" {
 resource "aws_cloudwatch_event_target" "send_pipeline_completion_to_slack" {
   target_id = "send-to-slack"
   rule      = aws_cloudwatch_event_rule.pipeline_completion.name
-  arn       = local.chatbot_sns_topic
+  arn       = local.chatbot_deployments_channel_sns_topic
 
   input_transformer {
     input_paths    = local.chatbot_message_input_paths
@@ -62,7 +63,7 @@ resource "aws_cloudwatch_event_rule" "pipeline_failure" {
 resource "aws_cloudwatch_event_target" "send_pipeline_failure_to_slack" {
   target_id = "send-to-slack"
   rule      = aws_cloudwatch_event_rule.pipeline_failure.name
-  arn       = local.chatbot_sns_topic
+  arn       = local.chatbot_alerts_channel_sns_topic
 
   input_transformer {
     input_paths    = local.chatbot_message_input_paths
