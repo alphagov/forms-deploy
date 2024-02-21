@@ -48,6 +48,7 @@ forms_admin_settings = {
   previous_auth_provider                = "gds_sso"
   cloudwatch_metrics_enabled            = true
   govuk_app_domain                      = "publishing.service.gov.uk"
+  payment_links                         = false
 }
 forms_api_settings = {
   cpu          = 512
