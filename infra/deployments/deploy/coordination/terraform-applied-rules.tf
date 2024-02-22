@@ -26,6 +26,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_development_to_staging
   rule      = aws_cloudwatch_event_rule.terraform_applied["development"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["staging"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_development_to_production" {
@@ -33,6 +37,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_development_to_product
   rule      = aws_cloudwatch_event_rule.terraform_applied["development"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["production"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_development_to_userresearch" {
@@ -40,6 +48,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_development_to_userres
   rule      = aws_cloudwatch_event_rule.terraform_applied["development"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["userresearch"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_staging_to_development" {
@@ -47,6 +59,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_staging_to_development
   rule      = aws_cloudwatch_event_rule.terraform_applied["staging"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["development"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_staging_to_production" {
@@ -54,6 +70,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_staging_to_production"
   rule      = aws_cloudwatch_event_rule.terraform_applied["staging"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["production"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_staging_to_userresearch" {
@@ -61,6 +81,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_staging_to_userresearc
   rule      = aws_cloudwatch_event_rule.terraform_applied["staging"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["userresearch"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_production_to_development" {
@@ -68,6 +92,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_production_to_developm
   rule      = aws_cloudwatch_event_rule.terraform_applied["production"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["development"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_production_to_staging" {
@@ -75,6 +103,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_production_to_staging"
   rule      = aws_cloudwatch_event_rule.terraform_applied["production"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["staging"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_production_to_userresearch" {
@@ -82,6 +114,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_production_to_userrese
   rule      = aws_cloudwatch_event_rule.terraform_applied["production"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["userresearch"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_userresearch_to_development" {
@@ -89,6 +125,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_userresearch_to_develo
   rule      = aws_cloudwatch_event_rule.terraform_applied["userresearch"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["development"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_userresearch_to_staging" {
@@ -96,6 +136,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_userresearch_to_stagin
   rule      = aws_cloudwatch_event_rule.terraform_applied["userresearch"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["staging"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_target" "terraform_applied_userresearch_to_production" {
@@ -103,6 +147,10 @@ resource "aws_cloudwatch_event_target" "terraform_applied_userresearch_to_produc
   rule      = aws_cloudwatch_event_rule.terraform_applied["userresearch"].name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${local.other_accounts["production"]}:event-bus/default"
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "log_terraform_applied_events" {
@@ -125,6 +173,10 @@ resource "aws_cloudwatch_event_target" "log_terraform_applied_events_to_cloudwat
   target_id = "log-to-cloudwatch"
   rule      = aws_cloudwatch_event_rule.log_terraform_applied_events.name
   arn       = aws_cloudwatch_log_group.terraform_applied_events.arn
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 data "aws_iam_policy_document" "log_group_policy" {

@@ -53,6 +53,10 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
     }
     EOF
   }
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_codepipeline" "apply_terroform" {
