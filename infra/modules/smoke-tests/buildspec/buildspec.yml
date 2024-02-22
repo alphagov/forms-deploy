@@ -6,7 +6,6 @@ phases:
       - ruby -v
       - cd /app
       - bundle -v
-      - bundle install
   build:
     commands:
       - bundle exec rspec spec/features/smoke_tests_spec.rb

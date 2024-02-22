@@ -41,5 +41,10 @@ resource "aws_codebuild_project" "smoke_tests" {
       name  = "SMOKE_TEST_FORM_URL"
       value = var.smoke_test_form_url
     }
+
+    environment_variable {
+      name  = "LOG_LEVEL"
+      value = "INFO"
+    }
   }
 }
