@@ -151,6 +151,9 @@ fi
 NEW_NODEJS_VERSION="$(get_new_nodejs_version)"
 
 echo "Updating to ${DOCKER_BASE_IMAGE}"
+echo "ALPINE_VERSION=$NEW_ALPINE_VERSION"
+echo "RUBY_VERSION=$NEW_RUBY_VERSION"
+echo "NODEJS_VERSION=$NEW_NODEJS_VERSION"
 
 for app in "${APPS[@]}"; do
   echo -e "\n\n****** BEGINNING UPDATE OF ${app} ********"
