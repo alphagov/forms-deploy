@@ -13,7 +13,6 @@ environmental_settings = {
   allow_authentication_from_email_domains  = [".gov.uk"]
   enable_alert_actions                     = false
   forms_product_page_support_url           = "https://www.dev.forms.service.gov.uk/support"
-  rds_maintenance_window                   = "mon:02:15-mon:02:45"
 }
 hosted_zone_id             = "Z03210831GH1QDMJ7N5C8"
 root_domain                = "dev.forms.service.gov.uk"

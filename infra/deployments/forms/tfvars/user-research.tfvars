@@ -13,7 +13,6 @@ environmental_settings = {
   allow_authentication_from_email_domains  = [] # user-reserch environment uses basic auth
   enable_alert_actions                     = false
   forms_product_page_support_url           = "https://www.research.forms.service.gov.uk/support"
-  rds_maintenance_window                   = "mon:02:15-mon:02:45"
 }
 hosted_zone_id             = "Z011139325A6VARFKUQ54"
 root_domain                = "research.forms.service.gov.uk"
