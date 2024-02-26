@@ -16,6 +16,7 @@ environmental_settings = {
   ]
   enable_alert_actions           = true
   forms_product_page_support_url = "https://www.staging.forms.service.gov.uk/support"
+  rds_maintenance_window         = "wed:04:00-wed:04:30"
 }
 hosted_zone_id             = "Z05508474P9CXBK9UAH3"
 root_domain                = "staging.forms.service.gov.uk"
