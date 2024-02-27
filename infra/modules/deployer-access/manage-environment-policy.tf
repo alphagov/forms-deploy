@@ -106,6 +106,19 @@ data "aws_iam_policy_document" "cloudfront" {
   }
 
   statement {
+    sid    = "ManageWAFRuleSet"
+    effect = "Allow"
+    actions = [
+      "wafv2:CreateWebACL",
+      "wafv2:PutManagedRuleSetVersions",
+      "wafv2:UpdateWebACL",
+    ]
+    resources = [
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/managedruleset/*"
+    ]
+  }
+
+  statement {
     sid    = "ManageCloudwatchLogsWAF"
     effect = "Allow"
     actions = [
