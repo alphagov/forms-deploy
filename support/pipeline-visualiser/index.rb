@@ -5,37 +5,59 @@ require "json"
 
 set :public_folder, "public"
 
-codepipeline = Aws::CodePipeline::Client.new(region: "eu-west-2")
+roles_to_assume = [
+    # UR
+    "arn:aws:iam::619109835131:role/andy-hunt-cross-account-visibility-test",
+
+    # Dev
+    "arn:aws:iam::498160065950:role/andyhunt-cross-acount-viewing-test"
+]
+
+aws_clients = []
+
+roles_to_assume.each do |role_arn|
+    aws_clients << Aws::CodePipeline::Client.new(
+        credentials: Aws::AssumeRoleCredentials.new(
+            role_arn: role_arn,
+            role_session_name: "govuk_forms_codepipeline_visualiser"
+        ),
+        region: "eu-west-2"
+    )
+end
 
 get "/" do
-    all_pipelines = codepipeline.list_pipelines()
-    pipeline_names = all_pipelines.pipelines.map {|p| p.name}
-
     pipelines = []
-    pipeline_names.each do |pipeline|
-        state = codepipeline.get_pipeline_state({
-            name: pipeline
-        })
 
-        executions = codepipeline.list_pipeline_executions({
-            pipeline_name: pipeline
-        })
+    aws_clients.each do |client|
 
-        latest_execution_summary = executions.pipeline_execution_summaries
-            .sort_by{ |summary| summary.start_time }
-            .reverse
-            .first
+        all_pipelines = client.list_pipelines()
+        pipeline_names = all_pipelines.pipelines.map {|p| p.name}
 
-        latest_id = latest_execution_summary.pipeline_execution_id
+        pipeline_names.each do |pipeline|
+            state = client.get_pipeline_state({
+                name: pipeline
+            })
 
-        # To get variables we have to request the pipeline
-        # execution with GetPipelineExecution
-        latest = codepipeline.get_pipeline_execution({
-            pipeline_name: pipeline,
-            pipeline_execution_id: latest_id
-        })
+            executions = client.list_pipeline_executions({
+                pipeline_name: pipeline
+            })
 
-        pipelines << generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time)
+            latest_execution_summary = executions.pipeline_execution_summaries
+                .sort_by{ |summary| summary.start_time }
+                .reverse
+                .first
+
+            latest_id = latest_execution_summary.pipeline_execution_id
+
+            # To get variables we have to request the pipeline
+            # execution with GetPipelineExecution
+            latest = client.get_pipeline_execution({
+                pipeline_name: pipeline,
+                pipeline_execution_id: latest_id
+            })
+
+            pipelines << generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time)
+        end
     end
 
     erb :state, :locals => {:pipelines => pipelines}
