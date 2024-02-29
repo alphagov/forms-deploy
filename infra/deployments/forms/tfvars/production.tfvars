@@ -70,4 +70,5 @@ forms_runner_settings = {
   max_capacity               = 36
   enable_maintenance_mode    = false
   cloudwatch_metrics_enabled = true
+  reference_numbers_enabled  = false
 }

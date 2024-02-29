@@ -57,3 +57,9 @@ variable "cloudwatch_metrics_enabled" {
   type        = bool
   default     = false
 }
+
+variable "reference_numbers_enabled" {
+  description = "Enables reference numbers on the confirmation screen and emails"
+  type        = bool
+  default     = false
+}
