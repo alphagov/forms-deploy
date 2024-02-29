@@ -143,9 +143,17 @@ commit_changes () {
 NEW_DOCKER_IMAGE_DIGEST="$(get_new_docker_image_digest)"
 DOCKER_BASE_IMAGE="${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}@${NEW_DOCKER_IMAGE_DIGEST}"
 
+if [ -z "$NEW_DOCKER_IMAGE_DIGEST" ]; then
+  echo 2>&1 "No Docker image found for ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}, aborting"
+  exit 1
+fi
+
 NEW_NODEJS_VERSION="$(get_new_nodejs_version)"
 
 echo "Updating to ${DOCKER_BASE_IMAGE}"
+echo "ALPINE_VERSION=$NEW_ALPINE_VERSION"
+echo "RUBY_VERSION=$NEW_RUBY_VERSION"
+echo "NODEJS_VERSION=$NEW_NODEJS_VERSION"
 
 for app in "${APPS[@]}"; do
   echo -e "\n\n****** BEGINNING UPDATE OF ${app} ********"
