@@ -15,4 +15,5 @@ module "forms_runner" {
   admin_base_url             = "https://admin.${var.root_domain}"
   enable_maintenance_mode    = var.forms_runner_settings.enable_maintenance_mode
   cloudwatch_metrics_enabled = var.forms_runner_settings.cloudwatch_metrics_enabled
+  reference_numbers_enabled  = var.forms_runner_settings.reference_numbers_enabled
 }
