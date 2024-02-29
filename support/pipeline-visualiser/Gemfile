@@ -9,3 +9,5 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gem "sinatra", "~> 4.0"
 
 gem "rackup", "~> 2.1"
+
+gem "aws-sdk-codepipeline", "~> 1.69"

@@ -1,0 +1,17 @@
+---
+roles:
+  - arn:aws:iam::619109835131:role/andy-hunt-cross-account-visibility-test
+  - arn:aws:iam::498160065950:role/andyhunt-cross-acount-viewing-test
+
+groups:
+  "Apply Terraform":
+    - "apply-forms-terraform-staging"
+    - "apply-forms-terraform-production"
+    - "apply-forms-terraform-user-research"
+    - "apply-forms-terraform-dev"
+
+  "Product pages":
+    - "deploy-forms-product-page-container-staging"
+    - "deploy-forms-product-page-container-production"
+    - "deploy-forms-product-page-container-user-research"
+    - "deploy-forms-product-page-container-dev"

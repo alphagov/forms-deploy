@@ -2,20 +2,19 @@ require "sinatra"
 require "aws-sdk-codepipeline"
 require "ostruct"
 require "json"
+require "YAML"
 
 set :public_folder, "public"
+helpers do
+    def slugify(str)
+        return str.downcase
+            .gsub(/[ _:\/]/, "-")
+    end
+end
 
-roles_to_assume = [
-    # UR
-    "arn:aws:iam::619109835131:role/andy-hunt-cross-account-visibility-test",
-
-    # Dev
-    "arn:aws:iam::498160065950:role/andyhunt-cross-acount-viewing-test"
-]
-
+config = YAML::safe_load_file("./config.yml")
 aws_clients = []
-
-roles_to_assume.each do |role_arn|
+config["roles"].each do |role_arn|
     aws_clients << Aws::CodePipeline::Client.new(
         credentials: Aws::AssumeRoleCredentials.new(
             role_arn: role_arn,
@@ -25,9 +24,9 @@ roles_to_assume.each do |role_arn|
     )
 end
 
+
 get "/" do
     pipelines = []
-
     aws_clients.each do |client|
 
         all_pipelines = client.list_pipelines()
@@ -60,7 +59,27 @@ get "/" do
         end
     end
 
-    erb :state, :locals => {:pipelines => pipelines}
+    pipelines_map = pipelines.to_h {|p| [p.name, p]}
+
+    groups = []
+    config["groups"].each do |k, _|
+        group_elements = config["groups"][k]
+        group = OpenStruct.new
+        group.name = k
+
+        group_pipelines = []
+        group_elements.map do |elem|
+            if pipelines_map.has_key?(elem)
+                p = pipelines_map.fetch(elem)
+                group_pipelines << p
+            end
+        end
+
+        group.pipelines = group_pipelines
+        groups << group
+    end
+
+    erb :state, :locals => {:groups => groups}
 end
 
 def generate_pipeline_viewdata(state, execution, last_start_time)
