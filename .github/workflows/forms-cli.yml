@@ -3,11 +3,11 @@ on:
   push:
     branches: [forms_cli]
     paths:
-      - 'support/forms-cli/**'
+      - "support/forms-cli/**"
   pull_request:
     branches: [main]
     paths:
-      - 'support/forms-cli/**'
+      - "support/forms-cli/**"
   merge_group:
     types: [checks_requested]
 jobs:
@@ -19,10 +19,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Determine Ruby version
+        id: determine-ruby-version
+        run: |
+          echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@d4526a55538b775af234ba4af27118ed6f8f6677 # v1.172.0
         with:
           bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
           working-directory: support/forms-cli
       - name: Run linter
         run: bundle exec rubocop
