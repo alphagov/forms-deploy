@@ -18,10 +18,15 @@ jobs:
           # Grab the last 75 commits. Later on we need to a git diff, and it's
           # very likely that two commits involved will be inside the last 75
           fetch-depth: 75
+      - name: Determine Ruby version
+        id: determine-ruby-version
+        run: |
+          echo "RUBY_VERSION=$(cat .ruby-version)" >> "$GITHUB_OUTPUT"
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@d4526a55538b775af234ba4af27118ed6f8f6677 # v1.172.0
         with:
           bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
           working-directory: infra/
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -161,4 +166,3 @@ jobs:
               terraform -chdir="${deployment}" validate
             fi
           done <  <(find "infra/deployments/" -type d -mindepth 2 -maxdepth 2 -print0)
-         
