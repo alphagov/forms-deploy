@@ -1,7 +1,10 @@
 ---
 roles:
-  - arn:aws:iam::619109835131:role/andy-hunt-cross-account-visibility-test
-  - arn:aws:iam::498160065950:role/andyhunt-cross-acount-viewing-test
+  - arn:aws:iam::711966560482:role/codepipeline-readonly
+  - arn:aws:iam::498160065950:role/codepipeline-readonly
+  - arn:aws:iam::443944947292:role/codepipeline-readonly
+  - arn:aws:iam::972536609845:role/codepipeline-readonly
+  - arn:aws:iam::619109835131:role/codepipeline-readonly
 
 groups:
   "Apply Terraform":
