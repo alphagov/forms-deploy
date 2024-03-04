@@ -3,6 +3,12 @@ locals {
     "pipelines.tools.forms.service.gov.uk"
   ]
 }
+
+data "aws_route53_zone" "tools_domain_zone" {
+  name         = "tools.forms.service.gov.uk"
+  private_zone = false
+}
+
 resource "aws_lb" "alb" {
   #checkov:skip=CKV_AWS_91:There's a ticket in the backlog to enable access logs
   name                       = "tools-forms-gov-uk"
