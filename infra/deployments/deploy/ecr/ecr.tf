@@ -58,6 +58,16 @@ resource "aws_ecr_repository" "end_to_end_tests" {
   }
 }
 
+resource "aws_ecr_repository" "pipeline_visualiser" {
+  #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV_AWS_51:Permit mutable tags on pipeline images
+  name                 = "pipeline-visualiser"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
   repository = aws_ecr_repository.forms_api.name
   policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_api_document.json
