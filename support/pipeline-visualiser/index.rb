@@ -2,7 +2,7 @@ require "sinatra"
 require "aws-sdk-codepipeline"
 require "ostruct"
 require "json"
-require "YAML"
+require "yaml"
 
 set :public_folder, "public"
 helpers do
@@ -18,7 +18,8 @@ config["roles"].each do |role_arn|
     aws_clients << Aws::CodePipeline::Client.new(
         credentials: Aws::AssumeRoleCredentials.new(
             role_arn: role_arn,
-            role_session_name: "govuk_forms_codepipeline_visualiser"
+            role_session_name: "govuk_forms_codepipeline_visualiser",
+            region: "eu-west-2"
         ),
         region: "eu-west-2"
     )
