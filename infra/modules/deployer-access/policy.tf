@@ -100,6 +100,7 @@ data "aws_iam_policy_document" "alerts" {
       "ssm:RemoveTagsFromResource",
     ]
     resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/email-zendesk",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pager-duty-integration-url",
     ]
     effect = "Allow"
@@ -116,6 +117,7 @@ data "aws_iam_policy_document" "alerts" {
     ]
     resources = [
       "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:pager_duty_integration_${var.env_name}",
+      "arn:aws:sns:us-east-1:${lookup(local.account_ids, var.env_name)}:cloudwatch-alarms",
     ]
     effect = "Allow"
   }
