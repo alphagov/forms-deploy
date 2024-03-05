@@ -441,6 +441,22 @@ data "aws_iam_policy_document" "pipelines" {
       "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*-pipeline-invoker"
     ]
   }
+
+  statement {
+    sid    = "ManagePipelines"
+    effect = "Allow"
+    actions = [
+      "codepipeline:CreatePipeline",
+      "codepipeline:DeletePipeline",
+      "codepipeline:UpdatePipeline",
+      "codepipeline:TagResource",
+      "codepipeline:UntagResource",
+    ]
+
+    resources = [
+      "arn:aws:codepipeline:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "ecr" {
