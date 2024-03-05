@@ -397,6 +397,7 @@ data "aws_iam_policy_document" "pipelines" {
   statement {
     actions = [
       "codestar-connections:UseConnection",
+      "codestar-connections:PassConnection"
     ]
     resources = [var.codestar_connection_arn]
     effect    = "Allow"
