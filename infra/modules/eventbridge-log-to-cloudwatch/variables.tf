@@ -12,3 +12,8 @@ variable "event_pattern" {
   type        = string
   description = "A JSON encoded event pattern for matching the events to be logged"
 }
+
+variable "dead_letter_queue_arn" {
+  type        = string
+  description = "The ARN of the SNS topic that dead letters should be delivered to"
+}

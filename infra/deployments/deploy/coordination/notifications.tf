@@ -46,6 +46,10 @@ resource "aws_cloudwatch_event_target" "send_pipeline_completion_to_slack" {
 }
 EOF
   }
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "pipeline_failure" {
@@ -81,5 +85,9 @@ resource "aws_cloudwatch_event_target" "send_pipeline_failure_to_slack" {
             }
         }
         EOF
+  }
+
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
   }
 }

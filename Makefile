@@ -107,3 +107,7 @@ validate: init
 .PHONY: generate-completion-word-list
 generate-completion-word-list:
 	@$(MAKE) -qprRn -f "Makefile" : 2>/dev/null | grep -E "^([[:alnum:][:punct:]]+)\:.*$$" | cut -d ':' -f 1 | sed '/^ *$$/d'
+
+.PHONY: fmt
+fmt:
+	terraform fmt -recursive infra/

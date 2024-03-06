@@ -39,6 +39,10 @@ resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
 EOF
   }
 
+  dead_letter_config {
+    arn = aws_sqs_queue.event_bridge_dlq.arn
+  }
+
   depends_on = [
     aws_codepipeline.deploy_product_pages_container
   ]
