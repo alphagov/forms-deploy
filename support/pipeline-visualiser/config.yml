@@ -14,7 +14,23 @@ groups:
     - "apply-forms-terraform-dev"
 
   "Product pages":
+    - "forms-product-page-image-builder"
     - "deploy-forms-product-page-container-staging"
     - "deploy-forms-product-page-container-production"
     - "deploy-forms-product-page-container-user-research"
     - "deploy-forms-product-page-container-dev"
+
+  "API":
+    - "forms-api-main-branch"
+
+  "Admin":
+    - "forms-admin-main-branch"
+
+  "Runner":
+    - "forms-runner-main-branch"
+
+  "Pipeline visualiser":
+    - "deploy-pipeline-visualiser"
+
+  "End to end tests":
+    - "e2e-image"
