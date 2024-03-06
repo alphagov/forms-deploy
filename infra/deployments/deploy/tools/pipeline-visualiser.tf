@@ -16,7 +16,7 @@ data "aws_ecs_container_definition" "pipeline_visualiser_active_container" {
   container_name  = "pipeline-visualiser"
 }
 
-resource "aws_ecs_task_definition" "task" {
+resource "aws_ecs_task_definition" "pipeline_visualiser_task" {
   family = "pipeline-visualiser"
   container_definitions = jsonencode([{
     name = "pipeline-visualiser",
@@ -41,6 +41,7 @@ resource "aws_ecs_task_definition" "task" {
         awslogs-stream-prefix = "pipeline-visualiser"
       }
     },
+    readonlyRootFilesystem = true
   }])
 
   runtime_platform {
@@ -58,11 +59,12 @@ resource "aws_ecs_task_definition" "task" {
   network_mode = "awsvpc"
 }
 
-resource "aws_ecs_service" "app_service" {
+resource "aws_ecs_service" "pipeline_visualiser_service" {
   #checkov:skip=CKV_AWS_332:We don't want to target "LATEST" and get a surprise when a new version is released.
+  #checkov:skip=CKV2_FORMS_AWS_2:We don't autoscale this service
   name                               = "pipeline-visualiser"
   cluster                            = aws_ecs_cluster.tools.arn
-  task_definition                    = aws_ecs_task_definition.task.id
+  task_definition                    = aws_ecs_task_definition.pipeline_visualiser_task.id
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
   desired_count                      = 1

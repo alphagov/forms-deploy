@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "codepipeline_readonly" {
   name = "codepipeline-readonly"
   assume_role_policy = jsonencode({

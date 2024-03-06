@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - |
+        jq -n --arg "image" "${IMAGE_URI}" '[{"name": "pipeline-visualiser", "imageUri": $image}]' > image-defs.json
+        ls -la
+        cat image-defs.json
+artifacts:
+  files:
+    - image-defs.json

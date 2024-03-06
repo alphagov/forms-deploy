@@ -2,6 +2,8 @@
 # CodePipeline
 ##
 resource "aws_codepipeline" "deploy-pipeline-visualiser" {
+  #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
+
   name          = "deploy-pipeline-visualiser"
   role_arn      = aws_iam_role.pipeline_visualiser_deployer.arn
   pipeline_type = "V2"
@@ -34,7 +36,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
   }
 
   stage {
-    name = "Build Container"
+    name = "Build-Container"
 
     action {
       name            = "Build"
@@ -52,16 +54,16 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
   }
 
   stage {
-    name = "Deploy to ECS"
+    name = "Deploy-To-ECS"
 
     action {
       name             = "generate-image-definitions"
-      namespace        = "Build"
+      namespace        = "generate-image-definitions"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
-      input_artifacts  = ["buildspec_source"]
+      input_artifacts  = ["forms_deploy"]
       output_artifacts = ["image-defs-json"]
       configuration = {
         ProjectName = module.pipeline_visualiser_generate_container_image_defs.name
@@ -113,7 +115,7 @@ module "pipeline_visualiser_generate_container_image_defs" {
   project_name        = "generate_pipeline_visualiser_container_image_defs"
   project_description = "Generate container image definitions for pipeline-visualiser"
   environment_variables = {
-    "TASK_DEFINITION_NAME" = aws_ecs_task_definition.pipeline_visualiser_task.name
+    "TASK_DEFINITION_NAME" = aws_ecs_task_definition.pipeline_visualiser_task.family
   }
   environment                = "deploy"
   artifact_store_arn         = module.pipeline_visualiser_artifact_bucket.arn
@@ -126,7 +128,7 @@ module "pipeline_visualiser_generate_container_image_defs" {
 # IAM
 ##
 resource "aws_iam_role" "pipeline_visualiser_deployer" {
-  name = "pipeline-visualiser-depoloyer"
+  name = "pipeline-visualiser-deployer"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -148,8 +150,8 @@ resource "aws_iam_role_policy" "pipeline_visualiser_deployer_policy" {
 
 data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
   statement {
-    actions   = ["cloudwatch:*"]
-    resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*"]
+    actions   = ["cloudwatch:*", "logs:*"]
+    resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:codebuild/*"]
     effect    = "Allow"
   }
 
@@ -181,6 +183,36 @@ data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
     actions   = ["s3:*"]
     resources = ["${module.pipeline_visualiser_artifact_bucket.arn}/*"]
     effect    = "Allow"
+  }
+
+  statement {
+    actions = ["ecs:*"]
+    effect  = "Allow"
+    resources = [
+      aws_ecs_cluster.tools.arn,
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.tools.name}/${aws_ecs_service.pipeline_visualiser_service.name}",
+      aws_ecs_task_definition.pipeline_visualiser_task.arn_without_revision,
+      "${aws_ecs_task_definition.pipeline_visualiser_task.arn_without_revision}:*"
+    ]
+  }
+
+  statement {
+    actions   = ["ecs:DescribeTaskDefinition"]
+    effect    = "Allow"
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "iam:PassRole",
+      "iam:DescribeRole",
+      "iam:GetRole"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_iam_role.pipeline_visualiser_task.arn,
+      aws_iam_role.ecs_task_exec_role.arn
+    ]
   }
 }
 ##

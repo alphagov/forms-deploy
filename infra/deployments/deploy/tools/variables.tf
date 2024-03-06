@@ -4,3 +4,9 @@ variable "pipeline_visualiser_container_image_uri" {
   nullable    = true
   default     = null
 }
+
+variable "pipeline_source_branch" {
+  type        = string
+  description = "The name of the Git branch from which to source changes"
+  default     = "main"
+}
