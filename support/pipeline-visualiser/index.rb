@@ -1,7 +1,9 @@
-require "sinatra"
 require "aws-sdk-codepipeline"
-require "ostruct"
+require "concurrent/timer_task"
+require "concurrent/map"
 require "json"
+require "ostruct"
+require "sinatra"
 require "yaml"
 
 set :public_folder, "public"
@@ -25,43 +27,50 @@ config["roles"].each do |role_arn|
     )
 end
 
+pipelines_map = Concurrent::Map.new
 
-get "/" do
+task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
     pipelines = []
     aws_clients.each do |client|
+        begin
+            all_pipelines = client.list_pipelines()
+            pipeline_names = all_pipelines.pipelines.map {|p| p.name}
 
-        all_pipelines = client.list_pipelines()
-        pipeline_names = all_pipelines.pipelines.map {|p| p.name}
+            pipeline_names.each do |pipeline|
+                state = client.get_pipeline_state({
+                    name: pipeline
+                })
 
-        pipeline_names.each do |pipeline|
-            state = client.get_pipeline_state({
-                name: pipeline
-            })
+                executions = client.list_pipeline_executions({
+                    pipeline_name: pipeline
+                })
 
-            executions = client.list_pipeline_executions({
-                pipeline_name: pipeline
-            })
+                latest_execution_summary = executions.pipeline_execution_summaries
+                    .sort_by{ |summary| summary.start_time }
+                    .reverse
+                    .first
 
-            latest_execution_summary = executions.pipeline_execution_summaries
-                .sort_by{ |summary| summary.start_time }
-                .reverse
-                .first
+                latest_id = latest_execution_summary.pipeline_execution_id
 
-            latest_id = latest_execution_summary.pipeline_execution_id
+                # To get variables we have to request the pipeline
+                # execution with GetPipelineExecution
+                latest = client.get_pipeline_execution({
+                    pipeline_name: pipeline,
+                    pipeline_execution_id: latest_id
+                })
 
-            # To get variables we have to request the pipeline
-            # execution with GetPipelineExecution
-            latest = client.get_pipeline_execution({
-                pipeline_name: pipeline,
-                pipeline_execution_id: latest_id
-            })
+                viewdata = generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time)
 
-            pipelines << generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time)
+                pipelines_map[viewdata.name] = viewdata
+            rescue => err
+                puts err
+            end
         end
     end
+end
+task.execute
 
-    pipelines_map = pipelines.to_h {|p| [p.name, p]}
-
+get "/" do
     groups = []
     config["groups"].each do |k, _|
         group_elements = config["groups"][k]
@@ -70,8 +79,8 @@ get "/" do
 
         group_pipelines = []
         group_elements.map do |elem|
-            if pipelines_map.has_key?(elem)
-                p = pipelines_map.fetch(elem)
+            if pipelines_map.fetch(elem, nil) != nil
+                p = pipelines_map[elem]
                 group_pipelines << p
             end
         end
