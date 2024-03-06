@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - set -e
+      - ruby -v
+      - bundle -v
+      - bundle install
+  build:
+    commands:
+      - bundle exec rspec spec/features/complete_spec.rb
