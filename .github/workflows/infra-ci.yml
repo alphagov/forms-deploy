@@ -5,7 +5,7 @@ on:
   merge_group:
     types: [checks_requested]
 env:
-  TF_VERSION: "~>1.7.2"
+  TF_VERSION: "~>1.7.4"
   HCL2JSON_VERSION: "v0.6.1"
 jobs:
   run_tests:
