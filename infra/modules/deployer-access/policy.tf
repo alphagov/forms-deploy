@@ -102,6 +102,7 @@ data "aws_iam_policy_document" "alerts" {
     resources = [
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/email-zendesk",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pager-duty-integration-url",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/automated-tests/*",
     ]
     effect = "Allow"
   }
@@ -386,6 +387,7 @@ data "aws_iam_policy_document" "code-build-modules" {
     actions = [
       "iam:CreatePolicy",
       "iam:DeletePolicy",
+      "iam:TagPolicy"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*"
