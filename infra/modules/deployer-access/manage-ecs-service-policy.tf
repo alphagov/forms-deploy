@@ -178,6 +178,7 @@ data "aws_iam_policy_document" "alb" {
       "elasticloadbalancing:*Listener",
       "elasticloadbalancing:*Rule*",
       "elasticloadbalancing:*LoadBalancer*",
+      "elasticloadbalancing:SetWebACL",
     ]
     resources = [
       "arn:aws:elasticloadbalancing:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
@@ -243,8 +244,11 @@ data "aws_iam_policy_document" "autoscaling" {
       "cloudwatch:*Alarm",
       "cloudwatch:ListTagsForResource"
     ]
-    resources = ["arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*"]
-    effect    = "Allow"
+    resources = [
+      "arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*",
+      "arn:aws:cloudwatch:us-east-1:${local.account_ids[var.env_name]}:*",
+    ]
+    effect = "Allow"
   }
 }
 

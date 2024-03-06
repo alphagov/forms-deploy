@@ -119,6 +119,38 @@ data "aws_iam_policy_document" "cloudfront" {
   }
 
   statement {
+    sid    = "ManageIPSets"
+    effect = "Allow"
+    actions = [
+      "wafv2:DeleteIPSet",
+      "wafv2:CreateIPSet",
+      "wafv2:UpdateIPSet",
+    ]
+    resources = [
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/ipset/*",
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:regional/ipset/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:global/ipset/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/ipset/*",
+    ]
+  }
+
+  statement {
+    sid    = "ManageWebACL"
+    effect = "Allow"
+    actions = [
+      "wafv2:PutLoggingConfiguration",
+      "wafv2:DeleteLoggingConfiguration",
+      "wafv2:CreateLoggingConfiguration",
+      "wafv2:CreateWebACL",
+      "wafv2:DeleteWebACL",
+      "wafv2:UpdateWebACL",
+    ]
+    resources = [
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:regional/webacl/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/webacl/*"
+    ]
+  }
+  statement {
     sid    = "ManageCloudwatchLogsWAF"
     effect = "Allow"
     actions = [
@@ -150,7 +182,7 @@ data "aws_iam_policy_document" "public-bucket" {
 
 data "aws_iam_policy_document" "secure-bucket" {
   statement {
-    sid    = "ManageALBLogsBucket"
+    sid    = "ManageALBandWAFLogsBucket"
     effect = "Allow"
     actions = [
       "s3:*Configuration",
@@ -158,7 +190,8 @@ data "aws_iam_policy_document" "secure-bucket" {
       "s3:*Object*",
     ]
     resources = [
-      "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*"
+      "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*",
+      "arn:aws:s3:::aws-waf-logs-alb-govuk-forms-${var.env_name}*",
     ]
   }
 }
