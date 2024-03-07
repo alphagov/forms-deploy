@@ -27,6 +27,12 @@ resource "aws_elasticache_replication_group" "forms-runner" {
   tags = {
     Name = "redis-${var.env_name}"
   }
+
+  lifecycle {
+    ignore_changes = [
+      snapshot_name,
+    ]
+  }
 }
 
 resource "aws_elasticache_parameter_group" "redis_parameter_group" {
