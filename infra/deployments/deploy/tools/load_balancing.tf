@@ -71,3 +71,9 @@ module "acm_certicate_with_validation" {
   domain_name               = "tools.forms.service.gov.uk"
   subject_alternative_names = local.alb_certificate_sans
 }
+
+resource "aws_shield_protection" "shield_for_alb" {
+  name         = "shield-for-${aws_lb.alb.name}"
+  resource_arn = aws_lb.alb.arn
+}
+

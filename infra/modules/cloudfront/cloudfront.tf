@@ -234,6 +234,12 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
   }
 }
 
+resource "aws_shield_protection" "shield_for_cloudfront" {
+  name         = "shield-for-cloudfront"
+  resource_arn = aws_cloudfront_distribution.main.arn
+}
+
+
 output "cloudfront_dns_name" {
   value = aws_cloudfront_distribution.main.domain_name
 }
