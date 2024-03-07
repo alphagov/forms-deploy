@@ -377,7 +377,7 @@ data "aws_iam_policy_document" "code-build-modules" {
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
-
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}"
     ]
   }
   statement {
@@ -397,6 +397,7 @@ data "aws_iam_policy_document" "pipelines" {
   statement {
     actions = [
       "codestar-connections:UseConnection",
+      "codestar-connections:PassConnection"
     ]
     resources = [var.codestar_connection_arn]
     effect    = "Allow"
@@ -439,6 +440,22 @@ data "aws_iam_policy_document" "pipelines" {
 
     resources = [
       "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*-pipeline-invoker"
+    ]
+  }
+
+  statement {
+    sid    = "ManagePipelines"
+    effect = "Allow"
+    actions = [
+      "codepipeline:CreatePipeline",
+      "codepipeline:DeletePipeline",
+      "codepipeline:UpdatePipeline",
+      "codepipeline:TagResource",
+      "codepipeline:UntagResource",
+    ]
+
+    resources = [
+      "arn:aws:codepipeline:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
     ]
   }
 }
