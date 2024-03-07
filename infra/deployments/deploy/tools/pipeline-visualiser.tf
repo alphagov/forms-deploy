@@ -186,3 +186,60 @@ resource "aws_route53_record" "pipelines_tools_forms_service_gov_uk" {
     evaluate_target_health = true
   }
 }
+
+##
+# IAM
+##
+module "forms_people" {
+  source = "../../../modules/users"
+}
+
+data "aws_iam_role" "readonly_people_roles" {
+  # Readonly roles are made for each of the people in these lists
+  for_each = toset(concat(
+    module.forms_people.with_role["deploy_admin"],
+    module.forms_people.with_role["deploy_support"],
+    module.forms_people.with_role["deploy_readonly"]
+  ))
+  name = "${each.value}-readonly"
+}
+
+resource "aws_iam_role" "pipeline_visualiser_task" {
+  name = "deploy-pipeline-visualiser-ecs-task"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+      # We want readonly roles created for humans to be able to
+      # assume this role so we can make use of it in development
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = [for r in data.aws_iam_role.readonly_people_roles : r.arn]
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "allow_pipeline_visualiser_to_assume_roles" {
+  role = aws_iam_role.pipeline_visualiser_task.name
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid      = "AllowAssumeRole"
+        Action   = "sts:AssumeRole"
+        Effect   = "Allow"
+        Resource = ["arn:aws:iam::*:role/codepipeline-readonly"]
+      }
+    ]
+  })
+}
