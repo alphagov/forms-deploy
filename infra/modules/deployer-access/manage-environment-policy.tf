@@ -125,6 +125,8 @@ data "aws_iam_policy_document" "cloudfront" {
       "wafv2:DeleteIPSet",
       "wafv2:CreateIPSet",
       "wafv2:UpdateIPSet",
+      "wafv2:TagResource",
+      "wafv2:UntagResource",
     ]
     resources = [
       "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/ipset/*",
