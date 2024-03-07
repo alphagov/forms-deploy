@@ -87,3 +87,9 @@ variable "payment_links" {
   type        = bool
   default     = false
 }
+
+variable "reference_numbers_enabled" {
+  description = "Enables reference number content"
+  type        = bool
+  default     = false
+}

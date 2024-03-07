@@ -35,6 +35,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = ""
   payment_links                         = false
+  reference_numbers_enabled             = false
 }
 forms_api_settings = {
   cpu          = 256
