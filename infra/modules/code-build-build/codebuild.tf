@@ -4,6 +4,7 @@ locals {
     "dev"           = "arn:aws:iam::498160065950:role/deployer-dev"
     "staging"       = "arn:aws:iam::972536609845:role/deployer-staging"
     "production"    = "arn:aws:iam::443944947292:role/deployer-production"
+    "deploy"        = "NO_SUCH_ROLE" # Deploy account doesn't have a deployer role
   }
 
   environment_variables = {
@@ -39,7 +40,7 @@ resource "aws_codebuild_project" "this" {
     image        = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type         = "LINUX_CONTAINER"
 
-    # Create environment variables dynamically. 
+    # Create environment variables dynamically.
     # We use local variables by default but they can be overriden by var.environment_variables
     dynamic "environment_variable" {
       for_each = merge(local.environment_variables, var.environment_variables)

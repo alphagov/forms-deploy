@@ -1,0 +1,36 @@
+---
+roles:
+  - arn:aws:iam::711966560482:role/codepipeline-readonly
+  - arn:aws:iam::498160065950:role/codepipeline-readonly
+  - arn:aws:iam::443944947292:role/codepipeline-readonly
+  - arn:aws:iam::972536609845:role/codepipeline-readonly
+  - arn:aws:iam::619109835131:role/codepipeline-readonly
+
+groups:
+  "Apply Terraform":
+    - "apply-forms-terraform-staging"
+    - "apply-forms-terraform-production"
+    - "apply-forms-terraform-user-research"
+    - "apply-forms-terraform-dev"
+
+  "Product pages":
+    - "forms-product-page-image-builder"
+    - "deploy-forms-product-page-container-staging"
+    - "deploy-forms-product-page-container-production"
+    - "deploy-forms-product-page-container-user-research"
+    - "deploy-forms-product-page-container-dev"
+
+  "API":
+    - "forms-api-main-branch"
+
+  "Admin":
+    - "forms-admin-main-branch"
+
+  "Runner":
+    - "forms-runner-main-branch"
+
+  "Pipeline visualiser":
+    - "deploy-pipeline-visualiser"
+
+  "End to end tests":
+    - "e2e-image"

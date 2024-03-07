@@ -1,0 +1,30 @@
+<% case status
+   when "Cancelled" %>
+    <strong class="govuk-tag govuk-tag--purple">
+        Cancelled
+    </strong>
+<% when "InProgress" %>
+    <strong class="govuk-tag govuk-tag--yellow">
+        In Progress
+    </strong>
+<% when "Failed" %>
+    <strong class="govuk-tag govuk-tag--red">
+        Failed
+    </strong>
+<% when "Stopped" %>
+    <strong class="govuk-tag govuk-tag--blue">
+        Stopped
+    </strong>
+<% when "Stopping" %>
+    <strong class="govuk-tag govuk-tag--turqoise">
+        Stopping
+    </strong>
+<% when "Succeeded" %>
+    <strong class="govuk-tag govuk-tag--green">
+        Succeeded
+    </strong>
+<% when "Not Started" %>
+    <strong class="govuk-tag govuk-tag--grey">
+        Not Started
+    </strong>
+<% end %>
