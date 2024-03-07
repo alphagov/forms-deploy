@@ -14,6 +14,7 @@ environmental_settings = {
   enable_alert_actions                     = false
   forms_product_page_support_url           = "https://www.research.forms.service.gov.uk/support"
   rds_maintenance_window                   = "wed:04:00-wed:04:30"
+  redis_backup_retention_period_days       = 2
 }
 hosted_zone_id             = "Z011139325A6VARFKUQ54"
 root_domain                = "research.forms.service.gov.uk"

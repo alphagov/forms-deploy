@@ -25,7 +25,9 @@ variable "engine_version" {
 }
 
 variable "snapshot_retention_limit" {
-  default = 30
+  type        = number
+  description = "How many days to keep redis automatic backups for"
+  default     = 2
 }
 
 variable "number_cache_clusters" {
