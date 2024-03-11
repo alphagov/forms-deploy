@@ -103,7 +103,7 @@ resource "aws_codepipeline" "main" {
     }
 
     action {
-      name            = "run-smoke-tests-staging"
+      name            = "run-e2e-tests-staging"
       category        = "Build"
       run_order       = "2"
       owner           = "AWS"
@@ -111,7 +111,7 @@ resource "aws_codepipeline" "main" {
       version         = "1"
       input_artifacts = ["forms_e2e_tests"]
       configuration = {
-        ProjectName = module.smoke_tests_staging.name
+        ProjectName = module.e2e_tests_staging.name
       }
     }
   }
@@ -134,7 +134,7 @@ resource "aws_codepipeline" "main" {
     }
 
     action {
-      name            = "run-smoke-tests-production"
+      name            = "run-e2e-tests-production"
       category        = "Build"
       run_order       = "2"
       owner           = "AWS"
@@ -142,7 +142,7 @@ resource "aws_codepipeline" "main" {
       version         = "1"
       input_artifacts = ["forms_e2e_tests"]
       configuration = {
-        ProjectName = module.smoke_tests_production.name
+        ProjectName = module.e2e_tests_production.name
       }
     }
   }
@@ -165,7 +165,7 @@ resource "aws_codepipeline" "main" {
     }
 
     action {
-      name            = "run-smoke-tests-dev"
+      name            = "run-e2e-tests-dev"
       category        = "Build"
       owner           = "AWS"
       run_order       = "2"
@@ -173,7 +173,7 @@ resource "aws_codepipeline" "main" {
       version         = "1"
       input_artifacts = ["forms_e2e_tests"]
       configuration = {
-        ProjectName = module.smoke_tests_dev.name
+        ProjectName = module.e2e_tests_dev.name
       }
     }
   }
@@ -214,13 +214,17 @@ module "terraform_apply_staging" {
   artifact_store_arn = module.artifact_bucket.arn
 }
 
-module "smoke_tests_staging" {
-  source             = "../code-build-run-smoke-tests"
+module "e2e_tests_staging" {
+  source             = "../code-build-run-e2e-tests"
   app_name           = var.app_name
-  environment        = "staging"
+  environment_name   = "staging"
   forms_admin_url    = "https://admin.staging.forms.service.gov.uk"
   product_pages_url  = "https://staging.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
+
+  auth0_user_name_parameter_name     = "/staging/automated-tests/e2e/auth0/email-username"
+  auth0_user_password_parameter_name = "/staging/automated-tests/e2e/auth0/auth0-user-password"
+  notify_api_key_parameter_name      = "/staging/automated-tests/e2e/notify/api-key"
 }
 
 module "terraform_apply_production" {
@@ -230,13 +234,17 @@ module "terraform_apply_production" {
   artifact_store_arn = module.artifact_bucket.arn
 }
 
-module "smoke_tests_production" {
-  source             = "../code-build-run-smoke-tests"
+module "e2e_tests_production" {
+  source             = "../code-build-run-e2e-tests"
   app_name           = var.app_name
-  environment        = "production"
+  environment_name   = "production"
   forms_admin_url    = "https://admin.forms.service.gov.uk"
   product_pages_url  = "https://forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
+
+  auth0_user_name_parameter_name     = "/production/automated-tests/e2e/auth0/email-username"
+  auth0_user_password_parameter_name = "/production/automated-tests/e2e/auth0/auth0-user-password"
+  notify_api_key_parameter_name      = "/production/automated-tests/e2e/notify/api-key"
 }
 
 module "terraform_apply_dev" {
@@ -246,13 +254,17 @@ module "terraform_apply_dev" {
   artifact_store_arn = module.artifact_bucket.arn
 }
 
-module "smoke_tests_dev" {
-  source             = "../code-build-run-smoke-tests"
+module "e2e_tests_dev" {
+  source             = "../code-build-run-e2e-tests"
   app_name           = var.app_name
-  environment        = "dev"
+  environment_name   = "dev"
   forms_admin_url    = "https://admin.dev.forms.service.gov.uk"
   product_pages_url  = "https://dev.forms.service.gov.uk"
   artifact_store_arn = module.artifact_bucket.arn
+
+  auth0_user_name_parameter_name     = "/dev/automated-tests/e2e/auth0/email-username"
+  auth0_user_password_parameter_name = "/dev/automated-tests/e2e/auth0/auth0-user-password"
+  notify_api_key_parameter_name      = "/dev/automated-tests/e2e/notify/api-key"
 }
 
 module "terraform_apply_user_research" {
