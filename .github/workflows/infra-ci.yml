@@ -41,7 +41,7 @@ jobs:
         run: bundle exec rspec
       - name: Lint Terraform
         id: checkov
-        uses: bridgecrewio/checkov-action@ac86ea74d4b798f9526a52c846964d6e5ff2f40d #v12.2680.0
+        uses: bridgecrewio/checkov-action@5877584c811146d35516c25eaca368b13589b4ba #v12.2688.0
         with:
           directory: infra/
           framework: terraform
