@@ -89,13 +89,6 @@ locals {
       development   = "admin"
       user_research = "support"
     },
-    "sarah.young" = {
-      deploy        = "admin"
-      staging       = "admin"
-      production    = "admin"
-      development   = "admin"
-      user_research = "admin"
-    }
     "samuel.culley" = {
       deploy        = "support"
       staging       = "support"
@@ -103,13 +96,6 @@ locals {
       development   = "admin"
       user_research = "admin"
     },
-    "stephen.daly" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
-      development   = "admin"
-      user_research = "admin"
-    }
     "tom.iles" = {
       deploy        = "support"
       staging       = "support"
