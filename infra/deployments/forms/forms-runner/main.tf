@@ -1,6 +1,8 @@
 variable "image_tag" {
   type        = string
   description = "The image tag to deploy"
+  nullable    = true
+  default     = null
 }
 
 module "forms_runner" {
