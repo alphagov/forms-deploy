@@ -36,6 +36,7 @@ forms_admin_settings = {
   govuk_app_domain                      = ""
   payment_links                         = true
   reference_numbers_enabled             = true
+  synchronize_to_mailchimp              = false
 }
 forms_api_settings = {
   cpu          = 256

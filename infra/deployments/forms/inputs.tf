@@ -94,6 +94,7 @@ variable "forms_admin_settings" {
     govuk_app_domain                      = string
     payment_links                         = bool
     reference_numbers_enabled             = bool
+    synchronize_to_mailchimp              = bool
   })
   nullable = false
 }

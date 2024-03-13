@@ -8,9 +8,10 @@ environmental_settings = {
   auth0_domain                             = "govuk-forms.uk.auth0.com"
   disable_auth0                            = false
   pause_databases_on_inactivity            = false
-  pause_databases_after_inactivity_seconds = 60 * 60 * 24 # Set to 24 hours for inactivity just in case the pause_database_on_inactivity flag is inverted or ignored
-  database_backup_retention_period_days    = 30
-  enable_alert_actions                     = true
+  pause_databases_after_inactivity_seconds = 60 * 60 * 24
+  # Set to 24 hours for inactivity just in case the pause_database_on_inactivity flag is inverted or ignored
+  database_backup_retention_period_days = 30
+  enable_alert_actions                  = true
   allow_authentication_from_email_domains = [
     ".gov.uk",
     ".mod.uk",
@@ -53,6 +54,7 @@ forms_admin_settings = {
   govuk_app_domain                      = "publishing.service.gov.uk"
   payment_links                         = true
   reference_numbers_enabled             = true
+  synchronize_to_mailchimp              = true
 }
 forms_api_settings = {
   cpu          = 512

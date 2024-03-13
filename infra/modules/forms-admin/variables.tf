@@ -93,3 +93,9 @@ variable "reference_numbers_enabled" {
   type        = bool
   default     = false
 }
+
+variable "enable_mailchimp_sync" {
+  description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
+  type        = bool
+  default     = false
+}
