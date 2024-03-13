@@ -103,13 +103,6 @@ locals {
       development   = "admin"
       user_research = "admin"
     },
-    "stephen.daly" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
-      development   = "admin"
-      user_research = "admin"
-    }
     "tom.iles" = {
       deploy        = "support"
       staging       = "support"
