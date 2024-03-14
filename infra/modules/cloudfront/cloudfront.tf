@@ -23,6 +23,18 @@ data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
   name = "Managed-CORS-S3Origin"
 }
 
+data "aws_nat_gateways" "all_nat_gateways" {
+  filter {
+    name   = "tag:Name"
+    values = ["nat-a", "nat-b", "nat-c"]
+  }
+}
+
+data "aws_nat_gateway" "each_nat_gateway" {
+  for_each = toset(data.aws_nat_gateways.all_nat_gateways.ids)
+  id       = each.value
+}
+
 resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_34:viewer_protocol_policy is already redirect-to-https
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
@@ -107,6 +119,17 @@ resource "aws_cloudfront_distribution" "main" {
   }
 }
 
+resource "aws_wafv2_ip_set" "system_egress_ips" {
+  provider = aws.us-east-1
+
+  name               = "${var.env_name}-system-egress-ips"
+  description        = "Egress IPs for ${var.env_name} environment"
+  scope              = "CLOUDFRONT"
+  ip_address_version = "IPV4"
+
+  addresses = [for ngw in data.aws_nat_gateway.each_nat_gateway : "${ngw.public_ip}/32"]
+}
+
 resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -126,11 +149,32 @@ resource "aws_wafv2_web_acl" "this" {
   }
 
   rule {
-    name     = "OriginIPRateLimit"
-    priority = 1
+    name     = "allow_egress_ips_of_${var.env_name}_env"
+    priority = 10
 
     action {
-      count {}
+      allow {} # Stop processing
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.system_egress_ips.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.env_name}_env_system_ips_allowed"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "OriginIPRateLimit"
+    priority = 100
+
+    action {
+      block {}
     }
 
     statement {
