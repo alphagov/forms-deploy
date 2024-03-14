@@ -10,6 +10,32 @@
     </p>
 
     <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">Viewing this pipeline in AWS CodePipeline</span>
+      </summary>
+
+      <div class="govuk-details__text">
+        <p class="govuk-body">
+        You can view this pipeline in AWS CodePipeline by logging into the relevant account and visiting
+        </p>
+
+        <p class="govuk-body">
+          <a href="https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2">https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2</a>
+        </p>
+
+        <p class="govuk-body">
+          You can also run the following in your terminal to log into the account and open the page
+        </p>
+
+        <code class="code" id="code-open-<%= slugify(pipeline.name) %>">AWS_VAULT="" gds aws <%= pipeline.gds_cli_role %> -- open "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2"</code>
+
+        <p class="govuk-body">
+          <button class="govuk-button govuk-button--secondary" onclick="navigator.clipboard.writeText(document.getElementById('code-open-<%= slugify(pipeline.name) %>').innerText)">Copy code</button>
+        </p>
+      </div>
+    </details>
+
+    <details class="govuk-details">
         <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text">About this pipeline run</span>
         </summary>
