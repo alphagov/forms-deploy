@@ -5,6 +5,7 @@ locals {
     "dns",
     "environment",
     "forms-product-page",
+    "forms-runner",
     "monitoring",
     "pipelines",
     "rds",
