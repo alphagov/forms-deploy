@@ -99,6 +99,7 @@
             <tr class="govuk-tabke__row">
                 <th scope="col" class="govuk-table__header">Stage</th>
                 <th scope="col" class="govuk-table__header">Status</th>
+                <th scope="col" class="govuk-table__header"><!-- Error messages, no visual header --></th>
             </tr>
         </thead>
 
@@ -106,12 +107,17 @@
             <% pipeline.stages.each do |stage| %>
                 <tr class="govuk-table__row">
                   <th scope="row" class="govuk-table__header"><%= stage.name %></th>
-                  <td class="govuk-table__cell">
+                  <td class="govuk-table__cell govuk-!-width-one-quarter">
                       <% if stage.outdated %>
                           <%= erb :'partials/label', :locals => {status: "Not Started"} %>
                       <% else %>
                           <%= erb :'partials/label', :locals => { status: stage.status } %>
                       <% end %>
+                  </td>
+                  <td class="govuk-table__cell">
+                    <% if stage.error_message %>
+                      <%= stage.error_message %>
+                    <% end %>
                   </td>
                 </tr>
             <% end %>

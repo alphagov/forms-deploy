@@ -147,5 +147,15 @@ def generate_stage_viewdata(stage, current_execution_id)
     data.status = stage.latest_execution.status
     data.outdated = is_outdated
 
+    if stage.latest_execution.status == "Failed"
+        failing_action = stage.action_states.find do |action|
+            action.latest_execution.status == "Failed"
+        end
+
+        data.error_message = failing_action.latest_execution.summary
+    else
+        data.error_message = nil
+    end
+
     return data
 end
