@@ -1,10 +1,12 @@
-require "aws-sdk-codepipeline"
 require "concurrent/timer_task"
 require "concurrent/map"
 require "json"
 require "ostruct"
 require "sinatra"
 require "yaml"
+
+require_relative "lib/aws-sdk-factory/live"
+require_relative "lib/aws-sdk-factory/development"
 
 set :public_folder, "public"
 helpers do
@@ -14,17 +16,16 @@ helpers do
     end
 end
 
+is_dev_mode = ENV.fetch("PIPELINE_VISUALISER_DEV_MODE", false)
+
 config = YAML::safe_load_file("./config.yml")
 aws_clients = []
 config["roles"].each do |role_arn|
-    aws_clients << Aws::CodePipeline::Client.new(
-        credentials: Aws::AssumeRoleCredentials.new(
-            role_arn: role_arn,
-            role_session_name: "govuk_forms_codepipeline_visualiser",
-            region: "eu-west-2"
-        ),
-        region: "eu-west-2"
-    )
+    if is_dev_mode
+        aws_clients << DevelopmentAWSSDKFactory.new_code_pipeline(role_arn)
+    else
+        aws_clients << LiveAWSSDKFactory.new_code_pipeline(role_arn)
+    end
 end
 
 pipelines_map = Concurrent::Map.new
@@ -64,6 +65,7 @@ task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
                 pipelines_map[viewdata.name] = viewdata
             rescue => err
                 puts err
+                puts err.backtrace
             end
         end
     end
@@ -84,12 +86,11 @@ get "/" do
                 group_pipelines << p
             end
         end
-
         group.pipelines = group_pipelines
         groups << group
     end
 
-    erb :state, :locals => {:groups => groups}
+    erb :state, :locals => {:groups => groups, :is_dev_mode => is_dev_mode}
 end
 
 def generate_pipeline_viewdata(state, execution, last_start_time)
