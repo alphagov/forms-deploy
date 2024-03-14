@@ -28,6 +28,11 @@ groups:
 
   "Runner":
     - "forms-runner-main-branch"
+    - "forms-runner-image-builder"
+    - "deploy-forms-runner-container-staging"
+    - "deploy-forms-runner-container-production"
+    - "deploy-forms-runner-container-user-research"
+    - "deploy-forms-runner-container-dev"
 
   "Pipeline visualiser":
     - "deploy-pipeline-visualiser"
