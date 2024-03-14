@@ -104,6 +104,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/webacl/cloudfront_waf_${var.env_name}/*",
       "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/webacl/alb_${var.env_name}/*",
       "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/ipset/${var.env_name}-*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/ipset/${var.env_name}-*",
     ]
   }
 
