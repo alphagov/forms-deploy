@@ -6,5 +6,7 @@ module "environment" {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
   }
+
+  ips_to_block = var.environmental_settings.ips_to_block
 }
 

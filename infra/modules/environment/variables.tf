@@ -9,6 +9,12 @@ variable "ip_rate_limit" {
   default     = 1000
 }
 
+variable "ips_to_block" {
+  type        = list(string)
+  description = "List of Origin IPs to block"
+  default     = []
+}
+
 variable "enable_cloudfront" {
   type        = bool
   description = "If true then a cloudfront distribution is created."
