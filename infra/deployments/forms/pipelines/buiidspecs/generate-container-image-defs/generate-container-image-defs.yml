@@ -3,7 +3,7 @@ phases:
   build:
     commands:
       - |
-         jq -n --arg "image" "${IMAGE_URI}" '[{"name": "forms-product-page", "imageUri": $image}]' > image-defs.json
+         jq -n --arg "image" "${IMAGE_URI}" --arg "app" "${APP_NAME}" '[{"name": $app, "imageUri": $image}]' > image-defs.json
          ls -la
          cat image-defs.json
 artifacts:

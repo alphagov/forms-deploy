@@ -158,6 +158,11 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
             name  = "IMAGE_URI"
             value = "#{variables.container_image_uri}"
             type  = "PLAINTEXT"
+          },
+          {
+            name  = "APP_NAME"
+            value = "forms-product-page"
+            type  = "PLAINTEXT"
           }
         ])
       }
