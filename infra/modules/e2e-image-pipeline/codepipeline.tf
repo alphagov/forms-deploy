@@ -79,6 +79,11 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
+      name  = "SMOKE_TEST_FORM_URL"
+      value = "https://submit.forms.service.gov.uk/form/2570/scheduled-smoke-test"
+      type  = "PLAINTEXT"
+    },
+    {
       name  = "AUTH0_EMAIL_USERNAME"
       value = "/dev/smoketests/auth0/email-username"
       type  = "PARAMETER_STORE"
