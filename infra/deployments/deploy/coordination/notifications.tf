@@ -12,6 +12,118 @@ locals {
   }
 }
 
+# The alerts and deployments SNS topics and their access policies were created by the AWS ChatBot service.
+# These import blocks should be left in place as a reminder of where they came from.
+import {
+  id = local.chatbot_alerts_channel_sns_topic
+  to = aws_sns_topic.alerts_topic
+}
+
+import {
+  id = local.chatbot_alerts_channel_sns_topic
+  to = aws_sns_topic_policy.alerts_topic_access_policy
+}
+
+resource "aws_sns_topic" "alerts_topic" {
+  # checkov:skip=CKV_AWS_26:AWS ChatBot doesn't configure it with encryption
+  name            = "CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
+  delivery_policy = <<JSON
+{
+  "http": {
+    "defaultHealthyRetryPolicy": {
+      "minDelayTarget": 20,
+      "maxDelayTarget": 20,
+      "numRetries": 3,
+      "numMaxDelayRetries": 0,
+      "numNoDelayRetries": 0,
+      "numMinDelayRetries": 0,
+      "backoffFunction": "linear"
+    },
+    "disableSubscriptionOverrides": false,
+    "defaultRequestPolicy": {
+      "headerContentType": "text/plain; charset=UTF-8"
+    }
+  }
+}
+JSON
+}
+
+resource "aws_sns_topic_policy" "alerts_topic_access_policy" {
+  arn = aws_sns_topic.alerts_topic.arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "sns:Publish"
+        Effect   = "Allow"
+        Resource = aws_sns_topic.alerts_topic.arn
+        Principal = {
+          Service = [
+            "cloudwatch.amazonaws.com",
+            "events.amazonaws.com",
+            "codestar-notifications.amazonaws.com"
+          ]
+        }
+      }
+    ]
+  })
+}
+
+import {
+  id = local.chatbot_deployments_channel_sns_topic
+  to = aws_sns_topic.deployments_topic
+}
+
+import {
+  id = local.chatbot_deployments_channel_sns_topic
+  to = aws_sns_topic_policy.deployments_topic_access_policy
+}
+
+resource "aws_sns_topic" "deployments_topic" {
+  # checkov:skip=CKV_AWS_26:AWS ChatBot doesn't configure it with encryption
+  name            = "CodeStarNotifications-govuk-forms-deployments-c383f287ab987f0b12d32e4533a145b1c918167d"
+  delivery_policy = <<JSON
+{
+  "http": {
+    "defaultHealthyRetryPolicy": {
+      "minDelayTarget": 20,
+      "maxDelayTarget": 20,
+      "numRetries": 3,
+      "numMaxDelayRetries": 0,
+      "numNoDelayRetries": 0,
+      "numMinDelayRetries": 0,
+      "backoffFunction": "linear"
+    },
+    "disableSubscriptionOverrides": false,
+    "defaultRequestPolicy": {
+      "headerContentType": "text/plain; charset=UTF-8"
+    }
+  }
+}
+JSON
+}
+
+resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
+  arn = aws_sns_topic.deployments_topic.arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "sns:Publish"
+        Effect   = "Allow"
+        Resource = aws_sns_topic.alerts_topic.arn
+        Principal = {
+          Service = [
+            "cloudwatch.amazonaws.com",
+            "events.amazonaws.com",
+            "codestar-notifications.amazonaws.com"
+          ]
+        }
+      }
+    ]
+  })
+}
+
 resource "aws_cloudwatch_event_rule" "pipeline_completion" {
   name        = "pipeline-success-events"
   description = "Send pipeline success messages to Slack"
@@ -61,8 +173,9 @@ resource "aws_cloudwatch_event_rule" "pipeline_failure" {
     detail = {
       state = ["FAILED"]
       pipeline = [
-        { "anything-but" : {
-          "suffix" : "dev"
+        {
+          "anything-but" : {
+            "suffix" : "dev"
           }
         },
       ]

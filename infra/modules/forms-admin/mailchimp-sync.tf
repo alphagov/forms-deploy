@@ -75,6 +75,8 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
 resource "aws_iam_role" "ecs_cron_scheduler" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
+  name = "${var.env_name}-forms-admin-ecs-cron-scheduler"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
