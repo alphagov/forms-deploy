@@ -1,23 +1,23 @@
 ## Triggers
-resource "aws_cloudwatch_event_rule" "product_pages_on_image_tag" {
-  name        = "product-page-on-${var.environment_name}-image-tag"
-  description = "Trigger the product pages pipeline when a new container image tag matching the desired pattern is pushed"
+resource "aws_cloudwatch_event_rule" "runner_on_image_tag" {
+  name        = "runner-on-${var.environment_name}-image-tag"
+  description = "Trigger the runner pipeline when a new container image tag matching the desired pattern is pushed"
   role_arn    = aws_iam_role.eventbridge_actor.arn
   event_pattern = jsonencode({
     source = ["aws.ecr", "uk.gov.service.forms"]
     detail = {
       action-type = ["PUSH"]
       image-tag = [
-        { wildcard = var.deploy-forms-product-page-container.trigger_on_tag_pattern }
+        { wildcard = var.deploy-forms-runner-container.trigger_on_tag_pattern }
       ]
-      repository-name = ["forms-product-page-deploy"]
+      repository-name = ["forms-runner-deploy"]
     }
   })
 }
 
-resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
-  target_id = "product-page-${var.environment_name}-trigger-deploy-pipeline"
-  rule      = aws_cloudwatch_event_rule.product_pages_on_image_tag.name
+resource "aws_cloudwatch_event_target" "trigger_runner_pipeline" {
+  target_id = "runner-${var.environment_name}-trigger-deploy-pipeline"
+  rule      = aws_cloudwatch_event_rule.runner_on_image_tag.name
   arn       = aws_lambda_function.pipeline_invoker.arn
 
   input_transformer {
@@ -28,11 +28,11 @@ resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
 
     input_template = <<EOF
 {
-  "name": "${aws_codepipeline.deploy_product_pages_container.name}",
+  "name": "${aws_codepipeline.deploy_runner_container.name}",
   "variables": [
     {
       "name": "container_image_uri",
-      "value": "711966560482.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:<image-tag>"
+      "value": "711966560482.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:<image-tag>"
     }
   ]
 }
@@ -44,33 +44,33 @@ EOF
   }
 
   depends_on = [
-    aws_codepipeline.deploy_product_pages_container
+    aws_codepipeline.deploy_runner_container
   ]
 }
 
 ## Pipeline
-data "archive_file" "deploy_product_pages_buildpsec_zip" {
+data "archive_file" "deploy_runner_buildpsec_zip" {
   type        = "zip"
-  output_path = "${path.root}/zip-files/deploy_product_pages_buildpsec_zip.zip"
+  output_path = "${path.root}/zip-files/deploy_runner_buildpsec_zip.zip"
 
   source {
     content  = file("${path.root}/buiidspecs/generate-container-image-defs/generate-container-image-defs.yml")
     filename = "/codebuild/readonly/buildspec.yml"
   }
 }
-resource "aws_s3_object" "deploy_product_pages_container_trigger_key" {
-  depends_on = [data.archive_file.deploy_product_pages_buildpsec_zip]
+resource "aws_s3_object" "deploy_runner_container_trigger_key" {
+  depends_on = [data.archive_file.deploy_runner_buildpsec_zip]
 
   bucket = module.artifact_bucket.name
-  key    = "codepipeline-source-keys/deploy_product_pages"
-  source = "${path.root}/zip-files/deploy_product_pages_buildpsec_zip.zip"
+  key    = "codepipeline-source-keys/deploy_runner"
+  source = "${path.root}/zip-files/deploy_runner_buildpsec_zip.zip"
 }
 
-resource "aws_codepipeline" "deploy_product_pages_container" {
-  depends_on = [aws_s3_object.deploy_product_pages_container_trigger_key]
+resource "aws_codepipeline" "deploy_runner_container" {
+  depends_on = [aws_s3_object.deploy_runner_container_trigger_key]
 
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
-  name          = "deploy-forms-product-page-container-${var.environment_name}"
+  name          = "deploy-forms-runner-container-${var.environment_name}"
   role_arn      = data.aws_iam_role.deployer-role.arn
   pipeline_type = "V2"
 
@@ -116,7 +116,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
 
       configuration = {
         S3Bucket             = module.artifact_bucket.name
-        S3ObjectKey          = "codepipeline-source-keys/deploy_product_pages"
+        S3ObjectKey          = "codepipeline-source-keys/deploy_runner"
         PollForSourceChanges = false
       }
     }
@@ -152,7 +152,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
       input_artifacts  = ["buildspec_source"]
       output_artifacts = ["image-defs-json"]
       configuration = {
-        ProjectName = module.generate_forms_product_pages_container_image_defs.name
+        ProjectName = module.generate_forms_runner_container_image_defs.name
         EnvironmentVariables = jsonencode([
           {
             name  = "IMAGE_URI"
@@ -161,7 +161,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
           },
           {
             name  = "APP_NAME"
-            value = "forms-product-page"
+            value = "forms-runner"
             type  = "PLAINTEXT"
           }
         ])
@@ -178,7 +178,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
       input_artifacts = ["image-defs-json"]
       configuration = {
         ClusterName       = "forms-${var.environment_name}"
-        ServiceName       = "forms-product-page"
+        ServiceName       = "forms-runner"
         DeploymentTimeout = 15
         FileName          = "image-defs.json"
       }
@@ -194,7 +194,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
   # So a dynamic block to omit the stage completely is the solution. We'd rather all the pipelines
   # look the same, but this seems like the best solution given the trade-offs.
   dynamic "stage" {
-    for_each = var.deploy-forms-product-page-container.disable_end_to_end_tests == false ? [1] : []
+    for_each = var.deploy-forms-runner-container.disable_end_to_end_tests == false ? [1] : []
 
     content {
       name = "test"
@@ -208,7 +208,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
         version         = "1"
         input_artifacts = ["forms_e2e_tests"]
         configuration = {
-          ProjectName = module.deploy_product_pages_end_to_end_tests[0].name
+          ProjectName = module.deploy_runner_end_to_end_tests[0].name
         }
       }
     }
@@ -226,32 +226,31 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
       version         = "1"
       input_artifacts = ["image-defs-json"]
       configuration = {
-        ProjectName = module.pull_forms_product_page_image_retag_and_push.name
+        ProjectName = module.pull_forms_runner_image_retag_and_push.name
       }
     }
   }
 }
 
 
-module "generate_forms_product_pages_container_image_defs" {
+module "generate_forms_runner_container_image_defs" {
   source              = "../../../modules/code-build-build"
-  project_name        = "generate_forms_product_pages_container_image_defs_${var.environment_name}"
-  project_description = "Generate container image definitions for forms-product-pages"
+  project_name        = "generate_forms_runner_container_image_defs_${var.environment_name}"
+  project_description = "Generate container image definitions for forms-runner"
   environment_variables = {
-    "TASK_DEFINITION_NAME" = "${var.environment_name}_forms-product-page"
+    "TASK_DEFINITION_NAME" = "${var.environment_name}_forms-runner"
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buiidspecs/generate-container-image-defs/generate-container-image-defs.yml")
-  log_group_name             = "codebuild/generate_forms_product_pages_container_image_defs_${var.environment_name}"
+  log_group_name             = "codebuild/generate_forms_runner_container_image_defs_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
 }
 
-module "deploy_product_pages_end_to_end_tests" {
-  count = var.deploy-forms-product-page-container.disable_end_to_end_tests == false ? 1 : 0
-
+module "deploy_runner_end_to_end_tests" {
+  count              = var.deploy-forms-runner-container.disable_end_to_end_tests == false ? 1 : 0
   source             = "../../../modules/code-build-run-e2e-tests"
-  app_name           = "forms-product-page"
+  app_name           = "forms-runner"
   environment_name   = var.environment_name
   forms_admin_url    = "https://admin.${var.root_domain}"
   product_pages_url  = "https://${var.root_domain}"
@@ -263,19 +262,19 @@ module "deploy_product_pages_end_to_end_tests" {
   notify_api_key_parameter_name      = module.automated_test_parameters[0].notify_api_key_parameter_name
 }
 
-module "pull_forms_product_page_image_retag_and_push" {
+module "pull_forms_runner_image_retag_and_push" {
   source                     = "../../../modules/code-build-build"
-  project_name               = "pull_forms_product_page_image_retag_and_push_${var.environment_name}"
+  project_name               = "pull_forms_runner_image_retag_and_push_${var.environment_name}"
   project_description        = "Pull the latest image, retag it, and push it back up"
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buiidspecs/pull-image-retag-and-push/pull-image-retag-and-push.yml")
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
-  log_group_name             = "codebuild/pull_forms_product_page_image_retag_and_push_${var.environment_name}"
+  log_group_name             = "codebuild/pull_forms_runner_image_retag_and_push_${var.environment_name}"
   environment_variables = {
-    IMAGE_NAME           = "forms-product-page-deploy"
+    IMAGE_NAME           = "forms-runner-deploy"
     AWS_ACCOUNT_ID       = "711966560482" #TODO: don't hardcode this
-    RETAG                = var.deploy-forms-product-page-container.retag_image_on_success
-    RETAG_SED_EXPRESSION = var.deploy-forms-product-page-container.retagging_sed_expression
+    RETAG                = var.deploy-forms-runner-container.retag_image_on_success
+    RETAG_SED_EXPRESSION = var.deploy-forms-runner-container.retagging_sed_expression
   }
 }
