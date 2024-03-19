@@ -162,10 +162,12 @@ data "aws_iam_policy_document" "cloudfront" {
       "logs:*LogEvents",
       "logs:*LogStream",
       "logs:*SubscriptionFilters",
+      "logs:*SubscriptionFilter",
       "logs:*LogGroup"
     ]
     resources = [
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}*"
+      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-alb-${var.env_name}*"
     ]
   }
 }
@@ -196,7 +198,6 @@ data "aws_iam_policy_document" "secure-bucket" {
     ]
     resources = [
       "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*",
-      "arn:aws:s3:::aws-waf-logs-alb-govuk-forms-${var.env_name}*",
     ]
   }
 }
