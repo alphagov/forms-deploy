@@ -41,7 +41,7 @@ class DevelopmentAWSSDKFactory
     return stub_all_as_passing(
       Aws::CodePipeline::Client.new(stub_responses: true),
       %w[apply-forms-terraform-dev deploy-forms-product-page-container-dev, deploy-forms-runner-container-dev],
-      )
+    )
   end
 
   def self.production_env_client
@@ -83,10 +83,30 @@ class DevelopmentAWSSDKFactory
           Aws::CodePipeline::Types::StageState.new(
             stage_name: "stage_3",
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
+              pipeline_execution_id: "execution-1",
+              status: "Failed",
+            ),
+            action_states: [
+              Aws::CodePipeline::Types::ActionState.new(
+                action_name: "action-1",
+                latest_execution: Aws::CodePipeline::Types::ActionExecution.new(
+                  status: "Failed",
+                  summary: "Summary error message",
+                  error_details: Aws::CodePipeline::Types::ErrorDetails.new(
+                    code: "JobFailed",
+                    message: "Error message from error details; build terminated with state: FAILED. Phase: BUILD."
+                  )
+                )
+              )
+            ]
+          ),
+          Aws::CodePipeline::Types::StageState.new(
+            stage_name: "stage_4",
+            latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-2",
               status: "Succeeded"
-            ),
-          )
+            )
+          ),
         ]
       )
     end
@@ -139,7 +159,7 @@ class DevelopmentAWSSDKFactory
     return stub_all_as_passing(
       Aws::CodePipeline::Client.new(stub_responses: true),
       %w[apply-forms-terraform-user-research deploy-forms-product-page-container-user-research deploy-forms-runner-container-user-research],
-      )
+    )
   end
 
   def self.stub_list_pipelines(client, pipeline_names)
@@ -158,7 +178,7 @@ class DevelopmentAWSSDKFactory
   def self.stub_get_pipeline_state(client, &block)
     client.stub_responses(
       :get_pipeline_state,
-      ->(context){
+      ->(context) {
         return block.call(context.params[:name])
       }
     )
@@ -167,7 +187,7 @@ class DevelopmentAWSSDKFactory
   def self.stub_list_pipeline_executions(client, &block)
     client.stub_responses(
       :list_pipeline_executions,
-      ->(context){
+      ->(context) {
         return block.call(context.params[:pipeline_name])
       }
     )
@@ -176,7 +196,7 @@ class DevelopmentAWSSDKFactory
   def self.stub_get_pipeline_execution_id(client, &block)
     client.stub_responses(
       :get_pipeline_execution,
-      ->(context){
+      ->(context) {
         pipeline_name = context.params[:pipeline_name]
         execution_id = context.params[:pipeline_execution_id]
 
@@ -228,26 +248,26 @@ class DevelopmentAWSSDKFactory
 
     stub_get_pipeline_execution_id(client) do |pipeline_name, execution_id|
       Aws::CodePipeline::Types::GetPipelineExecutionOutput.new(
-          pipeline_execution: Aws::CodePipeline::Types::PipelineExecution.new(
-            pipeline_name: pipeline_name,
-            pipeline_version: 2,
-            pipeline_execution_id: "execution-1",
-            status: "Succeeded",
-            variables: [
-              Aws::CodePipeline::Types::ResolvedPipelineVariable.new(
-                name: "Variable",
-                resolved_value: "Some string value"
-              )
-            ],
-            artifact_revisions: [
-              Aws::CodePipeline::Types::ArtifactRevision.new(
-                name: "get-source",
-                revision_id: "012abc",
-                revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text\n\nFollowed by a bit more text which describes it in more detail"}'
-              )
-            ]
-          )
+        pipeline_execution: Aws::CodePipeline::Types::PipelineExecution.new(
+          pipeline_name: pipeline_name,
+          pipeline_version: 2,
+          pipeline_execution_id: "execution-1",
+          status: "Succeeded",
+          variables: [
+            Aws::CodePipeline::Types::ResolvedPipelineVariable.new(
+              name: "Variable",
+              resolved_value: "Some string value"
+            )
+          ],
+          artifact_revisions: [
+            Aws::CodePipeline::Types::ArtifactRevision.new(
+              name: "get-source",
+              revision_id: "012abc",
+              revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text\n\nFollowed by a bit more text which describes it in more detail"}'
+            )
+          ]
         )
+      )
     end
 
     return client
