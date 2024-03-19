@@ -79,18 +79,23 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
+      name  = "SMOKE_TEST_FORM_URL"
+      value = "https://submit.forms.service.gov.uk/form/2570/scheduled-smoke-test"
+      type  = "PLAINTEXT"
+    },
+    {
       name  = "AUTH0_EMAIL_USERNAME"
-      value = "/dev/smoketests/auth0/email-username"
+      value = "/dev/automated-tests/e2e/auth0/email-username"
       type  = "PARAMETER_STORE"
     },
     {
       name  = "AUTH0_USER_PASSWORD"
-      value = "/dev/smoketests/auth0/auth0-user-password"
+      value = "/dev/automated-tests/e2e/auth0/auth0-user-password"
       type  = "PARAMETER_STORE"
     },
     {
       name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
-      value = "/dev/smoketests/notify/api-key"
+      value = "/dev/automated-tests/e2e/notify/api-key"
       type  = "PARAMETER_STORE"
     },
   ]

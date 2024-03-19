@@ -155,3 +155,58 @@ resource "aws_shield_protection" "shield_for_alb" {
   name         = "shield-for-${aws_lb.alb.name}"
   resource_arn = aws_lb.alb.arn
 }
+
+resource "aws_wafv2_ip_set" "ips_to_block_alb" {
+  name               = "${var.env_name}-ips-to-block-alb"
+  description        = "Origin IPs to block for alb in ${var.env_name} environment"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+
+  addresses = var.ips_to_block
+}
+
+resource "aws_wafv2_web_acl" "alb" {
+  #checkov:skip=CKV_AWS_192:We don't use log4j
+  #checkov:skip=CKV2_AWS_31:We cannot set it up without help from cyber. We're working on it
+
+  name        = "alb_${var.env_name}"
+  description = "AWS WAF for the load balancer"
+  scope       = "REGIONAL"
+
+  default_action {
+    allow {}
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "OriginIPBlock"
+    sampled_requests_enabled   = false
+  }
+
+  rule {
+    name     = "OriginIPBlock"
+    priority = 110
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.ips_to_block_alb.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.env_name}_ips_blocked_alb"
+      sampled_requests_enabled   = false
+    }
+
+  }
+}
+
+resource "aws_wafv2_web_acl_association" "alb" {
+  resource_arn = aws_lb.alb.arn
+  web_acl_arn  = aws_wafv2_web_acl.alb.arn
+}

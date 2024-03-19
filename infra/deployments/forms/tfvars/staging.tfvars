@@ -18,6 +18,7 @@ environmental_settings = {
   forms_product_page_support_url     = "https://www.staging.forms.service.gov.uk/support"
   rds_maintenance_window             = "wed:04:00-wed:04:30"
   redis_backup_retention_period_days = 2
+  ips_to_block                       = []
 }
 hosted_zone_id             = "Z05508474P9CXBK9UAH3"
 root_domain                = "staging.forms.service.gov.uk"
@@ -37,6 +38,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled            = true
   govuk_app_domain                      = "staging.publishing.service.gov.uk"
   payment_links                         = false
+  reference_numbers_enabled             = false
 }
 forms_api_settings = {
   cpu          = 256

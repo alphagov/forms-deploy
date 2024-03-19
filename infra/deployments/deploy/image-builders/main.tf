@@ -4,3 +4,10 @@ module "build-product-page-container" {
   container_repository = "forms-product-page-deploy"
   source_repository    = "alphagov/forms-product-page"
 }
+
+module "build-forms-runner-container" {
+  source               = "../../../modules/image-builder-pipeline"
+  application_name     = "forms-runner"
+  container_repository = "forms-runner-deploy"
+  source_repository    = "alphagov/forms-runner"
+}

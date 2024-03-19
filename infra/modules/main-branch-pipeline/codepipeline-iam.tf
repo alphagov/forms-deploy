@@ -11,11 +11,11 @@ data "aws_iam_policy_document" "codepipeline" {
     resources = [
       module.docker_build.arn,
       module.terraform_apply_dev.arn,
-      module.smoke_tests_dev.arn,
+      module.e2e_tests_dev.arn,
       module.terraform_apply_staging.arn,
-      module.smoke_tests_staging.arn,
+      module.e2e_tests_staging.arn,
       module.terraform_apply_production.arn,
-      module.smoke_tests_production.arn,
+      module.e2e_tests_production.arn,
       module.terraform_apply_user_research.arn,
     ]
     effect = "Allow"

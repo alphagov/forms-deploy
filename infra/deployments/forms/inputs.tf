@@ -93,6 +93,7 @@ variable "forms_admin_settings" {
     cloudwatch_metrics_enabled            = bool
     govuk_app_domain                      = string
     payment_links                         = bool
+    reference_numbers_enabled             = bool
   })
   nullable = false
 }
@@ -144,5 +145,6 @@ variable "environmental_settings" {
     forms_product_page_support_url           = string
     rds_maintenance_window                   = string
     redis_backup_retention_period_days       = optional(number)
+    ips_to_block                             = list(string)
   })
 }
