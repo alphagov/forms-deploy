@@ -35,7 +35,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = ""
   payment_links                         = false
-  reference_numbers_enabled             = false
+  reference_numbers_enabled             = true
 }
 forms_api_settings = {
   cpu          = 256
@@ -56,5 +56,5 @@ forms_runner_settings = {
   max_capacity               = 3
   enable_maintenance_mode    = false
   cloudwatch_metrics_enabled = false
-  reference_numbers_enabled  = false
+  reference_numbers_enabled  = true
 }
