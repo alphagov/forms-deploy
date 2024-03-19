@@ -157,13 +157,15 @@ def generate_stage_viewdata(stage, current_execution_id)
 
   if stage.latest_execution.status == "Failed"
     failing_action = stage.action_states.find do |action|
-      action.latest_execution.status == "Failed"
+      action.latest_execution&.status == "Failed"
     end
 
-    if failing_action.latest_execution.error_details&.message
-      data.error_message = failing_action.latest_execution.error_details.message
-    elsif failing_action.latest_execution.summary
-      data.error_message = failing_action.latest_execution.summary
+    if failing_action != nil
+      if failing_action.latest_execution&.error_details&.message
+        data.error_message = failing_action.latest_execution.error_details.message
+      elsif failing_action.latest_execution&.summary
+        data.error_message = failing_action.latest_execution.summary
+      end
     end
 
   else
