@@ -12,17 +12,17 @@ target_environment_set:
 dev development:
 	$(eval export TARGET_ENVIRONMENT = dev)
 	@true
-	
+
 .PHONY: staging
 staging:
 	$(eval export TARGET_ENVIRONMENT = staging)
 	@true
-	
+
 .PHONY: prod production
 prod production:
 	$(eval export TARGET_ENVIRONMENT = production)
 	@true
-	
+
 .PHONY: user-research
 user-research:
 	$(eval export TARGET_ENVIRONMENT = user-research)
@@ -45,7 +45,7 @@ DEPLOY_TF_ROOTS = $(shell cd infra/deployments; find deploy -mindepth 1 -maxdept
 target_tf_root_set:
 	$(if ${TARGET_TF_ROOT},,$(error Target Terraform root is not set. Try adding an Terraform root target before the final target. Terraform root targets are directories relative to 'infra/deployments/', such as 'forms/dns'.))
 	@true
-	
+
 # "$(@:forms/%=%)" is removing the "forms/" prefix from the chosen root.
 # The prefix is useful for a user, but when scripting we want only the
 # name of the directory.
@@ -58,7 +58,7 @@ $(DEPLOY_TF_ROOTS):
 	$(eval export TARGET_DEPLOYMENT = deploy)
 	$(eval export TARGET_TF_ROOT = $(@:deploy/%=%))
 	@true
-	
+
 account:
 	$(eval export TARGET_DEPLOYMENT = account)
 	$(eval export TARGET_TF_ROOT = account)
@@ -76,7 +76,7 @@ aws_credentials_available:
  		>2& echo "CodeBuild detected. Assuming credentials are present in the environment."; \
  	fi;
 	@true
-	
+
 show_info:
 	@echo ""
 	@echo "========[Terraform target information]"
@@ -85,7 +85,7 @@ show_info:
 	@echo "=> Terraform root:         $${TARGET_TF_ROOT}"
 	@echo "========"
 	@echo ""
-	
+
 .PHONY: init
 init: target_environment_set target_tf_root_set aws_credentials_available show_info
 	@./support/invoke-terraform.sh -a init -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
@@ -97,7 +97,7 @@ plan: init
 .PHONY: apply
 apply: init
 	@./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
-		
+
 .PHONY:
 validate: init
 	@./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
@@ -111,3 +111,13 @@ generate-completion-word-list:
 .PHONY: fmt
 fmt:
 	terraform fmt -recursive infra/
+.PHONY: lint
+lint: checkov spec
+
+.PHONY: checkov
+checkov:
+	checkov -d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download
+
+.PHONY: spec
+spec:
+	cd infra; bundle exec rspec

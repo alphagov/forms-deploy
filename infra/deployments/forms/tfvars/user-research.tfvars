@@ -14,6 +14,7 @@ environmental_settings = {
   enable_alert_actions                     = false
   forms_product_page_support_url           = "https://www.research.forms.service.gov.uk/support"
   rds_maintenance_window                   = "wed:04:00-wed:04:30"
+  redis_backup_retention_period_days       = 2
   ips_to_block                             = []
 }
 hosted_zone_id             = "Z011139325A6VARFKUQ54"
@@ -34,6 +35,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = ""
   payment_links                         = false
+  reference_numbers_enabled             = false
 }
 forms_api_settings = {
   cpu          = 256

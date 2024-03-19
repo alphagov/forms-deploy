@@ -158,6 +158,11 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
             name  = "IMAGE_URI"
             value = "#{variables.container_image_uri}"
             type  = "PLAINTEXT"
+          },
+          {
+            name  = "APP_NAME"
+            value = "forms-product-page"
+            type  = "PLAINTEXT"
           }
         ])
       }
@@ -203,7 +208,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
         version         = "1"
         input_artifacts = ["forms_e2e_tests"]
         configuration = {
-          ProjectName = module.deploy_product_pages_end_to_end_tests.name
+          ProjectName = module.deploy_product_pages_end_to_end_tests[0].name
         }
       }
     }
@@ -243,13 +248,19 @@ module "generate_forms_product_pages_container_image_defs" {
 }
 
 module "deploy_product_pages_end_to_end_tests" {
-  source             = "../../../modules/code-build-run-smoke-tests"
+  count = var.deploy-forms-product-page-container.disable_end_to_end_tests == false ? 1 : 0
+
+  source             = "../../../modules/code-build-run-e2e-tests"
   app_name           = "forms-product-page"
-  environment        = var.environment_name
+  environment_name   = var.environment_name
   forms_admin_url    = "https://admin.${var.root_domain}"
   product_pages_url  = "https://${var.root_domain}"
   artifact_store_arn = module.artifact_bucket.arn
   service_role_arn   = data.aws_iam_role.deployer-role.arn
+
+  auth0_user_name_parameter_name     = module.automated_test_parameters[0].auth0_user_name_parameter_name
+  auth0_user_password_parameter_name = module.automated_test_parameters[0].auth0_user_password_parameter_name
+  notify_api_key_parameter_name      = module.automated_test_parameters[0].notify_api_key_parameter_name
 }
 
 module "pull_forms_product_page_image_retag_and_push" {
