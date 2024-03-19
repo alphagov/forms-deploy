@@ -6,6 +6,7 @@ data "aws_elasticache_replication_group" "forms_runner" {
 
 locals {
   deploy_account_id           = "711966560482"
+  image                       = var.image_tag == null ? null : "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
 }
 
@@ -36,7 +37,7 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-runner"
   sub_domain             = "submit"
-  image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
+  image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 3000

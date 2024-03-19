@@ -6,8 +6,34 @@
     </h2>
 
     <p class="govuk-body">
-        <strong>Last execution time</strong> <%= pipeline.last_started_at.strftime("%D %H:%M") %>
+        <strong>Last execution time</strong> <%= pipeline.last_started_at.strftime("%d/%m/%y %H:%M") %>
     </p>
+
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">Viewing this pipeline in AWS CodePipeline</span>
+      </summary>
+
+      <div class="govuk-details__text">
+        <p class="govuk-body">
+        You can view this pipeline in AWS CodePipeline by logging into the relevant account and visiting
+        </p>
+
+        <p class="govuk-body">
+          <a href="https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2">https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2</a>
+        </p>
+
+        <p class="govuk-body">
+          You can also run the following in your terminal to log into the account and open the page
+        </p>
+
+        <code class="code" id="code-open-<%= slugify(pipeline.name) %>">AWS_VAULT="" gds aws <%= pipeline.gds_cli_role %> -- open "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2"</code>
+
+        <p class="govuk-body">
+          <button class="govuk-button govuk-button--secondary" onclick="navigator.clipboard.writeText(document.getElementById('code-open-<%= slugify(pipeline.name) %>').innerText)">Copy code</button>
+        </p>
+      </div>
+    </details>
 
     <details class="govuk-details">
         <summary class="govuk-details__summary">
@@ -99,6 +125,7 @@
             <tr class="govuk-tabke__row">
                 <th scope="col" class="govuk-table__header">Stage</th>
                 <th scope="col" class="govuk-table__header">Status</th>
+                <th scope="col" class="govuk-table__header"><!-- Error messages, no visual header --></th>
             </tr>
         </thead>
 
@@ -106,12 +133,17 @@
             <% pipeline.stages.each do |stage| %>
                 <tr class="govuk-table__row">
                   <th scope="row" class="govuk-table__header"><%= stage.name %></th>
-                  <td class="govuk-table__cell">
+                  <td class="govuk-table__cell govuk-!-width-one-quarter">
                       <% if stage.outdated %>
                           <%= erb :'partials/label', :locals => {status: "Not Started"} %>
                       <% else %>
                           <%= erb :'partials/label', :locals => { status: stage.status } %>
                       <% end %>
+                  </td>
+                  <td class="govuk-table__cell">
+                    <% if stage.error_message %>
+                      <%= stage.error_message %>
+                    <% end %>
                   </td>
                 </tr>
             <% end %>
