@@ -162,7 +162,7 @@ resource "aws_wafv2_web_acl" "this" {
   lifecycle {
     create_before_destroy = true
   }
-  
+
   rule {
     name     = "allow_egress_ips_of_${var.env_name}_env"
     priority = 10

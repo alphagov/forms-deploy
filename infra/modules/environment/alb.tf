@@ -206,8 +206,23 @@ resource "aws_wafv2_web_acl_association" "alb" {
   web_acl_arn  = aws_wafv2_web_acl.alb.arn
 }
 
+
+resource "aws_cloudwatch_log_group" "waf_alb_log_group" {
+  #checkov:skip=CKV_AWS_338:We're happy with 30 days retention for now
+  #checkov:skip=CKV_AWS_158:Amazon managed SSE is sufficient.
+  name              = "aws-waf-logs-alb-${var.env_name}"
+  retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_subscription_filter" "waf_alb_csls_log_subscription" {
+  name            = "waf_alb_csls_log_subscription"
+  log_group_name  = "aws-waf-logs-alb-${var.env_name}"
+  filter_pattern  = ""
+  destination_arn = "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+}
+
 resource "aws_wafv2_web_acl_logging_configuration" "this" {
-  log_destination_configs = [module.waf_logs_bucket.arn]
+  log_destination_configs = [aws_cloudwatch_log_group.waf_alb_log_group.arn]
   resource_arn            = aws_wafv2_web_acl.alb.arn
 
   logging_filter {
@@ -228,46 +243,5 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
         }
       }
     }
-  }
-}
-
-# Bucket setup for waf logs
-
-# this is for csls log shipping
-module "s3_waf_log_shipping" {
-  # Double slash afer .git in the module source below is required
-  # https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
-  source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules.git//s3/s3_log_shipping?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
-  s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
-  s3_name                  = module.waf_logs_bucket.name
-}
-
-module "waf_logs_bucket" {
-  source = "../secure-bucket"
-  # the bucket name must start with "aws-waf-logs-"
-  name = "aws-waf-logs-alb-govuk-forms-${var.env_name}"
-  bucket_config = {
-    force_destroy = true
-  }
-
-  extra_bucket_policies = [data.aws_iam_policy_document.allow_waf_logs.json, module.s3_waf_log_shipping.s3_policy]
-}
-
-data "aws_iam_policy_document" "allow_waf_logs" {
-  statement {
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
-    }
-    actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::${module.waf_logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*"]
-  }
-}
-
-resource "aws_s3_bucket_notification" "waf_bucket_notification" {
-  bucket = module.waf_logs_bucket.name
-  queue {
-    queue_arn = "arn:aws:sqs:eu-west-2:885513274347:cyber-security-s3-to-splunk-prodpython"
-    events    = ["s3:ObjectCreated:*"]
   }
 }
