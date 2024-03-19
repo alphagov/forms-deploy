@@ -35,6 +35,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = "integration.publishing.service.gov.uk"
   payment_links                         = true
+  reference_numbers_enabled             = true
 }
 forms_api_settings = {
   cpu          = 256

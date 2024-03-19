@@ -93,6 +93,7 @@ variable "forms_admin_settings" {
     cloudwatch_metrics_enabled            = bool
     govuk_app_domain                      = string
     payment_links                         = bool
+    reference_numbers_enabled             = bool
   })
   nullable = false
 }
