@@ -48,7 +48,7 @@ resource "aws_lb_listener" "listener" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = module.acm_certicate_with_validation.arn
+  certificate_arn   = module.acm_certificate_with_validation.arn
 
   default_action {
     type = "fixed-response"
@@ -61,7 +61,7 @@ resource "aws_lb_listener" "listener" {
   }
 }
 
-module "acm_certicate_with_validation" {
+module "acm_certificate_with_validation" {
   source = "../../../modules/acm-cert-with-dns-validation"
   providers = {
     aws             = aws
