@@ -8,4 +8,4 @@ phases:
       - bundle install
   build:
     commands:
-      - bundle exec rspec spec/features/complete_spec.rb
+      - bundle exec rspec spec/end_to_end
