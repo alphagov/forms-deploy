@@ -1,10 +1,12 @@
-require "aws-sdk-codepipeline"
 require "concurrent/timer_task"
 require "concurrent/map"
 require "json"
 require "ostruct"
 require "sinatra"
 require "yaml"
+
+require_relative "lib/aws-sdk-factory/live"
+require_relative "lib/aws-sdk-factory/development"
 
 set :public_folder, "public"
 helpers do
@@ -14,26 +16,32 @@ helpers do
     end
 end
 
+is_dev_mode = ENV.fetch("PIPELINE_VISUALISER_DEV_MODE", false)
+
 config = YAML::safe_load_file("./config.yml")
 aws_clients = []
-config["roles"].each do |role_arn|
-    aws_clients << Aws::CodePipeline::Client.new(
-        credentials: Aws::AssumeRoleCredentials.new(
-            role_arn: role_arn,
-            role_session_name: "govuk_forms_codepipeline_visualiser",
-            region: "eu-west-2"
-        ),
-        region: "eu-west-2"
-    )
+config["roles"].each do |role|
+    if is_dev_mode
+        aws_clients << {
+          "client" => DevelopmentAWSSDKFactory.new_code_pipeline(role["role"]),
+          "gds_cli_role" => role["gds_cli_role"]
+        }
+    else
+        aws_clients << {
+          "client" => LiveAWSSDKFactory.new_code_pipeline(role["role"]),
+          "gds_cli_role" => role["gds_cli_role"]
+        }
+    end
 end
 
 pipelines_map = Concurrent::Map.new
 
 task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
     pipelines = []
-    aws_clients.each do |client|
+    aws_clients.each do |client_config|
         begin
-            all_pipelines = client.list_pipelines()
+            client = client_config["client"]
+            all_pipelines = client.list_pipelines
             pipeline_names = all_pipelines.pipelines.map {|p| p.name}
 
             pipeline_names.each do |pipeline|
@@ -59,11 +67,12 @@ task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
                     pipeline_execution_id: latest_id
                 })
 
-                viewdata = generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time)
+                viewdata = generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time, client_config["gds_cli_role"])
 
                 pipelines_map[viewdata.name] = viewdata
             rescue => err
                 puts err
+                puts err.backtrace
             end
         end
     end
@@ -84,15 +93,14 @@ get "/" do
                 group_pipelines << p
             end
         end
-
         group.pipelines = group_pipelines
         groups << group
     end
 
-    erb :state, :locals => {:groups => groups}
+    erb :state, :locals => {:groups => groups, :is_dev_mode => is_dev_mode}
 end
 
-def generate_pipeline_viewdata(state, execution, last_start_time)
+def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
     name = state.pipeline_name
     exec_id = execution.pipeline_execution_id
     overall_status = execution.status
@@ -109,6 +117,7 @@ def generate_pipeline_viewdata(state, execution, last_start_time)
     data.variables = variables
     data.artifacts = artifacts
     data.stages = stages
+    data.gds_cli_role = gds_cli_role
 
     return data
 end
@@ -145,6 +154,16 @@ def generate_stage_viewdata(stage, current_execution_id)
     data.name = stage.stage_name
     data.status = stage.latest_execution.status
     data.outdated = is_outdated
+
+    if stage.latest_execution.status == "Failed"
+        failing_action = stage.action_states.find do |action|
+            action.latest_execution.status == "Failed"
+        end
+
+        data.error_message = failing_action.latest_execution.summary
+    else
+        data.error_message = nil
+    end
 
     return data
 end

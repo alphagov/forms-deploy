@@ -7,3 +7,7 @@ run:
     AWS_SECRET_ACCESS_KEY="$$(echo "$${CREDS_JSON}" | jq -r '.Credentials.SecretAccessKey')" \
     AWS_SESSION_TOKEN="$$(echo "$${CREDS_JSON}" | jq -r '.Credentials.SessionToken')" \
 	ruby index.rb
+
+.PHONY: dev
+dev:
+	PIPELINE_VISUALISER_DEV_MODE=true ruby index.rb
