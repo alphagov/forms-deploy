@@ -45,7 +45,7 @@ locals {
 
 # this is for csls log shipping
 module "s3_log_shipping" {
-  # Double slash after .git in the module source below is required
+  # Double slash afer .git in the module source below is required
   # https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
   source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules.git//s3/s3_log_shipping?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
   s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
@@ -122,7 +122,7 @@ resource "aws_security_group" "alb" {
   }
 }
 
-module "acm_certificate_with_validation" {
+module "acm_certicate_with_validation" {
   source = "../acm-cert-with-dns-validation"
   providers = {
     aws             = aws
@@ -138,7 +138,7 @@ resource "aws_lb_listener" "listener" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = module.acm_certificate_with_validation.arn
+  certificate_arn   = module.acm_certicate_with_validation.arn
 
   default_action {
     type = "fixed-response"
