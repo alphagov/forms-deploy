@@ -5,7 +5,7 @@ resource "aws_cloudwatch_event_rule" "scheduler" {
   schedule_expression = "rate(${var.frequency_minutes} minutes)"
 }
 
-resource "aws_cloudwatch_event_target" "test_runner" {
+resource "aws_cloudwatch_event_target" "start_test" {
   #checkov:skip=CKV2_FORMS_AWS_6: Dead Letter Queue will be added when available within environment module.
   rule      = aws_cloudwatch_event_rule.scheduler.name
   target_id = "StartTest"

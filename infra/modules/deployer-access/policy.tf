@@ -361,7 +361,7 @@ data "aws_iam_policy_document" "code-build-modules" {
     ]
   }
   statement {
-    sid    = "ManageCodebuildRoles"
+    sid    = "ManageRoles"
     effect = "Allow"
     actions = [
       "iam:AttachRolePolicy",
@@ -382,7 +382,7 @@ data "aws_iam_policy_document" "code-build-modules" {
     ]
   }
   statement {
-    sid    = "ManageCodebuildPolicies"
+    sid    = "ManagePolicies"
     effect = "Allow"
     actions = [
       "iam:CreatePolicy",
@@ -390,7 +390,8 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:TagPolicy"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*"
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-event-bridge-*",
     ]
   }
 }
