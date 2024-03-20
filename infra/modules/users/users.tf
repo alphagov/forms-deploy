@@ -83,7 +83,7 @@ locals {
       user_research = "admin"
     },
     "radha.kotyankar" = {
-      deploy        = "support"
+      deploy        = "admin"
       staging       = "support"
       production    = "support"
       development   = "admin"
