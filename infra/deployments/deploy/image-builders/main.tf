@@ -11,3 +11,10 @@ module "build-forms-runner-container" {
   container_repository = "forms-runner-deploy"
   source_repository    = "alphagov/forms-runner"
 }
+
+module "build-forms-api-container" {
+  source               = "../../../modules/image-builder-pipeline"
+  application_name     = "forms-api"
+  container_repository = "forms-api-deploy"
+  source_repository    = "alphagov/forms-api"
+}
