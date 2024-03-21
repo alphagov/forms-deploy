@@ -67,6 +67,10 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
       subnets          = module.ecs_service.service.network_configuration[0].subnets
     }
   }
+
+  dead_letter_config {
+    arn = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+  }
 }
 
 ##
