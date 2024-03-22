@@ -38,3 +38,8 @@ resource "aws_iam_role_policy_attachment" "ddos_response_team" {
 resource "aws_shield_drt_access_role_arn_association" "ddos_response_team" {
   role_arn = aws_iam_role.ddos_response_team.arn
 }
+
+resource "aws_shield_drt_access_log_bucket_association" "drt_access_alb_logs" {
+  log_bucket              = module.logs_bucket.arn
+  role_arn_association_id = aws_shield_drt_access_role_arn_association.ddos_response_team.id
+}
