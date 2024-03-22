@@ -322,6 +322,38 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   action       = "BLOCK"
 }
 
+variable "aws_shield_drt_access_role_arn" {
+  type        = string
+  description = "The role name for the AWS Shield DDoS Response Team (DRT)"
+  default     = "shield-ddos-response-team"
+}
+
+resource "aws_iam_role" "ddos_response_team" {
+  name               = var.aws_shield_drt_access_role_arn
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        "Sid" : "",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "drt.shield.amazonaws.com"
+        },
+        "Action" : "sts:AssumeRole"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ddos_response_team" {
+  role       = aws_iam_role.ddos_response_team.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSShieldDRTAccessPolicy"
+}
+
+resource "aws_shield_drt_access_role_arn_association" "ddos_response_team" {
+  role_arn = aws_iam_role.ddos_response_team.arn
+}
+
 resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
   provider = aws.us-east-1
 
