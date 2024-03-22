@@ -20,3 +20,9 @@ variable "enable_cloudfront" {
   description = "If true then a cloudfront distribution is created."
   default     = true
 }
+
+variable "aws_shield_drt_access_role_arn" {
+  type        = string
+  description = "The role name for the AWS Shield DDoS Response Team (DRT)"
+  default     = "shield-ddos-response-team"
+}

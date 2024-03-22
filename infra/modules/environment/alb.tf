@@ -87,7 +87,7 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = true
   drop_invalid_header_fields = true
   security_groups            = [aws_security_group.alb.id]
-  subnets = [
+  subnets                    = [
     aws_subnet.public_a.id,
     aws_subnet.public_b.id,
     aws_subnet.public_c.id
@@ -123,7 +123,7 @@ resource "aws_security_group" "alb" {
 }
 
 module "acm_certicate_with_validation" {
-  source = "../acm-cert-with-dns-validation"
+  source    = "../acm-cert-with-dns-validation"
   providers = {
     aws             = aws
     aws.certificate = aws # Create the certificate in the default eu-west-2
@@ -149,11 +149,6 @@ resource "aws_lb_listener" "listener" {
       status_code  = 503
     }
   }
-}
-
-resource "aws_shield_protection" "shield_for_alb" {
-  name         = "shield-for-${aws_lb.alb.name}"
-  resource_arn = aws_lb.alb.arn
 }
 
 resource "aws_wafv2_ip_set" "ips_to_block_alb" {
@@ -209,4 +204,9 @@ resource "aws_wafv2_web_acl" "alb" {
 resource "aws_wafv2_web_acl_association" "alb" {
   resource_arn = aws_lb.alb.arn
   web_acl_arn  = aws_wafv2_web_acl.alb.arn
+}
+
+resource "aws_shield_protection" "shield_for_alb" {
+  name         = "shield-for-${aws_lb.alb.name}"
+  resource_arn = aws_lb.alb.arn
 }
