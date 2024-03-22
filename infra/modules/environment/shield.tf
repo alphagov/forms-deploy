@@ -3,6 +3,11 @@ resource "aws_shield_protection" "shield_for_cloudfront" {
   resource_arn = module.cloudfront[0].cloudfront_arn
 }
 
+resource "aws_shield_protection" "shield_for_alb" {
+  name         = "shield-for-${aws_lb.alb.name}"
+  resource_arn = aws_lb.alb.arn
+}
+
 resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   resource_arn = module.cloudfront[0].cloudfront_arn
   action       = "BLOCK"
