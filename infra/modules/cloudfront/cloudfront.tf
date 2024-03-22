@@ -322,12 +322,6 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   action       = "BLOCK"
 }
 
-variable "aws_shield_drt_access_role_arn" {
-  type        = string
-  description = "The role name for the AWS Shield DDoS Response Team (DRT)"
-  default     = "shield-ddos-response-team"
-}
-
 resource "aws_iam_role" "ddos_response_team" {
   name               = var.aws_shield_drt_access_role_arn
   assume_role_policy = jsonencode({

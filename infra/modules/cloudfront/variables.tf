@@ -34,3 +34,9 @@ variable "ips_to_block" {
   description = "List of Origin IPs to block"
   default     = []
 }
+
+variable "aws_shield_drt_access_role_arn" {
+  type        = string
+  description = "The role name for the AWS Shield DDoS Response Team (DRT)"
+  default     = "shield-ddos-response-team"
+}
