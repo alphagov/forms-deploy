@@ -164,7 +164,8 @@ resource "aws_wafv2_web_acl" "this" {
     priority = 10
 
     action {
-      allow {} # Stop processing
+      allow {}
+      # Stop processing
     }
 
     statement {
@@ -316,6 +317,10 @@ resource "aws_shield_protection" "shield_for_cloudfront" {
   resource_arn = aws_cloudfront_distribution.main.arn
 }
 
+resource "aws_shield_application_layer_automatic_response" "cloudfront" {
+  resource_arn = aws_cloudfront_distribution.main.arn
+  action       = "BLOCK"
+}
 
 resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
   provider = aws.us-east-1
