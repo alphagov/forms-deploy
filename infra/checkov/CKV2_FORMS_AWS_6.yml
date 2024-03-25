@@ -1,22 +1,28 @@
 ---
 metadata:
-    name: "Check that EventBridge targets have a dead letter queue assigned"
-    id: "CKV2_FORMS_AWS_6"
-    category: "CONVENTION"
+  name: "Check that EventBridge targets have a dead letter queue assigned"
+  id: "CKV2_FORMS_AWS_6"
+  category: "CONVENTION"
 scope:
-    provider: "AWS"
+  provider: "AWS"
 definition:
-    and:
-        - cond_type: "filter"
-          value:
-            - "aws_cloudwatch_event_target"
-          attribute: "resource_type"
-          operator: "within"
-          
+  and:
+    - cond_type: "filter"
+      value:
+        - "aws_cloudwatch_event_target"
+      attribute: "resource_type"
+      operator: "within"
+    - or:
         - cond_type: "connection"
           resource_types:
-              - "aws_cloudwatch_event_target"
+            - "aws_cloudwatch_event_target"
           connected_resource_types:
-              - "aws_sqs_queue"
+            - "aws_sqs_queue"
           operator: "exists"
-    
+
+        - cond_type: "attribute"
+          resource_types:
+            - "aws_cloudwatch_event_target"
+          attribute: "dead_letter_config.arn"
+          operator: "starting_with"
+          value: "arn:aws:sqs"

@@ -192,6 +192,10 @@ module "ecs_service" {
       name      = "SECRET_KEY_BASE",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/secret-key-base"
     },
+    {
+      name      = "SETTINGS__MAILCHIMP__API_KEY"
+      valueFrom = aws_ssm_parameter.mailchimp_api_key.arn
+    },
     lookup(local.auth_credentials, var.auth_provider, []),
     lookup(local.auth_credentials, coalesce(var.previous_auth_provider, "_"), [])
   ])
