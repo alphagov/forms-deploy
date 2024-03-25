@@ -43,3 +43,27 @@ resource "aws_shield_drt_access_log_bucket_association" "drt_access_alb_logs" {
   log_bucket              = module.logs_bucket.arn
   role_arn_association_id = aws_shield_drt_access_role_arn_association.ddos_response_team.id
 }
+
+resource "aws_iam_role_policy" "drt_access_alb_logs" {
+  name = "ddos_response_team_access_alb_logs"
+  role = aws_iam_role.ddos_response_team.id
+
+  policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetBucketLocation",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Effect   = "Allow"
+        Resource = [
+          "arn:aws:s3:::${module.logs_bucket.name}",
+          "arn:aws:s3:::${module.logs_bucket.name}/*"
+        ],
+        Sid = "AWSDDoSResponseTeamAccessS3Bucket"
+      }
+    ]
+  })
+}
