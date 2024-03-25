@@ -13,7 +13,7 @@ data "aws_route53_zone" "tools_domain_zone" {
 }
 
 resource "aws_lb" "alb" {
-  #checkov:skip=CKV_AWS_91:There's a ticket in the backlog to enable access logs
+  #checkov:skip=CKV2_AWS_28:WAF protection for the ALB is coming at a later date
   name                       = "tools-forms-gov-uk"
   load_balancer_type         = "application"
   internal                   = false
@@ -94,7 +94,9 @@ data "aws_iam_policy_document" "allow_logs" {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
     }
-    actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::${module.logs_bucket.name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    actions = ["s3:PutObject"]
+    resources = [
+      "arn:aws:s3:::${module.logs_bucket.name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+    ]
   }
 }
