@@ -71,7 +71,7 @@ resource "aws_lb_listener" "listener" {
 }
 
 module "acm_certicate_with_validation" {
-  source = "../../../modules/acm-cert-with-dns-validation"
+  source    = "../../../modules/acm-cert-with-dns-validation"
   providers = {
     aws             = aws
     aws.certificate = aws # Create the certificate in the default eu-west-2
@@ -95,12 +95,8 @@ data "aws_iam_policy_document" "allow_logs" {
       identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
     }
     actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::${module.logs_bucket.name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    resources = [
+      "arn:aws:s3:::${module.logs_bucket.name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+    ]
   }
 }
-
-resource "aws_shield_protection" "shield_for_alb" {
-  name         = "shield-for-${aws_lb.alb.name}"
-  resource_arn = aws_lb.alb.arn
-}
-
