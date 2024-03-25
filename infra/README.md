@@ -71,7 +71,7 @@ At this point the pipelines in the environment can be triggered which will deplo
 #### Deploy Environment
 To recreate the `deploy` environment, apply the following roots:
 1. `engineer-access` to grant access to engineers to perform the following. If necessary ask an AWS admin to create a bootstrap role to provide authorization to apply the `engineer-access` deployment.
-2. `acccount` to ensure the account is configured correctly.
+2. `account` to ensure the account is configured correctly.
 3. `ecr` to create the ECR repositories that store the Docker images used by the ECS services in each environment.
 4. `coordination` to allow the `deploy` environment to coordinate the deployments of other environments.
 5. `forms-admin-pipeline`, `forms-api-pipeline` and `forms-runner-pipeline` to create the CodePipeline pipelines and CodeBuild projects.
