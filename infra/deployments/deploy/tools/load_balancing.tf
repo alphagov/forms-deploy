@@ -2,6 +2,9 @@ locals {
   alb_certificate_sans = [
     "pipelines.tools.forms.service.gov.uk"
   ]
+  #The AWS managed account for the ALB, see: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-access-logging.html
+  aws_lb_account_id = "652711504416"
+
 }
 
 data "aws_route53_zone" "tools_domain_zone" {
@@ -19,6 +22,12 @@ resource "aws_lb" "alb" {
 
   subnets         = [for s in aws_subnet.alb_subnets : s.id]
   security_groups = [aws_security_group.alb.id]
+
+  access_logs {
+    bucket  = module.logs_bucket.name
+    prefix  = "deploy"
+    enabled = true
+  }
 }
 
 resource "aws_security_group" "alb" {
@@ -70,6 +79,24 @@ module "acm_certicate_with_validation" {
 
   domain_name               = "tools.forms.service.gov.uk"
   subject_alternative_names = local.alb_certificate_sans
+}
+
+module "logs_bucket" {
+  source = "../../../modules/secure-bucket"
+  name   = "govuk-forms-alb-logs-deploy"
+
+  extra_bucket_policies = [data.aws_iam_policy_document.allow_logs.json]
+}
+
+data "aws_iam_policy_document" "allow_logs" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
+    }
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${module.logs_bucket.name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+  }
 }
 
 resource "aws_shield_protection" "shield_for_alb" {
