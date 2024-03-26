@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - set -e
+      - ruby -v
+      - cd /app
+      - bundle -v
+  build:
+    commands:
+      - bundle exec rspec "$RSPEC_PATH"

@@ -59,3 +59,9 @@ forms_runner_settings = {
   cloudwatch_metrics_enabled = false
   reference_numbers_enabled  = true
 }
+scheduled_smoke_tests_settings = {
+  enable_scheduled_smoke_tests = false
+  form_url                     = "not-applicable"
+  frequency_minutes            = 10
+  enable_alerting              = false
+}
