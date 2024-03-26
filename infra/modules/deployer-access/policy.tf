@@ -379,7 +379,8 @@ data "aws_iam_policy_document" "code-build-modules" {
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}"
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team"
     ]
   }
   statement {
@@ -540,6 +541,7 @@ data "aws_iam_policy_document" "shield" {
       "shield:DescribeProtection",
       "shield:DisassociateDRTLogBucket",
       "shield:DisassociateDRTRole",
+      "shield:TagResource",
       "shield:UpdateProtectionGroup"
 
     ]
