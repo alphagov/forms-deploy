@@ -542,12 +542,14 @@ data "aws_iam_policy_document" "shield" {
       "shield:DescribeProtection",
       "shield:DisassociateDRTLogBucket",
       "shield:DisassociateDRTRole",
+      "shield:EnableApplicationLayerAutomaticResponse",
       "shield:TagResource",
       "shield:UpdateProtectionGroup"
 
     ]
     resources = [
       "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team",
     ]
     effect = "Allow"
   }
