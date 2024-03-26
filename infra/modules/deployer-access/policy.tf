@@ -27,11 +27,18 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
     data.aws_iam_policy_document.eventbridge.json,
-    data.aws_iam_policy_document.cloudwatch_logging.json,
-    data.aws_iam_policy_document.shield.json
+    data.aws_iam_policy_document.cloudwatch_logging.json
   ]
 }
 
+resource "aws_iam_policy" "shield-test" {
+  policy = data.aws_iam_policy_document.shield.json
+}
+
+resource "aws_iam_role_policy_attachment" "shield-test" {
+  policy_arn = aws_iam_policy.shield-test.arn
+  role       = aws_iam_role.deployer.id
+}
 resource "aws_iam_policy" "forms-infra" {
   policy = data.aws_iam_policy_document.forms-infra.json
 }
@@ -380,7 +387,6 @@ data "aws_iam_policy_document" "code-build-modules" {
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team"
     ]
   }
   statement {
@@ -544,10 +550,21 @@ data "aws_iam_policy_document" "shield" {
       "shield:DisassociateDRTRole",
       "shield:EnableApplicationLayerAutomaticResponse",
       "shield:TagResource",
-      "shield:UpdateProtectionGroup"
+      "shield:UpdateProtectionGroup",
+      "cloudfront:GetDistribution",
+      "iam:CreateServiceLinkedRole",
+      "iam:GetRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:PassRole",
+      "s3:DeleteBucketPolicy",
+      "s3:GetBucketPolicy",
+      "s3:PutBucketPolicy",
 
     ]
     resources = [
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:*",
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection",
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection*",
       "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team",
     ]
