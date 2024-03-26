@@ -31,6 +31,12 @@ data "aws_iam_policy_document" "codepipeline" {
     resources = ["${module.artifact_bucket.arn}/*"]
     effect    = "Allow"
   }
+
+  statement {
+    actions   = ["shield:CreateProtection"]
+    resources = ["arn:aws:shield::${data.aws_caller_identity.current.account_id}:protection/*"]
+    effect    = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "codepipeline" {
@@ -45,7 +51,7 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = [
         "codepipeline.amazonaws.com",
       ]
