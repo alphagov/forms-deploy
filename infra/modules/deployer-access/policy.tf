@@ -27,7 +27,8 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
     data.aws_iam_policy_document.eventbridge.json,
-    data.aws_iam_policy_document.cloudwatch_logging.json
+    data.aws_iam_policy_document.cloudwatch_logging.json,
+    data.aws_iam_policy_document.shield.json
   ]
 }
 
@@ -522,6 +523,28 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
     resources = [
       "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:*",
       "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:*",
+    ]
+    effect = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "shield" {
+  statement {
+    actions = [
+      "shield:AssociateDRTLogBucket",
+      "shield:AssociateDRTRole",
+      "shield:CreateProtection",
+      "shield:CreateProtectionGroup",
+      "shield:DeleteProtection",
+      "shield:DeleteProtectionGroup",
+      "shield:DescribeProtection",
+      "shield:DisassociateDRTLogBucket",
+      "shield:DisassociateDRTRole",
+      "shield:UpdateProtectionGroup"
+
+    ]
+    resources = [
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
     ]
     effect = "Allow"
   }
