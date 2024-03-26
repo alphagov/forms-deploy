@@ -12,7 +12,7 @@ resource "auth0_action" "restrict_users_to_allowed_domains" {
     let domains = ${jsonencode(var.allowed_email_domains)}
     exports.onExecutePreUserRegistration = async (event, api) => {
       if (event.user.email && !domains.some((domain) => event.user.email.endsWith(domain))) {
-        api.access.deny("unauthorised_email_domain", "Use your government email address.");
+        api.access.deny("unauthorised_email_domain", "Error: use your government email address.");
       }
     };
   EOT
