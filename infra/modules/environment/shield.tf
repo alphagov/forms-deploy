@@ -40,7 +40,7 @@ resource "aws_shield_drt_access_role_arn_association" "ddos_response_team" {
 }
 
 resource "aws_shield_drt_access_log_bucket_association" "drt_access_alb_logs" {
-  log_bucket              = module.logs_bucket.arn
+  log_bucket              = "govuk-forms-alb-logs-dev"
   role_arn_association_id = aws_shield_drt_access_role_arn_association.ddos_response_team.id
 }
 
