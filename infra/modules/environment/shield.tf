@@ -67,3 +67,30 @@ resource "aws_iam_role_policy" "drt_access_alb_logs" {
     ]
   })
 }
+
+data "aws_ssm_parameter" "contact_phone_number" {
+  name = "/account/contact-phone-number"
+}
+
+data "aws_ssm_parameter" "contact_email" {
+  name = "/account/contact-email"
+}
+
+resource "aws_shield_proactive_engagement" "drt_escalation_contacts" {
+  enabled = true
+
+  emergency_contact {
+    contact_notes = "GOV.UK Forms Infrastructure Team"
+    email_address = data.aws_ssm_parameter.contact_email.value
+    phone_number  = data.aws_ssm_parameter.contact_phone_number.value
+  }
+
+  emergency_contact {
+    contact_notes = "GOV.UK Forms Infrastructure Team"
+    email_address = data.aws_ssm_parameter.contact_email.value
+    phone_number  = data.aws_ssm_parameter.contact_phone_number.value
+  }
+
+  depends_on = [aws_shield_drt_access_role_arn_association.ddos_response_team]
+}
+
