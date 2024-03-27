@@ -538,34 +538,45 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
 
 data "aws_iam_policy_document" "shield" {
   statement {
+    sid = "ShieldPermissionsProtectionResources"
+    actions = [
+      "shield:CreateProtection",
+      "shield:DeleteProtection",
+      "shield:DescribeProtection",
+      "shield:TagResource",
+    ]
+    resources = [
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ShieldPermissionsAllResources"
     actions = [
       "shield:AssociateDRTLogBucket",
       "shield:AssociateDRTRole",
       "shield:CreateProtection",
-      "shield:CreateProtectionGroup",
-      "shield:DeleteProtection",
-      "shield:DeleteProtectionGroup",
-      "shield:DescribeProtection",
       "shield:DisassociateDRTLogBucket",
       "shield:DisassociateDRTRole",
       "shield:EnableApplicationLayerAutomaticResponse",
-      "shield:TagResource",
-      "shield:UpdateProtectionGroup",
-      "cloudfront:GetDistribution",
-      "iam:CreateServiceLinkedRole",
-      "iam:GetRole",
-      "iam:ListAttachedRolePolicies",
-      "iam:PassRole",
-      "s3:DeleteBucketPolicy",
-      "s3:GetBucketPolicy",
-      "s3:PutBucketPolicy",
-
     ]
     resources = [
-      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:*",
-      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection",
-      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection*",
-      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
+      "*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ShieldPermissionsIAM"
+    actions = [
+      "iam:CreateServiceLinkedRole",
+      "iam:GetRole",
+      "iam:DeleteRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:PassRole",
+    ]
+    resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team",
     ]
     effect = "Allow"
