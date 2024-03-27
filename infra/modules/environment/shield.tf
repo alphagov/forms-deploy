@@ -72,7 +72,7 @@ resource "aws_shield_protection_group" "protected_resources" {
   depends_on = [aws_shield_protection.shield_for_alb, aws_shield_protection.shield_for_cloudfront]
 
   protection_group_id = "Incoming-Traffic-Resources"
-  aggregation         = "MEAN"
+  aggregation = "MAX"
   pattern             = "ARBITRARY"
   members             = [
     module.cloudfront[0].cloudfront_arn,
