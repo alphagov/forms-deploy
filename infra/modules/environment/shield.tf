@@ -110,7 +110,7 @@ resource "aws_route53_health_check" "api" {
   failure_threshold = "3"
   fqdn              = "api.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   port              = 443
-  request_interval  = "11"
+  request_interval = "30"
   resource_path     = "/ping"
   search_string     = "PONG"
   type              = "HTTPS_STR_MATCH"
