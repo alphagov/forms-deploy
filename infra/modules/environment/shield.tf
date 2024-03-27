@@ -68,6 +68,18 @@ resource "aws_iam_role_policy" "drt_access_alb_logs" {
   })
 }
 
+resource "aws_shield_protection_group" "protected_resources" {
+  depends_on = [aws_shield_protection.shield_for_alb, aws_shield_protection.shield_for_cloudfront]
+
+  protection_group_id = "Incoming Traffic Resources"
+  aggregation         = "MEAN"
+  pattern             = "ARBITRARY"
+  members             = [
+    module.cloudfront[0].cloudfront_arn,
+    aws_lb.alb.arn
+  ]
+}
+
 data "aws_ssm_parameter" "contact_phone_number" {
   name = "/account/contact-phone-number"
 }
