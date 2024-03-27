@@ -563,11 +563,15 @@ data "aws_iam_policy_document" "shield" {
   statement {
     sid = "ShieldPermissionsIAM"
     actions = [
+      "iam:AttachRolePolicy",
       "iam:CreateServiceLinkedRole",
-      "iam:GetRole",
+      "iam:CreateRole",
       "iam:DeleteRole",
+      "iam:GetRole",
       "iam:ListAttachedRolePolicies",
       "iam:PassRole",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team",
