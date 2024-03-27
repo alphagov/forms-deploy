@@ -533,9 +533,8 @@ data "aws_iam_policy_document" "shield" {
   statement {
     sid = "ShieldPermissionsProtectionResources"
     actions = [
-      "shield:CreateProtection",
-      "shield:DeleteProtection",
-      "shield:DescribeProtection",
+      "shield:*HealthCheck",
+      "shield:*Protection",
       "shield:TagResource",
     ]
     resources = [
@@ -547,13 +546,10 @@ data "aws_iam_policy_document" "shield" {
   statement {
     sid     = "ShieldPermissionsProtectionGroupResources"
     actions = [
-      "shield:CreateProtectionGroup",
-      "shield:DeleteProtectionGroup",
-      "shield:DescribeProtectionGroup",
+      "shield:*ProtectionGroup",
       "shield:ListProtectionGroups",
       "shield:ListResourcesInProtectionGroup",
       "shield:TagResource",
-      "shield:UpdateProtectionGroup",
     ]
     resources = [
       "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection-group/*",
@@ -564,12 +560,10 @@ data "aws_iam_policy_document" "shield" {
   statement {
     sid = "ShieldPermissionsAllResources"
     actions = [
-      "shield:AssociateDRTLogBucket",
-      "shield:AssociateDRTRole",
+      "shield:*DRTLogBucket",
+      "shield:*DRTRole",
       "shield:AssociateProactiveEngagementDetails",
       "shield:CreateProtection",
-      "shield:DisassociateDRTLogBucket",
-      "shield:DisassociateDRTRole",
       "shield:EnableApplicationLayerAutomaticResponse",
       "shield:EnableProactiveEngagement",
       "shield:UpdateEmergencyContactSettings",
