@@ -27,18 +27,11 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
     data.aws_iam_policy_document.eventbridge.json,
-    data.aws_iam_policy_document.cloudwatch_logging.json
+    data.aws_iam_policy_document.cloudwatch_logging.json,
+    data.aws_iam_policy_document.shield.json
   ]
 }
 
-resource "aws_iam_policy" "shield-test" {
-  policy = data.aws_iam_policy_document.shield.json
-}
-
-resource "aws_iam_role_policy_attachment" "shield-test" {
-  policy_arn = aws_iam_policy.shield-test.arn
-  role       = aws_iam_role.deployer.id
-}
 resource "aws_iam_policy" "forms-infra" {
   policy = data.aws_iam_policy_document.forms-infra.json
 }
