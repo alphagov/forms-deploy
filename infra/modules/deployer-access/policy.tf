@@ -549,10 +549,13 @@ data "aws_iam_policy_document" "shield" {
     actions = [
       "shield:AssociateDRTLogBucket",
       "shield:AssociateDRTRole",
+      "shield:AssociateProactiveEngagementDetails",
       "shield:CreateProtection",
       "shield:DisassociateDRTLogBucket",
       "shield:DisassociateDRTRole",
       "shield:EnableApplicationLayerAutomaticResponse",
+      "shield:EnableProactiveEngagement",
+      "shield:UpdateEmergencyContactSettings",
     ]
     resources = [
       "*",
