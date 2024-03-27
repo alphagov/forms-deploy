@@ -566,6 +566,7 @@ data "aws_iam_policy_document" "shield" {
       "shield:CreateProtection",
       "shield:EnableApplicationLayerAutomaticResponse",
       "shield:EnableProactiveEngagement",
+      "shield:DisableProactiveEngagement",
       "shield:UpdateEmergencyContactSettings",
     ]
     resources = [
@@ -581,6 +582,8 @@ data "aws_iam_policy_document" "shield" {
       "iam:CreateServiceLinkedRole",
       "iam:CreateRole",
       "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
       "iam:GetRole",
       "iam:ListAttachedRolePolicies",
       "iam:PassRole",
