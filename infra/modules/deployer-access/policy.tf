@@ -545,6 +545,23 @@ data "aws_iam_policy_document" "shield" {
   }
 
   statement {
+    sid     = "ShieldPermissionsProtectionGroupResources"
+    actions = [
+      "shield:CreateProtectionGroup",
+      "shield:DeleteProtectionGroup",
+      "shield:DescribeProtectionGroup",
+      "shield:ListProtectionGroups",
+      "shield:ListResourcesInProtectionGroup",
+      "shield:TagResource",
+      "shield:UpdateProtectionGroup",
+    ]
+    resources = [
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection-group/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid = "ShieldPermissionsAllResources"
     actions = [
       "shield:AssociateDRTLogBucket",
