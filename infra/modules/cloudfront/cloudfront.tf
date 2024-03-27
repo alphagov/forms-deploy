@@ -40,6 +40,7 @@ resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
   #checkov:skip=CKV2_AWS_32:Checkov error, response headers policy is set.
   #checkov:skip=CKV2_AWS_47:We don't use log4j
+  #checkov:skip=CKV_AWS_310:We don't have a backup origin to fail over to
 
   origin {
     domain_name = var.alb_dns_name
@@ -337,6 +338,7 @@ resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
 }
 
 resource "aws_sns_topic" "cloudwatch_alarms" {
+  #checkov:skip=CKV_AWS_26:We don't need this to be encrypted at the moment
   provider = aws.us-east-1
   name     = "cloudwatch-alarms"
 }
