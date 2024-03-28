@@ -21,6 +21,7 @@ data "aws_iam_policy_document" "forms-infra-1" {
   ]
 }
 
+// TODO This list is getting long, what's the guidance on updating these documents?
 data "aws_iam_policy_document" "forms-infra-2" {
   source_policy_documents = [
     data.aws_iam_policy_document.ses.json,
@@ -28,7 +29,8 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.ecr.json,
     data.aws_iam_policy_document.eventbridge.json,
     data.aws_iam_policy_document.cloudwatch_logging.json,
-    data.aws_iam_policy_document.shield.json
+    data.aws_iam_policy_document.shield.json,
+    data.aws_iam_policy_document.route53.json,
   ]
 }
 
@@ -529,6 +531,7 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
   }
 }
 
+//TODO Review policies, resources, and actions
 data "aws_iam_policy_document" "shield" {
   statement {
     sid = "ShieldPermissionsProtectionResources"
@@ -592,6 +595,22 @@ data "aws_iam_policy_document" "shield" {
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team",
+    ]
+    effect = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "route53" {
+  statement {
+    sid     = "Route53HealthChecks"
+    actions = [
+      "route53:ChangeTagsForResource",
+      "route53:CreateHealthCheck",
+      "route53:DeleteHealthCheck",
+    ]
+    // TODO This feels too broad
+    resources = [
+      "*",
     ]
     effect = "Allow"
   }
