@@ -118,7 +118,52 @@ resource "aws_route53_health_check" "api" {
   type              = "HTTPS_STR_MATCH"
 }
 
-resource "aws_shield_protection_health_check_association" "example" {
+resource "aws_shield_protection_health_check_association" "api" {
   health_check_arn     = aws_route53_health_check.api.arn
+  shield_protection_id = aws_shield_protection.cloudfront.id
+}
+
+resource "aws_route53_health_check" "admin" {
+  failure_threshold = "3"
+  fqdn              = "admin.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
+  port              = 443
+  request_interval  = "30"
+  resource_path     = "/ping"
+  search_string     = "PONG"
+  type              = "HTTPS_STR_MATCH"
+}
+
+resource "aws_shield_protection_health_check_association" "admin" {
+  health_check_arn     = aws_route53_health_check.admin.arn
+  shield_protection_id = aws_shield_protection.cloudfront.id
+}
+
+resource "aws_route53_health_check" "product_page" {
+  failure_threshold = "3"
+  fqdn              = "product-page.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
+  port              = 443
+  request_interval  = "30"
+  resource_path     = "/ping"
+  search_string     = "PONG"
+  type              = "HTTPS_STR_MATCH"
+}
+
+resource "aws_shield_protection_health_check_association" "product_page" {
+  health_check_arn     = aws_route53_health_check.product_page.arn
+  shield_protection_id = aws_shield_protection.cloudfront.id
+}
+
+resource "aws_route53_health_check" "runner" {
+  failure_threshold = "3"
+  fqdn              = "submit.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
+  port              = 443
+  request_interval  = "30"
+  resource_path     = "/ping"
+  search_string     = "PONG"
+  type              = "HTTPS_STR_MATCH"
+}
+
+resource "aws_shield_protection_health_check_association" "runner" {
+  health_check_arn     = aws_route53_health_check.runner.arn
   shield_protection_id = aws_shield_protection.cloudfront.id
 }
