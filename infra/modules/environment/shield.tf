@@ -108,6 +108,21 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
 
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
 }
+resource "aws_shield_protection_health_check_association" "https_healthy_host" {
+  health_check_arn     = aws_route53_health_check.https_healthy_host.arn
+  shield_protection_id = aws_shield_protection.cloudfront.id
+}
+
+resource "aws_route53_health_check" "https_healthy_host" {
+  type                   = "CALCULATED"
+  child_health_threshold = 1
+  child_healthchecks     = [
+    aws_route53_health_check.api.id,
+    aws_route53_health_check.admin.id,
+    aws_route53_health_check.product_page.id,
+    aws_route53_health_check.runner.id,
+  ]
+}
 
 resource "aws_route53_health_check" "api" {
   failure_threshold = "3"
@@ -117,11 +132,6 @@ resource "aws_route53_health_check" "api" {
   resource_path     = "/ping"
   search_string     = "PONG"
   type              = "HTTPS_STR_MATCH"
-}
-
-resource "aws_shield_protection_health_check_association" "api" {
-  health_check_arn     = aws_route53_health_check.api.arn
-  shield_protection_id = aws_shield_protection.cloudfront.id
 }
 
 resource "aws_route53_health_check" "admin" {
@@ -134,11 +144,6 @@ resource "aws_route53_health_check" "admin" {
   type              = "HTTPS_STR_MATCH"
 }
 
-resource "aws_shield_protection_health_check_association" "admin" {
-  health_check_arn     = aws_route53_health_check.admin.arn
-  shield_protection_id = aws_shield_protection.cloudfront.id
-}
-
 resource "aws_route53_health_check" "product_page" {
   failure_threshold = "3"
   fqdn              = "product-page.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -149,11 +154,6 @@ resource "aws_route53_health_check" "product_page" {
   type              = "HTTPS_STR_MATCH"
 }
 
-resource "aws_shield_protection_health_check_association" "product_page" {
-  health_check_arn     = aws_route53_health_check.product_page.arn
-  shield_protection_id = aws_shield_protection.cloudfront.id
-}
-
 resource "aws_route53_health_check" "runner" {
   failure_threshold = "3"
   fqdn              = "submit.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -162,9 +162,4 @@ resource "aws_route53_health_check" "runner" {
   resource_path     = "/ping"
   search_string     = "PONG"
   type              = "HTTPS_STR_MATCH"
-}
-
-resource "aws_shield_protection_health_check_association" "runner" {
-  health_check_arn     = aws_route53_health_check.runner.arn
-  shield_protection_id = aws_shield_protection.cloudfront.id
 }
