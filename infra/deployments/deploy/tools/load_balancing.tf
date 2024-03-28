@@ -30,6 +30,23 @@ resource "aws_lb" "alb" {
   }
 }
 
+# this is for csls log shipping
+module "s3_log_shipping" {
+  # Double slash afer .git in the module source below is required
+  # https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
+  source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules.git//s3/s3_log_shipping?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
+  s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
+  s3_name                  = module.logs_bucket.name
+}
+
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket = module.logs_bucket.name
+  queue {
+    queue_arn = "arn:aws:sqs:eu-west-2:885513274347:cyber-security-s3-to-splunk-prodpython"
+    events    = ["s3:ObjectCreated:*"]
+  }
+}
+
 resource "aws_security_group" "alb" {
   name        = "alb-tools-forms-gov-uk"
   description = "Allows public inbound on 443 and outbound to VPC"
@@ -85,7 +102,7 @@ module "logs_bucket" {
   source = "../../../modules/secure-bucket"
   name   = "govuk-forms-alb-logs-deploy"
 
-  extra_bucket_policies = [data.aws_iam_policy_document.allow_logs.json]
+  extra_bucket_policies = [data.aws_iam_policy_document.allow_logs.json, module.s3_log_shipping.s3_policy]
 }
 
 data "aws_iam_policy_document" "allow_logs" {
