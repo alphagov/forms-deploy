@@ -1,9 +1,9 @@
-resource "aws_shield_protection" "shield_for_cloudfront" {
+resource "aws_shield_protection" "cloudfront" {
   name         = "shield-for-cloudfront"
   resource_arn = module.cloudfront[0].cloudfront_arn
 }
 
-resource "aws_shield_protection" "shield_for_alb" {
+resource "aws_shield_protection" "alb" {
   name         = "shield-for-${aws_lb.alb.name}"
   resource_arn = aws_lb.alb.arn
 }
@@ -13,6 +13,7 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   action       = "BLOCK"
 }
 
+//TODO: Review naming
 resource "aws_iam_role" "ddos_response_team" {
   name               = var.aws_shield_drt_access_role_arn
   assume_role_policy = jsonencode({
@@ -69,7 +70,7 @@ resource "aws_iam_role_policy" "drt_access_alb_logs" {
 }
 
 resource "aws_shield_protection_group" "protected_resources" {
-  depends_on = [aws_shield_protection.shield_for_alb, aws_shield_protection.shield_for_cloudfront]
+  depends_on = [aws_shield_protection.alb, aws_shield_protection.cloudfront]
 
   protection_group_id = "Incoming-Traffic-Resources"
   aggregation = "MAX"
@@ -80,6 +81,7 @@ resource "aws_shield_protection_group" "protected_resources" {
   ]
 }
 
+//TODO: Review contact details retrieval
 data "aws_ssm_parameter" "contact_phone_number" {
   name = "/account/contact-phone-number"
 }
@@ -118,5 +120,5 @@ resource "aws_route53_health_check" "api" {
 
 resource "aws_shield_protection_health_check_association" "example" {
   health_check_arn     = aws_route53_health_check.api.arn
-  shield_protection_id = aws_shield_protection.shield_for_cloudfront.id
+  shield_protection_id = aws_shield_protection.cloudfront.id
 }
