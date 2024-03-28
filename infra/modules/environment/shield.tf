@@ -14,7 +14,7 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
 }
 
 //TODO: Review naming
-resource "aws_iam_role" "ddos_response_team" {
+resource "aws_iam_role" "shield_response_team" {
   name               = var.aws_shield_drt_access_role_arn
   assume_role_policy = jsonencode({
     Version   = "2012-10-17"
@@ -31,23 +31,23 @@ resource "aws_iam_role" "ddos_response_team" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ddos_response_team" {
-  role       = aws_iam_role.ddos_response_team.name
+resource "aws_iam_role_policy_attachment" "shield_response_team" {
+  role = aws_iam_role.shield_response_team.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSShieldDRTAccessPolicy"
 }
 
-resource "aws_shield_drt_access_role_arn_association" "ddos_response_team" {
-  role_arn = aws_iam_role.ddos_response_team.arn
+resource "aws_shield_drt_access_role_arn_association" "shield_response_team" {
+  role_arn = aws_iam_role.shield_response_team.arn
 }
 
-resource "aws_shield_drt_access_log_bucket_association" "drt_access_alb_logs" {
+resource "aws_shield_drt_access_log_bucket_association" "access_alb_logs" {
   log_bucket              = module.logs_bucket.name
-  role_arn_association_id = aws_shield_drt_access_role_arn_association.ddos_response_team.id
+  role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 }
 
-resource "aws_iam_role_policy" "drt_access_alb_logs" {
+resource "aws_iam_role_policy" "access_alb_logs" {
   name = "ddos_response_team_access_alb_logs"
-  role = aws_iam_role.ddos_response_team.id
+  role = aws_iam_role.shield_response_team.id
 
   policy = jsonencode({
     Version   = "2012-10-17"
@@ -76,13 +76,14 @@ resource "aws_shield_protection_group" "protected_resources" {
   aggregation = "MAX"
   pattern             = "ARBITRARY"
   members             = [
+    // TODO is this the correct way to reference our CloudFront distribution
     module.cloudfront[0].cloudfront_arn,
     aws_lb.alb.arn
   ]
 }
 
 //TODO: Review contact details retrieval
-data "aws_ssm_parameter" "contact_phone_number" {
+data "aws_ssm_parameter" "contact_phone" {
   name = "/account/contact-phone-number"
 }
 
@@ -90,22 +91,22 @@ data "aws_ssm_parameter" "contact_email" {
   name = "/account/contact-email"
 }
 
-resource "aws_shield_proactive_engagement" "drt_escalation_contacts" {
+resource "aws_shield_proactive_engagement" "escalation_contacts" {
   enabled = true
 
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"
     email_address = data.aws_ssm_parameter.contact_email.value
-    phone_number  = data.aws_ssm_parameter.contact_phone_number.value
+    phone_number = data.aws_ssm_parameter.contact_phone.value
   }
 
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"
     email_address = data.aws_ssm_parameter.contact_email.value
-    phone_number  = data.aws_ssm_parameter.contact_phone_number.value
+    phone_number = data.aws_ssm_parameter.contact_phone.value
   }
 
-  depends_on = [aws_shield_drt_access_role_arn_association.ddos_response_team]
+  depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
 }
 
 resource "aws_route53_health_check" "api" {
