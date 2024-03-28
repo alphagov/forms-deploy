@@ -108,21 +108,6 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
 
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
 }
-resource "aws_shield_protection_health_check_association" "https_healthy_host" {
-  health_check_arn     = aws_route53_health_check.https_healthy_host.arn
-  shield_protection_id = aws_shield_protection.cloudfront.id
-}
-
-resource "aws_route53_health_check" "https_healthy_host" {
-  type                   = "CALCULATED"
-  child_health_threshold = 1
-  child_healthchecks     = [
-    aws_route53_health_check.api.id,
-    aws_route53_health_check.admin.id,
-    aws_route53_health_check.product_page.id,
-    aws_route53_health_check.runner.id,
-  ]
-}
 
 resource "aws_route53_health_check" "api" {
   failure_threshold = "3"
@@ -162,4 +147,38 @@ resource "aws_route53_health_check" "runner" {
   resource_path     = "/ping"
   search_string     = "PONG"
   type              = "HTTPS_STR_MATCH"
+}
+
+locals {
+  apps = ["forms-admin", "forms-api", "forms-runner", "forms-product-page"]
+}
+
+data "aws_lb_target_group" "target_groups" {
+  for_each = toset(local.apps)
+  name     = "${each.key}-${var.env_name}"
+}
+
+resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
+  for_each = data.aws_lb_target_group.target_groups
+
+  type                            = "CLOUDWATCH_METRIC"
+  cloudwatch_alarm_name           = "alb_healthy_host_count_${each.value.name}"
+  cloudwatch_alarm_region         = "us-west-2"
+  insufficient_data_health_status = "Healthy"
+}
+
+resource "aws_route53_health_check" "aggregated_checks" {
+  type                   = "CALCULATED"
+  child_health_threshold = 1
+  child_healthchecks     = concat([
+    aws_route53_health_check.api.id,
+    aws_route53_health_check.admin.id,
+    aws_route53_health_check.product_page.id,
+    aws_route53_health_check.runner.id,
+  ], [for _, alarm in aws_route53_health_check.healthy_host_cloudwatch_alarm : alarm.id])
+}
+
+resource "aws_shield_protection_health_check_association" "system_health" {
+  health_check_arn     = aws_route53_health_check.aggregated_checks.arn
+  shield_protection_id = aws_shield_protection.cloudfront.id
 }
