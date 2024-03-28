@@ -81,5 +81,5 @@ scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true
   form_url                     = "https://submit.forms.service.gov.uk/form/2570/scheduled-smoke-test"
   frequency_minutes            = 10
-  enable_alerting              = false # Enable this after we've seen them to be reliable.
+  enable_alerting              = true
 }
