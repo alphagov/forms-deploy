@@ -32,7 +32,7 @@ resource "aws_iam_role" "shield_response_team" {
 }
 
 resource "aws_iam_role_policy_attachment" "shield_response_team" {
-  role = aws_iam_role.shield_response_team.name
+  role       = aws_iam_role.shield_response_team.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSShieldDRTAccessPolicy"
 }
 
@@ -46,7 +46,7 @@ resource "aws_shield_drt_access_log_bucket_association" "access_alb_logs" {
 }
 
 resource "aws_iam_role_policy" "access_alb_logs" {
-  name = "ddos_response_team_access_alb_logs"
+  name = "shield_response_team_access_alb_logs"
   role = aws_iam_role.shield_response_team.id
 
   policy = jsonencode({
@@ -73,7 +73,7 @@ resource "aws_shield_protection_group" "protected_resources" {
   depends_on = [aws_shield_protection.alb, aws_shield_protection.cloudfront]
 
   protection_group_id = "Incoming-Traffic-Resources"
-  aggregation = "MAX"
+  aggregation         = "MAX"
   pattern             = "ARBITRARY"
   members             = [
     // TODO is this the correct way to reference our CloudFront distribution
@@ -97,13 +97,13 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"
     email_address = data.aws_ssm_parameter.contact_email.value
-    phone_number = data.aws_ssm_parameter.contact_phone.value
+    phone_number  = data.aws_ssm_parameter.contact_phone.value
   }
 
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"
     email_address = data.aws_ssm_parameter.contact_email.value
-    phone_number = data.aws_ssm_parameter.contact_phone.value
+    phone_number  = data.aws_ssm_parameter.contact_phone.value
   }
 
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
@@ -113,7 +113,7 @@ resource "aws_route53_health_check" "api" {
   failure_threshold = "3"
   fqdn              = "api.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   port              = 443
-  request_interval = "30"
+  request_interval  = "30"
   resource_path     = "/ping"
   search_string     = "PONG"
   type              = "HTTPS_STR_MATCH"
