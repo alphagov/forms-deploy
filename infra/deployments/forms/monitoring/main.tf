@@ -18,11 +18,12 @@ module "runner_scheduled_smoke_tests" {
     submit forms.
 
     To investigate:
-    - Check the CodeBuild project logs for information
+    - Check the runner-smoke-test CodeBuild project logs for information
     where the tests failed.
-    - Attempt to fill in a form in the ${var.environment_name} to verify if
-    there is an issue. There may be an intermittent issue so
-    continue to next step regardless
+    - Attempt to fill in a form in the ${var.environment_name} environment to
+    verify if there is an issue. The tests use the form
+    ${var.scheduled_smoke_tests_settings.form_url}. There may be an
+    intermittent issue so continue to next step regardless
     - Check the application logs for errors.
     - If this is not a false alarm, begin an incident and follow the incident response at
     https://github.com/alphagov/forms-team/wiki/Incident-Response.
