@@ -356,3 +356,7 @@ output "cloudfront_dns_name" {
 output "cloudfront_arn" {
   value = aws_cloudfront_distribution.main.arn
 }
+
+output "cloudfront_distribution_id" {
+  value = aws_cloudfront_distribution.main.id
+}

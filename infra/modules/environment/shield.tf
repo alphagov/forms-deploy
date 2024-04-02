@@ -182,3 +182,27 @@ resource "aws_shield_protection_health_check_association" "system_health" {
   health_check_arn     = aws_route53_health_check.aggregated_checks.arn
   shield_protection_id = aws_shield_protection.cloudfront.id
 }
+
+resource "aws_route53_health_check" "cloudfront_5xx_error_rate" {
+  type                            = "CLOUDWATCH_METRIC"
+  cloudwatch_alarm_name           = "${var.env_name}_cloudfront_high_5xx_error_rate"
+  cloudwatch_alarm_region         = "eu-west-2"
+  insufficient_data_health_status = "Healthy"
+}
+
+resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
+  alarm_name          = "${var.env_name}_cloudfront_high_5xx_error_rate"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "5xxErrorRate"
+  namespace           = "AWS/Cloudfront"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 100
+  treat_missing_data  = "notBreaching"
+  actions_enabled     = false
+
+  dimensions = {
+    DistributionId = module.cloudfront[0].cloudfront_distribution_id
+  }
+}
