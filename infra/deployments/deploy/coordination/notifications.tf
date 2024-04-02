@@ -125,7 +125,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
 }
 
 module "slack_notifications" {
-  for_each = local.other_accounts
+  for_each = merge(local.other_accounts, { "deploy" = "711966560482" })
   source   = "./slack-notifications"
 
 
