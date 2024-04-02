@@ -175,6 +175,7 @@ resource "aws_route53_health_check" "aggregated_checks" {
     aws_route53_health_check.admin.id,
     aws_route53_health_check.product_page.id,
     aws_route53_health_check.runner.id,
+    aws_route53_health_check.cloudfront_5xx_error_rate.id
   ], [for _, alarm in aws_route53_health_check.healthy_host_cloudwatch_alarm : alarm.id])
 }
 
