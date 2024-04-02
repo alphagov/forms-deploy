@@ -163,7 +163,7 @@ resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
 
   type                            = "CLOUDWATCH_METRIC"
   cloudwatch_alarm_name           = "alb_healthy_host_count_${each.value.name}"
-  cloudwatch_alarm_region         = "us-west-2"
+  cloudwatch_alarm_region         = "eu-west-2"
   insufficient_data_health_status = "Healthy"
 }
 
