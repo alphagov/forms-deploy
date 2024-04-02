@@ -12,6 +12,13 @@
   <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png">
   <link rel="manifest" href="/assets/manifest.json">
   <link rel="stylesheet" href="/stylesheets/govuk-frontend-5.2.0.min.css">
+
+  <style type="text/css">
+    code {
+        background-color: #F2F3F3;
+        padding: 2px 5px;
+    }
+  </style>
 </head>
 
 <body class="govuk-template__body">
@@ -39,11 +46,26 @@
       </div>
 
       <div class="govuk-header__content">
-        <% if is_dev_mode %>
-          <strong class="govuk-tag govuk-tag--blue">
-            Dev mode
-          </strong>
-        <% end %>
+        <a href="#" class="govuk-header__link govuk-header__service-name">
+          GOV.UK Forms Pipelines
+        </a>
+        <nav aria-label="Menu" class="govuk-header__navigation">
+          <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" hidden>
+            Menu
+          </button>
+          <ul id="navigation" class="govuk-header__navigation-list">
+            <li class="govuk-header__navigation-item <%= active_page_css_class?("/") %>">
+              <a class="govuk-header__link" href="/">
+                Pipelines
+              </a>
+            </li>
+            <li class="govuk-header__navigation-item <%= active_page_css_class?("/deploying-changes") %>">
+              <a class="govuk-header__link" href="/deploying-changes">
+                Deploying changes
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </header>
