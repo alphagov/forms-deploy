@@ -124,134 +124,14 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
   })
 }
 
-resource "aws_cloudwatch_event_rule" "pipeline_completion" {
-  name        = "pipeline-success-events"
-  description = "Send pipeline success messages to Slack"
-  event_pattern = jsonencode({
-    source      = ["aws.codepipeline", "uk.gov.service.forms"],
-    detail-type = ["CodePipeline Pipeline Execution State Change"]
-    detail = {
-      state = ["SUCCEEDED"]
-    }
-  })
-}
+module "slack_notifications" {
+  for_each = local.other_accounts
+  source   = "./slack-notifications"
 
-resource "aws_cloudwatch_event_target" "send_pipeline_completion_to_slack" {
-  target_id = "send-to-slack"
-  rule      = aws_cloudwatch_event_rule.pipeline_completion.name
-  arn       = local.chatbot_deployments_channel_sns_topic
 
-  input_transformer {
-    input_paths    = local.chatbot_message_input_paths
-    input_template = <<EOF
-{
-    "version": "1.0",
-    "source": "custom",
-    "content": {
-        "textType": "client-markdown",
-        "title": ":tada: SUCCESS: <pipeline>",
-        "description": "Pipeline <pipeline> completed at <time>",
-        "nextSteps": [
-            "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<pipeline>/view?region=eu-west-2"
-        ]
-    }
-}
-EOF
-  }
-
-  dead_letter_config {
-    arn = aws_sqs_queue.event_bridge_dlq.arn
-  }
-}
-
-resource "aws_cloudwatch_event_rule" "pipeline_failure" {
-  name        = "pipeline-failure-events"
-  description = "Send pipeline failure messages to Slack"
-  event_pattern = jsonencode({
-    source      = ["aws.codepipeline", "uk.gov.service.forms"],
-    detail-type = ["CodePipeline Pipeline Execution State Change"]
-    detail = {
-      state = ["FAILED"]
-      pipeline = [
-        {
-          "anything-but" : {
-            "suffix" : "dev"
-          }
-        },
-      ]
-    }
-  })
-}
-
-resource "aws_cloudwatch_event_target" "send_pipeline_failure_to_slack" {
-  target_id = "send-to-slack"
-  rule      = aws_cloudwatch_event_rule.pipeline_failure.name
-  arn       = local.chatbot_alerts_channel_sns_topic
-
-  input_transformer {
-    input_paths    = local.chatbot_message_input_paths
-    input_template = <<EOF
-        {
-            "version": "1.0",
-            "source": "custom",
-            "content": {
-                "textType": "client-markdown",
-                "title": ":octagonal_sign: FAILURE: <pipeline>",
-                "description": "Pipeline <pipeline> failed at <time>",
-                "nextSteps": [
-                    "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<pipeline>/view?region=eu-west-2"
-                ]
-            }
-        }
-        EOF
-  }
-
-  dead_letter_config {
-    arn = aws_sqs_queue.event_bridge_dlq.arn
-  }
-}
-
-resource "aws_cloudwatch_event_rule" "dev_pipeline_failure" {
-  # dev failures are different as we do not want to be alerted by them
-  name        = "dev-pipeline-failure-events"
-  description = "Send dev pipeline failure messages to Slack"
-  event_pattern = jsonencode({
-    source      = ["aws.codepipeline", "uk.gov.service.forms"],
-    detail-type = ["CodePipeline Pipeline Execution State Change"]
-    detail = {
-      state = ["FAILED"]
-      pipeline = [
-        { "wildcard" : "*dev*" },
-      ]
-    }
-  })
-}
-
-resource "aws_cloudwatch_event_target" "send_dev_pipeline_failure_to_slack" {
-  target_id = "send-to-slack"
-  rule      = aws_cloudwatch_event_rule.dev_pipeline_failure.name
-  # dev failures can go to the channel where we get notified about deployments
-  arn = local.chatbot_deployments_channel_sns_topic
-
-  input_transformer {
-    input_paths    = local.chatbot_message_input_paths
-    input_template = <<EOF
-        {
-            "version": "1.0",
-            "source": "custom",
-            "content": {
-                "textType": "client-markdown",
-                "title": ":octagonal_sign: FAILURE: <pipeline>",
-                "description": "Pipeline <pipeline> failed at <time>",
-                "nextSteps": [
-                    "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<pipeline>/view?region=eu-west-2"
-                ]
-            }
-        }
-        EOF
-  }
-
-  dead_letter_config {
-    arn = aws_sqs_queue.event_bridge_dlq.arn
-  }
+  account_id                    = each.value
+  account_name                  = each.key
+  dead_letter_queue_arn         = aws_sqs_queue.event_bridge_dlq.arn
+  pipeline_completion_topic_arn = local.chatbot_deployments_channel_sns_topic
+  pipeline_failure_topic_arn    = each.key == "development" ? local.chatbot_deployments_channel_sns_topic : local.chatbot_alerts_channel_sns_topic
 }
