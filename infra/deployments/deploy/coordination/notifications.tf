@@ -111,7 +111,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
       {
         Action   = "sns:Publish"
         Effect   = "Allow"
-        Resource = aws_sns_topic.alerts_topic.arn
+        Resource = aws_sns_topic.deployments_topic.arn
         Principal = {
           Service = [
             "cloudwatch.amazonaws.com",
