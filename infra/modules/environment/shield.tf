@@ -42,7 +42,7 @@ resource "aws_shield_drt_access_role_arn_association" "shield_response_team" {
   role_arn = aws_iam_role.shield_response_team.arn
 }
 
-resource "aws_shield_drt_access_log_bucket_association" "alb_logs" {
+resource "aws_shield_drt_access_log_bucket_association" "access_alb_logs" {
   log_bucket              = module.logs_bucket.name
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 }
