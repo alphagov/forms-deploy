@@ -99,3 +99,9 @@ variable "enable_mailchimp_sync" {
   type        = bool
   default     = false
 }
+
+variable "archive_enabled" {
+  description = "Enables that ability to archive forms"
+  type        = bool
+  default     = false
+}
