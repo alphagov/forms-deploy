@@ -160,6 +160,9 @@ data "aws_lb_target_group" "target_groups" {
   name     = "${each.key}-${var.env_name}"
 }
 
+// TODO: AWS docs refer to another type of CloudFront metric name, TotalErrorRate, which measures the
+// percentage of all requests for which the HTTP status code is 4xx or 5xx.
+// https://docs.aws.amazon.com/whitepapers/latest/aws-best-practices-ddos-resiliency/metrics-and-alarms.html
 resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
   alarm_name          = "${var.env_name}_cloudfront_high_5xx_error_rate"
   comparison_operator = "GreaterThanThreshold"
