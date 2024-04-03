@@ -1,3 +1,5 @@
+// TODO: Review hardcoded values and extract relevant ones to variables.tf
+
 resource "aws_shield_protection" "cloudfront" {
   name         = "shield-for-cloudfront"
   resource_arn = module.cloudfront[0].cloudfront_arn
@@ -40,7 +42,7 @@ resource "aws_shield_drt_access_role_arn_association" "shield_response_team" {
   role_arn = aws_iam_role.shield_response_team.arn
 }
 
-resource "aws_shield_drt_access_log_bucket_association" "access_alb_logs" {
+resource "aws_shield_drt_access_log_bucket_association" "alb_logs" {
   log_bucket              = module.logs_bucket.name
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 }
@@ -177,11 +179,14 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
 
 resource "aws_route53_health_check" "cloudfront_5xx_error_rate" {
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = "${var.env_name}_cloudfront_high_5xx_error_rate"
+  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_5xx_error_rate.alarm_name
   cloudwatch_alarm_region         = "eu-west-2"
   insufficient_data_health_status = "Healthy"
 }
 
+# The alb_healthy_host_count CloudWatch alarm is configured in modules/alerts/health-host-count.tf
+# There is a hidden dependency on the cloudwatch_alarm_name between this resource and the alarm
+// TODO: Resolve the hidden dependency on cloudwatch_alarm_name. One option: create an output and module declaration
 resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
   for_each = data.aws_lb_target_group.target_groups
 
