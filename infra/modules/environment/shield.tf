@@ -214,10 +214,10 @@ module "alerts" {
 }
 
 resource "aws_route53_health_check" "healthy_hosts" {
-  for_each = data.aws_lb_target_group.target_groups
+  for_each = module.alerts.healthy_host_alarm_names
 
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = module.alerts.healthy_host_alarm_name
+  cloudwatch_alarm_name           = each.value
   cloudwatch_alarm_region         = var.cloudwatch_alarm_region
   insufficient_data_health_status = "Healthy"
 }
