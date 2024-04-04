@@ -27,7 +27,7 @@
           You can also run the following in your terminal to log into the account and open the page
         </p>
 
-        <code class="code" id="code-open-<%= slugify(pipeline.name) %>">AWS_VAULT="" gds aws <%= pipeline.gds_cli_role %> -- open "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2"</code>
+        <code class="code" id="code-open-<%= slugify(pipeline.name) %>">gds aws <%= pipeline.gds_cli_role %> --open "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<%= pipeline.name %>/view?region=eu-west-2"</code>
 
         <p class="govuk-body">
           <button class="govuk-button govuk-button--secondary" onclick="navigator.clipboard.writeText(document.getElementById('code-open-<%= slugify(pipeline.name) %>').innerText)">Copy code</button>
