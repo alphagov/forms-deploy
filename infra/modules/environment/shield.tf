@@ -1,10 +1,10 @@
 resource "aws_shield_protection" "cloudfront" {
-  name         = "shield-for-cloudfront"
+  name         = "cloudfront"
   resource_arn = module.cloudfront[0].cloudfront_arn
 }
 
 resource "aws_shield_protection" "alb" {
-  name         = "shield-for-${aws_lb.alb.name}"
+  name         = "${aws_lb.alb.name}-alb"
   resource_arn = aws_lb.alb.arn
 }
 
@@ -49,7 +49,7 @@ resource "aws_shield_drt_access_log_bucket_association" "alb_log_access" {
 }
 
 resource "aws_iam_role_policy" "alb_log_access" {
-  name = "shield_response_team_access_alb_logs"
+  name = "shield_response_team_alb_log_access"
   role = aws_iam_role.shield_response_team.id
 
   policy = jsonencode({
