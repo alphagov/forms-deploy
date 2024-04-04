@@ -14,6 +14,10 @@ helpers do
     return str.downcase
               .gsub(/[ _:\/]/, "-")
   end
+
+  def active_page_css_class?(path)
+    request.path_info == path ? "govuk-header__navigation-item--active" : ""
+  end
 end
 
 is_dev_mode = ENV.fetch("PIPELINE_VISUALISER_DEV_MODE", false)
@@ -98,6 +102,10 @@ get "/" do
   end
 
   erb :state, :locals => { :groups => groups, :is_dev_mode => is_dev_mode }
+end
+
+get "/deploying-changes" do
+  erb :deploying_changes
 end
 
 def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
