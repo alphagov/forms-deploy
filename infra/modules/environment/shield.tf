@@ -212,14 +212,16 @@ resource "aws_route53_health_check" "ddos_detected" {
   insufficient_data_health_status = "Healthy"
 }
 
-# The alb_healthy_host_count CloudWatch alarm is configured in modules/alerts/health-host-count.tf
-# There is a hidden dependency on the cloudwatch_alarm_name between this resource and the alarm
-// TODO: Resolve the hidden dependency on cloudwatch_alarm_name. One option: create an output and module declaration
+module "alerts" {
+  source      = "../alerts"
+  environment = var.env_name
+}
+
 resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
   for_each = data.aws_lb_target_group.target_groups
 
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = "alb_healthy_host_count_${each.value.name}"
+  cloudwatch_alarm_name           = module.alerts.healthy_host_alarm_name
   cloudwatch_alarm_region         = "eu-west-2"
   insufficient_data_health_status = "Healthy"
 }
