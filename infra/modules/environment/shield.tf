@@ -15,7 +15,6 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   depends_on = [aws_shield_protection.cloudfront]
 }
 
-//TODO: Review naming
 resource "aws_iam_role" "shield_response_team" {
   name               = var.aws_shield_drt_access_role_arn
   assume_role_policy = jsonencode({
@@ -42,14 +41,14 @@ resource "aws_shield_drt_access_role_arn_association" "shield_response_team" {
   role_arn = aws_iam_role.shield_response_team.arn
 }
 
-resource "aws_shield_drt_access_log_bucket_association" "access_alb_logs" {
+resource "aws_shield_drt_access_log_bucket_association" "alb_log_access" {
   log_bucket              = module.logs_bucket.name
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
 }
 
-resource "aws_iam_role_policy" "access_alb_logs" {
+resource "aws_iam_role_policy" "alb_log_access" {
   name = "shield_response_team_access_alb_logs"
   role = aws_iam_role.shield_response_team.id
 
@@ -80,7 +79,6 @@ resource "aws_shield_protection_group" "protected_resources" {
   aggregation         = "MAX"
   pattern             = "ARBITRARY"
   members             = [
-    // TODO is this the correct way to reference our CloudFront distribution
     module.cloudfront[0].cloudfront_arn,
     aws_lb.alb.arn
   ]
@@ -189,7 +187,7 @@ resource "aws_route53_health_check" "cloudfront_5xx_error_rate" {
   insufficient_data_health_status = "Healthy"
 }
 
-resource "aws_cloudwatch_metric_alarm" "ddos_detected" {
+resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
   provider            = aws.us-east-1
   alarm_name          = "ddos_detected_in_${var.env_name}"
   comparison_operator = "GreaterThanThreshold"
@@ -203,9 +201,9 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected" {
   actions_enabled = false
 }
 
-resource "aws_route53_health_check" "ddos_detected" {
+resource "aws_route53_health_check" "ddos_detection" {
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.ddos_detected.alarm_name
+  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.ddos_detection.alarm_name
   cloudwatch_alarm_region         = "us-east-1"
   insufficient_data_health_status = "Healthy"
 }
@@ -215,7 +213,7 @@ module "alerts" {
   environment = var.env_name
 }
 
-resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
+resource "aws_route53_health_check" "healthy_hosts" {
   for_each = data.aws_lb_target_group.target_groups
 
   type                            = "CLOUDWATCH_METRIC"
@@ -224,7 +222,7 @@ resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
   insufficient_data_health_status = "Healthy"
 }
 
-resource "aws_route53_health_check" "aggregated_checks" {
+resource "aws_route53_health_check" "aggregated" {
   type                   = "CALCULATED"
   child_health_threshold = 1
   child_healthchecks     = concat([
@@ -233,11 +231,11 @@ resource "aws_route53_health_check" "aggregated_checks" {
     aws_route53_health_check.product_page.id,
     aws_route53_health_check.runner.id,
     aws_route53_health_check.cloudfront_5xx_error_rate.id,
-    aws_route53_health_check.ddos_detected.id
-  ], [for _, alarm in aws_route53_health_check.healthy_host_cloudwatch_alarm : alarm.id])
+    aws_route53_health_check.ddos_detection.id
+  ], [for _, alarm in aws_route53_health_check.healthy_hosts : alarm.id])
 }
 
 resource "aws_shield_protection_health_check_association" "system_health" {
-  health_check_arn     = aws_route53_health_check.aggregated_checks.arn
+  health_check_arn     = aws_route53_health_check.aggregated.arn
   shield_protection_id = aws_shield_protection.cloudfront.id
 }
