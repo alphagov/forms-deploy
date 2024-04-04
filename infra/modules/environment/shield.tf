@@ -13,6 +13,8 @@ resource "aws_shield_protection" "alb" {
 resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   resource_arn = module.cloudfront[0].cloudfront_arn
   action       = "BLOCK"
+
+  depends_on = [aws_shield_protection.cloudfront]
 }
 
 //TODO: Review naming
@@ -45,6 +47,10 @@ resource "aws_shield_drt_access_role_arn_association" "shield_response_team" {
 resource "aws_shield_drt_access_log_bucket_association" "access_alb_logs" {
   log_bucket              = module.logs_bucket.name
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy" "access_alb_logs" {
