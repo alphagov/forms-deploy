@@ -26,3 +26,9 @@ variable "aws_shield_drt_access_role_arn" {
   description = "The role name for the AWS Shield DDoS Response Team (DRT)"
   default     = "shield-ddos-response-team"
 }
+
+variable "cloudwatch_alarm_region" {
+  type        = string
+  description = "The region in which the CloudWatch alarm is configured"
+  default     = "eu-west-2"
+}

@@ -1,5 +1,3 @@
-// TODO: Review hardcoded values and extract relevant ones to variables.tf
-
 resource "aws_shield_protection" "cloudfront" {
   name         = "shield-for-cloudfront"
   resource_arn = module.cloudfront[0].cloudfront_arn
@@ -187,7 +185,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
 resource "aws_route53_health_check" "cloudfront_5xx_error_rate" {
   type                            = "CLOUDWATCH_METRIC"
   cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_5xx_error_rate.alarm_name
-  cloudwatch_alarm_region         = "eu-west-2"
+  cloudwatch_alarm_region         = var.cloudwatch_alarm_region
   insufficient_data_health_status = "Healthy"
 }
 
@@ -222,7 +220,7 @@ resource "aws_route53_health_check" "healthy_host_cloudwatch_alarm" {
 
   type                            = "CLOUDWATCH_METRIC"
   cloudwatch_alarm_name           = module.alerts.healthy_host_alarm_name
-  cloudwatch_alarm_region         = "eu-west-2"
+  cloudwatch_alarm_region         = var.cloudwatch_alarm_region
   insufficient_data_health_status = "Healthy"
 }
 
