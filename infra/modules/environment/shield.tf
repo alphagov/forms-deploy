@@ -205,6 +205,13 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected" {
   actions_enabled = false
 }
 
+resource "aws_route53_health_check" "ddos_detected" {
+  type                            = "CLOUDWATCH_METRIC"
+  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.ddos_detected.alarm_name
+  cloudwatch_alarm_region         = "us-east-1"
+  insufficient_data_health_status = "Healthy"
+}
+
 # The alb_healthy_host_count CloudWatch alarm is configured in modules/alerts/health-host-count.tf
 # There is a hidden dependency on the cloudwatch_alarm_name between this resource and the alarm
 // TODO: Resolve the hidden dependency on cloudwatch_alarm_name. One option: create an output and module declaration
@@ -225,7 +232,8 @@ resource "aws_route53_health_check" "aggregated_checks" {
     aws_route53_health_check.admin.id,
     aws_route53_health_check.product_page.id,
     aws_route53_health_check.runner.id,
-    aws_route53_health_check.cloudfront_5xx_error_rate.id
+    aws_route53_health_check.cloudfront_5xx_error_rate.id,
+    aws_route53_health_check.ddos_detected.id
   ], [for _, alarm in aws_route53_health_check.healthy_host_cloudwatch_alarm : alarm.id])
 }
 
