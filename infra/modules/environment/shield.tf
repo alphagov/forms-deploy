@@ -151,15 +151,6 @@ resource "aws_route53_health_check" "runner" {
   type              = "HTTPS_STR_MATCH"
 }
 
-locals {
-  apps = ["forms-admin", "forms-api", "forms-runner", "forms-product-page"]
-}
-
-data "aws_lb_target_group" "target_groups" {
-  for_each = toset(local.apps)
-  name     = "${each.key}-${var.env_name}"
-}
-
 // TODO: AWS docs refer to another type of CloudFront metric name, TotalErrorRate, which measures the
 // percentage of all requests for which the HTTP status code is 4xx or 5xx.
 // https://docs.aws.amazon.com/whitepapers/latest/aws-best-practices-ddos-resiliency/metrics-and-alarms.html
@@ -208,16 +199,20 @@ resource "aws_route53_health_check" "ddos_detection" {
   insufficient_data_health_status = "Healthy"
 }
 
-module "alerts" {
-  source      = "../alerts"
-  environment = var.env_name
+locals {
+  apps = ["forms-admin", "forms-api", "forms-runner", "forms-product-page"]
+}
+
+data "aws_lb_target_group" "target_groups" {
+  for_each = toset(local.apps)
+  name     = "${each.key}-${var.env_name}"
 }
 
 resource "aws_route53_health_check" "healthy_hosts" {
-  for_each = module.alerts.healthy_host_alarm_names
+  for_each = data.aws_lb_target_group.target_groups
 
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = each.value
+  cloudwatch_alarm_name           = "alb_healthy_host_count_${each.value.name}"
   cloudwatch_alarm_region         = var.cloudwatch_alarm_region
   insufficient_data_health_status = "Healthy"
 }
