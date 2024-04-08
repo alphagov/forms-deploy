@@ -46,6 +46,10 @@ resource "aws_shield_drt_access_log_bucket_association" "alb_log_access" {
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team, module.logs_bucket.name]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy" "alb_log_access" {
