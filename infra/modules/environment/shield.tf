@@ -144,14 +144,12 @@ resource "aws_route53_health_check" "runner" {
   type              = "HTTPS_STR_MATCH"
 }
 
-// TODO: AWS docs refer to another type of CloudFront metric name, TotalErrorRate, which measures the
-// percentage of all requests for which the HTTP status code is 4xx or 5xx.
-// https://docs.aws.amazon.com/whitepapers/latest/aws-best-practices-ddos-resiliency/metrics-and-alarms.html
-resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
-  alarm_name          = "${var.env_name}_cloudfront_high_5xx_error_rate"
-  comparison_operator = "GreaterThanThreshold"
+resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
+  provider            = aws.us-east-1
+  alarm_name          = "${var.env_name}_cloudfront_total_error_rate"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
-  metric_name         = "5xxErrorRate"
+  metric_name         = "TotalErrorRate"
   namespace           = "AWS/Cloudfront"
   period              = 60
   statistic           = "Average"
@@ -164,9 +162,9 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
   }
 }
 
-resource "aws_route53_health_check" "cloudfront_5xx_error_rate" {
+resource "aws_route53_health_check" "cloudfront_total_error_rate" {
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_5xx_error_rate.alarm_name
+  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_total_error_rate.alarm_name
   cloudwatch_alarm_region         = var.cloudwatch_alarm_region
   insufficient_data_health_status = "Healthy"
 }
@@ -218,7 +216,7 @@ resource "aws_route53_health_check" "aggregated" {
     aws_route53_health_check.admin.id,
     aws_route53_health_check.product_page.id,
     aws_route53_health_check.runner.id,
-    aws_route53_health_check.cloudfront_5xx_error_rate.id,
+    aws_route53_health_check.cloudfront_total_error_rate.id,
     aws_route53_health_check.ddos_detection.id
   ], [for _, alarm in aws_route53_health_check.healthy_hosts : alarm.id])
 }
