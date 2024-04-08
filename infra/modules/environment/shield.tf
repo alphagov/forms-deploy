@@ -45,7 +45,7 @@ resource "aws_shield_drt_access_log_bucket_association" "alb_log_access" {
   log_bucket              = module.logs_bucket.name
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 
-  depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
+  depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team, module.logs_bucket.name]
 }
 
 resource "aws_iam_role_policy" "alb_log_access" {
