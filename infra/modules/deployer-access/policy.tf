@@ -531,7 +531,6 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
   }
 }
 
-//TODO Review policies, resources, and actions
 data "aws_iam_policy_document" "shield" {
   statement {
     sid     = "ShieldPermissionsProtectionResources"
@@ -595,7 +594,7 @@ data "aws_iam_policy_document" "shield" {
       "iam:TagRole",
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-ddos-response-team",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-response-team",
     ]
     effect = "Allow"
   }
@@ -609,7 +608,6 @@ data "aws_iam_policy_document" "route53" {
       "route53:CreateHealthCheck",
       "route53:DeleteHealthCheck",
     ]
-    // TODO This feels too broad
     resources = [
       "*",
     ]
