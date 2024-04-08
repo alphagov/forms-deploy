@@ -16,12 +16,12 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
 }
 
 resource "aws_iam_role" "shield_response_team" {
-  name               = var.aws_shield_drt_access_role_arn
+  name               = "shield-response-team"
   assume_role_policy = jsonencode({
     Version   = "2012-10-17"
     Statement = [
       {
-        "Sid" : "",
+        "Sid" : "ShieldResponseTeamAssumeRole",
         "Effect" : "Allow",
         "Principal" : {
           "Service" : "drt.shield.amazonaws.com"
@@ -84,7 +84,6 @@ resource "aws_shield_protection_group" "protected_resources" {
   ]
 }
 
-//TODO: Review contact details retrieval
 data "aws_ssm_parameter" "contact_phone" {
   name = "/account/contact-phone-number"
 }
@@ -95,12 +94,6 @@ data "aws_ssm_parameter" "contact_email" {
 
 resource "aws_shield_proactive_engagement" "escalation_contacts" {
   enabled = true
-
-  emergency_contact {
-    contact_notes = "GOV.UK Forms Infrastructure Team"
-    email_address = data.aws_ssm_parameter.contact_email.value
-    phone_number  = data.aws_ssm_parameter.contact_phone.value
-  }
 
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"

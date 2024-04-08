@@ -8,7 +8,6 @@ resource "aws_cloudwatch_metric_alarm" "healthy_host_alarms" {
   namespace           = "AWS/ApplicationELB"
   metric_name         = "HealthyHostCount"
   statistic           = "Minimum"
-  // TODO: Review standard vs high resolution period change
   period              = 60
   threshold           = var.minimum_healthy_host_count
 
