@@ -27,6 +27,11 @@ groups:
 
   "API":
     - "forms-api-main-branch"
+    - "forms-api-image-builder"
+    - "deploy-forms-api-container-staging"
+    - "deploy-forms-api-container-production"
+    - "deploy-forms-api-container-user-research"
+    - "deploy-forms-api-container-dev"
 
   "Admin":
     - "forms-admin-main-branch"
