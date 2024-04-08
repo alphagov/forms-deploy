@@ -145,7 +145,7 @@ plan_apply_validate(){
 post_apply() {
     if [ "${deployment}+${tf_root}" = "account+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
         echo "Performing post-apply actions"
-        ${script_dir}/../infra/scripts/subscribe-to-aws-shield-advanced.sh
+        "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
     fi
  }
 
