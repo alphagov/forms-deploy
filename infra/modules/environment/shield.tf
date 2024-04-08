@@ -165,7 +165,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
 resource "aws_route53_health_check" "cloudfront_total_error_rate" {
   type                            = "CLOUDWATCH_METRIC"
   cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_total_error_rate.alarm_name
-  cloudwatch_alarm_region         = var.cloudwatch_alarm_region
+  cloudwatch_alarm_region         = "us-east-1"
   insufficient_data_health_status = "Healthy"
 }
 

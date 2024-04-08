@@ -20,9 +20,3 @@ variable "enable_cloudfront" {
   description = "If true then a cloudfront distribution is created."
   default     = true
 }
-
-variable "cloudwatch_alarm_region" {
-  type        = string
-  description = "The region in which the CloudWatch alarm is configured"
-  default     = "eu-west-2"
-}
