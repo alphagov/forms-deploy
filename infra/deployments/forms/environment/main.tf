@@ -7,6 +7,7 @@ module "environment" {
     aws.us-east-1 = aws.us-east-1
   }
 
-  ips_to_block = var.environmental_settings.ips_to_block
+  ips_to_block         = var.environmental_settings.ips_to_block
+  enable_alert_actions = var.environmental_settings.enable_alert_actions
 }
 
