@@ -20,3 +20,9 @@ variable "enable_cloudfront" {
   description = "If true then a cloudfront distribution is created."
   default     = true
 }
+
+variable "enable_alert_actions" {
+  type        = bool
+  description = "Whether any actions associated with CloudWatch alarms should be enabled"
+  default     = true
+}

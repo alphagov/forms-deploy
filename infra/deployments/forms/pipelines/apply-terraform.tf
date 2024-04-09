@@ -1,6 +1,5 @@
 locals {
   roots = toset([
-    "alerts",
     "auth0",
     "dns",
     "environment",
