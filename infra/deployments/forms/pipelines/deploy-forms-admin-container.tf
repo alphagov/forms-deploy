@@ -143,6 +143,40 @@ resource "aws_codepipeline" "deploy_admin_container" {
     name = "deploy-to-ecs"
 
     action {
+      name            = "run-db-migrate"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["forms_e2e_tests"] # we need an input according to AWS, even if we don't... so we'll use this one for now.
+      configuration = {
+        ProjectName = module.db_migrate.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "CLUSTER_NAME"
+            value = "forms-${var.environment_name}"
+            type  = "PLAINTEXT"
+          },
+          {
+            name  = "APP_NAME"
+            value = "forms-admin"
+            type  = "PLAINTEXT"
+          },
+          {
+            name  = "TASK_DEFINITION_NAME"
+            value = "${var.environment_name}_forms-admin"
+            type  = "PLAINTEXT"
+          },
+          {
+            name  = "IMAGE_URI"
+            value = "#{variables.container_image_uri}"
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+
+    action {
       name             = "generate-image-definitions"
       namespace        = "Build"
       category         = "Build"
@@ -232,6 +266,16 @@ resource "aws_codepipeline" "deploy_admin_container" {
   }
 }
 
+module "db_migrate" {
+  source                     = "../../../modules/code-build-build"
+  project_name               = "db_migrate_${var.environment_name}"
+  project_description        = "Run database migrations"
+  environment                = var.environment_name
+  artifact_store_arn         = module.artifact_bucket.arn
+  buildspec                  = file("${path.root}/buiidspecs/db-migrate/db-migrate.yml")
+  log_group_name             = "codebuild/db_migrate_${var.environment_name}"
+  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+}
 
 module "generate_forms_admin_container_image_defs" {
   source              = "../../../modules/code-build-build"
