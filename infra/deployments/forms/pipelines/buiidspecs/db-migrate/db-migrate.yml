@@ -7,7 +7,7 @@ phases:
       - ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "${TASK_DEFINITION_NAME}")
 
       # Delete any reference to the old image from the task definition and add the new image uri
-      - NEW_ECS_TASK_DEFINITION=$(echo "${ECS_TASK_DEFINITION}" | jq --arg "IMAGE_URI" "${IMAGE_URI}" '.taskDefinition | .containerDefinitions[0].image = $IMAGE_URI | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) |  del(.registeredAt)  | del(.registeredBy)')
+      - NEW_ECS_TASK_DEFINITION=$(echo "${ECS_TASK_DEFINITION}" | jq --arg "INPUT_IMAGE_URI" "${IMAGE_URI}" '.taskDefinition | .containerDefinitions[0].image = $INPUT_IMAGE_URI | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) |  del(.registeredAt)  | del(.registeredBy)')
       - echo "Replaced image uri with ${IMAGE_URI}"
 
 
