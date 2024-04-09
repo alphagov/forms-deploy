@@ -72,6 +72,7 @@ data "aws_iam_policy_document" "alerts" {
       "kms:PutKeyPolicy",
       "kms:TagResource",
       "kms:UntagResource",
+      "kms:ScheduleKeyDeletion"
     ]
     resources = [
       # TODO: be more specific?
