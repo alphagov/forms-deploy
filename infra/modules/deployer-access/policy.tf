@@ -67,7 +67,6 @@ data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageKMSKeyAlerts"
     actions = [
-      "kms:CreateKey",
       "kms:EnableKeyRotation",
       "kms:PutKeyPolicy",
       "kms:TagResource",
@@ -79,6 +78,13 @@ data "aws_iam_policy_document" "alerts" {
       "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
     ]
     effect = "Allow"
+  }
+
+  statement {
+    sid       = "CreateKMSKeys"
+    actions   = ["kms:CreateKey"]
+    resources = ["*"] #CreateKey uses the * resource
+    effect    = "Allow"
   }
 
   statement {
