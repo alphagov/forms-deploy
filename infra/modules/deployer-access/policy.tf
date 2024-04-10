@@ -21,7 +21,6 @@ data "aws_iam_policy_document" "forms-infra-1" {
   ]
 }
 
-// TODO This list is getting long, what's the guidance on updating these documents?
 data "aws_iam_policy_document" "forms-infra-2" {
   source_policy_documents = [
     data.aws_iam_policy_document.ses.json,
@@ -68,19 +67,26 @@ resource "aws_iam_role_policy_attachment" "full_read_only" {
 
 data "aws_iam_policy_document" "alerts" {
   statement {
-    sid     = "ManageKMSKeyAlerts"
+    sid = "ManageKMSKeyAlerts"
     actions = [
-      "kms:CreateKey",
       "kms:EnableKeyRotation",
       "kms:PutKeyPolicy",
       "kms:TagResource",
       "kms:UntagResource",
+      "kms:ScheduleKeyDeletion"
     ]
     resources = [
       # TODO: be more specific?
       "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
     ]
     effect = "Allow"
+  }
+
+  statement {
+    sid       = "CreateKMSKeys"
+    actions   = ["kms:CreateKey"]
+    resources = ["*"] #CreateKey uses the * resource
+    effect    = "Allow"
   }
 
   statement {
@@ -381,7 +387,7 @@ data "aws_iam_policy_document" "code-build-modules" {
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}"
     ]
   }
   statement {

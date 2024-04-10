@@ -55,6 +55,7 @@ forms_admin_settings = {
   payment_links                         = true
   reference_numbers_enabled             = true
   synchronize_to_mailchimp              = true
+  archive_enabled                       = false
 }
 forms_api_settings = {
   cpu          = 512
@@ -81,5 +82,5 @@ scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true
   form_url                     = "https://submit.forms.service.gov.uk/form/2570/scheduled-smoke-test"
   frequency_minutes            = 10
-  enable_alerting              = false # Enable this after we've seen them to be reliable.
+  enable_alerting              = true
 }

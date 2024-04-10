@@ -20,14 +20,11 @@ The `modules` directory contains reusable Terraform modules which are referenced
 
 ### How to manage the deployments
 
-Most of the roots need to be applied by an engineer from their machine; this will likely change in future as our deployment pipelines are extended to manage all deployments.
+The majority of the roots are applied automatically as part of deployment pipelines. However, those for the `deploy` account (under [the `deployments/deploy` directory](deployments/deploy/)) are currently applied manually.
 
-The following roots manage the three GOV.UK Forms applications and are automatically applied by CodePipeline when the application code is updated in Github. These should only be run by an engineer from their machine in exceptional circumstances (see deployment pipelines section below).
-- `deployments/forms/forms-admin`
-- `deployments/forms/forms-api`
-- `deployments/forms/forms-runner`
+This is also true for the `account` root, which is intended to only ever be run by a human. The `account` root lays the groundwork within an AWS account, and manages things like engineer access.
 
-The remaining roots should be applied by running the Terraform locally. The simplest way to do this is to use the Makefile tooling in the root of this repository.
+### Applying Terraform manually
 
 To apply a Terraform root (such as `forms-api` in the `forms` deployment) in an environment (such as `dev`):
 
@@ -61,22 +58,23 @@ The following provides a high-level overview of the deployments and in which ord
 
 #### Development, Staging or Production Environment
 In the unlikely event of needing to recreate an entire GOV.UK Forms environment the following order should be followed.
-- `account` deployment should be applied to ready the AWS account. This will configure engineer access, and create a new Route53 hosted zone.
-- update the `production` vars file in the `account` deployment with the nameservers from the previous step, so that the domain is correctly delegated
-- `environment` to create the networking and common components for each GOV.UK Forms application.
-- `dns` to create the DNS records which resolve the environment's domain to the Application Load Balancer created by the `environment` root.
-- `rds` to create the Postgres database cluster used by `forms-admin` and `forms-api`.
-- `redis` to create the Redis cluster used by `forms-runner`.
-- `deployer-access` to create a role that can be used by the deployment pipelines in the `deploy` environment to deploy the GOV.UK Forms applications.
+1. `account` deployment should be applied to ready the AWS account. This will configure engineer access, and create a new Route53 hosted zone.
+2. update the `production` vars file in the `account` deployment with the nameservers from the previous step, so that the domain is correctly delegated
+3. `forms/environment` to create the networking and common components for each GOV.UK Forms application.
+4. `forms/pipelines` to deploy the pipelines for the environment
+5. `forms/rds` to deploy the database needed for the applications
+6. `forms/redis` to deploy the Redis cache needed for the applications
+7. `forms/forms-{admin,api,product-page,runner}` to perform the first-time deployment of the applications. This is a manual step in the first instance because we need to supply a container image URI. After the first deployment, Terraform can look up the currently running container and maintain that image URI.
 
-At this point the pipelines in `deploy` environment can be triggered which will deploy `forms-admin`, `forms-api` and `forms-runner` deployments into the environment.
+At this point the pipelines in the environment can be triggered which will deploy everything else.
 
 #### Deploy Environment
-To recreate the `deploy` environment.
-- `engineer-access` to grant access to engineers to perform the following. If necessary ask an AWS admin to create a bootstrap role to provide authorization to apply the `engineer-access` deployment.
-- `ecr` to create the ECR repositories that store the Docker images used by the ECS services in each environment.
-- `forms-admin-pipeline`, `forms-api-pipeline` and `forms-runner-pipeline` to create the CodePipeline pipelines and CodeBuild projects.
-- `deployments/*/deployer-access` may need applying to ensure the trust policy for the deployer role in each environment includes the newly created IAM roles used by CodeBuild projects.
+To recreate the `deploy` environment, apply the following roots:
+1. `engineer-access` to grant access to engineers to perform the following. If necessary ask an AWS admin to create a bootstrap role to provide authorization to apply the `engineer-access` deployment.
+2. `account` to ensure the account is configured correctly.
+3. `ecr` to create the ECR repositories that store the Docker images used by the ECS services in each environment.
+4. `coordination` to allow the `deploy` environment to coordinate the deployments of other environments.
+5. `forms-admin-pipeline`, `forms-api-pipeline` and `forms-runner-pipeline` to create the CodePipeline pipelines and CodeBuild projects.
 
 
 ### DNS For GOV.UK Forms
