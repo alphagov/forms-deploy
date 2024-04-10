@@ -20,7 +20,7 @@ phases:
          cd "${CODEBUILD_SRC_DIR}"
  
          (
-           cd "cd infra/deployments/forms/pipelines/pipeline-invoker"
+           cd "infra/deployments/forms/pipelines/pipeline-invoker"
            whoami
            rbenv version
            rbenv versions

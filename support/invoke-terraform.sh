@@ -64,6 +64,8 @@ case "${deployment}+${tf_root}" in
         echo "Installing Ruby gems for infra/deployments/forms/pipelines/pipeline-invoker"
         (
             cd infra/deployments/forms/pipelines/pipeline-invoker;
+            echo "Ensuring correct version of Ruby is installed"
+            rbenv install -s
             echo "Setting bundler to install gems locally"
             bundle config set --local path 'vendor/bundle'
             bundle install
