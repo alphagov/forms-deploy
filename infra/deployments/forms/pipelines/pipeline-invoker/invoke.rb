@@ -35,9 +35,9 @@ def main(event:, context:)
         payload["variables"] = []        
     end
     
-    if event["source_revisions"] != nil then
+    if event["sourceRevisions"] != nil then
         payload["source_revisions"] = []
-        event["source_revisions"].each do |revision|
+        event["sourceRevisions"].each do |revision|
             payload["source_revisions"] << {
                 action_nanme: revision["action_name"],
                 revision_type: revision["revision_type"],
