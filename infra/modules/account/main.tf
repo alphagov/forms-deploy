@@ -54,3 +54,18 @@ data "aws_ssm_parameter" "contact_email" {
   depends_on = [aws_ssm_parameter.contact_email]
 }
 
+resource "aws_iam_account_password_policy" "strong" {
+  #checkov:skip=CKV_AWS_9:requiring password reset can be counterproductive https://www.ncsc.gov.uk/collection/passwords/updating-your-approach
+
+  # Cyber security policies https://sites.google.com/cabinetoffice.gov.uk/cybersecurity/cyber-security-policies/cyber-security-policies?pli=1
+  # "User accounts must be secured with a password or PIN with a minimum length of 10 characters."
+  # "Administrator accounts must be secured with a password or PIN with a minimum length of 14 characters."
+  minimum_password_length      = 14 # checkov nudges us towards 14
+  require_lowercase_characters = true
+  require_numbers              = true
+  require_uppercase_characters = true
+  require_symbols              = true
+
+  password_reuse_prevention      = 24 # prevent use from re-using our last 24 passwords
+  allow_users_to_change_password = true
+}
