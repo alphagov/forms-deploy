@@ -90,7 +90,7 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
-    sid     = "DescribeSSMParameters"
+    sid = "DescribeSSMParameters"
     actions = [
       "ssm:DescribeParameters",
     ]
@@ -608,17 +608,24 @@ data "aws_iam_policy_document" "shield" {
 
 data "aws_iam_policy_document" "route53" {
   statement {
-    sid     = "Route53HealthChecks"
+    sid     = "CreateRoute53HealthChecks"
     actions = [
-      "route53:ChangeTagsForResource",
-      "route53:CreateHealthCheck",
-      "route53:DeleteHealthCheck",
+      "route53:CreateHealthCheck"
     ]
-    resources = [
-      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:${var.env_name}_cloudfront_total_error_rate",
-      "arn:aws:cloudwatch:us-east-1:${lookup(local.account_ids, var.env_name)}:ddos_detected_in_${var.env_name}",
-      "arn:aws:route53:::healthcheck/*"
-    ]
+    resources = ["*"] # CreateHealthCheck uses *
     effect = "Allow"
   }
+
+  sid     = "ConfigureRoute53HealthChecks"
+  actions = [
+    "route53:ChangeTagsForResource",
+    "route53:DeleteHealthCheck",
+  ]
+  resources = [
+    "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:${var.env_name}_cloudfront_total_error_rate",
+    "arn:aws:cloudwatch:us-east-1:${lookup(local.account_ids, var.env_name)}:ddos_detected_in_${var.env_name}",
+    "arn:aws:route53:::healthcheck/*"
+  ]
+  effect = "Allow"
+}
 }
