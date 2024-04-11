@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "codepipeline_assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "codepipeline.amazonaws.com",
       ]

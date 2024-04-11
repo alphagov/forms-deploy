@@ -87,7 +87,7 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = true
   drop_invalid_header_fields = true
   security_groups            = [aws_security_group.alb.id]
-  subnets                    = [
+  subnets = [
     aws_subnet.public_a.id,
     aws_subnet.public_b.id,
     aws_subnet.public_c.id
@@ -123,7 +123,7 @@ resource "aws_security_group" "alb" {
 }
 
 module "acm_certicate_with_validation" {
-  source    = "../acm-cert-with-dns-validation"
+  source = "../acm-cert-with-dns-validation"
   providers = {
     aws             = aws
     aws.certificate = aws # Create the certificate in the default eu-west-2
