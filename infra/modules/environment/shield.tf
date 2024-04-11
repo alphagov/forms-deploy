@@ -212,6 +212,8 @@ resource "aws_route53_health_check" "healthy_hosts" {
   cloudwatch_alarm_name           = "alb_healthy_host_count_${each.value.name}"
   cloudwatch_alarm_region         = "eu-west-2"
   insufficient_data_health_status = "Healthy"
+
+  depends_on = [module.alerts]
 }
 
 resource "aws_route53_health_check" "aggregated" {
