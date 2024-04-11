@@ -26,3 +26,9 @@ variable "enable_alert_actions" {
   description = "Whether any actions associated with CloudWatch alarms should be enabled"
   default     = true
 }
+
+variable "enable_shield_advanced" {
+  type        = bool
+  description = "Whether Shield Advanced functionality should be enabled (must only be true for production)"
+  default     = false
+}

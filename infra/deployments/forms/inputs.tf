@@ -148,6 +148,7 @@ variable "environmental_settings" {
     rds_maintenance_window                   = string
     redis_backup_retention_period_days       = optional(number)
     ips_to_block                             = list(string)
+    enable_shield_advanced                   = bool
   })
 }
 
