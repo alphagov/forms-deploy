@@ -68,6 +68,10 @@ resource "aws_rds_cluster" "forms" {
   }
 
   lifecycle {
+
+    # Do not remove "restore_to_point_in_time" from this block unless you are trying
+    # to create a new database from a point in time.
+    #
     # We specified version 11.18 when we created the database clusters
     # but since then AWS have provided automatic minor version upgrdes.
     #
@@ -76,9 +80,9 @@ resource "aws_rds_cluster" "forms" {
     # Instead, we ignore any changes to the engine version, and allow AWS to
     # be the arbiter of the exact version.
     #
-    # When we want to perform major version upgrdes, we can remove this lifecycle
-    # configuration, and replace it once the upgrade is complete.
-    ignore_changes = [engine_version, db_cluster_parameter_group_name]
+    # When we want to perform major version upgrades, we can remove this lifecycle
+    # "engine_version" configuration, and replace it once the upgrade is complete.
+    ignore_changes = [engine_version, db_cluster_parameter_group_name, restore_to_point_in_time]
   }
   allow_major_version_upgrade = true
 
