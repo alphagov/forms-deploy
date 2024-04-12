@@ -34,7 +34,7 @@ environmental_settings = {
   rds_maintenance_window             = "wed:04:00-wed:04:30"
   redis_backup_retention_period_days = 2
   ips_to_block                       = []
-  enable_shield_advanced             = true
+  enable_shield_advanced_healthchecks = true
 }
 hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"

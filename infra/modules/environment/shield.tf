@@ -1,20 +1,14 @@
 resource "aws_shield_protection" "cloudfront" {
-  count = var.enable_shield_advanced ? 1 : 0
-
   name         = "cloudfront"
   resource_arn = module.cloudfront[0].cloudfront_arn
 }
 
 resource "aws_shield_protection" "alb" {
-  count = var.enable_shield_advanced ? 1 : 0
-
   name         = "${aws_lb.alb.name}-alb"
   resource_arn = aws_lb.alb.arn
 }
 
 resource "aws_shield_application_layer_automatic_response" "cloudfront" {
-  count = var.enable_shield_advanced ? 1 : 0
-
   resource_arn = module.cloudfront[0].cloudfront_arn
   action       = "BLOCK"
 
@@ -22,7 +16,6 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
 }
 
 resource "aws_iam_role" "shield_response_team" {
-  count = var.enable_shield_advanced ? 1 : 0
 
   name = "shield-response-team"
   assume_role_policy = jsonencode({
@@ -41,21 +34,15 @@ resource "aws_iam_role" "shield_response_team" {
 }
 
 resource "aws_iam_role_policy_attachment" "shield_response_team" {
-  count = var.enable_shield_advanced ? 1 : 0
-
   role       = aws_iam_role.shield_response_team.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSShieldDRTAccessPolicy"
 }
 
 resource "aws_shield_drt_access_role_arn_association" "shield_response_team" {
-  count = var.enable_shield_advanced ? 1 : 0
-
   role_arn = aws_iam_role.shield_response_team.arn
 }
 
 resource "aws_shield_drt_access_log_bucket_association" "alb_log_access" {
-  count = var.enable_shield_advanced ? 1 : 0
-
   log_bucket              = module.logs_bucket.name
   role_arn_association_id = aws_shield_drt_access_role_arn_association.shield_response_team.id
 
@@ -63,7 +50,6 @@ resource "aws_shield_drt_access_log_bucket_association" "alb_log_access" {
 }
 
 resource "aws_iam_role_policy" "alb_log_access" {
-  count = var.enable_shield_advanced ? 1 : 0
 
   name = "shield_response_team_alb_log_access"
   role = aws_iam_role.shield_response_team.id
@@ -89,7 +75,6 @@ resource "aws_iam_role_policy" "alb_log_access" {
 }
 
 resource "aws_shield_protection_group" "protected_resources" {
-  count      = var.enable_shield_advanced ? 1 : 0
   depends_on = [aws_shield_protection.alb, aws_shield_protection.cloudfront]
 
   protection_group_id = "Incoming-Traffic-Resources"
@@ -110,7 +95,6 @@ data "aws_ssm_parameter" "contact_email" {
 }
 
 resource "aws_shield_proactive_engagement" "escalation_contacts" {
-  count   = var.enable_shield_advanced ? 1 : 0
   enabled = true
 
   emergency_contact {
@@ -123,7 +107,7 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
 }
 
 resource "aws_route53_health_check" "api" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   failure_threshold = "3"
   fqdn              = "api.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -135,7 +119,7 @@ resource "aws_route53_health_check" "api" {
 }
 
 resource "aws_route53_health_check" "admin" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   failure_threshold = "3"
   fqdn              = "admin.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -147,7 +131,7 @@ resource "aws_route53_health_check" "admin" {
 }
 
 resource "aws_route53_health_check" "product_page" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   failure_threshold = "3"
   fqdn              = "product-page.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -159,7 +143,7 @@ resource "aws_route53_health_check" "product_page" {
 }
 
 resource "aws_route53_health_check" "runner" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   failure_threshold = "3"
   fqdn              = "submit.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
@@ -173,7 +157,6 @@ resource "aws_route53_health_check" "runner" {
 resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
   #checkov:skip=CKV2_FORMS_AWS_1: Not alerting for now because of inter-region complexity, alarm is for Shield Team
   #checkov:skip=CKV_AWS_319: Not alerting for now because of inter-region complexity, alarm is for Shield Team
-  count = var.enable_shield_advanced ? 1 : 0
 
   provider            = aws.us-east-1
   alarm_name          = "${var.env_name}_cloudfront_total_error_rate"
@@ -193,7 +176,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
 }
 
 resource "aws_route53_health_check" "cloudfront_total_error_rate" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   type                            = "CLOUDWATCH_METRIC"
   cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_total_error_rate.alarm_name
@@ -204,7 +187,6 @@ resource "aws_route53_health_check" "cloudfront_total_error_rate" {
 resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
   #checkov:skip=CKV2_FORMS_AWS_1: Not alerting for now because of inter-region complexity, alarm is for Shield Team
   #checkov:skip=CKV_AWS_319: Not alerting for now because of inter-region complexity, alarm is for Shield Team
-  count = var.enable_shield_advanced ? 1 : 0
 
   provider            = aws.us-east-1
   alarm_name          = "ddos_detected_in_${var.env_name}"
@@ -220,7 +202,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
 }
 
 resource "aws_route53_health_check" "ddos_detection" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   type                            = "CLOUDWATCH_METRIC"
   cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.ddos_detection.alarm_name
@@ -249,7 +231,7 @@ resource "aws_route53_health_check" "healthy_hosts" {
 }
 
 resource "aws_route53_health_check" "aggregated" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   type                   = "CALCULATED"
   child_health_threshold = 1
@@ -264,7 +246,7 @@ resource "aws_route53_health_check" "aggregated" {
 }
 
 resource "aws_shield_protection_health_check_association" "system_health" {
-  count = var.enable_shield_advanced ? 1 : 0
+  count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
   health_check_arn     = aws_route53_health_check.aggregated.arn
   shield_protection_id = aws_shield_protection.cloudfront.id

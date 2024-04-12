@@ -27,8 +27,7 @@ variable "enable_alert_actions" {
   default     = true
 }
 
-variable "enable_shield_advanced" {
+variable "enable_shield_advanced_healthchecks" {
   type        = bool
-  description = "Whether Shield Advanced functionality should be enabled (must only be true for production)"
-  default     = false
+  description = "Whether Shield Advanced healthchecks should be enabled (must only be true for production)"
 }

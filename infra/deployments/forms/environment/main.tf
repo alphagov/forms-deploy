@@ -10,6 +10,6 @@ module "environment" {
   ips_to_block         = var.environmental_settings.ips_to_block
   enable_alert_actions = var.environmental_settings.enable_alert_actions
 
-  enable_shield_advanced = var.environmental_settings.enable_shield_advanced
+  enable_shield_advanced_healthchecks = var.environmental_settings.enable_shield_advanced_healthchecks
 }
 
