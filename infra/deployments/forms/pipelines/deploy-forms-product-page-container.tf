@@ -130,9 +130,10 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
       output_artifacts = ["forms_e2e_tests"]
 
       configuration = {
-        ConnectionArn        = var.codestar_connection_arn
-        FullRepositoryId     = "alphagov/forms-e2e-tests"
-        BranchName           = "main" # TODO: we should version this repository appropriately, so we can pick specific versions
+        ConnectionArn    = var.codestar_connection_arn
+        FullRepositoryId = "alphagov/forms-e2e-tests"
+        BranchName       = "main"
+        # TODO: we should version this repository appropriately, so we can pick specific versions
         DetectChanges        = false
         OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
@@ -188,7 +189,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
   # It isn't possible to conditionally skip or disable a stage or step in AWS CodePipeline
   # but we need to be able to do so because we can't run the end-to-end tests in the user-research
   # environment. We don't want to make the end-to-end tests module responsible for skipping itself
-  # because that's not its responsiblity, and CodePipeline doesn't give us a lightweight way to wrap
+  # because that's not its responsibility, and CodePipeline doesn't give us a lightweight way to wrap
   # something a little bit of Bash.
   #
   # So a dynamic block to omit the stage completely is the solution. We'd rather all the pipelines

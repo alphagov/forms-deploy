@@ -41,7 +41,7 @@ resource "aws_codebuild_project" "this" {
     type         = "LINUX_CONTAINER"
 
     # Create environment variables dynamically.
-    # We use local variables by default but they can be overriden by var.environment_variables
+    # We use local variables by default but they can be overridden by var.environment_variables
     dynamic "environment_variable" {
       for_each = merge(local.environment_variables, var.environment_variables)
 
