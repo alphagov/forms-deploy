@@ -39,9 +39,9 @@ def main(event:, context:)
         payload["source_revisions"] = []
         event["sourceRevisions"].each do |revision|
             payload["source_revisions"] << {
-                action_nanme: revision["action_name"],
-                revision_type: revision["revision_type"],
-                revision_value: revision["revision_value"]
+                action_name: revision["actionName"],
+                revision_type: revision["revisionType"],
+                revision_value: revision["revisionValue"]
             } 
         end
     else
