@@ -69,3 +69,17 @@ data "aws_iam_policy_document" "key_policy" {
   }
 }
 
+resource "aws_sns_topic" "alert_zendesk" {
+  name              = "alert_zendesk_${var.environment}"
+  kms_master_key_id = aws_kms_key.topic_sse.key_id
+}
+
+data "aws_ssm_parameter" "zendesk_email" {
+  name = "/alerting/email-zendesk"
+}
+
+resource "aws_sns_topic_subscription" "zendesk_subscription" {
+  topic_arn = aws_sns_topic.alert_zendesk.arn
+  protocol  = "email"
+  endpoint  = data.aws_ssm_parameter.zendesk_email.value
+}
