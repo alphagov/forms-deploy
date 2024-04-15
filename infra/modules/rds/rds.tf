@@ -73,7 +73,7 @@ resource "aws_rds_cluster" "forms" {
     # to create a new database from a point in time.
     #
     # We specified version 11.18 when we created the database clusters
-    # but since then AWS have provided automatic minor version upgrdes.
+    # but since then AWS have provided automatic minor version upgrades.
     #
     # We don't wish for Terraform to attempt to downgrade the engine version,
     # or to have to update our config every time there's a new minor version.
