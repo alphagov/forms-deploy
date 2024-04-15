@@ -236,18 +236,18 @@ resource "aws_route53_health_check" "aggregated" {
   type                   = "CALCULATED"
   child_health_threshold = 1
   child_healthchecks = concat([
-    aws_route53_health_check.api.id,
-    aws_route53_health_check.admin.id,
-    aws_route53_health_check.product_page.id,
-    aws_route53_health_check.runner.id,
-    aws_route53_health_check.cloudfront_total_error_rate.id,
-    aws_route53_health_check.ddos_detection.id
+    aws_route53_health_check.api[0].id,
+    aws_route53_health_check.admin[0].id,
+    aws_route53_health_check.product_page[0].id,
+    aws_route53_health_check.runner[0].id,
+    aws_route53_health_check.cloudfront_total_error_rate[0].id,
+    aws_route53_health_check.ddos_detection[0].id
   ], [for _, alarm in aws_route53_health_check.healthy_hosts : alarm.id])
 }
 
 resource "aws_shield_protection_health_check_association" "system_health" {
   count = var.enable_shield_advanced_healthchecks ? 1 : 0
 
-  health_check_arn     = aws_route53_health_check.aggregated.arn
+  health_check_arn     = aws_route53_health_check.aggregated[0].arn
   shield_protection_id = aws_shield_protection.cloudfront.id
 }
