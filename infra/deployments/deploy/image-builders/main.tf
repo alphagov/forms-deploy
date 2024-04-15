@@ -18,3 +18,10 @@ module "build-forms-api-container" {
   container_repository = "forms-api-deploy"
   source_repository    = "alphagov/forms-api"
 }
+
+module "build-forms-admin-container" {
+  source               = "../../../modules/image-builder-pipeline"
+  application_name     = "forms-admin"
+  container_repository = "forms-admin-deploy"
+  source_repository    = "alphagov/forms-admin"
+}

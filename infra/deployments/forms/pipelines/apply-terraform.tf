@@ -6,6 +6,7 @@ locals {
     "forms-product-page",
     "forms-runner",
     "forms-api",
+    "forms-admin",
     "monitoring",
     "pipelines",
     "rds",

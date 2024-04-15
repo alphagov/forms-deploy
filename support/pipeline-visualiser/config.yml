@@ -35,6 +35,11 @@ groups:
 
   "Admin":
     - "forms-admin-main-branch"
+    - "forms-admin-image-builder"
+    - "deploy-forms-admin-container-staging"
+    - "deploy-forms-admin-container-production"
+    - "deploy-forms-admin-container-user-research"
+    - "deploy-forms-admin-container-dev"
 
   "Runner":
     - "forms-runner-main-branch"
