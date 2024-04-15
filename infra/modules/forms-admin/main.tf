@@ -203,7 +203,4 @@ module "ecs_service" {
     lookup(local.auth_credentials, var.auth_provider, []),
     lookup(local.auth_credentials, coalesce(var.previous_auth_provider, "_"), [])
   ])
-
-  pre_deploy_script = abspath("${path.module}/../shared/scripts/db-migrations-pre-deploy.sh")
 }
-
