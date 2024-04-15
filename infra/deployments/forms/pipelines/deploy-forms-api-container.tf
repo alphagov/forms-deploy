@@ -150,7 +150,7 @@ resource "aws_codepipeline" "deploy_api_container" {
       version         = "1"
       input_artifacts = ["forms_e2e_tests"] # we need an input according to AWS, even if we don't... so we'll use this one for now.
       configuration = {
-        ProjectName = module.db_migrate.name
+        ProjectName = module.db_migrate_api.name
         EnvironmentVariables = jsonencode([
           {
             name  = "CLUSTER_NAME"
@@ -268,14 +268,14 @@ resource "aws_codepipeline" "deploy_api_container" {
 }
 
 
-module "db_migrate" {
+module "db_migrate_api" {
   source                     = "../../../modules/code-build-build"
-  project_name               = "db_migrate_${var.environment_name}"
+  project_name               = "db_migrate_api_${var.environment_name}"
   project_description        = "Run database migrations"
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buiidspecs/db-migrate/db-migrate.yml")
-  log_group_name             = "codebuild/db_migrate_${var.environment_name}"
+  log_group_name             = "codebuild/db_migrate_api_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
 }
 
