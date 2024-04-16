@@ -4,7 +4,8 @@ variable "env_name" {
 }
 
 variable "image_tag" {
-  type = string
+  type     = string
+  nullable = true
 }
 
 variable "cpu" {

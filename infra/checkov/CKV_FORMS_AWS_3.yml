@@ -1,0 +1,33 @@
+---
+metadata:
+  name: "Check that restore_to_point_in_time changes are ignored in aws_rds_cluster resources"
+  id: "CKV2_FORMS_AWS_3"
+  category: "CONVENTION"
+  guideline: |
+    When we perform a database restoration from a point in time we use the 
+    'restore_to_point_in_time' options. This causes the database to be deleted 
+    if it exists, then created from the backup.
+    
+    After we've performed the restoration we want to remove the options so that
+    future new databases are created from scratch, not a backup. However, if we
+    don't tell Terraform to ignore changes to the 'restore_to_point_in_time' 
+    options, it will forcibly delete the database cluster and create a fresh one.
+    
+    This is undesirable and we don't want it to happen by accident. Therefore 
+    we have a check to catch us doing it when we don't mean to.
+scope:
+  provider: "AWS"
+definition:
+  and:
+    - cond_type: "attribute"
+      resource_types:
+        - "aws_rds_cluster"
+      attribute: "lifecycle.ignore_changes"
+      operator: "exists"
+
+    - cond_type: "attribute"
+      resource_types:
+        - "aws_rds_cluster"
+      attribute: "lifecycle.ignore_changes"
+      operator: "contains"
+      value: "restore_to_point_in_time"

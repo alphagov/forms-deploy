@@ -1,5 +1,5 @@
 locals {
-  # The ordering here is arbitary so long as they don't clash.
+  # The ordering here is arbitrary so long as they don't clash.
   listener_priority = {
     forms-runner : 100
     forms-api : 200

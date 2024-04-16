@@ -1,6 +1,7 @@
 data "aws_caller_identity" "current" {}
 locals {
   deploy_account_id           = "711966560482"
+  image                       = var.image_tag == null ? null : "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-admin-deploy:${var.image_tag}"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
   auth_credentials = {
     _ = [], # just in case we have a "null" previous auth provider
@@ -79,7 +80,7 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-admin"
   sub_domain             = "admin"
-  image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-admin-deploy:${var.image_tag}"
+  image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 3000
@@ -203,7 +204,4 @@ module "ecs_service" {
     lookup(local.auth_credentials, var.auth_provider, []),
     lookup(local.auth_credentials, coalesce(var.previous_auth_provider, "_"), [])
   ])
-
-  pre_deploy_script = abspath("${path.module}/../shared/scripts/db-migrations-pre-deploy.sh")
 }
-

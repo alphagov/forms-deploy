@@ -12,6 +12,20 @@ deploy-forms-runner-container = {
   disable_end_to_end_tests = false
 }
 
+deploy-forms-api-container = {
+  trigger_on_tag_pattern   = "prod-*"
+  retag_image_on_success   = false # There are no further stages beyond production
+  retagging_sed_expression = ""
+  disable_end_to_end_tests = false
+}
+
+deploy-forms-admin-container = {
+  trigger_on_tag_pattern   = "prod-*"
+  retag_image_on_success   = false # There are no further stages beyond production
+  retagging_sed_expression = ""
+  disable_end_to_end_tests = false
+}
+
 apply-terraform = {
   pipeline_trigger    = "EVENT"
   git_source_branch   = null

@@ -2,6 +2,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   deploy_account_id = "711966560482"
+  image             = var.image_tag == null ? null : "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
 }
 
 module "ecs_service" {
@@ -9,7 +10,7 @@ module "ecs_service" {
   env_name               = var.env_name
   application            = "forms-api"
   sub_domain             = "api"
-  image                  = "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
+  image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory
   container_port         = 9292
@@ -65,7 +66,5 @@ module "ecs_service" {
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.env_name}/secret-key-base"
     }
   ]
-
-  pre_deploy_script = abspath("${path.module}/../shared/scripts/db-migrations-pre-deploy.sh")
 }
 
