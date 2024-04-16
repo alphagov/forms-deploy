@@ -6,9 +6,10 @@ module "artifact_bucket" {
 
 resource "aws_codepipeline" "main" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
-  name          = local.name_suffix
-  role_arn      = aws_iam_role.codepipeline.arn
-  pipeline_type = "V2"
+  name           = local.name_suffix
+  role_arn       = aws_iam_role.codepipeline.arn
+  pipeline_type  = "V2"
+  execution_mode = "QUEUED"
 
   artifact_store {
     type     = "S3"

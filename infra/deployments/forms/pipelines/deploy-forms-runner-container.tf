@@ -70,9 +70,10 @@ resource "aws_codepipeline" "deploy_runner_container" {
   depends_on = [aws_s3_object.deploy_runner_container_trigger_key]
 
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
-  name          = "deploy-forms-runner-container-${var.environment_name}"
-  role_arn      = data.aws_iam_role.deployer-role.arn
-  pipeline_type = "V2"
+  name           = "deploy-forms-runner-container-${var.environment_name}"
+  role_arn       = data.aws_iam_role.deployer-role.arn
+  pipeline_type  = "V2"
+  execution_mode = "QUEUED"
 
   artifact_store {
     type     = "S3"
