@@ -149,6 +149,7 @@ resource "aws_iam_role_policy" "pipeline_visualiser_deployer_policy" {
 }
 
 data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
+  #checkov:skip=CKV_AWS_356:There are "*" resources for legitimate reasons
   statement {
     actions   = ["cloudwatch:*", "logs:*"]
     resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:codebuild/*"]
