@@ -4,9 +4,10 @@
 resource "aws_codepipeline" "deploy-pipeline-visualiser" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
 
-  name          = "deploy-pipeline-visualiser"
-  role_arn      = aws_iam_role.pipeline_visualiser_deployer.arn
-  pipeline_type = "V2"
+  name           = "deploy-pipeline-visualiser"
+  role_arn       = aws_iam_role.pipeline_visualiser_deployer.arn
+  pipeline_type  = "V2"
+  execution_mode = "QUEUED"
 
   artifact_store {
     type     = "S3"
