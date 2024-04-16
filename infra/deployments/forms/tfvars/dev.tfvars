@@ -1,9 +1,9 @@
 allowed_account_ids = ["498160065950"]
-default_tags        = {
+default_tags = {
   Environment = "dev"
 }
-environment_name       = "dev"
-environment_type       = "development"
+environment_name = "dev"
+environment_type = "development"
 environmental_settings = {
   auth0_domain                             = "govuk-forms-dev.uk.auth0.com"
   disable_auth0                            = false
@@ -23,7 +23,7 @@ root_domain                = "dev.forms.service.gov.uk"
 cloudfront_distribution_id = "E2BI70XAWS5P2T"
 codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
 container_repository       = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
-forms_admin_settings       = {
+forms_admin_settings = {
   cpu                                   = 256
   memory                                = 512
   min_capacity                          = 3

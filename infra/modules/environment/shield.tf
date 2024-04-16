@@ -17,9 +17,9 @@ resource "aws_shield_application_layer_automatic_response" "cloudfront" {
 
 resource "aws_iam_role" "shield_response_team" {
 
-  name               = "shield-response-team"
+  name = "shield-response-team"
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         "Sid" : "ShieldResponseTeamAssumeRole",
@@ -55,7 +55,7 @@ resource "aws_iam_role_policy" "alb_log_access" {
   role = aws_iam_role.shield_response_team.id
 
   policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Action = [
@@ -63,7 +63,7 @@ resource "aws_iam_role_policy" "alb_log_access" {
           "s3:GetObject",
           "s3:ListBucket"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "arn:aws:s3:::${module.logs_bucket.name}",
           "arn:aws:s3:::${module.logs_bucket.name}/*"
@@ -80,7 +80,7 @@ resource "aws_shield_protection_group" "protected_resources" {
   protection_group_id = "Incoming-Traffic-Resources"
   aggregation         = "MAX"
   pattern             = "ARBITRARY"
-  members             = [
+  members = [
     module.cloudfront[0].cloudfront_arn,
     aws_lb.alb.arn
   ]
@@ -235,7 +235,7 @@ resource "aws_route53_health_check" "aggregated" {
 
   type                   = "CALCULATED"
   child_health_threshold = 1
-  child_healthchecks     = concat([
+  child_healthchecks = concat([
     aws_route53_health_check.api[0].id,
     aws_route53_health_check.admin[0].id,
     aws_route53_health_check.product_page[0].id,

@@ -1,18 +1,18 @@
 allowed_account_ids = ["443944947292"]
-default_tags        = {
+default_tags = {
   Environment = "production"
 }
-environment_name       = "production"
-environment_type       = "production"
+environment_name = "production"
+environment_type = "production"
 environmental_settings = {
   auth0_domain                             = "govuk-forms.uk.auth0.com"
   disable_auth0                            = false
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 60 * 60 * 24
   # Set to 24 hours for inactivity just in case the pause_database_on_inactivity flag is inverted or ignored
-  database_backup_retention_period_days    = 30
-  enable_alert_actions                     = true
-  allow_authentication_from_email_domains  = [
+  database_backup_retention_period_days = 30
+  enable_alert_actions                  = true
+  allow_authentication_from_email_domains = [
     ".gov.uk",
     ".mod.uk",
     "@cefas.co.uk",
@@ -41,7 +41,7 @@ root_domain                = "forms.service.gov.uk"
 cloudfront_distribution_id = "EXITHSOVYUXHW"
 codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
 container_repository       = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
-forms_admin_settings       = {
+forms_admin_settings = {
   cpu                                   = 256
   memory                                = 512
   min_capacity                          = 6

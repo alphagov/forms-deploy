@@ -67,7 +67,7 @@ resource "aws_iam_role_policy_attachment" "full_read_only" {
 
 data "aws_iam_policy_document" "alerts" {
   statement {
-    sid     = "ManageKMSKeyAlerts"
+    sid = "ManageKMSKeyAlerts"
     actions = [
       "kms:EnableKeyRotation",
       "kms:PutKeyPolicy",
@@ -90,7 +90,7 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
-    sid     = "DescribeSSMParameters"
+    sid = "DescribeSSMParameters"
     actions = [
       "ssm:DescribeParameters",
     ]
@@ -101,7 +101,7 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
-    sid     = "ManageSSMParameters"
+    sid = "ManageSSMParameters"
     actions = [
       "ssm:AddTagsToResource",
       "ssm:DeleteParameter",
@@ -117,7 +117,7 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
-    sid     = "ManageSNS"
+    sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
       "sns:*Tag*",
@@ -133,7 +133,7 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
-    sid     = "ManageCloudwatchMetricAlarms"
+    sid = "ManageCloudwatchMetricAlarms"
     actions = [
       "cloudwatch:*Alarm*",
       "cloudwatch:*Metric*",
@@ -150,7 +150,7 @@ data "aws_iam_policy_document" "alerts" {
 
 data "aws_iam_policy_document" "auth0" {
   statement {
-    sid     = "ManageSSMParametersAuth0"
+    sid = "ManageSSMParametersAuth0"
     actions = [
       "ssm:*Tag*",
       "ssm:*Parameter*",
@@ -167,7 +167,7 @@ data "aws_iam_policy_document" "auth0" {
 # This relates to the `dns` root and is different from what is covered in by the permissions in the `environment` module
 data "aws_iam_policy_document" "dns" {
   statement {
-    sid     = "ManageRoute53RecordSets"
+    sid = "ManageRoute53RecordSets"
     actions = [
       "route53:ChangeResourceRecordSets",
     ]
@@ -179,7 +179,7 @@ data "aws_iam_policy_document" "dns" {
 
 data "aws_iam_policy_document" "monitoring" {
   statement {
-    sid     = "ManageCloudwatchDashboards"
+    sid = "ManageCloudwatchDashboards"
     actions = [
       "cloudwatch:DeleteDashboards",
       "cloudwatch:PutDashboard",
@@ -195,7 +195,7 @@ data "aws_iam_policy_document" "monitoring" {
 
 data "aws_iam_policy_document" "rds" {
   statement {
-    sid     = "ManageRDS"
+    sid = "ManageRDS"
     actions = [
       "rds:*DBCluster*",
       "rds:*SecurityGroup*",
@@ -209,8 +209,8 @@ data "aws_iam_policy_document" "rds" {
   }
 
   statement {
-    sid     = "GetSSMParams"
-    effect  = "Allow"
+    sid    = "GetSSMParams"
+    effect = "Allow"
     actions = [
       "ssm:GetParameter",
     ]
@@ -222,7 +222,7 @@ data "aws_iam_policy_document" "rds" {
 
 data "aws_iam_policy_document" "redis" {
   statement {
-    sid     = "ManageElasticache"
+    sid = "ManageElasticache"
     actions = [
       "elasticache:*CacheCluster*",
       "elasticache:*CacheParameter*",
@@ -242,8 +242,8 @@ data "aws_iam_policy_document" "ses" {
   #checkov:skip=CKV_AWS_356:We use SES v1 which doesn't let us be more specific than *
   #checkov:skip=CKV_AWS_109:We have a plan to add a permissions boundary to the deployer
   statement {
-    sid     = "GetUser"
-    effect  = "Allow"
+    sid    = "GetUser"
+    effect = "Allow"
     actions = [
       "iam:AttachUserPolicy",
       "iam:DeleteUserPolicy",
@@ -256,8 +256,8 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
-    sid     = "ManageSESPolicies"
-    effect  = "Allow"
+    sid    = "ManageSESPolicies"
+    effect = "Allow"
     actions = [
       "iam:CreatePolicy",
       "iam:CreatePolicyVersion",
@@ -271,8 +271,8 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
-    sid     = "ManageSESVerification"
-    effect  = "Allow"
+    sid    = "ManageSESVerification"
+    effect = "Allow"
     actions = [
       "ses:*Dkim*",
       "ses:*EmailAddress*",
@@ -287,8 +287,8 @@ data "aws_iam_policy_document" "ses" {
 
   # We use SES v1 (I think?)... in v2 you can specify resources
   statement {
-    sid     = "ManageSESConfigurationSet"
-    effect  = "Allow"
+    sid    = "ManageSESConfigurationSet"
+    effect = "Allow"
     actions = [
       "ses:*ConfigurationSet*",
     ]
@@ -298,8 +298,8 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
-    sid     = "ManageKMSKeySES"
-    effect  = "Allow"
+    sid    = "ManageKMSKeySES"
+    effect = "Allow"
     actions = [
       "kms:CreateKey",
       "kms:EnableKeyRotation",
@@ -313,8 +313,8 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
-    sid     = "ManageSQS"
-    effect  = "Allow"
+    sid    = "ManageSQS"
+    effect = "Allow"
     actions = [
       "sqs:*queue*"
     ]
@@ -324,7 +324,7 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
-    sid     = "ManageSNS"
+    sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
       "sns:*Tag*",
@@ -345,8 +345,8 @@ data "aws_iam_policy_document" "code-build-modules" {
   # code-build-run-docker-build
   # code-build-run-smoke-tests
   statement {
-    sid     = "ManageLogs"
-    effect  = "Allow"
+    sid    = "ManageLogs"
+    effect = "Allow"
     actions = [
       "logs:*LogEvents",
       "logs:*LogStream",
@@ -359,8 +359,8 @@ data "aws_iam_policy_document" "code-build-modules" {
     ]
   }
   statement {
-    sid     = "ManageCodebuild"
-    effect  = "Allow"
+    sid    = "ManageCodebuild"
+    effect = "Allow"
     actions = [
       "codebuild:*Project*",
       "codebuild:*Build*",
@@ -370,8 +370,8 @@ data "aws_iam_policy_document" "code-build-modules" {
     ]
   }
   statement {
-    sid     = "ManageRoles"
-    effect  = "Allow"
+    sid    = "ManageRoles"
+    effect = "Allow"
     actions = [
       "iam:AttachRolePolicy",
       "iam:CreateRole",
@@ -391,8 +391,8 @@ data "aws_iam_policy_document" "code-build-modules" {
     ]
   }
   statement {
-    sid     = "ManagePolicies"
-    effect  = "Allow"
+    sid    = "ManagePolicies"
+    effect = "Allow"
     actions = [
       "iam:CreatePolicy",
       "iam:DeletePolicy",
@@ -429,9 +429,9 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
-    sid       = "ManageLambdaBuckets"
-    effect    = "Allow"
-    actions   = ["s3:*"]
+    sid     = "ManageLambdaBuckets"
+    effect  = "Allow"
+    actions = ["s3:*"]
     resources = [
       "arn:aws:s3:::govuk-forms-*-pipeline-invoker",
       "arn:aws:s3:::govuk-forms-*-pipeline-invoker/*"
@@ -439,8 +439,8 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
-    sid     = "ManageLambdaFunctions"
-    effect  = "Allow"
+    sid    = "ManageLambdaFunctions"
+    effect = "Allow"
     actions = [
       "lambda:*Function",
       "lambda:*Permission",
@@ -456,8 +456,8 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
-    sid     = "ManagePipelines"
-    effect  = "Allow"
+    sid    = "ManagePipelines"
+    effect = "Allow"
     actions = [
       "codepipeline:CreatePipeline",
       "codepipeline:DeletePipeline",
@@ -501,8 +501,8 @@ data "aws_iam_policy_document" "eventbridge" {
   #                          each will add a lot to an already constrained
   #                          character count
   statement {
-    sid     = "AllowEventActions"
-    effect  = "Allow"
+    sid    = "AllowEventActions"
+    effect = "Allow"
     actions = [
       "events:*"
     ]
@@ -541,7 +541,7 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
 
 data "aws_iam_policy_document" "shield" {
   statement {
-    sid     = "ShieldPermissionsProtectionResources"
+    sid = "ShieldPermissionsProtectionResources"
     actions = [
       "shield:*HealthCheck",
       "shield:*Protection",
@@ -554,7 +554,7 @@ data "aws_iam_policy_document" "shield" {
   }
 
   statement {
-    sid     = "ShieldPermissionsProtectionGroupResources"
+    sid = "ShieldPermissionsProtectionGroupResources"
     actions = [
       "shield:*ProtectionGroup",
       "shield:ListProtectionGroups",
@@ -568,7 +568,7 @@ data "aws_iam_policy_document" "shield" {
   }
 
   statement {
-    sid     = "ShieldPermissionsAllResources"
+    sid = "ShieldPermissionsAllResources"
     actions = [
       "shield:*DRTLogBucket",
       "shield:*DRTRole",
@@ -587,7 +587,7 @@ data "aws_iam_policy_document" "shield" {
   }
 
   statement {
-    sid     = "ShieldPermissionsIAM"
+    sid = "ShieldPermissionsIAM"
     actions = [
       "iam:AttachRolePolicy",
       "iam:CreateServiceLinkedRole",
@@ -610,7 +610,7 @@ data "aws_iam_policy_document" "shield" {
 
 data "aws_iam_policy_document" "route53" {
   statement {
-    sid     = "CreateRoute53HealthChecks"
+    sid = "CreateRoute53HealthChecks"
     actions = [
       "route53:CreateHealthCheck"
     ]
@@ -619,7 +619,7 @@ data "aws_iam_policy_document" "route53" {
   }
 
   statement {
-    sid     = "ConfigureRoute53HealthChecks"
+    sid = "ConfigureRoute53HealthChecks"
     actions = [
       "route53:ChangeTagsForResource",
       "route53:DeleteHealthCheck",
