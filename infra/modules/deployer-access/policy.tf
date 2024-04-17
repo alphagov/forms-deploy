@@ -546,6 +546,7 @@ data "aws_iam_policy_document" "shield" {
       "shield:*HealthCheck",
       "shield:*Protection",
       "shield:TagResource",
+      "shield:UntagResource",
     ]
     resources = [
       "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
@@ -560,6 +561,8 @@ data "aws_iam_policy_document" "shield" {
       "shield:ListProtectionGroups",
       "shield:ListResourcesInProtectionGroup",
       "shield:TagResource",
+      "shield:UntagResource",
+
     ]
     resources = [
       "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection-group/*",
