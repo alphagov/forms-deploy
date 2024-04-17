@@ -31,6 +31,12 @@ data "aws_iam_policy_document" "codepipeline" {
     resources = ["${module.artifact_bucket.arn}/*"]
     effect    = "Allow"
   }
+
+  statement {
+    actions   = ["shield:CreateProtection"]
+    resources = ["arn:aws:shield::${data.aws_caller_identity.current.account_id}:protection/*"]
+    effect    = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "codepipeline" {
