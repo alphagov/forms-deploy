@@ -606,6 +606,7 @@ data "aws_iam_policy_document" "shield" {
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-response-team",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/aws-service-role/shield.amazonaws.com/AWSServiceRoleForAWSShield"
     ]
     effect = "Allow"
   }
