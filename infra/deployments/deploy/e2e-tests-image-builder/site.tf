@@ -2,7 +2,7 @@ terraform {
   # Comment out when bootstrapping
   backend "s3" {
     bucket = "gds-forms-deploy-tfstate"
-    key    = "main_branch_pipelines.tfstate"
+    key    = "e2e-tests-image-builder.tfstate"
     region = "eu-west-2"
   }
 }
@@ -13,7 +13,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/main-branch-pipelines"
+      Deployment  = "deploy/e2e-tests-image-builder"
     }
   }
 }

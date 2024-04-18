@@ -26,7 +26,6 @@ groups:
     - "deploy-forms-product-page-container-dev"
 
   "API":
-    - "forms-api-main-branch"
     - "forms-api-image-builder"
     - "deploy-forms-api-container-staging"
     - "deploy-forms-api-container-production"
@@ -34,7 +33,6 @@ groups:
     - "deploy-forms-api-container-dev"
 
   "Admin":
-    - "forms-admin-main-branch"
     - "forms-admin-image-builder"
     - "deploy-forms-admin-container-staging"
     - "deploy-forms-admin-container-production"
@@ -42,7 +40,6 @@ groups:
     - "deploy-forms-admin-container-dev"
 
   "Runner":
-    - "forms-runner-main-branch"
     - "forms-runner-image-builder"
     - "deploy-forms-runner-container-staging"
     - "deploy-forms-runner-container-production"
