@@ -12,7 +12,6 @@ environmental_settings = {
   database_backup_retention_period_days    = 30
   allow_authentication_from_email_domains = [
     ".gov.uk",
-    "@digitalaccessibilitycentre.org"
   ]
   enable_alert_actions                = true
   forms_product_page_support_url      = "https://www.staging.forms.service.gov.uk/support"
