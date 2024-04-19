@@ -9,6 +9,7 @@ require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
 require_relative "lib/models/ArtifactRevision"
+require_relative "lib/models/PipelineGroup"
 require_relative "lib/models/PipelineStage"
 require_relative "lib/models/PipelineSummary"
 
@@ -91,9 +92,6 @@ get "/" do
   groups = []
   config["groups"].each do |k, _|
     group_elements = config["groups"][k]
-    group = OpenStruct.new
-    group.name = k
-
     group_pipelines = []
     group_elements.map do |elem|
       if pipelines_map.fetch(elem, nil) != nil
@@ -101,7 +99,7 @@ get "/" do
         group_pipelines << p
       end
     end
-    group.pipelines = group_pipelines
+    group = PipelineGroup.new(k, group_pipelines)
     groups << group
   end
 
