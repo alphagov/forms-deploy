@@ -13,11 +13,24 @@ describe PipelineSummary do
   }
 
   let(:codepipeline_execution) {
-    Aws::CodePipeline::Types::PipelineExecutionSummary.new(
-      start_time: Time.now,
+    Aws::CodePipeline::Types::PipelineExecution.new(
+      pipeline_name: "a_pipeline",
+      pipeline_version: 2,
       pipeline_execution_id: "execution-1",
       status: "Succeeded",
-      last_update_time: Time.now
+      variables: [
+        Aws::CodePipeline::Types::ResolvedPipelineVariable.new(
+          name: "Variable",
+          resolved_value: "Some string value"
+        )
+      ],
+      artifact_revisions: [
+        Aws::CodePipeline::Types::ArtifactRevision.new(
+          name: "get-source",
+          revision_id: "012abc",
+          revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text\n\nFollowed by a bit more text which describes it in more detail"}'
+        )
+      ]
     )
   }
 
@@ -45,15 +58,29 @@ describe PipelineSummary do
     expect(subject.status).to eq "Succeeded"
   end
 
-  it "variables is an empty array" do
-    expect(subject.variables).to eq []
-  end
-
   it "artifacts is an empty array" do
     expect(subject.artifacts).to eq []
   end
 
   it "stages is an empty array" do
     expect(subject.stages).to eq []
+  end
+
+  describe "when there are no variables" do
+    it "variables is an empty hash" do
+      codepipeline_execution.variables = []
+      subject = PipelineSummary.new(codepipeline_state, codepipeline_execution, last_start_at)
+
+      expect(subject.variables).to eq({})
+    end
+  end
+
+  describe "when there are variables" do
+    it "converts them in to a hash" do
+      expected_hash = {
+        "Variable" => "Some string value"
+      }
+      expect(subject.variables).to eq expected_hash
+    end
   end
 end

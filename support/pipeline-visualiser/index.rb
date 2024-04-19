@@ -116,7 +116,6 @@ def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
   summary = PipelineSummary.new(state, execution, last_start_time)
   summary.gds_cli_role = gds_cli_role
 
-  summary.variables = execution.variables || []
   summary.artifacts = execution.artifact_revisions.map { |artifact| generate_artifact_viewdata(artifact) }
   summary.stages = state.stage_states.map { |stage| generate_stage_viewdata(stage, summary.execution_id) }
 

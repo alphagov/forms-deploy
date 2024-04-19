@@ -17,7 +17,8 @@ class PipelineSummary
     @last_started_at = last_started_at
     @status = codepipeline_execution.status
 
-    @variables = []
+    vars = codepipeline_execution.variables || []
+    @variables = vars.map {|var| [var.name, var.resolved_value]}.to_h
     @artifacts = []
     @stages = []
   end

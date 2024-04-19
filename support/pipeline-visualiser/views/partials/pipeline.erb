@@ -106,10 +106,10 @@
                           </th>
                         </tr>
                     <% else %>
-                        <% pipeline.variables.each do |var| %>
+                        <% pipeline.variables.each do |name, value| %>
                             <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header"><%= var.name %></th>
-                                <td class="govuk-table__cell"><%= var.resolved_value %></td>
+                                <th scope="row" class="govuk-table__header"><%= name %></th>
+                                <td class="govuk-table__cell"><%= value %></td>
                             </tr>
                         <% end %>
                     <% end %>
