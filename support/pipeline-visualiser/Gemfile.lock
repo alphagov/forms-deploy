@@ -15,6 +15,7 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
     concurrent-ruby (1.2.3)
+    diff-lcs (1.5.1)
     jmespath (1.6.2)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
@@ -27,6 +28,19 @@ GEM
     rackup (2.1.0)
       rack (>= 3)
       webrick (~> 1.8)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
     ruby2_keywords (0.0.5)
     sinatra (4.0.0)
       mustermann (~> 3.0)
@@ -39,11 +53,13 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  arm64-darwin-23
 
 DEPENDENCIES
   aws-sdk-codepipeline (~> 1.69)
   concurrent-ruby
   rackup (~> 2.1)
+  rspec (~> 3.13)
   sinatra (~> 4.0)
 
 BUNDLED WITH

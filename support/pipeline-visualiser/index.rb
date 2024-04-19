@@ -8,6 +8,8 @@ require "yaml"
 require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
+require_relative "lib/models/PipelineStage"
+
 set :public_folder, "public"
 helpers do
   def slugify(str)
@@ -156,29 +158,5 @@ def generate_artifact_viewdata(artifact)
 end
 
 def generate_stage_viewdata(stage, current_execution_id)
-  is_outdated = stage.latest_execution.pipeline_execution_id != current_execution_id
-
-  data = OpenStruct.new
-  data.name = stage.stage_name
-  data.status = stage.latest_execution.status
-  data.outdated = is_outdated
-
-  if stage.latest_execution.status == "Failed"
-    failing_action = stage.action_states.find do |action|
-      action.latest_execution&.status == "Failed"
-    end
-
-    if failing_action != nil
-      if failing_action.latest_execution&.error_details&.message
-        data.error_message = failing_action.latest_execution.error_details.message
-      elsif failing_action.latest_execution&.summary
-        data.error_message = failing_action.latest_execution.summary
-      end
-    end
-
-  else
-    data.error_message = nil
-  end
-
-  return data
+  return PipelineStage.new(stage, current_execution_id)
 end
