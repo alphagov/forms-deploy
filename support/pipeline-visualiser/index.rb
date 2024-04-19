@@ -9,6 +9,7 @@ require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
 require_relative "lib/models/PipelineStage"
+require_relative "lib/models/PipelineSummary"
 
 set :public_folder, "public"
 helpers do
@@ -111,25 +112,15 @@ get "/deploying-changes" do
 end
 
 def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
-  name = state.pipeline_name
-  exec_id = execution.pipeline_execution_id
-  overall_status = execution.status
-  variables = execution.variables || []
+  summary = PipelineSummary.new(state, execution, last_start_time)
+  summary.gds_cli_role = gds_cli_role
 
-  artifacts = execution.artifact_revisions.map { |artifact| generate_artifact_viewdata(artifact) }
-  stages = state.stage_states.map { |stage| generate_stage_viewdata(stage, exec_id) }
+  summary.variables = execution.variables || []
+  summary.artifacts = execution.artifact_revisions.map { |artifact| generate_artifact_viewdata(artifact) }
+  summary.stages = state.stage_states.map { |stage| generate_stage_viewdata(stage, summary.execution_id) }
 
-  data = OpenStruct.new
-  data.name = name
-  data.execution_id = exec_id
-  data.last_started_at = last_start_time
-  data.status = overall_status
-  data.variables = variables
-  data.artifacts = artifacts
-  data.stages = stages
-  data.gds_cli_role = gds_cli_role
 
-  return data
+  return summary
 end
 
 def generate_artifact_viewdata(artifact)
