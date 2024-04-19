@@ -100,7 +100,7 @@ do
 
     rm "${__repo_root__}/${file}"
     mv "${__repo_root__}/${file}.tmp" "${__repo_root__}/${file}"
-    echo "Written to '${__repo_root__}/infra/modules/code-build-deploy-ecs/terraform_version.tf.json'"
+    echo "Written to '${__repo_root__}/infra/modules/code-build-build/terraform_version.tf.json'"
 done <   <(find "$(readlink -f "${__repo_root__}/infra/modules")/" -type f -name "terraform_version.tf.json" -print0) # (double < required by https://www.shellcheck.net/wiki/SC2044)
 
 
