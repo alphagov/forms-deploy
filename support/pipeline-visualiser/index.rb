@@ -8,6 +8,7 @@ require "yaml"
 require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
+require_relative "lib/models/ArtifactRevision"
 require_relative "lib/models/PipelineStage"
 require_relative "lib/models/PipelineSummary"
 
@@ -124,28 +125,7 @@ def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
 end
 
 def generate_artifact_viewdata(artifact)
-  data = OpenStruct.new
-  data.name = artifact.name
-  data.revision_id = artifact.revision_id
-
-  if artifact.revision_summary.start_with? "{"
-    # It's probably a Git source
-    summary_json = JSON.parse(artifact.revision_summary)
-
-    summary_text = ""
-    case summary_json["ProviderType"]
-    when "GitHub", "CodeCommit"
-      summary_text = summary_json["CommitMessage"]
-    else
-      summary_text = "Error: Unknown provider type"
-    end
-
-    data.revision_summary = summary_text
-  else
-    data.revision_summary = artifact.revision_summary
-  end
-
-  return data
+  return ArtifactRevision.new(artifact)
 end
 
 def generate_stage_viewdata(stage, current_execution_id)
