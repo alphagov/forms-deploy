@@ -38,7 +38,7 @@ describe PipelineSummary do
     Date.parse("2024-04-01T00:00:00")
   }
 
-  subject{
+  subject {
     PipelineSummary.new(codepipeline_state, codepipeline_execution, last_start_at)
   }
 
@@ -81,6 +81,43 @@ describe PipelineSummary do
         "Variable" => "Some string value"
       }
       expect(subject.variables).to eq expected_hash
+    end
+  end
+
+  describe "is_running" do
+    %w[InProgress Stopping].each do |status|
+      it "is true when the execution status is '#{status}'" do
+        codepipeline_execution.status = status
+        expect(subject.is_running?).to be_truthy
+      end
+    end
+
+    %w[Cancelled Stopped Succeeded Superseded Failed].each do |status|
+      it "is false when the execution status is '#{status}'" do
+        codepipeline_execution.status = status
+        expect(subject.is_running?).to be_falsey
+      end
+    end
+  end
+
+  describe "running_duration" do
+    context "when in a non-running state" do
+      it "is nil" do
+        codepipeline_execution.status = "Succeeded"
+        expect(subject.running_duration).to be_nil
+      end
+    end
+
+    context "when in a running state" do
+      it "is duration between now and the last_started_at time" do
+        codepipeline_execution.status = "InProgress"
+        last_start_at = DateTime.now - (2/24.0) # 2 hours ago
+
+        subject = PipelineSummary.new(codepipeline_state, codepipeline_execution, last_start_at)
+
+        duration = subject.running_duration
+        expect(duration.in_hours).to eq 2
+      end
     end
   end
 end

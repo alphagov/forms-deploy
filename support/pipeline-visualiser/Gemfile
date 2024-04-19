@@ -13,3 +13,7 @@ gem "aws-sdk-codepipeline", "~> 1.69"
 gem 'concurrent-ruby', require: 'concurrent'
 
 gem "rspec", "~> 3.13"
+
+gem "activesupport", "~> 7.1"
+
+gem "activesupport-duration-human_string", "~> 1.0"
