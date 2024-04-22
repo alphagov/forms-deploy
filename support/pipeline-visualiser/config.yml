@@ -1,15 +1,15 @@
 ---
 roles:
   - role: arn:aws:iam::711966560482:role/codepipeline-readonly
-    gds_cli_role: forms-deploy-readonly
+    gds_cli_role: forms-deploy-support
   - role: arn:aws:iam::498160065950:role/codepipeline-readonly
-    gds_cli_role: forms-dev-readonly
+    gds_cli_role: forms-dev-support
   - role: arn:aws:iam::443944947292:role/codepipeline-readonly
-    gds_cli_role: forms-prod-readonly
+    gds_cli_role: forms-prod-support
   - role: arn:aws:iam::972536609845:role/codepipeline-readonly
-    gds_cli_role: forms-staging-readonly
+    gds_cli_role: forms-staging-support
   - role: arn:aws:iam::619109835131:role/codepipeline-readonly
-    gds_cli_role: forms-user-research-readonly
+    gds_cli_role: forms-user-research-support
 
 groups:
   "Apply Terraform":
