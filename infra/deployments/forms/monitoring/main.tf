@@ -1,1 +1,0 @@
-# This file left empty so Terraform will tear it all down
