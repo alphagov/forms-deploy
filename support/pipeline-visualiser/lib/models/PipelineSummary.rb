@@ -11,6 +11,8 @@ class PipelineSummary
   attr_accessor :artifacts
   attr_accessor :stages
   attr_accessor :running_duration
+  attr_accessor :current_stage_name
+
 
   # @param [Aws::CodePipeline::Types::GetPipelineStateOutput] codepipeline_state
   # @param [Aws::CodePipeline::Types::PipelineExecutionSummary] codepipeline_execution
@@ -32,6 +34,12 @@ class PipelineSummary
       now_seconds = DateTime.now.to_time.to_i
       last_start_seconds = @last_started_at.to_time.to_i
       @running_duration = ActiveSupport::Duration.build(now_seconds - last_start_seconds)
+
+      codepipeline_state.stage_states.each do |stage|
+        if stage.latest_execution.pipeline_execution_id == @execution_id && stage.latest_execution.status == "InProgress" then
+          @current_stage_name = stage.stage_name
+        end
+      end
     end
   end
 

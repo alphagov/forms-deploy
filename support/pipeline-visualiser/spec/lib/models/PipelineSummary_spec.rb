@@ -8,7 +8,23 @@ describe PipelineSummary do
       pipeline_name: "a_pipeline",
       created: Time.now,
       updated: Time.now,
-      pipeline_version: 2
+      pipeline_version: 2,
+      stage_states: [
+        Aws::CodePipeline::Types::StageState.new(
+          stage_name: "stage_1",
+          latest_execution: Aws::CodePipeline::Types::StageExecution.new(
+            pipeline_execution_id: "execution-1",
+            status: "Succeeded"
+          )
+        ),
+        Aws::CodePipeline::Types::StageState.new(
+          stage_name: "stage_2",
+          latest_execution: Aws::CodePipeline::Types::StageExecution.new(
+            pipeline_execution_id: "execution-1",
+            status: "InProgress"
+          )
+        )
+      ]
     )
   }
 
@@ -100,24 +116,34 @@ describe PipelineSummary do
     end
   end
 
-  describe "running_duration" do
-    context "when in a non-running state" do
-      it "is nil" do
-        codepipeline_execution.status = "Succeeded"
-        expect(subject.running_duration).to be_nil
-      end
+  context "when in a non-running state" do
+    it "running_duration is nil" do
+      codepipeline_execution.status = "Succeeded"
+      expect(subject.running_duration).to be_nil
     end
 
-    context "when in a running state" do
-      it "is duration between now and the last_started_at time" do
-        codepipeline_execution.status = "InProgress"
-        last_start_at = DateTime.now - (2/24.0) # 2 hours ago
+    it "current_stage_name is nil" do
+      codepipeline_execution.status = "Succeeded"
+      expect(subject.current_stage_name).to be_nil
+    end
+  end
 
-        subject = PipelineSummary.new(codepipeline_state, codepipeline_execution, last_start_at)
+  context "when in a running state" do
+    let(:last_start_at){
+      DateTime.now - (2/24.0) # 2 hours ago
+    }
 
-        duration = subject.running_duration
-        expect(duration.in_hours).to eq 2
-      end
+    before do
+      codepipeline_execution.status = "InProgress"
+    end
+
+    it "running_duration is a duration between now and the last_started_at time" do
+      duration = subject.running_duration
+      expect(duration.in_hours).to eq 2
+    end
+
+    it "current_stage_name is the name of the first stage in the current execution with the status 'InProgress'" do
+      expect(subject.current_stage_name).to eq "stage_2"
     end
   end
 end
