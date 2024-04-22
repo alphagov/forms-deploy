@@ -27,36 +27,9 @@ locals {
     "production"    = "443944947292"
     "user-research" = "619109835131"
   }
-
-  deploy_account_terraform_apply = [
-    "arn:aws:iam::${local.deploy_account_id}:role/codebuild-apply-terraform-${var.env_name}"
-  ]
-
-  deployer_roles_per_env = {
-    "user-research" = local.deploy_account_terraform_apply,
-    "dev"           = local.deploy_account_terraform_apply,
-    "staging"       = local.deploy_account_terraform_apply,
-    "production"    = local.deploy_account_terraform_apply
-  }
 }
 
 data "aws_iam_policy_document" "assume_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "AWS"
-      identifiers = lookup(local.deployer_roles_per_env, var.env_name)
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "sts:ExternalId"
-
-      values = [var.env_name]
-    }
-  }
-
   statement {
     actions = ["sts:AssumeRole"]
 
