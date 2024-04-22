@@ -23,6 +23,22 @@ describe PipelineSummary do
             pipeline_execution_id: "execution-1",
             status: "InProgress"
           )
+        ),
+        Aws::CodePipeline::Types::StageState.new(
+          stage_name: "stage_3",
+          latest_execution: Aws::CodePipeline::Types::StageExecution.new(
+            pipeline_execution_id: "execution-1",
+            status: "Failed"
+          ),
+          action_states: [
+            Aws::CodePipeline::Types::ActionState.new(
+              action_name: "action-1",
+              latest_execution: Aws::CodePipeline::Types::ActionExecution.new(
+                status: "Failed",
+                summary: "AN ERROR MESSAGE"
+              )
+            )
+          ]
         )
       ]
     )
@@ -144,6 +160,20 @@ describe PipelineSummary do
 
     it "current_stage_name is the name of the first stage in the current execution with the status 'InProgress'" do
       expect(subject.current_stage_name).to eq "stage_2"
+    end
+  end
+
+  context "in a failing state" do
+    before do
+      codepipeline_execution.status = "Failed"
+    end
+
+    it "first_failing_stage_name is the name of the first stage with the Failed status" do
+      expect(subject.first_failing_stage_name).to eq "stage_3"
+    end
+
+    it "first_failing_stage_error_message is the error message coming from the first failing stage" do
+      expect(subject.first_failing_stage_error_message).to eq "AN ERROR MESSAGE"
     end
   end
 end

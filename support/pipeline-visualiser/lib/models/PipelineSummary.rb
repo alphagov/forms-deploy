@@ -12,6 +12,8 @@ class PipelineSummary
   attr_accessor :stages
   attr_accessor :running_duration
   attr_accessor :current_stage_name
+  attr_accessor :first_failing_stage_name
+  attr_accessor :first_failing_stage_error_message
 
 
   # @param [Aws::CodePipeline::Types::GetPipelineStateOutput] codepipeline_state
@@ -38,6 +40,19 @@ class PipelineSummary
       codepipeline_state.stage_states.each do |stage|
         if stage.latest_execution.pipeline_execution_id == @execution_id && stage.latest_execution.status == "InProgress" then
           @current_stage_name = stage.stage_name
+          break
+        end
+      end
+    end
+
+    if @status == "Failed"
+      failing_stage = codepipeline_state.stage_states.find {|stage| stage.latest_execution.status == "Failed" }
+      if failing_stage != nil
+        @first_failing_stage_name = failing_stage.stage_name
+
+        failing_action = failing_stage.action_states.find {|action| action.latest_execution.status == "Failed"}
+        if failing_action != nil
+          @first_failing_stage_error_message = failing_action.latest_execution.summary
         end
       end
     end

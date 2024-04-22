@@ -1,5 +1,5 @@
 class PipelineGroup
-  # @!attribute [PipelineSummary[]]
+  # @attribute [PipelineSummary[]]
   attr_reader :summaries
   attr_reader :name
 
