@@ -251,3 +251,8 @@ resource "aws_shield_protection_health_check_association" "system_health" {
   health_check_arn     = aws_route53_health_check.aggregated[0].arn
   shield_protection_id = aws_shield_protection.cloudfront.id
 }
+
+resource "aws_iam_service_linked_role" "shield" {
+  aws_service_name = "shield.amazonaws.com"
+  description      = "AWSServiceRoleForAWSShield IAM role"
+}
