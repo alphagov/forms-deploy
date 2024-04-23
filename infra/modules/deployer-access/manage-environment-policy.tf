@@ -143,9 +143,7 @@ data "aws_iam_policy_document" "cloudfront" {
     sid    = "ManageWebACL"
     effect = "Allow"
     actions = [
-      "wafv2:PutLoggingConfiguration",
-      "wafv2:DeleteLoggingConfiguration",
-      "wafv2:CreateLoggingConfiguration",
+      "wafv2:*LoggingConfiguration",
       "wafv2:CreateWebACL",
       "wafv2:DeleteWebACL",
       "wafv2:UpdateWebACL",
@@ -155,6 +153,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/webacl/*"
     ]
   }
+
   statement {
     sid    = "ManageCloudwatchLogsWAF"
     effect = "Allow"
@@ -162,11 +161,44 @@ data "aws_iam_policy_document" "cloudfront" {
       "logs:*LogEvents",
       "logs:*LogStream",
       "logs:*SubscriptionFilters",
-      "logs:*LogGroup"
+      "logs:*SubscriptionFilter",
+      "logs:*LogGroup",
+      "logs:PutRetentionPolicy",
     ]
     resources = [
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}*"
+      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-alb-${var.env_name}*"
     ]
+  }
+
+  statement {
+    sid    = "ManageCloudwatchLogs"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:*LogDelivery",
+      "logs:PutResourcePolicy",
+      "logs:DescribeResourcePolicies"
+    ]
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    sid    = "CreateServiceLinkedRoleForWAF"
+    effect = "Allow"
+    actions = [
+      "iam:CreateServiceLinkedRole"
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/*"
+    ]
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["wafv2.amazonaws.com"]
+    }
   }
 }
 
@@ -196,7 +228,6 @@ data "aws_iam_policy_document" "secure-bucket" {
     ]
     resources = [
       "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*",
-      "arn:aws:s3:::aws-waf-logs-alb-govuk-forms-${var.env_name}*",
     ]
   }
 }
