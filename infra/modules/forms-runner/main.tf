@@ -76,10 +76,6 @@ module "ecs_service" {
       value = "production"
     },
     {
-      name  = "RAILS_SERVE_STATIC_FILES",
-      value = "1"
-    },
-    {
       name  = "RAILS_MAX_THREADS",
       value = var.rails_max_threads
     },
