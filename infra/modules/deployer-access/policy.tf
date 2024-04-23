@@ -27,7 +27,9 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
     data.aws_iam_policy_document.eventbridge.json,
-    data.aws_iam_policy_document.cloudwatch_logging.json
+    data.aws_iam_policy_document.cloudwatch_logging.json,
+    data.aws_iam_policy_document.shield.json,
+    data.aws_iam_policy_document.route53.json,
   ]
 }
 
@@ -525,11 +527,112 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
   statement {
     actions = [
       "logs:PutRetentionPolicy",
+      "logs:DeleteLogGroup",
       "logs:DeleteRetentionPolicy",
+      "logs:DeleteSubscriptionFilter",
     ]
     resources = [
       "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:*",
       "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:*",
+    ]
+    effect = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "shield" {
+  statement {
+    sid = "ShieldPermissionsProtectionResources"
+    actions = [
+      "shield:*HealthCheck",
+      "shield:*Protection",
+      "shield:TagResource",
+      "shield:UntagResource",
+    ]
+    resources = [
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ShieldPermissionsProtectionGroupResources"
+    actions = [
+      "shield:*ProtectionGroup",
+      "shield:ListProtectionGroups",
+      "shield:ListResourcesInProtectionGroup",
+      "shield:TagResource",
+      "shield:UntagResource",
+
+    ]
+    resources = [
+      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection-group/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ShieldPermissionsAllResources"
+    actions = [
+      "shield:*DRTLogBucket",
+      "shield:*DRTRole",
+      "shield:AssociateProactiveEngagementDetails",
+      "shield:CreateProtection",
+      "shield:EnableApplicationLayerAutomaticResponse",
+      "shield:EnableProactiveEngagement",
+      "shield:DisableApplicationLayerAutomaticResponse",
+      "shield:DisableProactiveEngagement",
+      "shield:UpdateEmergencyContactSettings",
+    ]
+    resources = [
+      "*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "ShieldPermissionsIAM"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:CreateServiceLinkedRole",
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:GetRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:PassRole",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
+      "iam:UpdateRole",
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-response-team",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/aws-service-role/shield.amazonaws.com/AWSServiceRoleForAWSShield"
+    ]
+    effect = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "route53" {
+  statement {
+    sid = "CreateRoute53HealthChecks"
+    actions = [
+      "route53:CreateHealthCheck"
+    ]
+    resources = ["*"] # CreateHealthCheck uses *
+    effect    = "Allow"
+  }
+
+  statement {
+    sid = "ConfigureRoute53HealthChecks"
+    actions = [
+      "route53:ChangeTagsForResource",
+      "route53:DeleteHealthCheck",
+    ]
+    resources = [
+      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:${var.env_name}_cloudfront_total_error_rate",
+      "arn:aws:cloudwatch:us-east-1:${lookup(local.account_ids, var.env_name)}:ddos_detected_in_${var.env_name}",
+      "arn:aws:route53:::healthcheck/*"
     ]
     effect = "Allow"
   }

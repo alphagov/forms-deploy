@@ -169,7 +169,8 @@ resource "aws_wafv2_web_acl" "this" {
     priority = 10
 
     action {
-      allow {} # Stop processing
+      allow {}
+      # Stop processing
     }
 
     statement {
@@ -356,4 +357,12 @@ resource "aws_sns_topic_subscription" "email" {
 
 output "cloudfront_dns_name" {
   value = aws_cloudfront_distribution.main.domain_name
+}
+
+output "cloudfront_arn" {
+  value = aws_cloudfront_distribution.main.arn
+}
+
+output "cloudfront_distribution_id" {
+  value = aws_cloudfront_distribution.main.id
 }

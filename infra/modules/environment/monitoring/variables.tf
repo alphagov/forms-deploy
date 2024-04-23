@@ -1,0 +1,30 @@
+variable "environment_name" {
+  description = "The name of the environment. This is distinct from the environment type, but is likely to share the same name in cases like production or staging."
+  type        = string
+  nullable    = false
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_-]+$", var.environment_name))
+    error_message = "variable 'environment_name' must contain only alphanumeric characters, underscores, and hyphens; it must be a valid part of a DNS name"
+  }
+}
+
+variable "environment_type" {
+  description = "The type of environment this is. For example 'dev', 'staging', 'productions'."
+  type        = string
+  nullable    = false
+  validation {
+    condition     = contains(["development", "staging", "production", "user_research", "ithc"], var.environment_type)
+    error_message = "variable 'environment_type' must be one of dev, staging, production, user_research, or ithc"
+  }
+}
+
+variable "scheduled_smoke_tests_settings" {
+  description = "Configuration for the scheduled smoke tests"
+  type = object({
+    enable_scheduled_smoke_tests = bool
+    # This form is created specifically for the runner smoke tests. See https://github.com/alphagov/forms-e2e-tests/blob/main/spec/smoke_tests/smoke_test_runner_spec.rb
+    form_url          = string
+    frequency_minutes = number
+    enable_alerting   = bool # Whether to send notification to govuk-forms-alerts channel
+  })
+}

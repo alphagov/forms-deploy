@@ -1,13 +1,20 @@
 <h1 class="govuk-heading-l">Deploying changes</h1>
 <p class="govuk-body">
-This page has a brief summary about how to deploy changes to different repositories/applications.
+This page has a summary about how to deploy changes to different repositories/applications.
+<p>
 
-For a more in depth explanation, you should read <a class="govuk-link" href="https://github.com/alphagov/forms-team/wiki/Path-to-production%3a-applications">Path to production: applications</a> and <a class="govuk-link" href="https://github.com/alphagov/forms-team/wiki/Path-to-production%3a-Terraform">Path to production: Terraform</a> on the team wiki.
+<p class="govuk-body">
+For a more in depth explanation, you should read <a class="govuk-link" href="https://github.com/alphagov/forms-team/wiki/Deploying-to-production%3A-applications">Deploying to production: applications</a> and <a class="govuk-link" href="https://github.com/alphagov/forms-team/wiki/Deploying-to-production%3A-Terraform"> Deploying to production: Terraform</a> on the team wiki.
 </p>
 
-<h2 class="govuk-heading-m">Product pages, Runner</h2>
+<h2 class="govuk-heading-m">GOV.UK Forms applications</h2>
 <p class="govuk-body">
-  <a class="govuk-link" href="https://github.com/alphagov/forms-product-page">forms-product-page</a> and <a class="govuk-link" href="https://github.com/alphagov/forms-runner">forms-runner</a> both have a pipeline per environment. The pipelines exist in the account into which they deploy.
+  All GOV.UK Forms applications (
+  <a class="govuk-link" href="https://github.com/alphagov/forms-admin">forms-admin</a>,
+  <a class="govuk-link" href="https://github.com/alphagov/forms-api">forms-api</a>,
+  <a class="govuk-link" href="https://github.com/alphagov/forms-runner">forms-runner</a> and
+  <a class="govuk-link" href="https://github.com/alphagov/forms-product-page">forms-product-page</a>)
+  have a pipeline per environment. Each pipeline exists in the account into which it deploys.
 </p>
 
 <p class="govuk-body">
@@ -20,55 +27,18 @@ For a more in depth explanation, you should read <a class="govuk-link" href="htt
   repository and <a class="govuk-link"  href="#apply-terraform">Apply Terraform</a> pipelines.
 </p>
 
-<h2 class="govuk-heading-m">Admin, API</h2>
-<p class="govuk-body">
-  <a class="govuk-link" href="https://github.com/alphagov/forms-admin">forms-admin</a> and <a
-  class="govuk-link" href="https://github.com/alphagov/forms-api">forms-api</a> both have a
-  single pipeline that deploys changes to each environment in turn.
-</p>
-
-<p class="govuk-body">
-  To deploy a change to these applications, merge the change in to the <code>main</code> branch. The change will be automatically picked up by the pipeline and deployed to staging, production, user research, and development environments in turn.
-</p>
-
-<p class="govuk-body">
-  To deploy a change to the infrastructure running these applications, see the
-  <a class="govuk-link" href="https://github.com/alphagov/forms-deploy">forms-deploy</a>
-  repository. Make the changes and merge them into the <code>main</code> branch of that repository. To deploy the change, run one of the following commands:
-</p>
-
-<ul>
-  <li>
-    <p class="govuk-body">
-      <strong>Admin:</strong> <code>gds aws forms-ENV-admin -- make ENV forms/forms-admin apply</code>
-    </p>
-    <p class="govuk-body">
-      where ENV is the name of the environment you want to deploy to.
-    </p>
-  </li>
-
-  <li>
-    <p class="govuk-body">
-      <strong>API:</strong> <code>gds aws forms-ENV-admin -- make ENV forms/forms-api apply</code>
-    </p>
-    <p class="govuk-body">
-      where ENV is the name of the environment you want to deploy to.
-    </p>
-  </li>
-</ul>
-
 <h2 class="govuk-heading-m">Pipeline visualiser (this tool)</h2>
 <p class="govuk-body">
-  The pipeline visualiser tool lives <a class="govuk-link" href="https://github.com/alphagov/forms-deploy/tree/main/support/pipeline-visualiser">at <code>support/pipeline-visualiser/</code> in the forms-deploy repository</a>. It has a single pipeline that deploys changes to its one environment in the deploy account.
+  The pipeline visualiser tool lives <a class="govuk-link" href="https://github.com/alphagov/forms-deploy/tree/main/support/pipeline-visualiser">at <code>support/pipeline-visualiser/</code> in the forms-deploy repository</a>. It has a single pipeline that deploys changes to its one environment in the 'deploy' account.
 </p>
 
 <p class="govuk-body">
   To deploy a change to it, or its infrastructure, merge the change into the <code>main</code> branch and it will be automatically picked up and deployed.
 </p>
 
-<h2 id="apply-terraform" class="govuk-heading-m">Apply Terraform</h2>
+<h2 id="apply-terraform" class="govuk-heading-m">Apply Terraform (infrastructure)</h2>
 <p class="govuk-body">
-  <a class="govuk-link" href="https://github.com/alphagov/forms-deploy">forms-deploy</a> has a pipeline per environment. The pipelines exist in the account into which it deploys.
+  <a class="govuk-link" href="https://github.com/alphagov/forms-deploy">forms-deploy</a> has an 'Apply Terraform' pipeline per environment. The pipelines exist in the account into which it deploys.
 </p>
 
 <p class="govuk-body">
@@ -77,14 +47,13 @@ For a more in depth explanation, you should read <a class="govuk-link" href="htt
 
 <ul>
   <li>
-    <p class="govuk-body"><strong>Infrastructure in the environment accounts (except forms-admin and forms-api)</strong></p>
+    <p class="govuk-body"><strong>Infrastructure in the environment accounts </strong></p>
     <p class="govuk-body">The change will be picked up by the pipelines and deployed automatically.</p>
   </li>
   <li>
-    <p class="govuk-body"><strong>Infrastructure in the deploy account</strong></p>
+    <p class="govuk-body"><strong>Infrastructure in the 'deploy' account</strong></p>
 
-    <p class="govuk-body">Run <code>gds aws forms-deploy-admin – make deploy deploy/ROOT apply</code></p>
-    <p class="govuk-body">
+    <p class="govuk-body">Run <code>gds aws forms-deploy-admin – make deploy deploy/ROOT apply</code>,
       where ROOT is the directory under <code>infra/deployments/deploy/</code> that you
       have made a change to (or uses the module which you have made a change to)
     </p>
@@ -94,7 +63,7 @@ For a more in depth explanation, you should read <a class="govuk-link" href="htt
     </p>
   </li>
   <li>
-    <p class="govuk-body"><strong>Account level Terraform (under <code>infra/deployments/account/</code>)</strong></p>
+    <p class="govuk-body"><strong>Infrastructure at the account level (under <code>infra/deployments/account/</code>)</strong></p>
     <p class="govuk-body">Run <code>gds aws forms-ENV-admin – make ENV account apply</code></p>
     <p class="govuk-body">where ENV is the name of the environment account you want to deploy to</p>
   </li>

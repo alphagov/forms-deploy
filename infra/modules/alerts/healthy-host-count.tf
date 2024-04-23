@@ -4,11 +4,11 @@ resource "aws_cloudwatch_metric_alarm" "healthy_host_alarms" {
   alarm_name          = "alb_healthy_host_count_${each.value.name}"
   alarm_description   = "Less than ${var.minimum_healthy_host_count} healthy instances of ${each.value.name}"
   comparison_operator = "LessThanThreshold"
-  evaluation_periods  = 2
+  evaluation_periods  = 1
   namespace           = "AWS/ApplicationELB"
   metric_name         = "HealthyHostCount"
   statistic           = "Minimum"
-  period              = 30
+  period              = 60
   threshold           = var.minimum_healthy_host_count
 
   dimensions = {

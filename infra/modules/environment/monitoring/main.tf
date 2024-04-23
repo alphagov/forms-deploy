@@ -1,12 +1,12 @@
 resource "aws_cloudwatch_dashboard" "overview" {
   dashboard_name = "Overview"
-  dashboard_body = file("dashboard_body.json")
+  dashboard_body = file("${path.module}/dashboard_body.json")
 }
 
 module "runner_scheduled_smoke_tests" {
   count = var.scheduled_smoke_tests_settings.enable_scheduled_smoke_tests ? 1 : 0
 
-  source = "../../../modules/smoke-test"
+  source = "./smoke-test"
 
   environment       = var.environment_name
   frequency_minutes = var.scheduled_smoke_tests_settings.frequency_minutes

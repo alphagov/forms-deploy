@@ -134,8 +134,20 @@ plan_apply_validate(){
 		-chdir="${src_dir}" \
 		${action} \
 		${extra_args}
+    tf_exit_code=$?
 
+    # Terraform only gives an exit code of 0 on a successful run
+    if [ ${tf_exit_code} = 0 ] && [ "${action}" = "apply" ]; then
+        post_apply
+    fi
 }
+
+post_apply() {
+    if [ "${deployment}+${tf_root}" = "account+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
+        echo "Performing post-apply actions"
+        "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
+    fi
+ }
 
 case "${action}" in
     apply)
