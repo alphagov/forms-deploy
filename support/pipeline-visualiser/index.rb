@@ -77,8 +77,22 @@ get "/group/:group_slug" do
   pipelines = pipeline_names
     .map { |name| pipelines_map.fetch(name, nil) }
     .reject { |p| p == nil }
-  puts pipelines
+
   erb  :group, :locals => {:view => Group.new(group[0], pipelines), :is_dev_mode => is_dev_mode }
+end
+
+get "/group/:group_slug/pipeline/:pipeline_slug" do
+  all_groups = config["groups"].to_a
+  group = all_groups.find {|grp| params["group_slug"] == slugify(grp[0])}
+  pass unless group != nil
+
+  pipeline_slugs_to_names = group[1].map {|name| [slugify(name), name]}.to_h
+  pass unless pipeline_slugs_to_names.keys.include? params["pipeline_slug"]
+
+  pipeline_name = pipeline_slugs_to_names[params["pipeline_slug"]]
+  pipeline = pipelines_map[pipeline_name]
+
+  erb :pipeline, :locals => {:pipeline => pipeline, :is_dev_mode => is_dev_mode }
 end
 
 not_found do
