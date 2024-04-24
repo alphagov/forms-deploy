@@ -34,6 +34,7 @@ GEM
     i18n (1.14.4)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
+    libxml-ruby (5.0.3)
     minitest (5.22.3)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
@@ -81,6 +82,7 @@ DEPENDENCIES
   activesupport-duration-human_string (~> 1.0)
   aws-sdk-codepipeline (~> 1.69)
   concurrent-ruby
+  libxml-ruby (~> 5.0.3)
   rackup (~> 2.1)
   rspec (~> 3.13)
   sinatra (~> 4.0)

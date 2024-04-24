@@ -1,23 +1,80 @@
-<div class="govuk-tabs" data-module="govuk-tabs">
-    <h2 class="govuk-tabs__title">Contents</h2>
-    <ul class="govuk-tabs__list">
-        <% groups.each do |group| %>
-            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                <a class="govuk-tabs__tab" href="#<%= slugify(group.name) %>">
-                    <%= group.name %>
-                </a>
-            </li>
+<h1 class="govuk-heading-l">GOV.UK Forms Pipelines</h1>
+<section>
+  <h2 class="govuk-heading-m">Running pipelines</h2>
+
+  <table class="govuk-table">
+    <caption class="govuk-table__caption">Running pipelines</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Pipeline</th>
+        <th scope="col" class="govuk-table__header">Stage</th>
+        <th scope="col" class="govuk-table__header">State</th>
+        <th scope="col" class="govuk-table__header">Duration</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <% if view.running_pipelines.length == 0 %>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell" colspan="4">
+            There are no running pipelines
+          </td>
+        </tr>
+      <% else %>
+        <% view.running_pipelines.each do |pipeline| %>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell"><%= pipeline.name %></td>
+            <td class="govuk-table__cell"><%= pipeline.current_stage_name %></td>
+            <td class="govuk-table__cell">
+              <%= erb :'partials/label', :locals => {status: pipeline.status} %>
+            </td>
+            <td class="govuk-table__cell">
+              <%= pipeline.running_duration.human_str %>
+            </td>
+          </tr>
         <% end %>
-    </ul>
+      <% end %>
+    </tbody>
+  </table>
+</section>
 
-    <% groups.each_index do |i| %>
-        <% group = groups[i] %>
-        <div class="govuk-tabs__panel <%= i > 0 ? "govuk-tabs__panel--hidden" : "" %>" id="<%= slugify(group.name) %>">
-            <h1 class="govuk-headling-l"><%= group.name %></h1>
-
-            <% group.pipelines.each do |pipeline| %>
-                <%= erb :'partials/pipeline', :locals => { pipeline: pipeline } %>
-            <% end %>
-        </div>
+<h2 class="govuk-heading-m">Failing pipelines</h2>
+<section>
+  <table class="govuk-table">
+    <caption class="govuk-table__caption">Running pipelines</caption>
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">Pipeline</th>
+      <th scope="col" class="govuk-table__header">Stage</th>
+      <th scope="col" class="govuk-table__header">Error</th>
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    <% if view.failing_pipelines.length == 0 %>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell" colspan="4">
+          There are no failing pipelines
+        </td>
+      </tr>
+    <% else %>
+      <% view.failing_pipelines.each do |pipeline| %>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell"><%= pipeline.name %></td>
+          <td class="govuk-table__cell"><%= pipeline.first_failing_stage_name %></td>
+          <td class="govuk-table__cell">
+            <%= pipeline.first_failing_stage_error_message %>
+          </td>
+        </tr>
+      <% end %>
     <% end %>
-</div>
+    </tbody>
+  </table>
+</section>
+
+<h2 class="govuk-heading-m">Pipeline groups</h2>
+<ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+  <% view.pipeline_groups.each do |group| %>
+    <li>
+      <a href="/group/<%= slugify(group.name) %>" class="govuk-link"><%= group.name %></a> <%= erb :'partials/label', :locals => {status: group.status } %>
+    </li>
+  <% end %>
+</ul>

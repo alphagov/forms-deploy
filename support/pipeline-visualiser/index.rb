@@ -1,3 +1,4 @@
+require 'activesupport-duration-human_string'
 require "concurrent/timer_task"
 require "concurrent/map"
 require "json"
@@ -12,6 +13,7 @@ require_relative "lib/models/ArtifactRevision"
 require_relative "lib/models/PipelineGroup"
 require_relative "lib/models/PipelineStage"
 require_relative "lib/models/PipelineSummary"
+require_relative "lib/views/AllPipelines"
 
 set :public_folder, "public"
 helpers do
@@ -103,7 +105,8 @@ get "/" do
     groups << group
   end
 
-  erb :state, :locals => { :groups => groups, :is_dev_mode => is_dev_mode }
+  view = AllPipelinesView.new(groups)
+  erb :state, :locals => { :view => view, :is_dev_mode => is_dev_mode }
 end
 
 get "/deploying-changes" do
