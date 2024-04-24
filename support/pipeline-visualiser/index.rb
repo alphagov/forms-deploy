@@ -59,7 +59,7 @@ get "/" do
   end
 
   view = AllPipelinesView.new(groups)
-  erb :state, :locals => { :view => view, :is_dev_mode => is_dev_mode }
+  erb :index, :locals => { :view => view, :is_dev_mode => is_dev_mode }
 end
 
 get "/deploying-changes" do
