@@ -10,6 +10,7 @@ require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
 require_relative "lib/views/AllPipelines"
+require_relative "lib/views/Group"
 
 set :public_folder, "public"
 helpers do
@@ -26,6 +27,7 @@ end
 is_dev_mode = ENV.fetch("PIPELINE_VISUALISER_DEV_MODE", false)
 
 config = YAML::safe_load_file("./config.yml")
+
 aws_clients = []
 config["roles"].each do |role|
   if is_dev_mode
@@ -64,4 +66,21 @@ end
 
 get "/deploying-changes" do
   erb :deploying_changes
+end
+
+get "/group/:group_slug" do
+  all_groups = config["groups"].to_a
+  group = all_groups.find {|grp| params["group_slug"] == slugify(grp[0])}
+  pass unless group != nil
+
+  pipeline_names = group[1]
+  pipelines = pipeline_names
+    .map { |name| pipelines_map.fetch(name, nil) }
+    .reject { |p| p == nil }
+  puts pipelines
+  erb  :group, :locals => {:view => Group.new(group[0], pipelines), :is_dev_mode => is_dev_mode }
+end
+
+not_found do
+  erb :not_found
 end
