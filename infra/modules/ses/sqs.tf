@@ -124,19 +124,19 @@ resource "aws_sns_topic_subscription" "ses_bounces_and_complaints_subscription" 
 }
 
 data "aws_iam_policy_document" "ses_bounces_and_complaints_queue_iam_policy" {
-  policy_id = "SESBouncesComplatintsQueueTopic"
+  policy_id = "SESBouncesComplaintsQueueTopic"
   statement {
     sid       = "SESBouncesComplaintsQueueTopic"
     effect    = "Allow"
     actions   = ["SQS:SendMessage"]
-    resources = ["${aws_sqs_queue.ses_bounces_and_complaints_queue.arn}"]
+    resources = [aws_sqs_queue.ses_bounces_and_complaints_queue.arn]
     principals {
       type        = "Service"
       identifiers = ["sns.amazonaws.com"]
     }
     condition {
       test     = "ArnEquals"
-      values   = ["${aws_sns_topic.ses_bounces_and_complaints_topic.arn}"]
+      values   = [aws_sns_topic.ses_bounces_and_complaints_topic.arn]
       variable = "aws:SourceArn"
     }
   }
