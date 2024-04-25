@@ -3,9 +3,9 @@ data "aws_sqs_queue" "ses_bounces_and_complaints_queue" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_buildup" {
-  alarm_name          = "ses_bounces_and_complaints_queue_alarm"
+  alarm_name          = "ses_bounces_and_complaints_queue_buildup"
   alarm_description   = <<EOF
-    When an email from SES to a user bounces or is marked as spam ('complaints'),
+    When SES sends an email to a user and the email bounces or is marked as spam ('complaints'),
     SES will log the event as a message on an SQS queue. We want to avoid a buildup
     of messages on the queue.
 
@@ -16,7 +16,7 @@ resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_buildup
     1. Go look at the message in SQS console by visiting the URL below and
     presing "Poll for messages"
 
-    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/711966560482/${data.aws_sqs_queue.ses_bounces_and_complaints_queue.name}")}/send-receive
+    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/${local.account_id}/${data.aws_sqs_queue.ses_bounces_and_complaints_queue.name}")}/send-receive
 
     2. Delete messages on the queue until the queue is empty
 
@@ -32,6 +32,7 @@ EOF
   threshold           = 10
 
   dimensions = {
+    foo       = local.account_id
     QueueName = data.aws_sqs_queue.ses_bounces_and_complaints_queue.name
   }
   treat_missing_data = "notBreaching"
@@ -40,9 +41,9 @@ EOF
 }
 
 resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_contains_message" {
-  alarm_name          = "ses_bounces_and_complaints_queue_alarm"
+  alarm_name          = "ses_bounces_and_complaints_queue_contains_message"
   alarm_description   = <<EOF
-    When an email from SES to a user bounces or is marked as spam ('complaints'),
+    When SES sends an email to a user and the email bounces or is marked as spam ('complaints'),
     SES will log the event as a message on an SQS queue.
 
     This alarm will enter the alarm state when there is a new message on the queue.
@@ -51,7 +52,7 @@ resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_contain
     1. Go look at the message in SQS console by visiting the URL below and
     presing "Poll for messages"
 
-    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/711966560482/${data.aws_sqs_queue.ses_bounces_and_complaints_queue.name}")}/send-receive
+    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/${local.account_id}/${data.aws_sqs_queue.ses_bounces_and_complaints_queue.name}")}/send-receive
 
     2. Delete messages on the queue until the queue is empty
 
