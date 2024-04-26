@@ -1,6 +1,6 @@
 resource "auth0_log_stream" "splunk_log_stream" {
-  count = 0
-  
+  count = var.enable_splunk_log_stream ? 1 : 0
+
   name = "Splunk log stream"
   type = "splunk"
 
