@@ -86,3 +86,9 @@ variable "support_url" {
   type        = string
   description = "URL of the support page"
 }
+
+variable "enable_splunk_log_stream" {
+  type        = bool
+  description = "Whether to enable streaming logs from Auth0 to Splunk."
+  default     = false
+}
