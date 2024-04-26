@@ -139,6 +139,7 @@ variable "environmental_settings" {
   type = object({
     auth0_domain                             = string
     disable_auth0                            = bool
+    enable_auth0_splunk_log_stream           = bool
     pause_databases_on_inactivity            = bool
     pause_databases_after_inactivity_seconds = number
     database_backup_retention_period_days    = number
