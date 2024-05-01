@@ -115,10 +115,6 @@ module "ecs_service" {
       value = "production"
     },
     {
-      name  = "RAILS_SERVE_STATIC_FILES",
-      value = "1"
-    },
-    {
       name  = "SETTINGS__FORMS_RUNNER__URL",
       value = var.runner_base
     },

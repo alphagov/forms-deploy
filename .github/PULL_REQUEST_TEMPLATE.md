@@ -14,3 +14,10 @@ Trello card: <!-- link -->
 - Do the commit messages explain why the changes were made?
 - Are there all the unit tests needed?
 - Has all relevant documentation been updated?
+
+### Reminders
+
+If you've made changes to the deployer role (files in `modules/deployer-access`):
+
+* Remember to run `make <environment> account apply` on the relevant environments (`dev`, `staging`, `user-research`, and/or `prod`)
+* Check the #govuk-forms-deployment-notifications Slack channel to ensure the `apply-forms-terraform-<environment>` pipelines have run successfully

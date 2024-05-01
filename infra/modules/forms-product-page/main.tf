@@ -35,10 +35,6 @@ module "ecs_service" {
       value = "production"
     },
     {
-      name  = "RAILS_SERVE_STATIC_FILES",
-      value = "1"
-    },
-    {
       name  = "SETTINGS__SENTRY__ENVIRONMENT",
       value = "aws-${var.env_name}"
     },
