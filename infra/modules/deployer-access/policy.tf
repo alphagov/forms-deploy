@@ -72,6 +72,7 @@ data "aws_iam_policy_document" "alerts" {
       "kms:EnableKeyRotation",
       "kms:PutKeyPolicy",
       "kms:TagResource",
+      "kms:UpdateKeyDescription",
       "kms:UntagResource",
       "kms:ScheduleKeyDeletion"
     ]
