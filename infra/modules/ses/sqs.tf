@@ -1,6 +1,6 @@
 resource "aws_kms_key" "this" {
-  description = "Key used to encrypt messages on the bounces and complanaints queue and topic"
-  policy      = data.aws_iam_policy_document.encryption_key_policy.json
+  description = "Key used to encrypt messages on the bounces and complaints queue and topic"
+  policy      = data.aws_iam_policy_document.encryption_key.json
 
   enable_key_rotation = true
 }
@@ -9,7 +9,7 @@ module "users" {
   source = "../users"
 }
 
-data "aws_iam_policy_document" "encryption_key_policy" {
+data "aws_iam_policy_document" "encryption_key" {
   # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
   #checkov:skip=CKV_AWS_111: This is applied directly to the key and we cannot specify the key in the resources.
   #checkov:skip=CKV_AWS_109: This is applied directly to the key and we cannot specify the key in the resources.
@@ -97,52 +97,52 @@ data "aws_iam_policy_document" "encryption_key_policy" {
   }
 }
 
-resource "aws_sqs_queue" "ses_bounces_and_complaints_queue" {
-  name                      = "ses_bounces_and_complaints_queue"
+resource "aws_sqs_queue" "ses_bounces_and_complaints" {
+  name                      = "ses_bounces_and_complaints"
   message_retention_seconds = 1209600
-  redrive_policy            = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.ses_dead_letter_queue.arn}\",\"maxReceiveCount\":4}"
+  redrive_policy            = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.ses_dead_letter.arn}\",\"maxReceiveCount\":4}"
 
   kms_master_key_id = aws_kms_key.this.id
 }
 
-resource "aws_sqs_queue" "ses_dead_letter_queue" {
+resource "aws_sqs_queue" "ses_dead_letter" {
   name = "ses_dead_letter_queue"
 
   kms_master_key_id = aws_kms_key.this.id
 }
 
-resource "aws_sns_topic" "ses_bounces_and_complaints_topic" {
-  name = "ses_bounces_and_complaints_topic"
+resource "aws_sns_topic" "ses_bounces_and_complaints" {
+  name = "ses_bounces_and_complaints"
 
   kms_master_key_id = aws_kms_key.this.id
 }
 
-resource "aws_sns_topic_subscription" "ses_bounces_and_complaints_subscription" {
-  topic_arn = aws_sns_topic.ses_bounces_and_complaints_topic.arn
+resource "aws_sns_topic_subscription" "ses_bounces_and_complaints" {
+  topic_arn = aws_sns_topic.ses_bounces_and_complaints.arn
   protocol  = "sqs"
-  endpoint  = aws_sqs_queue.ses_bounces_and_complaints_queue.arn
+  endpoint  = aws_sqs_queue.ses_bounces_and_complaints.arn
 }
 
-data "aws_iam_policy_document" "ses_bounces_and_complaints_queue_iam_policy" {
+data "aws_iam_policy_document" "ses_bounces_and_complaints" {
   policy_id = "SESBouncesComplaintsQueueTopic"
   statement {
     sid       = "SESBouncesComplaintsQueueTopic"
     effect    = "Allow"
     actions   = ["SQS:SendMessage"]
-    resources = [aws_sqs_queue.ses_bounces_and_complaints_queue.arn]
+    resources = [aws_sqs_queue.ses_bounces_and_complaints.arn]
     principals {
       type        = "Service"
       identifiers = ["sns.amazonaws.com"]
     }
     condition {
       test     = "ArnEquals"
-      values   = [aws_sns_topic.ses_bounces_and_complaints_topic.arn]
+      values   = [aws_sns_topic.ses_bounces_and_complaints.arn]
       variable = "aws:SourceArn"
     }
   }
 }
 
-resource "aws_sqs_queue_policy" "ses_bounces_and_complaints_queue_policy" {
-  queue_url = aws_sqs_queue.ses_bounces_and_complaints_queue.id
-  policy    = data.aws_iam_policy_document.ses_bounces_and_complaints_queue_iam_policy.json
+resource "aws_sqs_queue_policy" "ses_bounces_and_complaints" {
+  queue_url = aws_sqs_queue.ses_bounces_and_complaints.id
+  policy    = data.aws_iam_policy_document.ses_bounces_and_complaints.json
 }

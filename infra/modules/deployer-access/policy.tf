@@ -263,6 +263,7 @@ data "aws_iam_policy_document" "ses" {
       "iam:CreatePolicy",
       "iam:CreatePolicyVersion",
       "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
       "iam:TagPolicy",
       "iam:UntagPolicy",
     ]
@@ -334,7 +335,7 @@ data "aws_iam_policy_document" "ses" {
       "sns:UntagResource",
     ]
     resources = [
-      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:ses_bounces_and_complaints_topic",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:ses_bounces_and_complaints",
     ]
     effect = "Allow"
   }

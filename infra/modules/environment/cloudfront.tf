@@ -22,7 +22,7 @@ resource "aws_ssm_parameter" "email_zendesk" {
   description = "Support email for GOV.UK Forms Zendesk"
   name        = "/alerting/email-zendesk"
   type        = "SecureString"
-  value       = "email@email.com"
+  value       = "not_a_real_email@digital.cabinet-office.gov.uk"
 
   lifecycle {
     ignore_changes = [
