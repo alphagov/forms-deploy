@@ -98,7 +98,7 @@ data "aws_iam_policy_document" "encryption_key" {
 }
 
 resource "aws_sqs_queue" "ses_bounces_and_complaints" {
-  name                      = "ses_bounces_and_complaints"
+  name                      = "ses_bounces_and_complaints_queue"
   message_retention_seconds = 1209600
   redrive_policy            = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.ses_dead_letter.arn}\",\"maxReceiveCount\":4}"
 
