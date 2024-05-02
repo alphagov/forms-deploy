@@ -76,8 +76,6 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
 
 ## Monitor for failure
 resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
-  count = var.enable_mailchimp_sync ? 1 : 0
-
   name        = "${var.env_name}-forms-admin-sync-failed"
   description = "Trigger when the MailChimp sync job has exited with a non-zero exit code"
 
@@ -91,8 +89,7 @@ resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
     ]
 
     detail = {
-      lastStatus        = ["STOPPED"]
-      taskDefinitionArn = [aws_ecs_task_definition.cron_job[0].arn]
+      lastStatus = ["STOPPED"]
       containers = {
         name     = [local.mailchimp_sync_container_definitions.name]
         exitCode = [{ "anything-but" : ["0"] }]
@@ -102,9 +99,7 @@ resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
 }
 
 resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
-  count = var.enable_mailchimp_sync ? 1 : 0
-
-  rule = aws_cloudwatch_event_rule.sync_cron_job_failed[0].name
+  rule = aws_cloudwatch_event_rule.sync_cron_job_failed.name
 
   # defined in 'alerts' module. Sends alarms/errors via ZenDesk
   arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_dev"
