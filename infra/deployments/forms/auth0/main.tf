@@ -6,7 +6,7 @@ module "auth0" {
   env_name          = var.environment_name
   smtp_from_address = "no-reply@${var.root_domain}"
 
-  allowed_email_domains = var.environmental_settings.allow_authentication_from_email_domains
-
-  support_url = var.environmental_settings.forms_product_page_support_url
+  allowed_email_domains    = var.environmental_settings.allow_authentication_from_email_domains
+  support_url              = var.environmental_settings.forms_product_page_support_url
+  enable_splunk_log_stream = var.environmental_settings.enable_auth0_splunk_log_stream
 }

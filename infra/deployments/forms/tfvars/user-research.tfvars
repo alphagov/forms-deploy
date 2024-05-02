@@ -7,6 +7,7 @@ environment_type = "user_research"
 environmental_settings = {
   auth0_domain                             = null
   disable_auth0                            = true
+  enable_auth0_splunk_log_stream           = false
   pause_databases_on_inactivity            = true
   pause_databases_after_inactivity_seconds = 3600
   database_backup_retention_period_days    = 1

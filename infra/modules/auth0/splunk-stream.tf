@@ -1,0 +1,34 @@
+resource "auth0_log_stream" "splunk_log_stream" {
+  count = var.enable_splunk_log_stream ? 1 : 0
+
+  name = "Splunk log stream"
+  type = "splunk"
+
+  sink {
+    splunk_domain = "http-inputs.gds.splunkcloud.com"
+    splunk_port   = "443"
+    splunk_secure = true
+    splunk_token  = data.aws_ssm_parameter.splunk_hec_token.value
+  }
+}
+
+resource "aws_ssm_parameter" "splunk_hec_token" {
+
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+  # Value is set externally.
+  name  = "/${var.env_name}/splunk/auth0_hec_token"
+  type  = "SecureString"
+  value = "dummy-hec-token"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
+data "aws_ssm_parameter" "splunk_hec_token" {
+  name = "/${var.env_name}/splunk/auth0_hec_token"
+
+  depends_on = [aws_ssm_parameter.splunk_hec_token]
+}
