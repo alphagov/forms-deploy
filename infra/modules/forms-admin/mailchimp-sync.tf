@@ -45,6 +45,7 @@ resource "aws_ecs_task_definition" "cron_job" {
 resource "aws_cloudwatch_event_rule" "sync_cron_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
+  name                = "${var.env_name}-forms-admin-sync-cron"
   description         = "Trigger the forms-admin MailChimp synchronisation on a schedule"
   schedule_expression = "cron(30 10 * * ? *)" # 10:30AM daily. In office hours so that we can respond to failures
 }
@@ -66,6 +67,67 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
       security_groups  = module.ecs_service.service.network_configuration[0].security_groups
       subnets          = module.ecs_service.service.network_configuration[0].subnets
     }
+  }
+
+  dead_letter_config {
+    arn = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+  }
+}
+
+## Monitor for failure
+resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
+  count = var.enable_mailchimp_sync ? 1 : 0
+
+  name        = "${var.env_name}-forms-admin-sync-failed"
+  description = "Trigger when the MailChimp sync job has exited with a non-zero exit code"
+
+  event_pattern = jsonencode({
+    source      = ["aws.ecs"]
+    detail-type = ["ECS Task State Change"]
+    resources = [
+      {
+        wildcard : "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"
+      }
+    ]
+
+    detail = {
+      lastStatus        = ["STOPPED"]
+      taskDefinitionArn = [aws_ecs_task_definition.cron_job[0].arn]
+      containers = {
+        name     = [local.mailchimp_sync_container_definitions.name]
+        exitCode = [{ "anything-but" : ["0"] }]
+      }
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
+  count = var.enable_mailchimp_sync ? 1 : 0
+
+  rule = aws_cloudwatch_event_rule.sync_cron_job_failed[0].name
+
+  # defined in 'alerts' module. Sends alarms/errors via ZenDesk
+  arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_dev"
+
+  input_transformer {
+    input_paths = {
+      time    = "$.time"
+      taskArn = "$.detail.taskArn"
+    }
+    input_template = <<EOF
+    {
+      "version": "1.0",
+      "source": "custom",
+      "content": {
+        "textType": "client-markdown",
+        "title": ":octagonal_sign::clock1030: FAILURE: Synchronising mailing lists with MailChimp has failed",
+        "description": "MailChimp mailing list task failed at <time>. ",
+        "nextSteps": [
+        "https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/forms/tasks?region=eu-west-2"
+        ]
+      }
+    }
+    EOF
   }
 
   dead_letter_config {
