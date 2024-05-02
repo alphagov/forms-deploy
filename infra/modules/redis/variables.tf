@@ -24,12 +24,6 @@ variable "engine_version" {
   description = "The version of Redis to use"
 }
 
-variable "snapshot_retention_limit" {
-  type        = number
-  description = "How many days to keep redis automatic backups for"
-  default     = 2
-}
-
 variable "number_cache_clusters" {
   type        = string
   description = "How many cache clusters to run, must >= number of AZs"
