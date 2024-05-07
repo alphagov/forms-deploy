@@ -26,5 +26,4 @@ module "forms_admin" {
   payment_links                         = var.forms_admin_settings.payment_links
   reference_numbers_enabled             = var.forms_admin_settings.reference_numbers_enabled
   enable_mailchimp_sync                 = var.forms_admin_settings.synchronize_to_mailchimp
-  archive_enabled                       = var.forms_admin_settings.archive_enabled
 }

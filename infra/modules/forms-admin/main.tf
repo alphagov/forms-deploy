@@ -165,10 +165,6 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__REFERENCE_NUMBERS_ENABLED",
       value = var.reference_numbers_enabled
-    },
-    {
-      name  = "SETTINGS__FEATURES__ARCHIVE_ENABLED",
-      value = var.archive_enabled
     }
   ]
 

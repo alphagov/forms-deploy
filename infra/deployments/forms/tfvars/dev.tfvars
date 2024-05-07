@@ -39,7 +39,6 @@ forms_admin_settings = {
   payment_links                         = true
   reference_numbers_enabled             = true
   synchronize_to_mailchimp              = false
-  archive_enabled                       = true
 }
 forms_api_settings = {
   cpu          = 256
