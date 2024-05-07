@@ -47,15 +47,11 @@ pipelines_map = start_background_pipeline_status_updater(aws_clients)
 
 get "/" do
   groups = []
-  config["groups"].each do |k, _|
+  config["groups"].each_key do |k|
     group_elements = config["groups"][k]
-    group_pipelines = []
-    group_elements.map do |elem|
-      if pipelines_map.fetch(elem, nil) != nil
-        p = pipelines_map[elem]
-        group_pipelines << p
-      end
-    end
+    group_pipelines = group_elements
+                      .map { |name| pipelines_map.fetch(name, nil) }
+                      .reject(&:nil?)
     group = PipelineGroup.new(k, group_pipelines)
     groups << group
   end
@@ -75,8 +71,8 @@ get "/group/:group_slug" do
 
   pipeline_names = group[1]
   pipelines = pipeline_names
-    .map { |name| pipelines_map.fetch(name, nil) }
-    .reject { |p| p == nil }
+              .map { |name| pipelines_map.fetch(name, nil) }
+              .reject(&:nil?)
 
   erb  :group, :locals => {
     :view => Group.new(group[0], pipelines),

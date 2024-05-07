@@ -22,7 +22,9 @@
       <% else %>
         <% view.running_pipelines.each do |pipeline| %>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell"><%= pipeline.name %></td>
+            <td class="govuk-table__cell">
+              <a href="<%= view.pipeline_url(pipeline.name) %>" class="govuk-link"><%= pipeline.name %></a>
+            </td>
             <td class="govuk-table__cell"><%= pipeline.current_stage_name %></td>
             <td class="govuk-table__cell">
               <%= erb :'partials/label', :locals => {status: pipeline.status} %>
@@ -58,7 +60,9 @@
     <% else %>
       <% view.failing_pipelines.each do |pipeline| %>
         <tr class="govuk-table__row">
-          <td class="govuk-table__cell"><%= pipeline.name %></td>
+          <td class="govuk-table__cell">
+            <a href="<%= view.pipeline_url(pipeline.name) %>" class="govuk-link"><%= pipeline.name %></a>
+          </td>
           <td class="govuk-table__cell"><%= pipeline.first_failing_stage_name %></td>
           <td class="govuk-table__cell">
             <%= pipeline.first_failing_stage_error_message %>

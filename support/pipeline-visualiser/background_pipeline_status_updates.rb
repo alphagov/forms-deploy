@@ -10,7 +10,6 @@ def start_background_pipeline_status_updater(aws_clients)
   pipelines_map = Concurrent::Map.new
 
   task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
-    pipelines = []
     aws_clients.each do |client_config|
       begin
         client = client_config["client"]
