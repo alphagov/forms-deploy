@@ -27,13 +27,13 @@
       </td>
       <td class="govuk-table__cell"><%= pipeline.current_stage_name if pipeline.is_running? %></td>
       <td class="govuk-table__cell">
-        <abbr title="<%= pipeline.last_started_at %>">
+        <time datetime="<%= pipeline.last_started_at %>" title="<%= pipeline.last_started_at %>">
           <% if pipeline.is_running? %>
             <%= pipeline.running_duration.human_str %> ago
           <% else %>
             <%= pipeline.last_started_at.strftime("%H:%M, %A %d %b %Y ") %>
           <% end %>
-        </abbr>
+        </time>
       </td>
     </tr>
   <% end %>
