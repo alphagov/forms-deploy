@@ -95,7 +95,6 @@ variable "forms_admin_settings" {
     payment_links                         = bool
     reference_numbers_enabled             = bool
     synchronize_to_mailchimp              = bool
-    archive_enabled                       = bool
   })
   nullable = false
 }
