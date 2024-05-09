@@ -1,0 +1,71 @@
+name: "Pipeline Visualiser checks"
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "support/pipeline-visualiser/**"
+  merge_group:
+    types: [checks_requested]
+jobs:
+  build_container:
+    runs-on: arm64-runner # The container will ultimately be built for arm64 and run on arm64, so we should test it on arm64.
+    name: "Build container"
+    defaults:
+      run:
+        working-directory: support/pipeline-visualiser
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Fail if Docker is already installed
+        run: |
+          if which docker; then
+            # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-error-message
+            echo "::error::Docker is already installed and we should default to using the included version. Remove the 'Install Docker' step from this workflow"
+            exit 1
+          fi
+
+      # This step is needed because the current GitHub arm64 runner doesn't have Docker pre-installed
+      - name: Install Docker
+        run: |
+          # shellcheck disable=SC1091
+          sudo apt-get update
+          sudo apt-get -y install ca-certificates curl
+          sudo install -m 0755 -d /etc/apt/keyrings
+          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          sudo chmod a+r /etc/apt/keyrings/docker.asc
+          echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+          sudo usermod -a -G docker "${USER}"
+          sudo apt-get install acl
+          sudo setfacl --modify "user:${USER}:rw" /var/run/docker.sock
+
+      - name: Run docker build
+        run: docker build .
+
+  run_tests:
+    runs-on: ubuntu-latest
+    name: "Build and test"
+    defaults:
+      run:
+        working-directory: support/pipeline-visualiser
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Determine Ruby version
+        id: determine-ruby-version
+        run: |
+          echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@cacc9f1c0b3f4eb8a16a6bb0ed10897b43b9de49 # v1.176.0
+        with:
+          bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
+          working-directory: support/pipeline-visualiser
+      - name: Run tests
+        run: bundle exec rspec
+
