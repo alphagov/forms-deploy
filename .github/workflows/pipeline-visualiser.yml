@@ -1,0 +1,43 @@
+name: "Pipeline Visualiser checks"
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "support/pipeline-visualiser/**"
+  merge_group:
+    types: [checks_requested]
+jobs:
+  build_container:
+    runs-on: arm64-runner # The container will ultimately be built for arm64 and run on arm64, so we should test it on arm64.
+    name: "Build container"
+    defaults:
+      run:
+        working-directory: support/pipeline-visualiser
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run docker build
+        run: docker build .
+
+  run_tests:
+    runs-on: ubuntu-latest
+    name: "Build and test"
+    defaults:
+      run:
+        working-directory: support/pipeline-visualiser
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Determine Ruby version
+        id: determine-ruby-version
+        run: |
+          echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@cacc9f1c0b3f4eb8a16a6bb0ed10897b43b9de49 # v1.176.0
+        with:
+          bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
+          working-directory: support/pipeline-visualiser
+      - name: Run tests
+        run: bundle exec rspec
+
