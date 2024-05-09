@@ -7,7 +7,7 @@ environment_type = "production"
 environmental_settings = {
   auth0_domain                             = "govuk-forms.uk.auth0.com"
   disable_auth0                            = false
-  enable_auth0_splunk_log_stream           = false
+  enable_auth0_splunk_log_stream           = true
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 60 * 60 * 24
   # Set to 24 hours for inactivity just in case the pause_database_on_inactivity flag is inverted or ignored
