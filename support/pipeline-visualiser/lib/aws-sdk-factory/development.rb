@@ -47,7 +47,7 @@ class DevelopmentAWSSDKFactory
   def self.production_env_client
     client = stub_all_as_passing(
       Aws::CodePipeline::Client.new(stub_responses: true),
-      %w[apply-forms-terraform-production deploy-forms-product-page-container-production deploy-forms-runner-container-production]
+      %w[apply-forms-terraform-production]
     )
 
     stub_get_pipeline_state(client) do |pipeline_name|
@@ -110,6 +110,12 @@ class DevelopmentAWSSDKFactory
         ]
       )
     end
+
+    stub_all_with_status(
+      client,
+      %w[deploy-forms-product-page-container-production deploy-forms-runner-container-production],
+      "InProgress"
+    )
 
     return client
   end
@@ -206,6 +212,9 @@ class DevelopmentAWSSDKFactory
   end
 
   def self.stub_all_as_passing(client, pipeline_names)
+    self.stub_all_with_status(client, pipeline_names, "Succeeded")
+  end
+  def self.stub_all_with_status(client, pipeline_names, status)
     stub_list_pipelines(client, pipeline_names)
 
     stub_get_pipeline_state(client) do |pipeline_name|
@@ -219,14 +228,14 @@ class DevelopmentAWSSDKFactory
             stage_name: "stage_1",
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-1",
-              status: "Succeeded"
+              status: status
             )
           ),
           Aws::CodePipeline::Types::StageState.new(
             stage_name: "stage_2",
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-1",
-              status: "Succeeded"
+              status: status
             )
           )
         ]
@@ -237,9 +246,9 @@ class DevelopmentAWSSDKFactory
       Aws::CodePipeline::Types::ListPipelineExecutionsOutput.new(
         pipeline_execution_summaries: [
           Aws::CodePipeline::Types::PipelineExecutionSummary.new(
-            start_time: Time.now,
+            start_time: Time.at(Time.now.to_i - 120),
             pipeline_execution_id: "execution-1",
-            status: "Succeeded",
+            status: status,
             last_update_time: Time.now
           )
         ]
@@ -252,7 +261,7 @@ class DevelopmentAWSSDKFactory
           pipeline_name: pipeline_name,
           pipeline_version: 2,
           pipeline_execution_id: "execution-1",
-          status: "Succeeded",
+          status: status,
           variables: [
             Aws::CodePipeline::Types::ResolvedPipelineVariable.new(
               name: "Variable",

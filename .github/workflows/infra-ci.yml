@@ -36,9 +36,9 @@ jobs:
           wget "https://github.com/tmccombs/hcl2json/releases/download/${HCL2JSON_VERSION}/hcl2json_linux_amd64"
           chmod +x hcl2json_linux_amd64
           sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json
-      - name: Run Terraform specs
-        working-directory: infra/
-        run: bundle exec rspec
+      - name: Run specs
+        run: |
+          make spec
       - name: Lint Terraform
         id: checkov
         uses: bridgecrewio/checkov-action@80c58e67aea1b38e55b0097c4efe915e6b04f11d #v12.2731.0

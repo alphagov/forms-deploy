@@ -120,4 +120,5 @@ checkov:
 
 .PHONY: spec
 spec:
-	cd infra; bundle exec rspec
+	(cd infra; bundle install; bundle exec rspec;)
+	(cd support/pipeline-visualiser; bundle install; bundle exec rspec;)

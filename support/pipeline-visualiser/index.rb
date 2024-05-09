@@ -1,12 +1,16 @@
-require "concurrent/timer_task"
-require "concurrent/map"
+require 'activesupport-duration-human_string'
 require "json"
 require "ostruct"
 require "sinatra"
 require "yaml"
 
+require_relative "./background_pipeline_status_updates"
+
 require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
+
+require_relative "lib/views/AllPipelines"
+require_relative "lib/views/Group"
 
 set :public_folder, "public"
 helpers do
@@ -23,6 +27,7 @@ end
 is_dev_mode = ENV.fetch("PIPELINE_VISUALISER_DEV_MODE", false)
 
 config = YAML::safe_load_file("./config.yml")
+
 aws_clients = []
 config["roles"].each do |role|
   if is_dev_mode
@@ -38,147 +43,69 @@ config["roles"].each do |role|
   end
 end
 
-pipelines_map = Concurrent::Map.new
-
-task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
-  pipelines = []
-  aws_clients.each do |client_config|
-    begin
-      client = client_config["client"]
-      all_pipelines = client.list_pipelines
-      pipeline_names = all_pipelines.pipelines.map { |p| p.name }
-
-      pipeline_names.each do |pipeline|
-        state = client.get_pipeline_state({
-                                            name: pipeline
-                                          })
-
-        executions = client.list_pipeline_executions({
-                                                       pipeline_name: pipeline
-                                                     })
-
-        latest_execution_summary = executions.pipeline_execution_summaries
-                                             .sort_by { |summary| summary.start_time }
-                                             .reverse
-                                             .first
-
-        latest_id = latest_execution_summary.pipeline_execution_id
-
-        # To get variables we have to request the pipeline
-        # execution with GetPipelineExecution
-        latest = client.get_pipeline_execution({
-                                                 pipeline_name: pipeline,
-                                                 pipeline_execution_id: latest_id
-                                               })
-
-        viewdata = generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time, client_config["gds_cli_role"])
-
-        pipelines_map[viewdata.name] = viewdata
-      rescue => err
-        puts err
-        puts err.backtrace
-      end
-    end
-  end
-end
-task.execute
+pipelines_map = start_background_pipeline_status_updater(aws_clients)
 
 get "/" do
   groups = []
-  config["groups"].each do |k, _|
+  config["groups"].each_key do |k|
     group_elements = config["groups"][k]
-    group = OpenStruct.new
-    group.name = k
-
-    group_pipelines = []
-    group_elements.map do |elem|
-      if pipelines_map.fetch(elem, nil) != nil
-        p = pipelines_map[elem]
-        group_pipelines << p
-      end
-    end
-    group.pipelines = group_pipelines
+    group_pipelines = group_elements
+                      .map { |name| pipelines_map.fetch(name, nil) }
+                      .reject(&:nil?)
+    group = PipelineGroup.new(k, group_pipelines)
     groups << group
   end
 
-  erb :state, :locals => { :groups => groups, :is_dev_mode => is_dev_mode }
+  view = AllPipelinesView.new(groups)
+  erb :index, :locals => { :view => view, :is_dev_mode => is_dev_mode }
 end
 
 get "/deploying-changes" do
   erb :deploying_changes
 end
 
-def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
-  name = state.pipeline_name
-  exec_id = execution.pipeline_execution_id
-  overall_status = execution.status
-  variables = execution.variables || []
+get "/group/:group_slug" do
+  all_groups = config["groups"].to_a
+  group = all_groups.find {|grp| params["group_slug"] == slugify(grp[0])}
+  pass unless group != nil
 
-  artifacts = execution.artifact_revisions.map { |artifact| generate_artifact_viewdata(artifact) }
-  stages = state.stage_states.map { |stage| generate_stage_viewdata(stage, exec_id) }
+  pipeline_names = group[1]
+  pipelines = pipeline_names
+              .map { |name| pipelines_map.fetch(name, nil) }
+              .reject(&:nil?)
 
-  data = OpenStruct.new
-  data.name = name
-  data.execution_id = exec_id
-  data.last_started_at = last_start_time
-  data.status = overall_status
-  data.variables = variables
-  data.artifacts = artifacts
-  data.stages = stages
-  data.gds_cli_role = gds_cli_role
-
-  return data
+  erb  :group, :locals => {
+    :view => Group.new(group[0], pipelines),
+    :is_dev_mode => is_dev_mode,
+    :breadcrumbs => {
+      "Home" => "/"
+    }
+  }
 end
 
-def generate_artifact_viewdata(artifact)
-  data = OpenStruct.new
-  data.name = artifact.name
-  data.revision_id = artifact.revision_id
+get "/group/:group_slug/pipeline/:pipeline_slug" do
+  all_groups = config["groups"].to_a
+  group_slugs_to_names = config["groups"].keys.map {|name| [slugify(name), name]}.to_h
+  group = all_groups.find {|grp| params["group_slug"] == slugify(grp[0])}
+  pass unless group != nil
 
-  if artifact.revision_summary.start_with? "{"
-    # It's probably a Git source
-    summary_json = JSON.parse(artifact.revision_summary)
+  pipeline_slugs_to_names = group[1].map {|name| [slugify(name), name]}.to_h
+  pass unless pipeline_slugs_to_names.keys.include? params["pipeline_slug"]
 
-    summary_text = ""
-    case summary_json["ProviderType"]
-    when "GitHub", "CodeCommit"
-      summary_text = summary_json["CommitMessage"]
-    else
-      summary_text = "Error: Unknown provider type"
-    end
+  group_name = group_slugs_to_names[params["group_slug"]]
+  pipeline_name = pipeline_slugs_to_names[params["pipeline_slug"]]
+  pipeline = pipelines_map[pipeline_name]
 
-    data.revision_summary = summary_text
-  else
-    data.revision_summary = artifact.revision_summary
-  end
-
-  return data
+  erb :pipeline, :locals => {
+    :pipeline => pipeline,
+    :is_dev_mode => is_dev_mode,
+    :breadcrumbs => {
+      "Home" => "/",
+      group_name => "/group/#{params["group_slug"]}"
+    }
+  }
 end
 
-def generate_stage_viewdata(stage, current_execution_id)
-  is_outdated = stage.latest_execution.pipeline_execution_id != current_execution_id
-
-  data = OpenStruct.new
-  data.name = stage.stage_name
-  data.status = stage.latest_execution.status
-  data.outdated = is_outdated
-
-  if stage.latest_execution.status == "Failed"
-    failing_action = stage.action_states.find do |action|
-      action.latest_execution&.status == "Failed"
-    end
-
-    if failing_action != nil
-      if failing_action.latest_execution&.error_details&.message
-        data.error_message = failing_action.latest_execution.error_details.message
-      elsif failing_action.latest_execution&.summary
-        data.error_message = failing_action.latest_execution.summary
-      end
-    end
-
-  else
-    data.error_message = nil
-  end
-
-  return data
+not_found do
+  erb :not_found
 end
