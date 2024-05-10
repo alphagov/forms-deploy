@@ -146,7 +146,6 @@ variable "environmental_settings" {
     enable_alert_actions                     = bool
     forms_product_page_support_url           = string
     rds_maintenance_window                   = string
-    redis_backup_retention_period_days       = optional(number)
     ips_to_block                             = list(string)
     enable_shield_advanced_healthchecks      = bool
   })

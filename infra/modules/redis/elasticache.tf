@@ -23,7 +23,8 @@ resource "aws_elasticache_replication_group" "forms-runner" {
   apply_immediately          = var.apply_immediately
   maintenance_window         = var.redis_maintenance_window
   snapshot_window            = var.redis_snapshot_window
-  snapshot_retention_limit   = var.snapshot_retention_limit
+  snapshot_retention_limit   = 0 # We don't restore Redis from snapshots (see PR#728).
+
   tags = {
     Name = "redis-${var.env_name}"
   }
