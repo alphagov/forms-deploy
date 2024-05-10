@@ -1,4 +1,3 @@
-
 module "artifact_bucket" {
   source = "../secure-bucket"
   name   = "pipeline-${local.name_suffix}"
@@ -19,7 +18,7 @@ resource "aws_codepipeline" "main" {
   variable {
     name          = "tag_prefix"
     description   = "The prefix which will be applied to the generated image tag. Prefixes are used to trigger different pipelines. To cause a deployment to dev, use the value \"dev-\""
-    default_value = "stg-"
+    default_value = "merged-"
   }
 
   stage {
