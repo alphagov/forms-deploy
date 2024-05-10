@@ -3,6 +3,7 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "QUEUED"
 }
 
 deploy-forms-runner-container = {
@@ -10,6 +11,7 @@ deploy-forms-runner-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "QUEUED"
 }
 
 deploy-forms-api-container = {
@@ -17,6 +19,7 @@ deploy-forms-api-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "QUEUED"
 }
 
 deploy-forms-admin-container = {
@@ -24,6 +27,7 @@ deploy-forms-admin-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "QUEUED"
 }
 
 apply-terraform = {

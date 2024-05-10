@@ -6,6 +6,7 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "SUPERSEDED"
 }
 
 deploy-forms-runner-container = {
@@ -16,6 +17,7 @@ deploy-forms-runner-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "SUPERSEDED"
 }
 
 deploy-forms-api-container = {
@@ -26,6 +28,7 @@ deploy-forms-api-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "SUPERSEDED"
 }
 
 deploy-forms-admin-container = {
@@ -36,6 +39,7 @@ deploy-forms-admin-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   disable_end_to_end_tests = false
+  pipeline_execution_mode  = "SUPERSEDED"
 }
 
 apply-terraform = {

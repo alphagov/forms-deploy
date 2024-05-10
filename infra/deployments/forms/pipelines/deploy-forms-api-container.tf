@@ -74,7 +74,7 @@ resource "aws_codepipeline" "deploy_api_container" {
   name           = "deploy-forms-api-container-${var.environment_name}"
   role_arn       = data.aws_iam_role.deployer-role.arn
   pipeline_type  = "V2"
-  execution_mode = "QUEUED"
+  execution_mode = var.deploy-forms-api-container.pipeline_execution_mode
 
   artifact_store {
     type     = "S3"

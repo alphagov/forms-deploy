@@ -14,7 +14,16 @@ variable "deploy-forms-product-page-container" {
     # It isn't possible to perform the end-to-end tests in the user-research environment because
     # it doesn't have Auth0 configured. Therefore we need to be able disable that step there.
     disable_end_to_end_tests = bool
+
+    # The AWS CodePipeline execution mode to use for this pipeline.
+    # See https://docs.aws.amazon.com/codepipeline/latest/userguide/concepts-how-it-works.html
+    pipeline_execution_mode = string
   })
+
+  validation {
+    condition     = contains(["QUEUED", "SUPERSEDED"], var.deploy-forms-product-page-container.pipeline_execution_mode)
+    error_message = "Allowed pipeline modes are QUEUED and SUPERSEDED"
+  }
 }
 
 variable "deploy-forms-runner-container" {
@@ -33,7 +42,16 @@ variable "deploy-forms-runner-container" {
     # It isn't possible to perform the end-to-end tests in the user-research environment because
     # it doesn't have Auth0 configured. Therefore we need to be able disable that step there.
     disable_end_to_end_tests = bool
+
+    # The AWS CodePipeline execution mode to use for this pipeline.
+    # See https://docs.aws.amazon.com/codepipeline/latest/userguide/concepts-how-it-works.html
+    pipeline_execution_mode = string
   })
+
+  validation {
+    condition     = contains(["QUEUED", "SUPERSEDED"], var.deploy-forms-runner-container.pipeline_execution_mode)
+    error_message = "Allowed pipeline modes are QUEUED and SUPERSEDED"
+  }
 }
 
 variable "deploy-forms-api-container" {
@@ -52,7 +70,16 @@ variable "deploy-forms-api-container" {
     # It isn't possible to perform the end-to-end tests in the user-research environment because
     # it doesn't have Auth0 configured. Therefore we need to be able disable that step there.
     disable_end_to_end_tests = bool
+
+    # The AWS CodePipeline execution mode to use for this pipeline.
+    # See https://docs.aws.amazon.com/codepipeline/latest/userguide/concepts-how-it-works.html
+    pipeline_execution_mode = string
   })
+
+  validation {
+    condition     = contains(["QUEUED", "SUPERSEDED"], var.deploy-forms-api-container.pipeline_execution_mode)
+    error_message = "Allowed pipeline modes are QUEUED and SUPERSEDED"
+  }
 }
 
 variable "deploy-forms-admin-container" {
@@ -71,7 +98,16 @@ variable "deploy-forms-admin-container" {
     # It isn't possible to perform the end-to-end tests in the user-research environment because
     # it doesn't have Auth0 configured. Therefore we need to be able disable that step there.
     disable_end_to_end_tests = bool
+
+    # The AWS CodePipeline execution mode to use for this pipeline.
+    # See https://docs.aws.amazon.com/codepipeline/latest/userguide/concepts-how-it-works.html
+    pipeline_execution_mode = string
   })
+
+  validation {
+    condition     = contains(["QUEUED", "SUPERSEDED"], var.deploy-forms-admin-container.pipeline_execution_mode)
+    error_message = "Allowed pipeline modes are QUEUED and SUPERSEDED"
+  }
 }
 
 variable "apply-terraform" {
