@@ -1,8 +1,8 @@
 variable "deploy-forms-product-page-container" {
   description = "Configuration options for the deploy-forms-product-page-container pipeline"
   type = object({
-    # The container image tag pattern that should cause the pipeline to run
-    trigger_on_tag_pattern = string
+    # The container image tag patterns that should cause the pipeline to run
+    trigger_on_tag_patterns = list(string)
 
     # Should the image have a new tag applied at the end of a successful pipeline run?
     retag_image_on_success = bool
@@ -20,8 +20,8 @@ variable "deploy-forms-product-page-container" {
 variable "deploy-forms-runner-container" {
   description = "Configuration options for the deploy-forms-runner-container pipeline"
   type = object({
-    # The container image tag pattern that should cause the pipeline to run
-    trigger_on_tag_pattern = string
+    # The container image tag patterns that should cause the pipeline to run
+    trigger_on_tag_patterns = list(string)
 
     # Should the image have a new tag applied at the end of a successful pipeline run?
     retag_image_on_success = bool
@@ -39,8 +39,8 @@ variable "deploy-forms-runner-container" {
 variable "deploy-forms-api-container" {
   description = "Configuration options for the deploy-forms-api-container pipeline"
   type = object({
-    # The container image tag pattern that should cause the pipeline to run
-    trigger_on_tag_pattern = string
+    # The container image tag patterns that should cause the pipeline to run
+    trigger_on_tag_patterns = list(string)
 
     # Should the image have a new tag applied at the end of a successful pipeline run?
     retag_image_on_success = bool
@@ -58,8 +58,8 @@ variable "deploy-forms-api-container" {
 variable "deploy-forms-admin-container" {
   description = "Configuration options for the deploy-forms-admin-container pipeline"
   type = object({
-    # The container image tag pattern that should cause the pipeline to run
-    trigger_on_tag_pattern = string
+    # The container image tag patterns that should cause the pipeline to run
+    trigger_on_tag_patterns = list(string)
 
     # Should the image have a new tag applied at the end of a successful pipeline run?
     retag_image_on_success = bool

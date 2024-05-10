@@ -8,7 +8,8 @@ resource "aws_cloudwatch_event_rule" "runner_on_image_tag" {
     detail = {
       action-type = ["PUSH"]
       image-tag = [
-        { wildcard = var.deploy-forms-runner-container.trigger_on_tag_pattern }
+        for pattern in var.deploy-forms-runner-container.trigger_on_tag_patterns :
+        { wildcard = pattern }
       ]
       repository-name = ["forms-runner-deploy"]
     }

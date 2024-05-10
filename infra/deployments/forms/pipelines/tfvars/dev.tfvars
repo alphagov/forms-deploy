@@ -1,5 +1,5 @@
 deploy-forms-product-page-container = {
-  trigger_on_tag_pattern = "dev-*"
+  trigger_on_tag_patterns = ["dev-*", "prod-*"] # Dev pipeline should deploy from known-good production versions, and also allow for dev versions
 
   # Don't re-tag at the end. A successful run in dev should not trigger a path to production.
   # That is triggered by a merge to main in the relevant repository
@@ -9,7 +9,7 @@ deploy-forms-product-page-container = {
 }
 
 deploy-forms-runner-container = {
-  trigger_on_tag_pattern = "dev-*"
+  trigger_on_tag_patterns = ["dev-*", "prod-*"] # Dev pipeline should deploy from known-good production versions, and also allow for dev versions
 
   # Don't re-tag at the end. A successful run in dev should not trigger a path to production.
   # That is triggered by a merge to main in the relevant repository
@@ -19,7 +19,7 @@ deploy-forms-runner-container = {
 }
 
 deploy-forms-api-container = {
-  trigger_on_tag_pattern = "dev-*"
+  trigger_on_tag_patterns = ["dev-*", "prod-*"] # Dev pipeline should deploy from known-good production versions, and also allow for dev versions
 
   # Don't re-tag at the end. A successful run in dev should not trigger a path to production.
   # That is triggered by a merge to main in the relevant repository
@@ -29,7 +29,7 @@ deploy-forms-api-container = {
 }
 
 deploy-forms-admin-container = {
-  trigger_on_tag_pattern = "dev-*"
+  trigger_on_tag_patterns = ["dev-*", "prod-*"] # Dev pipeline should deploy from known-good production versions, and also allow for dev versions
 
   # Don't re-tag at the end. A successful run in dev should not trigger a path to production.
   # That is triggered by a merge to main in the relevant repository

@@ -8,7 +8,8 @@ resource "aws_cloudwatch_event_rule" "product_pages_on_image_tag" {
     detail = {
       action-type = ["PUSH"]
       image-tag = [
-        { wildcard = var.deploy-forms-product-page-container.trigger_on_tag_pattern }
+        for pattern in var.deploy-forms-product-page-container.trigger_on_tag_patterns :
+        { wildcard = pattern }
       ]
       repository-name = ["forms-product-page-deploy"]
     }
