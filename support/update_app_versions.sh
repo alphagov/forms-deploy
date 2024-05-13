@@ -19,8 +19,8 @@ if ! docker info > /dev/null 2>&1 ; then
 fi
 
 # Update these values as necessary and then run the script
-NEW_RUBY_VERSION="3.2.2"
-NEW_ALPINE_VERSION="3.18"
+NEW_RUBY_VERSION="3.3.1"
+NEW_ALPINE_VERSION="3.19"
 
 # Constants that should not need to be updated
 APPS=(forms-api forms-admin forms-runner forms-product-page forms-e2e-tests)
@@ -65,9 +65,6 @@ update_ruby_version () {
 
   echo "Updating .ruby-version file"
   echo "$NEW_RUBY_VERSION" > .ruby-version
-
-  echo "Updating Gemfile"
-  sed -i '' 's/^ruby.*$/ruby "'"${NEW_RUBY_VERSION}"'"/' Gemfile
 
   echo "Running 'bundle install' to update Gemfile.lock"
   bundle install > /dev/null
