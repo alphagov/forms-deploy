@@ -20,7 +20,7 @@ fi
 
 # Update these values as necessary and then run the script
 NEW_RUBY_VERSION="3.2.2"
-NEW_ALPINE_VERSION="3.18"
+NEW_ALPINE_VERSION="3.19"
 
 # Constants that should not need to be updated
 APPS=(forms-api forms-admin forms-runner forms-product-page forms-e2e-tests)
