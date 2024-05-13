@@ -66,9 +66,6 @@ update_ruby_version () {
   echo "Updating .ruby-version file"
   echo "$NEW_RUBY_VERSION" > .ruby-version
 
-  echo "Updating Gemfile"
-  sed -i '' 's/^ruby.*$/ruby "'"${NEW_RUBY_VERSION}"'"/' Gemfile
-
   echo "Running 'bundle install' to update Gemfile.lock"
   bundle install > /dev/null
 
