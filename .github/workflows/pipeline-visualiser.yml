@@ -68,4 +68,3 @@ jobs:
           working-directory: support/pipeline-visualiser
       - name: Run tests
         run: bundle exec rspec
-
