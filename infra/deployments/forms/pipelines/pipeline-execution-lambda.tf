@@ -74,7 +74,7 @@ resource "aws_iam_role" "lambda_pipeline_invoker" {
   })
 }
 
-data "aws_iam_policy_document" "allow_pipeline_inovcation" {
+data "aws_iam_policy_document" "allow_pipeline_invocation" {
   statement {
     effect    = "Allow"
     actions   = ["codepipeline:StartPipelineExecution"]
@@ -89,7 +89,7 @@ resource "aws_iam_role_policy_attachment" "basic_lambda_policy" {
 
 resource "aws_iam_role_policy" "allow_pipeline_invocation" {
   role   = aws_iam_role.lambda_pipeline_invoker.name
-  policy = data.aws_iam_policy_document.allow_pipeline_inovcation.json
+  policy = data.aws_iam_policy_document.allow_pipeline_invocation.json
 }
 
 resource "aws_lambda_permission" "allow_event_bridge" {
