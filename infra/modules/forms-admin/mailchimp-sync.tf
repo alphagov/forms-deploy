@@ -105,21 +105,14 @@ resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
   arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_dev"
 
   input_transformer {
-    input_paths = {
-      time    = "$.time"
-      taskArn = "$.detail.taskArn"
-    }
     input_template = <<EOF
     {
-      "version": "1.0",
-      "source": "custom",
-      "content": {
-        "textType": "client-markdown",
-        "title": ":octagonal_sign::clock1030: FAILURE: Synchronising mailing lists with MailChimp has failed",
-        "description": "MailChimp mailing list task failed at <time>. ",
-        "nextSteps": [
-        "https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/forms/tasks?region=eu-west-2"
-        ]
+      "title": "WARNING: Synchronising mailing lists with MailChimp has failed.",
+      "description": "GOV.UK Forms has a scheduled ECS task to sync our Mailchimp mailing list with new users in the users database. When this task fails an email is sent to Zendesk.",
+      "next-steps": {
+        "1": "Navigate to Splunk: https://gds.splunkcloud.com/en-GB/app/gds-543-forms/search",
+        "2": "Search for index=gds_dsp_production_forms log_stream=forms-admin-production-mailchimp-sync/forms-admin_mailchimp_sync/*. Use the 'Today' date-time preset to find today's logs.",
+        "3": "Review logs for errors."
       }
     }
     EOF
