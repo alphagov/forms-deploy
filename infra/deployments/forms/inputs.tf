@@ -92,8 +92,6 @@ variable "forms_admin_settings" {
     previous_auth_provider                = string
     cloudwatch_metrics_enabled            = bool
     govuk_app_domain                      = string
-    payment_links                         = bool
-    reference_numbers_enabled             = bool
     synchronize_to_mailchimp              = bool
   })
   nullable = false
@@ -129,7 +127,6 @@ variable "forms_runner_settings" {
     max_capacity               = number
     enable_maintenance_mode    = bool
     cloudwatch_metrics_enabled = bool
-    reference_numbers_enabled  = bool
   })
 }
 
