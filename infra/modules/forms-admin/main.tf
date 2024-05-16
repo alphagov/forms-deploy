@@ -159,10 +159,6 @@ module "ecs_service" {
       value = var.cloudwatch_metrics_enabled
     },
     {
-      name  = "SETTINGS__FEATURES__PAYMENT_LINKS",
-      value = var.payment_links
-    },
-    {
       name  = "SETTINGS__FEATURES__REFERENCE_NUMBERS_ENABLED",
       value = var.reference_numbers_enabled
     }
