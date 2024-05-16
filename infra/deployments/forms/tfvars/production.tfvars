@@ -53,7 +53,6 @@ forms_admin_settings = {
   previous_auth_provider                = "gds_sso"
   cloudwatch_metrics_enabled            = true
   govuk_app_domain                      = "publishing.service.gov.uk"
-  reference_numbers_enabled             = true
   synchronize_to_mailchimp              = true
 }
 forms_api_settings = {
@@ -75,7 +74,6 @@ forms_runner_settings = {
   max_capacity               = 36
   enable_maintenance_mode    = false
   cloudwatch_metrics_enabled = true
-  reference_numbers_enabled  = true
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true

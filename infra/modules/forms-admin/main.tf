@@ -157,10 +157,6 @@ module "ecs_service" {
     {
       name  = "SETTINGS__CLOUDWATCH_METRICS_ENABLED",
       value = var.cloudwatch_metrics_enabled
-    },
-    {
-      name  = "SETTINGS__FEATURES__REFERENCE_NUMBERS_ENABLED",
-      value = var.reference_numbers_enabled
     }
   ]
 
