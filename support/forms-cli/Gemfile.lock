@@ -1637,7 +1637,7 @@ DEPENDENCIES
   debug
   notifications-ruby-client
   rspec
-  rubocop-govuk
+  rubocop-govuk (~> 4.16)
 
 BUNDLED WITH
    2.5.3
