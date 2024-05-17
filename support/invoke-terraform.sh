@@ -52,6 +52,23 @@ if [ -z "${action}" ] || [ -z "${deployment}" ] || [ -z "${environment}" ]; then
     usage
 fi
 
+init_ruby_project(){
+    DIR="${1}"
+    (
+        echo "Initialising Ruby project at ${DIR}"
+        cd "${DIR}";
+        echo "Setting bundler to install gems locally"
+        bundle config set --local path 'vendor/bundle'
+        echo "Excluding development and test dependency groups"
+        bundle config set --local without "development" "test"
+        bundle install
+        echo "Reverting bundler to install gems globally"
+        bundle config set --local system 'true'
+        echo "Reverting bundler to install development and test dependency groups"
+        bundle config unsset --local without
+    )
+}
+
 # Set source directory
 src_dir="${deployments_dir}/${deployment}/${tf_root}"
 ## Consider special combinations of deployment, environment, and root
@@ -61,15 +78,8 @@ case "${deployment}+${tf_root}" in
         src_dir="${deployments_dir}/${deployment}"
         ;;
     "forms+pipelines")
-        echo "Installing Ruby gems for infra/deployments/forms/pipelines/pipeline-invoker"
-        (
-            cd infra/deployments/forms/pipelines/pipeline-invoker;
-            echo "Setting bundler to install gems locally"
-            bundle config set --local path 'vendor/bundle'
-            bundle install
-            echo "Reverting bundler to install gems globally"
-            bundle config set --local system 'true'
-        )
+        init_ruby_project "infra/deployments/forms/pipelines/pipeline-invoker"
+        init_ruby_project "support/paused-pipeline-detector"
         ;;
     "forms+rds")
         if [ "${TF_VAR_apply_immediately:=false}" == true ]; then
