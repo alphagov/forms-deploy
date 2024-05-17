@@ -83,18 +83,6 @@ variable "cloudwatch_metrics_enabled" {
   default     = false
 }
 
-variable "payment_links" {
-  description = "Enables payment link task"
-  type        = bool
-  default     = false
-}
-
-variable "reference_numbers_enabled" {
-  description = "Enables reference number content"
-  type        = bool
-  default     = false
-}
-
 variable "enable_mailchimp_sync" {
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
   type        = bool
