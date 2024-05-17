@@ -1,4 +1,4 @@
-require_relative '../../../lib/models/PipelineStage'
+require_relative "../../../lib/models/pipeline_stage"
 require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 

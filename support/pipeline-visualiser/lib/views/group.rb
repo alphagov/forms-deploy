@@ -1,6 +1,5 @@
 class Group
-  attr_accessor :name
-  attr_accessor :pipelines
+  attr_accessor :name, :pipelines
 
   def initialize(name, pipelines)
     @name = name

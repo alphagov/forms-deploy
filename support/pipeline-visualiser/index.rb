@@ -9,8 +9,8 @@ require_relative "./background_pipeline_status_updates"
 require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
-require_relative "lib/views/AllPipelines"
-require_relative "lib/views/Group"
+require_relative "lib/views/all_pipelines"
+require_relative "lib/views/group"
 
 set :public_folder, "public"
 helpers do

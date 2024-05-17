@@ -1,10 +1,10 @@
 require "concurrent/timer_task"
 require "concurrent/map"
 
-require_relative "lib/models/ArtifactRevision"
-require_relative "lib/models/PipelineGroup"
-require_relative "lib/models/PipelineStage"
-require_relative "lib/models/PipelineSummary"
+require_relative "lib/models/artifact_revision"
+require_relative "lib/models/pipeline_group"
+require_relative "lib/models/pipeline_stage"
+require_relative "lib/models/pipeline_summary"
 
 def start_background_pipeline_status_updater(aws_clients)
   pipelines_map = Concurrent::Map.new

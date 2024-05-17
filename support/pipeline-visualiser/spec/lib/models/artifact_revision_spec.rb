@@ -1,4 +1,4 @@
-require_relative '../../../lib/models/ArtifactRevision'
+require_relative "../../../lib/models/artifact_revision"
 require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 

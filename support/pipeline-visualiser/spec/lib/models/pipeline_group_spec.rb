@@ -1,5 +1,5 @@
-require_relative '../../../lib/models/PipelineGroup'
-require_relative '../../../lib/models/PipelineSummary'
+require_relative "../../../lib/models/pipeline_group"
+require_relative "../../../lib/models/pipeline_summary"
 
 class StubSummary
   attr_accessor :status
