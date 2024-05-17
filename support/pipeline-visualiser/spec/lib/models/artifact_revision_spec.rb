@@ -3,17 +3,17 @@ require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 
 describe ArtifactRevision do
-  let(:artifact) {
+  subject do
+    ArtifactRevision.new(artifact)
+  end
+
+  let(:artifact) do
     Aws::CodePipeline::Types::ArtifactRevision.new(
       name: "get-source",
       revision_id: "012abc",
-      revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text"}'
+      revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text"}',
     )
-  }
-
-  subject{
-    ArtifactRevision.new(artifact)
-  }
+  end
 
   it "name comes from the artifact name" do
     expect(subject.name).to eq "get-source"
@@ -37,7 +37,7 @@ describe ArtifactRevision do
         it "the revision summary is the commit message" do
           summary = {
             "ProviderType" => provider,
-            "CommitMessage" => "a commit message"
+            "CommitMessage" => "a commit message",
           }
 
           artifact.revision_summary = summary.to_json
@@ -52,7 +52,7 @@ describe ArtifactRevision do
       it "the revision summary contains some error message" do
         summary = {
           "ProviderType" => "unknown",
-          "CommitMessage" => "a commit message"
+          "CommitMessage" => "a commit message",
         }
 
         artifact.revision_summary = summary.to_json

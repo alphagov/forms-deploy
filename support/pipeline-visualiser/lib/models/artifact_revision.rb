@@ -1,7 +1,5 @@
 class ArtifactRevision
-  attr_accessor :name
-  attr_accessor :revision_id
-  attr_accessor :revision_summary
+  attr_accessor :name, :revision_id, :revision_summary
 
   # @param [Aws::CodePipeline::Types::ArtifactRevision] artifact
   def initialize(artifact)
@@ -12,12 +10,12 @@ class ArtifactRevision
       summary_json = JSON.parse(artifact.revision_summary)
 
       summary_text = ""
-      case summary_json["ProviderType"]
-      when "GitHub", "CodeCommit"
-        @revision_summary = summary_json["CommitMessage"]
-      else
-        @revision_summary = "Error: Unknown provider type"
-      end
+      @revision_summary = case summary_json["ProviderType"]
+                          when "GitHub", "CodeCommit"
+                            summary_json["CommitMessage"]
+                          else
+                            "Error: Unknown provider type"
+                          end
     else
       @revision_summary = artifact.revision_summary
     end

@@ -17,14 +17,14 @@ class PipelineGroup
       "Stopped" => 4,
       "Stopping" => 3,
       "Cancelled" => 2,
-      "Failed" => 1
+      "Failed" => 1,
     }
   end
 
   def status
-    sorted_summaries = @summaries.sort_by {|summary|
+    sorted_summaries = @summaries.sort_by do |summary|
       @statusValues[summary.status]
-    }
+    end
 
     sorted_summaries[0].status
   end

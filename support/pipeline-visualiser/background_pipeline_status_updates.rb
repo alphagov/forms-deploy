@@ -11,48 +11,46 @@ def start_background_pipeline_status_updater(aws_clients)
 
   task = Concurrent::TimerTask.new(execution_interval: 30, run_now: true) do
     aws_clients.each do |client_config|
-      begin
-        client = client_config["client"]
-        all_pipelines = client.list_pipelines
-        pipeline_names = all_pipelines.pipelines.map { |p| p.name }
+      client = client_config["client"]
+      all_pipelines = client.list_pipelines
+      pipeline_names = all_pipelines.pipelines.map { |p| p.name }
 
-        pipeline_names.each do |pipeline|
-          state = client.get_pipeline_state({
-                                              name: pipeline
-                                            })
+      pipeline_names.each do |pipeline|
+        state = client.get_pipeline_state({
+          name: pipeline,
+        })
 
-          executions = client.list_pipeline_executions({
-                                                         pipeline_name: pipeline
-                                                       })
+        executions = client.list_pipeline_executions({
+          pipeline_name: pipeline,
+        })
 
-          latest_execution_summary = executions.pipeline_execution_summaries
-                                               .sort_by { |summary| summary.start_time }
-                                               .reverse
-                                               .first
+        latest_execution_summary = executions.pipeline_execution_summaries
+                                             .sort_by { |summary| summary.start_time }
+                                             .reverse
+                                             .first
 
-          latest_id = latest_execution_summary.pipeline_execution_id
+        latest_id = latest_execution_summary.pipeline_execution_id
 
-          # To get variables we have to request the pipeline
-          # execution with GetPipelineExecution
-          latest = client.get_pipeline_execution({
-                                                   pipeline_name: pipeline,
-                                                   pipeline_execution_id: latest_id
-                                                 })
+        # To get variables we have to request the pipeline
+        # execution with GetPipelineExecution
+        latest = client.get_pipeline_execution({
+          pipeline_name: pipeline,
+          pipeline_execution_id: latest_id,
+        })
 
-          viewdata = generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time, client_config["gds_cli_role"])
+        viewdata = generate_pipeline_viewdata(state, latest.pipeline_execution, latest_execution_summary.start_time, client_config["gds_cli_role"])
 
-          pipelines_map[viewdata.name] = viewdata
-        rescue => err
-          puts err
-          puts err.backtrace
-        end
+        pipelines_map[viewdata.name] = viewdata
+      rescue StandardError => e
+        puts e
+        puts e.backtrace
       end
     end
   end
 
   task.execute
 
-  return pipelines_map
+  pipelines_map
 end
 
 def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
@@ -62,14 +60,13 @@ def generate_pipeline_viewdata(state, execution, last_start_time, gds_cli_role)
   summary.artifacts = execution.artifact_revisions.map { |artifact| generate_artifact_viewdata(artifact) }
   summary.stages = state.stage_states.map { |stage| generate_stage_viewdata(stage, summary.execution_id) }
 
-
-  return summary
+  summary
 end
 
 def generate_artifact_viewdata(artifact)
-  return ArtifactRevision.new(artifact)
+  ArtifactRevision.new(artifact)
 end
 
 def generate_stage_viewdata(stage, current_execution_id)
-  return PipelineStage.new(stage, current_execution_id)
+  PipelineStage.new(stage, current_execution_id)
 end

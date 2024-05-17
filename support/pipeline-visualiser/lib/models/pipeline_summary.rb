@@ -1,20 +1,8 @@
-require 'active_support'
-require 'active_support/duration'
+require "active_support"
+require "active_support/duration"
 
 class PipelineSummary
-  attr_accessor :name
-  attr_accessor :execution_id
-  attr_accessor :last_started_at
-  attr_accessor :status
-  attr_accessor :gds_cli_role
-  attr_accessor :variables
-  attr_accessor :artifacts
-  attr_accessor :stages
-  attr_accessor :running_duration
-  attr_accessor :current_stage_name
-  attr_accessor :first_failing_stage_name
-  attr_accessor :first_failing_stage_error_message
-
+  attr_accessor :name, :execution_id, :last_started_at, :status, :gds_cli_role, :variables, :artifacts, :stages, :running_duration, :current_stage_name, :first_failing_stage_name, :first_failing_stage_error_message
 
   # @param [Aws::CodePipeline::Types::GetPipelineStateOutput] codepipeline_state
   # @param [Aws::CodePipeline::Types::PipelineExecutionSummary] codepipeline_execution
@@ -26,7 +14,7 @@ class PipelineSummary
     @status = codepipeline_execution.status
 
     vars = codepipeline_execution.variables || []
-    @variables = vars.map {|var| [var.name, var.resolved_value]}.to_h
+    @variables = vars.map { |var| [var.name, var.resolved_value] }.to_h
     @artifacts = []
     @stages = []
 
@@ -38,7 +26,7 @@ class PipelineSummary
       @running_duration = ActiveSupport::Duration.build(now_seconds - last_start_seconds)
 
       codepipeline_state.stage_states.each do |stage|
-        if stage.latest_execution.pipeline_execution_id == @execution_id && stage.latest_execution.status == "InProgress" then
+        if stage.latest_execution.pipeline_execution_id == @execution_id && stage.latest_execution.status == "InProgress"
           @current_stage_name = stage.stage_name
           break
         end
@@ -46,12 +34,12 @@ class PipelineSummary
     end
 
     if @status == "Failed"
-      failing_stage = codepipeline_state.stage_states.find {|stage| stage.latest_execution.status == "Failed" }
-      if failing_stage != nil
+      failing_stage = codepipeline_state.stage_states.find { |stage| stage.latest_execution.status == "Failed" }
+      unless failing_stage.nil?
         @first_failing_stage_name = failing_stage.stage_name
 
-        failing_action = failing_stage.action_states.find {|action| action.latest_execution.status == "Failed"}
-        if failing_action != nil
+        failing_action = failing_stage.action_states.find { |action| action.latest_execution.status == "Failed" }
+        unless failing_action.nil?
           @first_failing_stage_error_message = failing_action.latest_execution.summary
         end
       end

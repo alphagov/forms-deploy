@@ -3,7 +3,11 @@ require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 
 describe PipelineSummary do
-  let(:codepipeline_state) {
+  subject do
+    PipelineSummary.new(codepipeline_state, codepipeline_execution, last_start_at)
+  end
+
+  let(:codepipeline_state) do
     Aws::CodePipeline::Types::GetPipelineStateOutput.new(
       pipeline_name: "a_pipeline",
       created: Time.now,
@@ -14,37 +18,37 @@ describe PipelineSummary do
           stage_name: "stage_1",
           latest_execution: Aws::CodePipeline::Types::StageExecution.new(
             pipeline_execution_id: "execution-1",
-            status: "Succeeded"
-          )
+            status: "Succeeded",
+          ),
         ),
         Aws::CodePipeline::Types::StageState.new(
           stage_name: "stage_2",
           latest_execution: Aws::CodePipeline::Types::StageExecution.new(
             pipeline_execution_id: "execution-1",
-            status: "InProgress"
-          )
+            status: "InProgress",
+          ),
         ),
         Aws::CodePipeline::Types::StageState.new(
           stage_name: "stage_3",
           latest_execution: Aws::CodePipeline::Types::StageExecution.new(
             pipeline_execution_id: "execution-1",
-            status: "Failed"
+            status: "Failed",
           ),
           action_states: [
             Aws::CodePipeline::Types::ActionState.new(
               action_name: "action-1",
               latest_execution: Aws::CodePipeline::Types::ActionExecution.new(
                 status: "Failed",
-                summary: "AN ERROR MESSAGE"
-              )
-            )
-          ]
-        )
-      ]
+                summary: "AN ERROR MESSAGE",
+              ),
+            ),
+          ],
+        ),
+      ],
     )
-  }
+  end
 
-  let(:codepipeline_execution) {
+  let(:codepipeline_execution) do
     Aws::CodePipeline::Types::PipelineExecution.new(
       pipeline_name: "a_pipeline",
       pipeline_version: 2,
@@ -53,26 +57,22 @@ describe PipelineSummary do
       variables: [
         Aws::CodePipeline::Types::ResolvedPipelineVariable.new(
           name: "Variable",
-          resolved_value: "Some string value"
-        )
+          resolved_value: "Some string value",
+        ),
       ],
       artifact_revisions: [
         Aws::CodePipeline::Types::ArtifactRevision.new(
           name: "get-source",
           revision_id: "012abc",
-          revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text\n\nFollowed by a bit more text which describes it in more detail"}'
-        )
-      ]
+          revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text\n\nFollowed by a bit more text which describes it in more detail"}',
+        ),
+      ],
     )
-  }
+  end
 
-  let(:last_start_at) {
+  let(:last_start_at) do
     Date.parse("2024-04-01T00:00:00")
-  }
-
-  subject {
-    PipelineSummary.new(codepipeline_state, codepipeline_execution, last_start_at)
-  }
+  end
 
   it "name comes from the name in the pipeline state" do
     expect(subject.name).to eq "a_pipeline"
@@ -110,7 +110,7 @@ describe PipelineSummary do
   describe "when there are variables" do
     it "converts them in to a hash" do
       expected_hash = {
-        "Variable" => "Some string value"
+        "Variable" => "Some string value",
       }
       expect(subject.variables).to eq expected_hash
     end
@@ -145,9 +145,9 @@ describe PipelineSummary do
   end
 
   context "when in a running state" do
-    let(:last_start_at){
-      DateTime.now - (2/24.0) # 2 hours ago
-    }
+    let(:last_start_at) do
+      DateTime.now - (2 / 24.0) # 2 hours ago
+    end
 
     before do
       codepipeline_execution.status = "InProgress"

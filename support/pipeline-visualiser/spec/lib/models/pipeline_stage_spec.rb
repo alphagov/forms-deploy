@@ -3,36 +3,34 @@ require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 
 describe PipelineStage do
+  subject do
+    PipelineStage.new(codepipeline_stage, "execution-1")
+  end
 
-  let(:codepipeline_stage){
+  let(:codepipeline_stage) do
     Aws::CodePipeline::Types::StageState.new(
       stage_name: "stage_name",
       latest_execution: Aws::CodePipeline::Types::StageExecution.new(
         pipeline_execution_id: "execution-2",
-        status: "Failed"
+        status: "Failed",
       ),
       action_states: [
         Aws::CodePipeline::Types::ActionState.new(
           action_name: "action-1",
           latest_execution: Aws::CodePipeline::Types::ActionExecution.new(
             status: "Succeeded",
-          )
+          ),
         ),
         Aws::CodePipeline::Types::ActionState.new(
           action_name: "action-2",
           latest_execution: Aws::CodePipeline::Types::ActionExecution.new(
             status: "Failed",
-            summary: "action error message"
-          )
-        )
-      ]
+            summary: "action error message",
+          ),
+        ),
+      ],
     )
-  }
-
-  subject {
-    PipelineStage.new(codepipeline_stage, "execution-1")
-  }
-
+  end
 
   it "name comes from the name of the CodePipeline stage stage_name" do
     expect(subject.name).to eq "stage_name"

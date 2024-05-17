@@ -6,17 +6,17 @@ class StubSummary
 end
 
 describe PipelineGroup do
-  let(:pipeline_a){ StubSummary.new }
-  let(:pipeline_b){ StubSummary.new }
-  let(:pipeline_c){ StubSummary.new }
-
-  subject{
+  subject do
     PipelineGroup.new("test", [pipeline_a, pipeline_b, pipeline_c])
-  }
+  end
+
+  let(:pipeline_a) { StubSummary.new }
+  let(:pipeline_b) { StubSummary.new }
+  let(:pipeline_c) { StubSummary.new }
 
   describe "state shows the worst state in the group and " do
-    #%w[]
-    #%w[Cancelled Failed]
+    # %w[]
+    # %w[Cancelled Failed]
     it "Succeeded is the best state" do
       pipeline_a.status = "Succeeded"
       pipeline_b.status = "Succeeded"
