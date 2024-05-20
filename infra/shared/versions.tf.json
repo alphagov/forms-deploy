@@ -3,7 +3,7 @@
     "required_version": "~>1.7.4",
     "required_providers": {
       "archive": "2.4.2",
-      "aws": "~>5.39.1",
+      "aws": "~>5.49.0",
       "auth0": {
         "source": "auth0/auth0",
         "version": "~> 1.0.0"
