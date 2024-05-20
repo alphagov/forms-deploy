@@ -181,7 +181,7 @@ module "terraform_apply" {
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buiidspecs/apply-terraform/apply-terraform.yml")
+  buildspec                  = file("${path.root}/buildspecs/apply-terraform/apply-terraform.yml")
   log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
 }
@@ -192,7 +192,7 @@ module "publish_complete_event" {
   project_description        = "Publush event to mark terraform application complete"
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buiidspecs/apply-terraform/terraform-application-successful-event.yml")
+  buildspec                  = file("${path.root}/buildspecs/apply-terraform/terraform-application-successful-event.yml")
   log_group_name             = "codebuild/deploy-terraform-${var.environment_name}-completed"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
 }
