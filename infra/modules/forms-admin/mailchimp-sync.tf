@@ -70,7 +70,7 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
   }
 
   dead_letter_config {
-    arn = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+    arn = "arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:${var.env_name}-eventbridge-dead-letter-queue"
   }
 }
 
@@ -102,15 +102,15 @@ resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
   rule = aws_cloudwatch_event_rule.sync_cron_job_failed.name
 
   # defined in 'alerts' module. Sends alarms/errors via ZenDesk
-  arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_dev"
+  arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_${var.env_name}"
 
   input_transformer {
     input_template = <<EOF
     {
       "title": "WARNING: Synchronising mailing lists with MailChimp has failed.",
-      "description": "GOV.UK Forms has a scheduled ECS task to sync our Mailchimp mailing list with new users in the users database. When this task fails an email is sent to Zendesk.",
+      "description": "GOV.UK Forms has a scheduled ECS task to sync our Mailchimp mailing list with new users in the users database (only applied in production). When this task fails an email is sent to Zendesk.",
       "next-steps": {
-        "1": "Navigate to Splunk: https://gds.splunkcloud.com/en-GB/app/gds-543-forms/search",
+        "1": "Navigate to Splunk: https://gds.splunkcloud.com/en-GB/app/gds-543-forms/search.",
         "2": "Search for index=gds_dsp_production_forms log_stream=forms-admin-production-mailchimp-sync/forms-admin_mailchimp_sync/*. Use the 'Today' date-time preset to find today's logs.",
         "3": "Review logs for errors."
       }
@@ -119,7 +119,7 @@ resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
   }
 
   dead_letter_config {
-    arn = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+    arn = "arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:${var.env_name}-eventbridge-dead-letter-queue"
   }
 }
 
