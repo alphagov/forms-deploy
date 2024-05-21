@@ -14,8 +14,5 @@ module "ses" {
     [
       for user in module.users.for_env[var.environment_type] : "${user}@digital.cabinet-office.gov.uk"
     ],
-    [
-      "forms--test-automation-groupt@digital.cabinet-office.gov.uk", # smoke tests user
-    ],
   )
 }
