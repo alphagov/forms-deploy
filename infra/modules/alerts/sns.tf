@@ -58,12 +58,14 @@ data "aws_iam_policy_document" "key_policy" {
   }
 
   statement {
-    sid    = "EnableCloudWatchAccess"
+    sid    = "EnableCloudWatchAndEventsAccess"
     effect = "Allow"
+
     principals {
       type        = "Service"
-      identifiers = ["cloudwatch.amazonaws.com"]
+      identifiers = ["cloudwatch.amazonaws.com", "events.amazonaws.com"]
     }
+
     actions   = ["kms:GenerateDataKey*", "kms:Decrypt"]
     resources = ["*"]
   }

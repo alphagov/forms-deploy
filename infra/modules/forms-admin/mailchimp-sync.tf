@@ -45,6 +45,7 @@ resource "aws_ecs_task_definition" "cron_job" {
 resource "aws_cloudwatch_event_rule" "sync_cron_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
+  name                = "${var.env_name}-forms-admin-sync-cron"
   description         = "Trigger the forms-admin MailChimp synchronisation on a schedule"
   schedule_expression = "cron(30 10 * * ? *)" # 10:30AM daily. In office hours so that we can respond to failures
 }
@@ -66,6 +67,55 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
       security_groups  = module.ecs_service.service.network_configuration[0].security_groups
       subnets          = module.ecs_service.service.network_configuration[0].subnets
     }
+  }
+
+  dead_letter_config {
+    arn = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+  }
+}
+
+## Monitor for failure
+resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
+  name        = "${var.env_name}-forms-admin-sync-failed"
+  description = "Trigger when the MailChimp sync job has exited with a non-zero exit code"
+
+  event_pattern = jsonencode({
+    source      = ["aws.ecs"]
+    detail-type = ["ECS Task State Change"]
+    resources = [
+      {
+        wildcard : "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task/*"
+      }
+    ]
+
+    detail = {
+      lastStatus = ["STOPPED"]
+      containers = {
+        name     = [local.mailchimp_sync_container_definitions.name]
+        exitCode = [{ "anything-but" : ["0"] }]
+      }
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
+  rule = aws_cloudwatch_event_rule.sync_cron_job_failed.name
+
+  # defined in 'alerts' module. Sends alarms/errors via ZenDesk
+  arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_dev"
+
+  input_transformer {
+    input_template = <<EOF
+    {
+      "title": "WARNING: Synchronising mailing lists with MailChimp has failed.",
+      "description": "GOV.UK Forms has a scheduled ECS task to sync our Mailchimp mailing list with new users in the users database. When this task fails an email is sent to Zendesk.",
+      "next-steps": {
+        "1": "Navigate to Splunk: https://gds.splunkcloud.com/en-GB/app/gds-543-forms/search",
+        "2": "Search for index=gds_dsp_production_forms log_stream=forms-admin-production-mailchimp-sync/forms-admin_mailchimp_sync/*. Use the 'Today' date-time preset to find today's logs.",
+        "3": "Review logs for errors."
+      }
+    }
+    EOF
   }
 
   dead_letter_config {
