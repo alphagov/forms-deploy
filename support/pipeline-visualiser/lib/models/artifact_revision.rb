@@ -8,8 +8,6 @@ class ArtifactRevision
 
     if artifact.revision_summary.start_with? "{"
       summary_json = JSON.parse(artifact.revision_summary)
-
-      summary_text = ""
       @revision_summary = case summary_json["ProviderType"]
                           when "GitHub", "CodeCommit"
                             summary_json["CommitMessage"]

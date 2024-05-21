@@ -21,7 +21,7 @@ class PipelineSummary
     if !is_running?
       @running_duration = nil
     else
-      now_seconds = DateTime.now.to_time.to_i
+      now_seconds = Time.now.to_time.to_i
       last_start_seconds = @last_started_at.to_time.to_i
       @running_duration = ActiveSupport::Duration.build(now_seconds - last_start_seconds)
 

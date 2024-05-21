@@ -95,7 +95,7 @@ RSpec.configure do |config|
   #   Kernel.srand config.seed
 end
 
-REPO_ROOT = File.expand_path(__dir__ + "/../../")
+REPO_ROOT = File.expand_path("#{__dir__}/../../")
 def repo_path(path)
   File.expand_path(File.join(REPO_ROOT, path))
 end

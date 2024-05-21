@@ -3,8 +3,8 @@ require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 
 describe PipelineStage do
-  subject do
-    PipelineStage.new(codepipeline_stage, "execution-1")
+  subject(:pipeline_stage) do
+    described_class.new(codepipeline_stage, "execution-1")
   end
 
   let(:codepipeline_stage) do
@@ -33,34 +33,34 @@ describe PipelineStage do
   end
 
   it "name comes from the name of the CodePipeline stage stage_name" do
-    expect(subject.name).to eq "stage_name"
+    expect(pipeline_stage.name).to eq "stage_name"
   end
 
   it "status comes from the latest execution status" do
-    expect(subject.status).to eq "Failed"
+    expect(pipeline_stage.status).to eq "Failed"
   end
 
   it "is outdated if the current execution id is not the same as the latest" do
-    expect(subject.outdated).to be true
+    expect(pipeline_stage.outdated).to be true
   end
 
   it "is not outdated if the current execution id matches the latest execution id" do
-    subject = PipelineStage.new(codepipeline_stage, "execution-2")
-    expect(subject.outdated).to be false
+    pipeline_stage = described_class.new(codepipeline_stage, "execution-2")
+    expect(pipeline_stage.outdated).to be false
   end
 
   describe "when stage state not Failed" do
     it "error message is nil" do
       codepipeline_stage.latest_execution.status = "Succeeded"
-      subject = PipelineStage.new(codepipeline_stage, "execution-1")
+      pipeline_stage = described_class.new(codepipeline_stage, "execution-1")
 
-      expect(subject.error_message).to be_nil
+      expect(pipeline_stage.error_message).to be_nil
     end
   end
 
   describe "when stage state is Failed" do
     it "error message comes from the first failed action" do
-      expect(subject.error_message).to eq "action error message"
+      expect(pipeline_stage.error_message).to eq "action error message"
     end
   end
 end

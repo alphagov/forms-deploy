@@ -3,17 +3,17 @@
 
 require "net/http"
 
-environment = %w[dev stage]
+environments = %w[dev stage]
 apps = %w[admin submit api]
 
-environment.each do |environment|
-  apps.each do |apps|
-    uri = "https://#{apps}.#{environment}.forms.service.gov.uk/ping"
+environments.each do |environment|
+  apps.each do |app|
+    uri = "https://#{app}.#{environment}.forms.service.gov.uk/ping"
     res = Net::HTTP.get_response(URI(uri))
     if res.is_a?(Net::HTTPSuccess)
-      puts "#{apps} #{environment} OK"
+      puts "#{app} #{environment} OK"
     else
-      puts "#{apps} #{environment} Status Code: #{res.code} Error: #{res.message}"
+      puts "#{app} #{environment} Status Code: #{res.code} Error: #{res.message}"
     end
   end
 end

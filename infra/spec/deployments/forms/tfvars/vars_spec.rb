@@ -18,7 +18,7 @@ vars_files = Dir.glob(repo_path("infra/deployments/forms/tfvars/*.tfvars")).map 
 }.to_h
 
 describe "terraform vars" do
-  context "in environment" do
+  context "with environment" do
     vars_files.each do |file_name, json|
       describe(file_name) do
         it "root domain is a subdomin of 'forms.service.gov.uk'" do
@@ -31,11 +31,6 @@ describe "terraform vars" do
                           forms_runner_settings]
         applications.each do |app|
           describe app do
-            it "must have max_capacity set" do
-              max_capacity = json[app]["max_capacity"]
-              expect(max_capacity).not_to be_nil
-            end
-
             it "must have max_capacity set" do
               max_capacity = json[app]["max_capacity"]
               expect(max_capacity).not_to be_nil
@@ -54,31 +49,25 @@ describe "terraform vars" do
 
             it "must check maximum instances is divisible by 3" do
               max_capacity = json[app]["max_capacity"]
-              expect(max_capacity % 3).to be == 0
+              expect(max_capacity % 3).to eq 0
             end
 
             it "must check minimum instances is divisible by 3" do
               min_capacity = json[app]["min_capacity"]
-              expect(min_capacity % 3).to be == 0
+              expect(min_capacity % 3).to eq 0
             end
 
             it "must check max_capacity and min_capacity are whole numbers" do
               max_capacity = json[app]["max_capacity"]
               min_capacity = json[app]["min_capacity"]
-              expect(max_capacity % 1).to be == 0
-              expect(min_capacity % 1).to be == 0
-            end
-
-            it "must check max_capacity and min_capacity are whole numbers" do
-              max_capacity = json[app]["max_capacity"]
-              min_capacity = json[app]["min_capacity"]
-              expect(max_capacity % 1).to be == 0
-              expect(min_capacity % 1).to be == 0
+              expect(max_capacity % 1).to eq 0
+              expect(min_capacity % 1).to eq 0
             end
 
             it "must have CPU set to specified values" do
               cpu = json[app]["cpu"]
-              expect([256, 512, 1024, 2048, 4096, 8192, 16_384]).to include(cpu)
+              compatible_cpu = [256, 512, 1024, 2048, 4096, 8192, 16_384]
+              expect(compatible_cpu).to include(cpu)
             end
 
             it "must check cpu and memory are compatible" do
@@ -86,11 +75,14 @@ describe "terraform vars" do
               memory = json[app]["memory"]
               case cpu
               when 256
-                expect([512, 1024, 2048]).to include(memory)
+                compatible_memory = [512, 1024, 2048]
+                expect(compatible_memory).to include(memory)
               when 512
-                expect([1024, 2048, 4096, 8192, 16_384]).to include(memory)
+                compatible_memory = [1024, 2048, 4096, 8192, 16_384]
+                expect(compatible_memory).to include(memory)
               when 1024
-                expect([2048, 3072, 4096, 5120, 6144, 7168, 8192]).to include(memory)
+                compatible_memory = [2048, 3072, 4096, 5120, 6144, 7168, 8192]
+                expect(compatible_memory).to include(memory)
               when 2048
                 expect((4..16).map { |n| n * 1024 }).to include(memory)
               when 4096

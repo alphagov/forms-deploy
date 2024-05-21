@@ -38,7 +38,7 @@ class DevelopmentAWSSDKFactory
   def self.development_env_client
     stub_all_as_passing(
       Aws::CodePipeline::Client.new(stub_responses: true),
-      %w[apply-forms-terraform-dev deploy-forms-product-page-container-dev, deploy-forms-runner-container-dev],
+      %w[apply-forms-terraform-dev deploy-forms-product-page-container-dev deploy-forms-runner-container-dev],
     )
   end
 
@@ -121,7 +121,7 @@ class DevelopmentAWSSDKFactory
   def self.staging_env_client
     client = stub_all_as_passing(
       Aws::CodePipeline::Client.new(stub_responses: true),
-      %w[apply-forms-terraform-staging deploy-forms-product-page-container-staging, deploy-forms-runner-container-staging],
+      %w[apply-forms-terraform-staging deploy-forms-product-page-container-staging deploy-forms-runner-container-staging],
     )
 
     stub_get_pipeline_state(client) do |pipeline_name|

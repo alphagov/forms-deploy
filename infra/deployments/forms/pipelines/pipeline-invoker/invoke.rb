@@ -15,7 +15,9 @@ require "aws-sdk-codepipeline"
 #
 # It should be a valid codepipeline:StartPipelineExecution payload
 
+# rubocop:disable Lint/UnusedMethodArgument
 def main(event:, context:)
+  # rubocop:enable Lint/UnusedMethodArgument
   logger = Logger.new($stdout)
   log_payload = {}
   log_payload["event_received"] = event
@@ -23,20 +25,18 @@ def main(event:, context:)
   payload = {}
   payload["name"] = event["name"]
 
-  if !event["variables"].nil?
-    payload["variables"] = []
+  payload["variables"] = []
+  unless event["variables"].nil?
     event["variables"].each do |var|
       payload["variables"] << {
         name: var["name"],
         value: var["value"],
       }
     end
-  else
-    payload["variables"] = []
   end
 
-  if !event["sourceRevisions"].nil?
-    payload["source_revisions"] = []
+  payload["source_revisions"] = []
+  unless event["sourceRevisions"].nil?
     event["sourceRevisions"].each do |revision|
       payload["source_revisions"] << {
         action_name: revision["actionName"],
@@ -44,8 +44,6 @@ def main(event:, context:)
         revision_value: revision["revisionValue"],
       }
     end
-  else
-    payload["source_revisions"] = []
   end
 
   payload["client_request_token"] = event["client_request_token"]

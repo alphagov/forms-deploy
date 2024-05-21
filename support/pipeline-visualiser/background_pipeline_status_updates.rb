@@ -13,7 +13,7 @@ def start_background_pipeline_status_updater(aws_clients)
     aws_clients.each do |client_config|
       client = client_config["client"]
       all_pipelines = client.list_pipelines
-      pipeline_names = all_pipelines.pipelines.map { |p| p.name }
+      pipeline_names = all_pipelines.pipelines.map(&:name)
 
       pipeline_names.each do |pipeline|
         state = client.get_pipeline_state({
@@ -25,7 +25,7 @@ def start_background_pipeline_status_updater(aws_clients)
         })
 
         latest_execution_summary = executions.pipeline_execution_summaries
-                                             .sort_by { |summary| summary.start_time }
+                                             .sort_by(&:start_time)
                                              .reverse
                                              .first
 

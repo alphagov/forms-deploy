@@ -7,14 +7,14 @@ class AllPipelinesView
 
   def running_pipelines
     @pipeline_groups
-      .collect { |group| group.pipelines }
+      .collect(&:pipelines)
       .flatten
-      .filter { |pipeline| pipeline.is_running? }
+      .filter(&:is_running?)
   end
 
   def failing_pipelines
     @pipeline_groups
-      .collect { |group| group.pipelines }
+      .collect(&:pipelines)
       .flatten
       .filter { |pipeline| pipeline.status == "Failed" }
   end

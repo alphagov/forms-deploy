@@ -10,7 +10,7 @@ class PipelineGroup
 
     # Used to find the worst status in the group
     # A lower number is a worse status
-    @statusValues = {
+    @status_values = {
       "Succeeded" => 7,
       "InProgress" => 6,
       "Superseded" => 5,
@@ -23,7 +23,7 @@ class PipelineGroup
 
   def status
     sorted_summaries = @summaries.sort_by do |summary|
-      @statusValues[summary.status]
+      @status_values[summary.status]
     end
 
     sorted_summaries[0].status
