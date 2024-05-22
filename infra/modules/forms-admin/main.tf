@@ -157,7 +157,11 @@ module "ecs_service" {
     {
       name  = "SETTINGS__CLOUDWATCH_METRICS_ENABLED",
       value = var.cloudwatch_metrics_enabled
-    }
+    },
+    {
+      name  = "SETTINGS__FEATURES__GROUPS",
+      value = var.groups_enabled
+    },
   ]
 
   secrets = flatten([

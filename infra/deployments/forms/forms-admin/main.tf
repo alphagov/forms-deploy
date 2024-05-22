@@ -24,4 +24,5 @@ module "forms_admin" {
   previous_auth_provider                = var.forms_admin_settings.previous_auth_provider
   cloudwatch_metrics_enabled            = var.forms_admin_settings.cloudwatch_metrics_enabled
   enable_mailchimp_sync                 = var.forms_admin_settings.synchronize_to_mailchimp
+  groups_enabled                        = var.forms_admin_settings.groups_enabled
 }

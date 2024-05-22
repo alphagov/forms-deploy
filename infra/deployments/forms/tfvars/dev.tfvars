@@ -36,6 +36,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled            = false
   govuk_app_domain                      = "integration.publishing.service.gov.uk"
   synchronize_to_mailchimp              = false
+  groups_enabled                        = false
 }
 forms_api_settings = {
   cpu          = 256
