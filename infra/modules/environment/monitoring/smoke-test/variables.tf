@@ -37,5 +37,4 @@ variable "codebuild_environment_variables" {
 variable "alarm_sns_topic_arn" {
   description = "The arn for the SNS topic that the CloudWatch alarm will send notifications to."
   type        = string
-  default     = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
 }

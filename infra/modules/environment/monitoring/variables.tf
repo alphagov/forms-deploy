@@ -28,3 +28,8 @@ variable "scheduled_smoke_tests_settings" {
     enable_alerting   = bool # Whether to send notification to govuk-forms-alerts channel
   })
 }
+
+variable "smoke_test_alarm_sns_topic_arn" {
+  description = "The arn for the SNS topic that the smoke tests CloudWatch alarm will send notifications to."
+  type        = string
+}

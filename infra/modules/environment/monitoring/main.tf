@@ -8,12 +8,13 @@ module "runner_scheduled_smoke_tests" {
 
   source = "./smoke-test"
 
-  environment       = var.environment_name
-  frequency_minutes = var.scheduled_smoke_tests_settings.frequency_minutes
-  enable_alerting   = var.scheduled_smoke_tests_settings.enable_alerting
-  test_name         = "runner-smoke-test"
-  rspec_path        = "spec/smoke_tests/smoke_test_runner_spec.rb"
-  alarm_description = <<EOF
+  environment         = var.environment_name
+  frequency_minutes   = var.scheduled_smoke_tests_settings.frequency_minutes
+  enable_alerting     = var.scheduled_smoke_tests_settings.enable_alerting
+  test_name           = "runner-smoke-test"
+  rspec_path          = "spec/smoke_tests/smoke_test_runner_spec.rb"
+  alarm_sns_topic_arn = var.smoke_test_alarm_sns_topic_arn
+  alarm_description   = <<EOF
     The runner smoke tests are failing. Users might not be able to complete and
     submit forms.
 
