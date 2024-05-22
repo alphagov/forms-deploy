@@ -17,6 +17,6 @@ resource "aws_cloudwatch_metric_alarm" "healthy_host_alarms" {
   }
 
   actions_enabled = var.enable_alert_actions
-  alarm_actions   = [aws_sns_topic.alert_topic.arn]
-  ok_actions      = [aws_sns_topic.alert_topic.arn]
+  alarm_actions   = [aws_sns_topic.alert_pagerduty.arn]
+  ok_actions      = [aws_sns_topic.alert_pagerduty.arn]
 }
