@@ -12,7 +12,7 @@ resource "aws_cloudwatch_metric_alarm" "event_bridge_dlq_delivery_alarm" {
   alarm_description = <<EOF
     When EventBridge fails to invoke a target, it will log information about
     why it failed to invoke it and what happened in a message delivered to a
-    dead letter queue.
+    dead letter queue in ${var.environment_type}.
 
     This alarm will enter the alarm state when there is a new message on the
     queue.
@@ -21,7 +21,7 @@ resource "aws_cloudwatch_metric_alarm" "event_bridge_dlq_delivery_alarm" {
     1. Log into the ${var.environment_type} account
     
     2. Go look at the message in SQS console by visiting the URL below and
-    presing "Poll for messages"
+    presing "Poll for messages". Error details are found in the message "Attributes" tab.
 
     https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/${data.aws_caller_identity.current.account_id}/${var.environment_name}-eventbridge-dead-letter-queue")}/send-receive
 
