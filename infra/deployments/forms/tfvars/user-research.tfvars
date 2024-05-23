@@ -31,6 +31,7 @@ forms_admin_settings = {
   enable_maintenance_mode               = false
   metrics_feature_flag                  = true
   submission_email_changed_feature_flag = true
+  groups_feature_flag                   = false
   auth_provider                         = "basic_auth"
   previous_auth_provider                = null
   cloudwatch_metrics_enabled            = false
