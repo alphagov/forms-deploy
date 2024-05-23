@@ -4,20 +4,20 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
-resource "aws_sns_topic" "alert_topic" {
-  name              = "pager_duty_integration_${var.environment}"
+resource "aws_sns_topic" "alert_pagerduty" {
+  name              = "pagerduty_integration_${var.environment}"
   kms_master_key_id = aws_kms_key.topic_sse.key_id
 }
 
-data "aws_ssm_parameter" "pager_duty_integration_url" {
-  name       = "/alerting/${var.environment}/pager-duty-integration-url"
+data "aws_ssm_parameter" "pagerduty_integration_url" {
+  name       = "/alerting/${var.environment}/pagerduty-integration-url"
   depends_on = [aws_ssm_parameter.pagerduty_integration_url]
 }
 
 resource "aws_ssm_parameter" "pagerduty_integration_url" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
   # Value is set externally.
-  name  = "/alerting/${var.environment}/pager-duty-integration-url"
+  name  = "/alerting/${var.environment}/pagerduty-integration-url"
   type  = "SecureString"
   value = "https://example.org/"
 
@@ -26,10 +26,10 @@ resource "aws_ssm_parameter" "pagerduty_integration_url" {
   }
 }
 
-resource "aws_sns_topic_subscription" "pager_duty_subscription" {
-  topic_arn = aws_sns_topic.alert_topic.arn
+resource "aws_sns_topic_subscription" "pagerduty_subscription" {
+  topic_arn = aws_sns_topic.alert_pagerduty.arn
   protocol  = "https"
-  endpoint  = data.aws_ssm_parameter.pager_duty_integration_url.value
+  endpoint  = data.aws_ssm_parameter.pagerduty_integration_url.value
 }
 
 resource "aws_kms_key" "topic_sse" {

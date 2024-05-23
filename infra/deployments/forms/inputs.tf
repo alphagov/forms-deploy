@@ -88,6 +88,7 @@ variable "forms_admin_settings" {
     enable_maintenance_mode               = bool
     metrics_feature_flag                  = bool
     submission_email_changed_feature_flag = bool
+    groups_feature_flag                   = bool
     auth_provider                         = string
     previous_auth_provider                = string
     cloudwatch_metrics_enabled            = bool

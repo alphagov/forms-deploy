@@ -112,6 +112,7 @@ data "aws_iam_policy_document" "alerts" {
     ]
     resources = [
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/email-zendesk",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pagerduty-integration-url",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pager-duty-integration-url",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/automated-tests/*",
     ]
@@ -129,6 +130,7 @@ data "aws_iam_policy_document" "alerts" {
     ]
     resources = [
       "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:pager_duty_integration_${var.env_name}",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:pagerduty_integration_${var.env_name}",
       "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:alert_zendesk_${var.env_name}",
       "arn:aws:sns:us-east-1:${lookup(local.account_ids, var.env_name)}:cloudwatch-alarms",
     ]
