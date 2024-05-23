@@ -18,6 +18,7 @@ data "aws_iam_policy_document" "forms-infra-1" {
     data.aws_iam_policy_document.rds.json,
     data.aws_iam_policy_document.redis.json,
     data.aws_iam_policy_document.code-build-modules.json,
+    data.aws_iam_policy_document.ssm.json,
   ]
 }
 
@@ -637,6 +638,22 @@ data "aws_iam_policy_document" "route53" {
       "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:${var.env_name}_cloudfront_total_error_rate",
       "arn:aws:cloudwatch:us-east-1:${lookup(local.account_ids, var.env_name)}:ddos_detected_in_${var.env_name}",
       "arn:aws:route53:::healthcheck/*"
+    ]
+    effect = "Allow"
+  }
+}
+
+data "aws_iam_policy_document" "ssm" {
+  statement {
+    sid = "ManageServiceSSMParameters"
+    actions = [
+      "ssm:AddTagsToResource",
+      "ssm:PutParameter",
+      "ssm:RemoveTagsFromResource",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/forms-api-key",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/forms-notify-key",
     ]
     effect = "Allow"
   }
