@@ -655,7 +655,7 @@ data "aws_iam_policy_document" "ssm" {
     ]
     resources = [
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/forms-api-key",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/forms-notify-key",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/notify-api-key",
     ]
     effect = "Allow"
   }
