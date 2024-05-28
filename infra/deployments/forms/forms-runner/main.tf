@@ -18,3 +18,13 @@ module "forms_runner" {
   enable_maintenance_mode    = var.forms_runner_settings.enable_maintenance_mode
   cloudwatch_metrics_enabled = var.forms_runner_settings.cloudwatch_metrics_enabled
 }
+
+import {
+  to = module.forms_runner.aws_ssm_parameter.forms_api_key
+  id = "/forms-runner-${var.environment_name}/forms-api-key"
+}
+
+import {
+  to = module.forms_runner.aws_ssm_parameter.notify_api_key
+  id = "/forms-runner-${var.environment_name}/notify-api-key"
+}
