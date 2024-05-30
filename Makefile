@@ -111,8 +111,14 @@ generate-completion-word-list:
 .PHONY: fmt
 fmt:
 	terraform fmt -recursive infra/
+
 .PHONY: lint
-lint: checkov spec
+lint: checkov spec lint_ruby
+
+.PHONY: lint_ruby
+lint_ruby:
+	bundle install
+	bundle exec rubocop
 
 .PHONY: checkov
 checkov:

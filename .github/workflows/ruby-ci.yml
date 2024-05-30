@@ -21,4 +21,4 @@ jobs:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
       - name: Run rubocop
-        run: bundle exec rubocop
+        run: make lint_ruby
