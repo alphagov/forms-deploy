@@ -86,7 +86,6 @@ variable "forms_admin_settings" {
     min_capacity                          = number
     max_capacity                          = number
     enable_maintenance_mode               = bool
-    metrics_feature_flag                  = bool
     submission_email_changed_feature_flag = bool
     groups_feature_flag                   = bool
     auth_provider                         = string

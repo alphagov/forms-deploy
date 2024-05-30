@@ -31,7 +31,6 @@ forms_admin_settings = {
   min_capacity                          = 3
   max_capacity                          = 3
   enable_maintenance_mode               = false
-  metrics_feature_flag                  = true
   submission_email_changed_feature_flag = true
   groups_feature_flag                   = false
   auth_provider                         = "auth0"

@@ -17,7 +17,6 @@ module "forms_admin" {
   runner_base                           = "https://submit.${var.root_domain}"
   govuk_app_domain                      = var.forms_admin_settings.govuk_app_domain
   enable_maintenance_mode               = var.forms_admin_settings.enable_maintenance_mode
-  metrics_feature_flag                  = var.forms_admin_settings.metrics_feature_flag
   submission_email_changed_feature_flag = var.forms_admin_settings.submission_email_changed_feature_flag
   groups_feature_flag                   = var.forms_admin_settings.groups_feature_flag
   forms_product_page_support_url        = var.environmental_settings.forms_product_page_support_url
