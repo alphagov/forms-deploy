@@ -1,4 +1,4 @@
-require 'activesupport-duration-human_string'
+require "activesupport-duration-human_string"
 require "json"
 require "ostruct"
 require "sinatra"
@@ -9,13 +9,13 @@ require_relative "./background_pipeline_status_updates"
 require_relative "lib/aws-sdk-factory/live"
 require_relative "lib/aws-sdk-factory/development"
 
-require_relative "lib/views/AllPipelines"
-require_relative "lib/views/Group"
+require_relative "lib/views/all_pipelines"
+require_relative "lib/views/group"
 
 set :public_folder, "public"
 helpers do
   def slugify(str)
-    return str.downcase
+    str.downcase
               .gsub(/[ _:\/]/, "-")
   end
 
@@ -26,21 +26,21 @@ end
 
 is_dev_mode = ENV.fetch("PIPELINE_VISUALISER_DEV_MODE", false)
 
-config = YAML::safe_load_file("./config.yml")
+config = YAML.safe_load_file("./config.yml")
 
 aws_clients = []
 config["roles"].each do |role|
-  if is_dev_mode
-    aws_clients << {
-      "client" => DevelopmentAWSSDKFactory.new_code_pipeline(role["role"]),
-      "gds_cli_role" => role["gds_cli_role"]
-    }
-  else
-    aws_clients << {
-      "client" => LiveAWSSDKFactory.new_code_pipeline(role["role"]),
-      "gds_cli_role" => role["gds_cli_role"]
-    }
-  end
+  aws_clients << if is_dev_mode
+                   {
+                     "client" => DevelopmentAWSSDKFactory.new_code_pipeline(role["role"]),
+                     "gds_cli_role" => role["gds_cli_role"],
+                   }
+                 else
+                   {
+                     "client" => LiveAWSSDKFactory.new_code_pipeline(role["role"]),
+                     "gds_cli_role" => role["gds_cli_role"],
+                   }
+                 end
 end
 
 pipelines_map = start_background_pipeline_status_updater(aws_clients)
@@ -57,7 +57,7 @@ get "/" do
   end
 
   view = AllPipelinesView.new(groups)
-  erb :index, :locals => { :view => view, :is_dev_mode => is_dev_mode }
+  erb :index, locals: { view:, is_dev_mode: }
 end
 
 get "/deploying-changes" do
@@ -66,43 +66,43 @@ end
 
 get "/group/:group_slug" do
   all_groups = config["groups"].to_a
-  group = all_groups.find {|grp| params["group_slug"] == slugify(grp[0])}
-  pass unless group != nil
+  group = all_groups.find { |grp| params["group_slug"] == slugify(grp[0]) }
+  pass if group.nil?
 
   pipeline_names = group[1]
   pipelines = pipeline_names
               .map { |name| pipelines_map.fetch(name, nil) }
               .reject(&:nil?)
 
-  erb  :group, :locals => {
-    :view => Group.new(group[0], pipelines),
-    :is_dev_mode => is_dev_mode,
-    :breadcrumbs => {
-      "Home" => "/"
-    }
+  erb :group, locals: {
+    view: Group.new(group[0], pipelines),
+    is_dev_mode:,
+    breadcrumbs: {
+      "Home" => "/",
+    },
   }
 end
 
 get "/group/:group_slug/pipeline/:pipeline_slug" do
   all_groups = config["groups"].to_a
-  group_slugs_to_names = config["groups"].keys.map {|name| [slugify(name), name]}.to_h
-  group = all_groups.find {|grp| params["group_slug"] == slugify(grp[0])}
-  pass unless group != nil
+  group_slugs_to_names = config["groups"].keys.map { |name| [slugify(name), name] }.to_h
+  group = all_groups.find { |grp| params["group_slug"] == slugify(grp[0]) }
+  pass if group.nil?
 
-  pipeline_slugs_to_names = group[1].map {|name| [slugify(name), name]}.to_h
+  pipeline_slugs_to_names = group[1].map { |name| [slugify(name), name] }.to_h
   pass unless pipeline_slugs_to_names.keys.include? params["pipeline_slug"]
 
   group_name = group_slugs_to_names[params["group_slug"]]
   pipeline_name = pipeline_slugs_to_names[params["pipeline_slug"]]
   pipeline = pipelines_map[pipeline_name]
 
-  erb :pipeline, :locals => {
-    :pipeline => pipeline,
-    :is_dev_mode => is_dev_mode,
-    :breadcrumbs => {
+  erb :pipeline, locals: {
+    pipeline:,
+    is_dev_mode:,
+    breadcrumbs: {
       "Home" => "/",
-      group_name => "/group/#{params["group_slug"]}"
-    }
+      group_name => "/group/#{params['group_slug']}",
+    },
   }
 end
 

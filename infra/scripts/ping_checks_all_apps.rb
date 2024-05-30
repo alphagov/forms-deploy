@@ -1,19 +1,19 @@
 # This script checks if our services are running by requesting the following
 # admin, submit, api urls in the dev and staging environments.
 
-require 'net/http'
+require "net/http"
 
-environment = ["dev", "stage"]
-apps = ["admin", "submit", "api"]
+environments = %w[dev stage]
+apps = %w[admin submit api]
 
-environment.each do |environment|
-    apps.each do |apps|
-        uri = "https://#{apps}.#{environment}.forms.service.gov.uk/ping"
-        res = Net::HTTP.get_response(URI(uri))
-        if res.is_a?(Net::HTTPSuccess)
-            puts "#{apps} #{environment} OK"
-        else
-            puts "#{apps} #{environment} Status Code: #{res.code} Error: #{res.message}"
-        end
+environments.each do |environment|
+  apps.each do |app|
+    uri = "https://#{app}.#{environment}.forms.service.gov.uk/ping"
+    res = Net::HTTP.get_response(URI(uri))
+    if res.is_a?(Net::HTTPSuccess)
+      puts "#{app} #{environment} OK"
+    else
+      puts "#{app} #{environment} Status Code: #{res.code} Error: #{res.message}"
     end
+  end
 end

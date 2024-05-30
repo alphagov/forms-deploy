@@ -1,33 +1,33 @@
-require_relative '../../../lib/models/ArtifactRevision'
+require_relative "../../../lib/models/artifact_revision"
 require "aws-sdk-codepipeline"
 require "aws-sdk-codepipeline/types"
 
 describe ArtifactRevision do
-  let(:artifact) {
+  subject(:artifact_revision) do
+    described_class.new(artifact)
+  end
+
+  let(:artifact) do
     Aws::CodePipeline::Types::ArtifactRevision.new(
       name: "get-source",
       revision_id: "012abc",
-      revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text"}'
+      revision_summary: '{"ProviderType": "GitHub", "CommitMessage": "Some headline text"}',
     )
-  }
-
-  subject{
-    ArtifactRevision.new(artifact)
-  }
+  end
 
   it "name comes from the artifact name" do
-    expect(subject.name).to eq "get-source"
+    expect(artifact_revision.name).to eq "get-source"
   end
 
   it "revision id comes from the artifact's revision id" do
-    expect(subject.revision_id).to eq "012abc"
+    expect(artifact_revision.revision_id).to eq "012abc"
   end
 
   describe "when the artifact summary does not begin with '{'" do
     it "treats the summary as plain text" do
       artifact.revision_summary = "plain text"
-      subject = ArtifactRevision.new(artifact)
-      expect(subject.revision_summary).to eq "plain text"
+      artifact_revision = described_class.new(artifact)
+      expect(artifact_revision.revision_summary).to eq "plain text"
     end
   end
 
@@ -37,13 +37,13 @@ describe ArtifactRevision do
         it "the revision summary is the commit message" do
           summary = {
             "ProviderType" => provider,
-            "CommitMessage" => "a commit message"
+            "CommitMessage" => "a commit message",
           }
 
           artifact.revision_summary = summary.to_json
-          subject = ArtifactRevision.new(artifact)
+          artifact_revision = described_class.new(artifact)
 
-          expect(subject.revision_summary).to eq "a commit message"
+          expect(artifact_revision.revision_summary).to eq "a commit message"
         end
       end
     end
@@ -52,13 +52,13 @@ describe ArtifactRevision do
       it "the revision summary contains some error message" do
         summary = {
           "ProviderType" => "unknown",
-          "CommitMessage" => "a commit message"
+          "CommitMessage" => "a commit message",
         }
 
         artifact.revision_summary = summary.to_json
-        subject = ArtifactRevision.new(artifact)
+        artifact_revision = described_class.new(artifact)
 
-        expect(subject.revision_summary).to eq "Error: Unknown provider type"
+        expect(artifact_revision.revision_summary).to eq "Error: Unknown provider type"
       end
     end
   end

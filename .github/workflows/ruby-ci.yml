@@ -1,21 +1,13 @@
-name: "Test Forms Cli"
+name: "Ruby CI"
 on:
-  push:
-    branches: [forms_cli]
-    paths:
-      - "support/forms-cli/**"
   pull_request:
     branches: [main]
-    paths:
-      - "support/forms-cli/**"
   merge_group:
     types: [checks_requested]
 jobs:
-  build_and_test:
+  lint:
+    name: "Lint"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: support/forms-cli
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,10 +16,9 @@ jobs:
         run: |
           echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby@943103cae7d3f1bb1e4951d5fcc7928b40e4b742 # v1.177.1
+        uses: ruby/setup-ruby@cacc9f1c0b3f4eb8a16a6bb0ed10897b43b9de49 # v1.176.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
-          working-directory: support/forms-cli
-      - name: Run tests
-        run: bundle exec rspec
+      - name: Run rubocop
+        run: make lint_ruby
