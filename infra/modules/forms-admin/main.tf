@@ -143,14 +143,6 @@ module "ecs_service" {
       value = var.env_name
     },
     {
-      name  = "SETTINGS__FEATURES__METRICS_FOR_FORM_CREATORS_ENABLED",
-      value = var.metrics_feature_flag
-    },
-    {
-      name  = "SETTINGS__FEATURES__NOTIFY_ORIGINAL_SUBMISSION_EMAIL_OF_CHANGE",
-      value = var.submission_email_changed_feature_flag
-    },
-    {
       name  = "SETTINGS__FEATURES__GROUPS",
       value = var.groups_feature_flag
     },

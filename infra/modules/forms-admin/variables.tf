@@ -49,18 +49,6 @@ variable "enable_maintenance_mode" {
   type        = bool
 }
 
-variable "metrics_feature_flag" {
-  description = "Toggles on/off the metrics for form creators feature"
-  type        = bool
-  default     = false
-}
-
-variable "submission_email_changed_feature_flag" {
-  description = "Toggles on/off the notify submission email changed feature"
-  type        = bool
-  default     = false
-}
-
 variable "groups_feature_flag" {
   description = "Toggles on/off the groups for user management feature"
   type        = bool
