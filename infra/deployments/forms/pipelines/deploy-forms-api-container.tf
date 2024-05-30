@@ -54,7 +54,7 @@ data "archive_file" "deploy_api_buildpsec_zip" {
   output_path = "${path.root}/zip-files/deploy_api_buildpsec_zip.zip"
 
   source {
-    content  = file("${path.root}/buiidspecs/generate-container-image-defs/generate-container-image-defs.yml")
+    content  = file("${path.root}/buildspecs/generate-container-image-defs/generate-container-image-defs.yml")
     filename = "/codebuild/readonly/buildspec.yml"
   }
 }
@@ -277,7 +277,7 @@ module "db_migrate_api" {
   project_description        = "Run database migrations"
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buiidspecs/db-migrate/db-migrate.yml")
+  buildspec                  = file("${path.root}/buildspecs/db-migrate/db-migrate.yml")
   log_group_name             = "codebuild/db_migrate_api_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
 }
@@ -291,7 +291,7 @@ module "generate_forms_api_container_image_defs" {
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buiidspecs/generate-container-image-defs/generate-container-image-defs.yml")
+  buildspec                  = file("${path.root}/buildspecs/generate-container-image-defs/generate-container-image-defs.yml")
   log_group_name             = "codebuild/generate_forms_api_container_image_defs_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
 }
@@ -317,7 +317,7 @@ module "pull_forms_api_image_retag_and_push" {
   project_description        = "Pull the latest image, retag it, and push it back up"
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buiidspecs/pull-image-retag-and-push/pull-image-retag-and-push.yml")
+  buildspec                  = file("${path.root}/buildspecs/pull-image-retag-and-push/pull-image-retag-and-push.yml")
   codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
   log_group_name             = "codebuild/pull_forms_api_image_retag_and_push_${var.environment_name}"
   environment_variables = {
