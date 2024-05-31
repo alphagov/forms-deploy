@@ -280,7 +280,7 @@ puts "Installing Terraform #{latest_tf_version.segments[0]}.#{latest_tf_version.
 tfenv "install", "latest:^#{latest_tf_version.segments[0]}.#{latest_tf_version.segments[1]}"
 tfenv "use", "latest:^#{latest_tf_version.segments[0]}.#{latest_tf_version.segments[1]}"
 # Write latest Terraform version to .terraform-version
-terraform_tool_version_file_path = repo_path("infra/.terraform-version")
+terraform_tool_version_file_path = repo_path(".terraform-version")
 puts "Writing Terraform version to #{terraform_tool_version_file_path}"
 File.write terraform_tool_version_file_path, latest_tf_version
 
