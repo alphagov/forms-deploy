@@ -143,7 +143,7 @@ module "ecs_service" {
       value = var.env_name
     },
     {
-      name  = "SETTINGS__FEATURES__GROUPS",
+      name  = "SETTINGS__FEATURES__GROUPS__ENABLED",
       value = var.groups_feature_flag
     },
     {
