@@ -439,7 +439,10 @@ data "aws_iam_policy_document" "pipelines" {
     actions = ["s3:*"]
     resources = [
       "arn:aws:s3:::govuk-forms-*-pipeline-invoker",
-      "arn:aws:s3:::govuk-forms-*-pipeline-invoker/*"
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker/*",
+
+      "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection",
+      "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection/*",
     ]
   }
 
@@ -456,7 +459,7 @@ data "aws_iam_policy_document" "pipelines" {
     ]
 
     resources = [
-      "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*-pipeline-invoker"
+      "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*",
     ]
   }
 
@@ -473,6 +476,20 @@ data "aws_iam_policy_document" "pipelines" {
 
     resources = [
       "arn:aws:codepipeline:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+    ]
+  }
+
+  statement {
+    sid    = "ManageRelatedIAMRoles"
+    effect = "Allow"
+    actions = [
+      "iam:CreateRole",
+      "iam:DeleteRole",
+    ]
+
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-lambda-pipeline-invoker",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-lambda-paused-pipeline-invoker"
     ]
   }
 }
