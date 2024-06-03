@@ -8,7 +8,8 @@ resource "aws_cloudwatch_event_rule" "admin_on_image_tag" {
     detail = {
       action-type = ["PUSH"]
       image-tag = [
-        { wildcard = var.deploy-forms-admin-container.trigger_on_tag_pattern }
+        for pattern in var.deploy-forms-admin-container.trigger_on_tag_patterns :
+        { wildcard = pattern }
       ]
       repository-name = ["forms-admin-deploy"]
     }
@@ -73,7 +74,7 @@ resource "aws_codepipeline" "deploy_admin_container" {
   name           = "deploy-forms-admin-container-${var.environment_name}"
   role_arn       = data.aws_iam_role.deployer-role.arn
   pipeline_type  = "V2"
-  execution_mode = "QUEUED"
+  execution_mode = var.deploy-forms-admin-container.pipeline_execution_mode
 
   artifact_store {
     type     = "S3"

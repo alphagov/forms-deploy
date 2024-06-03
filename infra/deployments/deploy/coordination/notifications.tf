@@ -54,6 +54,7 @@ resource "aws_sns_topic_policy" "alerts_topic_access_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid      = "AllowPublishFromServices",
         Action   = "sns:Publish"
         Effect   = "Allow"
         Resource = aws_sns_topic.alerts_topic.arn
@@ -63,6 +64,15 @@ resource "aws_sns_topic_policy" "alerts_topic_access_policy" {
             "events.amazonaws.com",
             "codestar-notifications.amazonaws.com"
           ]
+        }
+      },
+      {
+        Sid      = "AllowPublishFromAccounts"
+        Action   = "sns:Publish"
+        Effect   = "Allow"
+        Resource = aws_sns_topic.alerts_topic.arn
+        Principal = {
+          AWS = [for _, id in local.other_accounts : "arn:aws:iam::${id}:root"]
         }
       }
     ]
@@ -109,6 +119,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid      = "AllowPublishFromServices",
         Action   = "sns:Publish"
         Effect   = "Allow"
         Resource = aws_sns_topic.deployments_topic.arn
@@ -118,6 +129,15 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
             "events.amazonaws.com",
             "codestar-notifications.amazonaws.com"
           ]
+        }
+      },
+      {
+        Sid      = "AllowPublishFromAccounts"
+        Action   = "sns:Publish"
+        Effect   = "Allow"
+        Resource = aws_sns_topic.deployments_topic.arn
+        Principal = {
+          AWS = [for _, id in local.other_accounts : "arn:aws:iam::${id}:root"]
         }
       }
     ]

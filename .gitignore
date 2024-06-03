@@ -37,3 +37,9 @@ terraform.rc
 
 # Ignore python cache
 **/__pycache__/*
+
+# Vendor dirs
+**/vendor/*
+
+# Bundler
+**/.bundle/*
