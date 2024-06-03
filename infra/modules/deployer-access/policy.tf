@@ -483,12 +483,27 @@ data "aws_iam_policy_document" "pipelines" {
     sid    = "ManageRelatedIAMRoles"
     effect = "Allow"
     actions = [
-      "iam:*Role"
+      "iam:*Role",
+      "iam:*RolePolicy",
     ]
 
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-lambda-pipeline-invoker",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-lambda-paused-pipeline-invoker"
+    ]
+  }
+
+  statement {
+    sid    = "ManageLogs"
+    effect = "Allow"
+    actions = [
+      "logs:*LogEvents",
+      "logs:*LogStream",
+      "logs:*SubscriptionFilters",
+      "logs:*LogGroup",
+    ]
+    resources = [
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:/aws/lambda/*",
     ]
   }
 }
