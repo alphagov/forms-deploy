@@ -483,8 +483,7 @@ data "aws_iam_policy_document" "pipelines" {
     sid    = "ManageRelatedIAMRoles"
     effect = "Allow"
     actions = [
-      "iam:CreateRole",
-      "iam:DeleteRole",
+      "iam:*Role"
     ]
 
     resources = [
