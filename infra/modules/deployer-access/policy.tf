@@ -456,7 +456,6 @@ data "aws_iam_policy_document" "pipelines" {
       "lambda:TagResource",
       "lambda:UntagResource",
       "lambda:UpdateFunctionCode",
-      "lambda:UpdateFunctionConfiguration",
     ]
 
     resources = [
