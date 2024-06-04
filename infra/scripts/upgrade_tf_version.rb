@@ -39,6 +39,11 @@ def latest_github_release(url, allow_prerelease)
       .first
 end
 
+def github_release_exist?(url)
+  resp = Net::HTTP.get_response(URI.parse(url))
+  resp.code.to_i >= 200 && resp.code.to_i < 300
+end
+
 def canonical_provider_source(provider_config)
   provider_config["source"]
 end
@@ -146,6 +151,7 @@ end
 options = {
   allow_prerelease: false,
   force: false,
+  terraform_version: nil,
 }
 
 OptionParser.new { |opts|
@@ -157,6 +163,13 @@ OptionParser.new { |opts|
 
   opts.on("-f", "--force", "Perform upgrade procedure even if no upgrades are needed") do
     options[:force] = true
+  end
+
+  opts.on("--tf-version VERSION", String,
+          # Multiple lines of help text make it nicely formatted
+          "Set the exact version of Terraform to install.",
+          "VERSION can be in the format v1.2.3 or 1.2.3.") do |value|
+    options[:terraform_version] = value
   end
 }.parse!
 
@@ -184,13 +197,30 @@ end
 ####
 # Upgrade procedure
 ####
-puts "Getting latest Terraform version..."
+
+# @type [Gem::Version]
+target_terraform_version = nil
 current_tf_version_constraint = Gem::Requirement.new(
   json_dig(versions_file_path, %w[terraform required_version]),
 )
 
-latest_tf_release = latest_github_release("https://api.github.com/repos/hashicorp/terraform/releases", options[:allow_prerelease])
-latest_tf_version = Gem::Version.new(latest_tf_release["name"][1..])
+if options[:terraform_version].nil?
+  puts "Getting latest Terraform version..."
+
+  latest_tf_release = latest_github_release("https://api.github.com/repos/hashicorp/terraform/releases", options[:allow_prerelease])
+  latest_tf_version = Gem::Version.new(latest_tf_release["name"][1..])
+  target_terraform_version = latest_tf_version
+else
+  puts "Checking that Terraform version #{options[:terraform_version]} exists"
+  requested_tf_version = options[:terraform_version]
+  version_tag = requested_tf_version[0] == "v" ? requested_tf_version : "v#{requested_tf_version}"
+
+  if github_release_exist?("https://api.github.com/repos/hashicorp/terraform/releases/tags/#{version_tag}")
+    target_terraform_version = Gem::Version.new(version_tag[1..])
+  else
+    raise "Could not find a GitHub release for Terraform version #{requested_tf_version}"
+  end
+end
 
 # Build a map of provider source => version constraint
 # @type [Hash<String,Hash<String,String>>]
@@ -215,7 +245,7 @@ provider_latest_versions = provider_constraints.keys.map { |provider_name|
 
 # Is latest TF version an upgrade?
 _, tf_constraint_ver = Gem::Requirement.parse(current_tf_version_constraint)
-tf_upgrade_available = latest_tf_version > tf_constraint_ver
+tf_upgrade_available = target_terraform_version > tf_constraint_ver
 
 # Are any provider latest versions upgrades?
 provider_upgrade_available = provider_constraints.any? do |provider, constraint|
@@ -223,17 +253,22 @@ provider_upgrade_available = provider_constraints.any? do |provider, constraint|
   provider_latest_versions[provider] > constraint_ver
 end
 
-# Stop if there are no upgrades needed (and not forcing)
-if options[:force] == false
-  any_upgrades_available = tf_upgrade_available || provider_upgrade_available
-  raise "There are no new versions needed. Stopping." unless any_upgrades_available
+# Only check for upgrades if the desired Terraform version is not set
+if options[:terraform_version].nil?
+  # Stop if there are no upgrades needed (and not forcing)
+  # rubocop:disable Style/SoleNestedConditional
+  if options[:force] == false
+    any_upgrades_available = tf_upgrade_available || provider_upgrade_available
+    raise "There are no new versions needed. Stopping." unless any_upgrades_available
+  end
+  # rubocop:enable Style/SoleNestedConditional
 end
 
 # Warn about new major Terraform versions
-tf_latest_major, = latest_tf_version.canonical_segments
+tf_target_major, = target_terraform_version.canonical_segments
 tf_current_major, = tf_constraint_ver.canonical_segments
-if tf_latest_major > tf_current_major
-  puts "WARNING! Terraform major version is going from #{tf_current_major} to #{tf_latest_major}. There may be breaking changes"
+if tf_target_major != tf_current_major
+  puts "WARNING! Terraform major version is going from #{tf_current_major} to #{tf_target_major}. There may be breaking changes"
 end
 
 # Warn about new major provider versions
@@ -259,7 +294,7 @@ end
 puts ""
 
 # Write out new version constraints
-new_tf_constraint = Gem::Requirement.new("~> #{latest_tf_version}")
+new_tf_constraint = Gem::Requirement.new("~> #{target_terraform_version}")
 new_provider_constraints = provider_latest_versions.transform_values do |version|
   Gem::Requirement.new("~> #{version}")
 end
@@ -276,18 +311,18 @@ puts "Writing version constraints to #{versions_file_path}"
 set_terraform_version_constraints(versions_file_path, new_tf_constraint, new_provider_constraints, provider_source_to_name_map)
 
 # Install new Terraform version via tfenv
-puts "Installing Terraform #{latest_tf_version.segments[0]}.#{latest_tf_version.segments[1]}.x with tfenv"
-tfenv "install", "latest:^#{latest_tf_version.segments[0]}.#{latest_tf_version.segments[1]}"
-tfenv "use", "latest:^#{latest_tf_version.segments[0]}.#{latest_tf_version.segments[1]}"
+puts "Installing Terraform #{target_terraform_version.segments[0]}.#{target_terraform_version.segments[1]}.x with tfenv"
+tfenv "install", "latest:^#{target_terraform_version.segments[0]}.#{target_terraform_version.segments[1]}"
+tfenv "use", "latest:^#{target_terraform_version.segments[0]}.#{target_terraform_version.segments[1]}"
 # Write latest Terraform version to .terraform-version
 terraform_tool_version_file_path = repo_path(".terraform-version")
 puts "Writing Terraform version to #{terraform_tool_version_file_path}"
-File.write terraform_tool_version_file_path, latest_tf_version
+File.write terraform_tool_version_file_path, target_terraform_version
 
 # Update Terraform version in CoedBuild configurations
 Dir.glob(repo_path("infra/modules/**/terraform_version.tf.json")).each do |codebuild_vars_file|
   puts "Writing Terraform version to #{codebuild_vars_file}"
-  set_codebuild_terraform_version(codebuild_vars_file, latest_tf_version)
+  set_codebuild_terraform_version(codebuild_vars_file, target_terraform_version)
 end
 
 # Update Terraform version in GitHub Actions
