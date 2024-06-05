@@ -57,6 +57,15 @@ init_ruby_project(){
     (
         echo "Initialising Ruby project at ${DIR}"
         cd "${DIR}";
+
+        # Use already installed Ruby if running in AWS CodeBuild
+        if [ "${CODEBUILD_CI:-false}" = true ]; then
+          RBENV_VERSION="$(rbenv global)"
+          export RBENV_VERSION
+        fi
+
+        rbenv version
+
         echo "Setting bundler to install gems locally"
         bundle config set --local path 'vendor/bundle'
         echo "Excluding development and test dependency groups"
