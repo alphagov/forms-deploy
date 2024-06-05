@@ -6,7 +6,7 @@ gem "aws-sdk", "~> 3"
 gem "colorize"
 gem "notifications-ruby-client"
 gem "rspec"
-gem "rubocop-govuk", "~> 4.16"
+gem "rubocop-govuk", "~> 4.18"
 
 group :development do
   gem "debug"
