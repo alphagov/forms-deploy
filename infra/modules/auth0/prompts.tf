@@ -18,7 +18,7 @@ resource "auth0_branding" "govuk_brand" {
 
 resource "auth0_branding_theme" "govuk_theme" {
   borders {
-    button_border_weight = 2
+    button_border_weight = 1
     buttons_style        = "sharp"
     button_border_radius = 2
     input_border_weight  = 2
