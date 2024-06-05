@@ -32,6 +32,7 @@ resource "aws_s3_bucket_versioning" "state" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "state" {
+  #checkov:skip=CKV2_AWS_67:Not using CMK so CMK rotation not applicable.
   bucket = var.bucket_name
 
   rule {
