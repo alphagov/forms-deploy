@@ -90,8 +90,24 @@ data "aws_ssm_parameter" "contact_phone" {
   name = "/account/contact-phone-number"
 }
 
-data "aws_ssm_parameter" "contact_email" {
-  name = "/account/contact-email"
+resource "aws_ssm_parameter" "pagerduty_email" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
+  name  = "/account/pagerduty-email"
+  type  = "SecureString"
+  value = "dummy-email-address@digital.cabinet-office.gov.uk"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
+data "aws_ssm_parameter" "pagerduty_email" {
+  name = "/account/pagerduty-email"
+
+  depends_on = [aws_ssm_parameter.pagerduty_email]
 }
 
 resource "aws_shield_proactive_engagement" "escalation_contacts" {
@@ -99,7 +115,7 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
 
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"
-    email_address = data.aws_ssm_parameter.contact_email.value
+    email_address = data.aws_ssm_parameter.pagerduty_email.value
     phone_number  = data.aws_ssm_parameter.contact_phone.value
   }
 
