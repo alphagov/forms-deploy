@@ -114,6 +114,9 @@ data "aws_iam_policy_document" "alerts" {
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/email-zendesk",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pagerduty-integration-url",
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/automated-tests/*",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/pagerduty-email",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/contact-phone-number",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/contact-email",
     ]
     effect = "Allow"
   }
