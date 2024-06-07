@@ -11,6 +11,11 @@ module "cloudfront" {
   alb_dns_name  = aws_lb.alb.dns_name
   ip_rate_limit = var.ip_rate_limit
   ips_to_block  = var.ips_to_block
+  nat_gateway_egress_ips = [
+    aws_nat_gateway.nat_a.public_ip,
+    aws_nat_gateway.nat_b.public_ip,
+    aws_nat_gateway.nat_c.public_ip,
+  ]
 
   subject_alternative_names   = lookup(local.subject_alternative_names, var.env_name)
   alarm_subscription_endpoint = data.aws_ssm_parameter.email_zendesk.value
