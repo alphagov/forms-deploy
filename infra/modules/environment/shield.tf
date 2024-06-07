@@ -129,9 +129,8 @@ resource "aws_route53_health_check" "api" {
   fqdn              = "api.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   port              = 443
   request_interval  = "30"
-  resource_path     = "/ping"
-  search_string     = "PONG"
-  type              = "HTTPS_STR_MATCH"
+  resource_path     = "/up"
+  type              = "HTTPS"
 }
 
 resource "aws_route53_health_check" "admin" {
@@ -141,9 +140,8 @@ resource "aws_route53_health_check" "admin" {
   fqdn              = "admin.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   port              = 443
   request_interval  = "30"
-  resource_path     = "/ping"
-  search_string     = "PONG"
-  type              = "HTTPS_STR_MATCH"
+  resource_path     = "/up"
+  type              = "HTTPS"
 }
 
 resource "aws_route53_health_check" "product_page" {
@@ -153,9 +151,8 @@ resource "aws_route53_health_check" "product_page" {
   fqdn              = "product-page.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   port              = 443
   request_interval  = "30"
-  resource_path     = "/ping"
-  search_string     = "PONG"
-  type              = "HTTPS_STR_MATCH"
+  resource_path     = "/up"
+  type              = "HTTPS"
 }
 
 resource "aws_route53_health_check" "runner" {
@@ -165,9 +162,8 @@ resource "aws_route53_health_check" "runner" {
   fqdn              = "submit.${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
   port              = 443
   request_interval  = "30"
-  resource_path     = "/ping"
-  search_string     = "PONG"
-  type              = "HTTPS_STR_MATCH"
+  resource_path     = "/up"
+  type              = "HTTPS"
 }
 
 resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
