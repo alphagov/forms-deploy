@@ -1,6 +1,6 @@
 # The Certificate for CloudFront must be in us-east-1
 module "acm_certificate_with_validation" {
-  source = "../acm-cert-with-dns-validation"
+  source = "../../acm-cert-with-dns-validation"
 
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
