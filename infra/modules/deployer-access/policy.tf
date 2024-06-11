@@ -359,6 +359,7 @@ data "aws_iam_policy_document" "code-build-modules" {
       "logs:*LogEvents",
       "logs:*LogStream",
       "logs:*SubscriptionFilters",
+      "logs:*SubscriptionFilter",
       "logs:*LogGroup",
     ]
     resources = [
@@ -503,6 +504,7 @@ data "aws_iam_policy_document" "pipelines" {
       "logs:*LogEvents",
       "logs:*LogStream",
       "logs:*SubscriptionFilters",
+      "logs:*SubscriptionFilter",
       "logs:*LogGroup",
     ]
     resources = [
