@@ -669,6 +669,7 @@ data "aws_iam_policy_document" "route53" {
     actions = [
       "route53:ChangeTagsForResource",
       "route53:DeleteHealthCheck",
+      "route53:UpdateHealthCheck"
     ]
     resources = [
       "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:${var.env_name}_cloudfront_total_error_rate",
