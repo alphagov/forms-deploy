@@ -58,3 +58,9 @@ variable "cloudwatch_metrics_enabled" {
   type        = bool
   default     = false
 }
+
+variable "analytics_enabled" {
+  description = "Enables Google analytics and the cookie banner"
+  type        = bool
+  default     = false
+}

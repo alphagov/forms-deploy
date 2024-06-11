@@ -55,6 +55,7 @@ forms_runner_settings = {
   max_capacity               = 3
   enable_maintenance_mode    = false
   cloudwatch_metrics_enabled = false
+  analytics_enabled          = false
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true

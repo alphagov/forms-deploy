@@ -126,6 +126,7 @@ variable "forms_runner_settings" {
     max_capacity               = number
     enable_maintenance_mode    = bool
     cloudwatch_metrics_enabled = bool
+    analytics_enabled          = bool
   })
 }
 
