@@ -1,6 +1,6 @@
 # The Certificate for CloudFront must be in us-east-1
 module "acm_certificate_with_validation" {
-  source = "../acm-cert-with-dns-validation"
+  source = "../../acm-cert-with-dns-validation"
 
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
@@ -21,18 +21,6 @@ data "aws_cloudfront_cache_policy" "caching_policy" {
 
 data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
   name = "Managed-CORS-S3Origin"
-}
-
-data "aws_nat_gateways" "all_nat_gateways" {
-  filter {
-    name   = "tag:Name"
-    values = ["nat-a", "nat-b", "nat-c"]
-  }
-}
-
-data "aws_nat_gateway" "each_nat_gateway" {
-  for_each = toset(data.aws_nat_gateways.all_nat_gateways.ids)
-  id       = each.value
 }
 
 resource "aws_cloudfront_distribution" "main" {
@@ -128,7 +116,7 @@ resource "aws_wafv2_ip_set" "system_egress_ips" {
   scope              = "CLOUDFRONT"
   ip_address_version = "IPV4"
 
-  addresses = [for ngw in data.aws_nat_gateway.each_nat_gateway : "${ngw.public_ip}/32"]
+  addresses = [for ip in var.nat_gateway_egress_ips : "${ip}/32"]
 }
 
 resource "aws_wafv2_ip_set" "ips_to_block" {

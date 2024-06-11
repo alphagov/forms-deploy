@@ -29,6 +29,11 @@ variable "alarm_subscription_endpoint" {
   description = "Endpoint for alarm notifications from Cloudwatch"
 }
 
+variable "nat_gateway_egress_ips" {
+  type        = list(string)
+  description = "The IP addresses of all the NAT gateways used for traffic to exit the GOV.UK Forms VPC"
+}
+
 variable "ips_to_block" {
   type        = list(string)
   description = "List of Origin IPs to block"
