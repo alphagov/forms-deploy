@@ -131,6 +131,10 @@ resource "aws_route53_health_check" "api" {
   request_interval  = "30"
   resource_path     = "/up"
   type              = "HTTPS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_health_check" "admin" {
@@ -142,6 +146,10 @@ resource "aws_route53_health_check" "admin" {
   request_interval  = "30"
   resource_path     = "/up"
   type              = "HTTPS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_health_check" "product_page" {
@@ -153,6 +161,10 @@ resource "aws_route53_health_check" "product_page" {
   request_interval  = "30"
   resource_path     = "/up"
   type              = "HTTPS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_health_check" "runner" {
@@ -164,6 +176,10 @@ resource "aws_route53_health_check" "runner" {
   request_interval  = "30"
   resource_path     = "/up"
   type              = "HTTPS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
@@ -194,6 +210,10 @@ resource "aws_route53_health_check" "cloudfront_total_error_rate" {
   cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_total_error_rate.alarm_name
   cloudwatch_alarm_region         = "us-east-1"
   insufficient_data_health_status = "Healthy"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
@@ -220,6 +240,10 @@ resource "aws_route53_health_check" "ddos_detection" {
   cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.ddos_detection.alarm_name
   cloudwatch_alarm_region         = "us-east-1"
   insufficient_data_health_status = "Healthy"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 locals {
