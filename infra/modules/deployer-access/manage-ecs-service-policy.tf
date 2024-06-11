@@ -261,6 +261,7 @@ data "aws_iam_policy_document" "logs" {
       "logs:*LogEvents",
       "logs:*LogStream",
       "logs:*SubscriptionFilters",
+      "logs:*SubscriptionFilter",
       "logs:*LogGroup"
     ]
     resources = [
