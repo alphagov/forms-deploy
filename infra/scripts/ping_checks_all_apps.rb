@@ -8,7 +8,7 @@ apps = %w[admin submit api]
 
 environments.each do |environment|
   apps.each do |app|
-    uri = "https://#{app}.#{environment}.forms.service.gov.uk/ping"
+    uri = "https://#{app}.#{environment}.forms.service.gov.uk/up"
     res = Net::HTTP.get_response(URI(uri))
     if res.is_a?(Net::HTTPSuccess)
       puts "#{app} #{environment} OK"
