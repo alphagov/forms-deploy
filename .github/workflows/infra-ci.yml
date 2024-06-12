@@ -121,7 +121,7 @@ jobs:
           set -e -u -o pipefail
           mkdir "$TF_PLUGIN_CACHE_DIR"
 
-          if [[ $(git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json") -eq 0 ]]; then
+          if [[ $(git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json" | wc -l) -eq 0 ]]; then
             echo "No Terraform files have changed. Stopping";
             exit 0
           fi
