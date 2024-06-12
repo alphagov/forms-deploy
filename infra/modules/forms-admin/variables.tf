@@ -77,6 +77,12 @@ variable "cloudwatch_metrics_enabled" {
   default     = false
 }
 
+variable "analytics_enabled" {
+  description = "Enables Google analytics"
+  type        = bool
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
   type        = bool

@@ -33,6 +33,7 @@ forms_admin_settings = {
   auth_provider              = "basic_auth"
   previous_auth_provider     = null
   cloudwatch_metrics_enabled = false
+  analytics_enabled          = true
   govuk_app_domain           = ""
   synchronize_to_mailchimp   = false
 }
