@@ -33,6 +33,7 @@ forms_admin_settings = {
   auth_provider              = "basic_auth"
   previous_auth_provider     = null
   cloudwatch_metrics_enabled = false
+  analytics_enabled          = true
   govuk_app_domain           = ""
   synchronize_to_mailchimp   = false
 }
@@ -55,6 +56,7 @@ forms_runner_settings = {
   max_capacity               = 3
   enable_maintenance_mode    = false
   cloudwatch_metrics_enabled = false
+  analytics_enabled          = false
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = false

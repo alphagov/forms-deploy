@@ -90,6 +90,7 @@ variable "forms_admin_settings" {
     auth_provider              = string
     previous_auth_provider     = string
     cloudwatch_metrics_enabled = bool
+    analytics_enabled          = bool
     govuk_app_domain           = string
     synchronize_to_mailchimp   = bool
   })
@@ -126,6 +127,7 @@ variable "forms_runner_settings" {
     max_capacity               = number
     enable_maintenance_mode    = bool
     cloudwatch_metrics_enabled = bool
+    analytics_enabled          = bool
   })
 }
 
