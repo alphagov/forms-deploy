@@ -51,7 +51,7 @@ jobs:
           make spec
       - name: Lint Terraform
         id: checkov
-        uses: bridgecrewio/checkov-action@5e1be991a847050c2f6f0cbc05eb255c4eb59b2f #v12.2772.0
+        uses: bridgecrewio/checkov-action@5ec4b94cd3e2b97551965608a7413098ee737108 #v12.2780.0
         with:
           directory: infra/
           framework: terraform
