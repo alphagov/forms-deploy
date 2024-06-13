@@ -186,26 +186,22 @@ resource "aws_codepipeline" "deploy_runner_container" {
         FileName          = "image-defs.json"
       }
     }
-  }
 
-  # It isn't possible to conditionally skip or disable a stage or step in AWS CodePipeline
-  # but we need to be able to do so because we can't run the end-to-end tests in the user-research
-  # environment. We don't want to make the end-to-end tests module responsible for skipping itself
-  # because that's not its responsibility, and CodePipeline doesn't give us a lightweight way to wrap
-  # something a little bit of Bash.
-  #
-  # So a dynamic block to omit the stage completely is the solution. We'd rather all the pipelines
-  # look the same, but this seems like the best solution given the trade-offs.
-  dynamic "stage" {
-    for_each = var.deploy-forms-runner-container.disable_end_to_end_tests == false ? [1] : []
+    # It isn't possible to conditionally skip or disable an action in CodePipeline
+    # but we need to be able to do so because we can't run the end-to-end tests in the user-research
+    # environment. We don't want to make the end-to-end tests module responsible for skipping itself
+    # because that's not its responsibility, and CodePipeline doesn't give us a lightweight way to wrap
+    # something a little bit of Bash.
+    #
+    # So a dynamic block to omit the action completely is the solution. We'd rather all the pipelines
+    # look the same, but this seems like the best solution given the trade-offs.
+    dynamic "action" {
+      for_each = var.deploy-forms-runner-container.disable_end_to_end_tests == false ? [1] : []
 
-    content {
-      name = "test"
-
-      action {
+      content {
         name            = "run-end-to-end-tests"
         category        = "Build"
-        run_order       = "1"
+        run_order       = 3
         owner           = "AWS"
         provider        = "CodeBuild"
         version         = "1"
