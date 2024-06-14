@@ -168,7 +168,7 @@ resource "aws_codepipeline" "apply_terroform" {
       name = "run-e2e-test"
 
       action {
-        name            = "run-runner-end-to-end-tests"
+        name            = "run-end-to-end-tests"
         category        = "Build"
         run_order       = "1"
         owner           = "AWS"
