@@ -12,14 +12,38 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 10
 
-  # Maintain dependencies for forms-cli
+  # Maintain Python dependencies (for Checkov)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  # Maintain Ruby dependencies
   - package-ecosystem: "bundler"
     directory: "/support/forms-cli"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
 
-  # Maintain dependencies for custom Terraform checks using RSpec
+  - package-ecosystem: "bundler"
+    directory: "/support/pipeline-visualiser"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "bundler"
+    directory: "/support/paused-pipeline-detector"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "bundler"
+    directory: "/infra/deployments/forms/pipelines/pipeline-invoker"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
   - package-ecosystem: "bundler"
     directory: "/infra"
     schedule:
