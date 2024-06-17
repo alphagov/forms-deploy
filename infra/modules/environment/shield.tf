@@ -86,10 +86,6 @@ resource "aws_shield_protection_group" "protected_resources" {
   ]
 }
 
-data "aws_ssm_parameter" "contact_phone" {
-  name = "/account/contact-phone-number"
-}
-
 resource "aws_ssm_parameter" "pagerduty_email" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
@@ -110,13 +106,33 @@ data "aws_ssm_parameter" "pagerduty_email" {
   depends_on = [aws_ssm_parameter.pagerduty_email]
 }
 
+resource "aws_ssm_parameter" "pagerduty_phone_number" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
+  name  = "/account/pagerduty-phone-number"
+  type  = "SecureString"
+  value = "+1234567890"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
+data "aws_ssm_parameter" "pagerduty_phone_number" {
+  name = "/account/pagerduty-phone-number"
+
+  depends_on = [aws_ssm_parameter.pagerduty_phone_number]
+}
+
 resource "aws_shield_proactive_engagement" "escalation_contacts" {
   enabled = true
 
   emergency_contact {
     contact_notes = "GOV.UK Forms Infrastructure Team"
     email_address = data.aws_ssm_parameter.pagerduty_email.value
-    phone_number  = data.aws_ssm_parameter.contact_phone.value
+    phone_number  = data.aws_ssm_parameter.pagerduty_phone_number.value
   }
 
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
