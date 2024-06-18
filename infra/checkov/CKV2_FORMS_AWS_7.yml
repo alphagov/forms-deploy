@@ -1,0 +1,14 @@
+---
+metadata:
+  name: "Check that changes to the value of SSM parameters are ignored"
+  id: "CKV2_FORMS_AWS_7"
+  category: "SECRETS"
+scope:
+  provider: "AWS"
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "aws_ssm_parameter"
+  attribute: "lifecycle.ignore_changes"
+  operator: "contains"
+  value: "value"
