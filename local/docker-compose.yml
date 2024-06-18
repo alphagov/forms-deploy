@@ -30,7 +30,6 @@ services:
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
-      - RAILS_LOG_TO_STDOUT=1
       - SECRET_KEY_BASE=assets
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
@@ -88,7 +87,6 @@ services:
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
-      - RAILS_LOG_TO_STDOUT=1
       - SECRET_KEY_BASE=dummyvalue
     ports:
       - "3002:3002"
@@ -119,7 +117,6 @@ services:
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
-      - RAILS_LOG_TO_STDOUT=1
       - REDIS_URL=redis://redis/
       - SECRET_KEY_BASE=dummyvalue
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
