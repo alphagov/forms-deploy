@@ -49,14 +49,14 @@ jobs:
       - name: Run specs
         run: |
           make spec
-      - name: Lint Terraform
-        id: checkov
-        uses: bridgecrewio/checkov-action@14c88c26b9f00ee21d2843096d5807e4e4353e57 #v12.2783.0
+      - uses: actions/setup-python@v5
         with:
-          directory: infra/
-          framework: terraform
-          quiet: true #Only show failed checks
-          external_checks_dirs: infra/checkov/
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Lint Terraform
+        run: |
+          pip install -r requirements.txt
+          checkov -d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet
       - name: Lint shell scripts
         run: |
           # we don't have non-alpha-numeric file names
