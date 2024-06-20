@@ -42,15 +42,15 @@ We have a lot of Terraform code, across a lot of distinct root modules. To keep 
 To simplify performing the upgrade, you can run 
 
 ```
-./infra/scripts/upgrade_tf_versions.sh
+./infra/scripts/upgrade_tf_version.rb
 ```
 
-This will find the latest version of Terraform and the AWS provider, update the versions file with it, and then update the lock files in each root.
+This will find the latest version of Terraform and all of the Terraform providers we use, update the versions file with them, and then update the lock files in each root.
 
-By default the version selected will be the latest full release. If you need to allow the script to pick a pre-release version, set the `ALLOW_PRERELEASE` environment variable to true
+By default the version selected will be the latest full release. If you need to allow the script to pick a pre-release version, use the `--allow-prerelease` flag.
 
 ```
-ALLOW_PRERELEASE=true ./infra/scripts/upgrade_tf_versions.sh
+./infra/scripts/upgrade_tf_version.rb --allow-prerelease
 ```
 
 Performing a Terraform upgrade can take a long time, and is prone to failure as a result of network failures. It is useful to perform the upgrade on a fresh checkout of the repository in a temporary directory.
