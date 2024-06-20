@@ -15,6 +15,7 @@ resource "aws_iam_user_policy_attachment" "attach" {
 
 resource "aws_ssm_parameter" "auth0_smtp_username" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+  #checkov:skip=CKV2_FORMS_AWS_7:We know the correct value at runtime and should not ignore changes to it
 
   name  = "/ses/auth0/smtp-username"
   type  = "SecureString"
@@ -23,6 +24,7 @@ resource "aws_ssm_parameter" "auth0_smtp_username" {
 
 resource "aws_ssm_parameter" "auth0_smtp_password" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+  #checkov:skip=CKV2_FORMS_AWS_7:We know the correct value at runtime and should not ignore changes to it
 
   name  = "/ses/auth0/smtp-password"
   type  = "SecureString"
