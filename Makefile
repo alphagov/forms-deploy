@@ -83,6 +83,10 @@ show_info:
 	@echo "=> Target environment:     $${TARGET_ENVIRONMENT}"
 	@echo "=> Target deployment:      $${TARGET_DEPLOYMENT}"
 	@echo "=> Terraform root:         $${TARGET_TF_ROOT}"
+	@if env | grep "TF_VAR_" >/dev/null &2>1; then \
+  		echo "=> Overridden Terraform variables:"; \
+  		env | grep TF_VAR_ | sed 's/^TF_VAR_//g' | xargs printf "\t%s\n"; \
+  	fi
 	@echo "========"
 	@echo ""
 
