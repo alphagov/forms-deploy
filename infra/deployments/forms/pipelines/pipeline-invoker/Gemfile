@@ -2,5 +2,5 @@
 
 source "https://rubygems.org"
 
-gem "aws-sdk-codepipeline", "~> 1.74"
+gem "aws-sdk-codepipeline", "~> 1.75"
 gem "rubocop-govuk", "~> 4.18"
