@@ -18,7 +18,7 @@ environmental_settings = {
     ".mod.uk",
     "@cefas.co.uk",
     "@certoffice.org",
-    "@ddc-mod.uk",
+    "@ddc-mod.org",
     "@hs2.org.uk",
     "@innovateuk.ukri.org",
     "@mod.uk",
