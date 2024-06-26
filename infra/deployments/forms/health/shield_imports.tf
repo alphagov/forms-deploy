@@ -6,42 +6,42 @@ locals {
     "dev"           = "0932e17f-d696-4f0d-86da-8762a4061af1",
     "staging"       = "4418859f-5ca7-4dfb-8164-4feaddb438ee",
     "production"    = "b35bfe8d-7a0b-45fe-995d-3bef3d1cda03",
-    "user_research" = "d0bf8280-d5eb-4b5b-80d4-2edf28fed417"
+    "user-research" = "d0bf8280-d5eb-4b5b-80d4-2edf28fed417"
   }
 
   shield_alb_protection_ids = {
     "dev"           = "40c1f53d-d590-491a-94f8-57c608d47255",
     "staging"       = "cb681d8b-ef5f-4192-8868-e4fe98be5ab6",
     "production"    = "e980d478-f679-41a3-9d97-79fa6ddb018b",
-    "user_research" = "59490a83-1a65-4643-b56a-eae740e7aeb3"
+    "user-research" = "59490a83-1a65-4643-b56a-eae740e7aeb3"
   }
 
   shield_role_arn_association_ids = {
     "dev"           = data.aws_caller_identity.current.account_id,
     "staging"       = data.aws_caller_identity.current.account_id,
     "production"    = data.aws_caller_identity.current.account_id,
-    "user_research" = data.aws_caller_identity.current.account_id
+    "user-research" = data.aws_caller_identity.current.account_id
   }
 
   shield_proactive_engagement_ids = {
     "dev"           = data.aws_caller_identity.current.account_id,
     "staging"       = data.aws_caller_identity.current.account_id,
     "production"    = data.aws_caller_identity.current.account_id,
-    "user_research" = data.aws_caller_identity.current.account_id
+    "user-research" = data.aws_caller_identity.current.account_id
   }
 
   r53_healthcheck_api_id = {
     "dev"           = "",
     "staging"       = "",
     "production"    = "774584fc-c0bc-47e3-8f56-f1f322b8d1f9",
-    "user_research" = ""
+    "user-research" = ""
   }
 
   r53_healthcheck_admin_id = {
     "dev"           = "",
     "staging"       = "",
     "production"    = "bce539df-5615-48c6-816f-621390401b80",
-    "user_research" = ""
+    "user-research" = ""
   }
 
 
@@ -49,28 +49,28 @@ locals {
     "dev"           = "",
     "staging"       = "",
     "production"    = "8025bfc1-8bc3-4ba3-bd9b-550d5c96b04a",
-    "user_research" = ""
+    "user-research" = ""
   }
 
   r53_healthcheck_runner_id = {
     "dev"           = "",
     "staging"       = "",
     "production"    = "1eb2cd45-d39c-4caf-abd0-c5dcdfe6020b",
-    "user_research" = ""
+    "user-research" = ""
   }
 
   r53_healthcheck_cf_total_error_rate_id = {
     "dev"           = "",
     "staging"       = "",
     "production"    = "c5e532b5-adc1-4bb4-aec9-b9e13bbb01de",
-    "user_research" = ""
+    "user-research" = ""
   }
 
   r53_healthcheck_ddos_detection_id = {
     "dev"           = "",
     "staging"       = "",
     "production"    = "05dc08ae-bfb2-42ed-839e-51e7a54a82af",
-    "user_research" = ""
+    "user-research" = ""
   }
 
   r53_healthcheck_target_groups_ids = {
@@ -103,7 +103,7 @@ locals {
     "dev"           = "",
     "staging"       = "",
     "production"    = "5357ee7d-4b68-4900-a134-c28be0488de0",
-    "user_research" = ""
+    "user-research" = ""
   }
 }
 

@@ -6,21 +6,21 @@ locals {
     "dev"           = "269cda6b-9af8-4f11-8597-7d5ed92ae6b7",
     "staging"       = "3e02f944-d792-4130-bd20-83d0791569d7",
     "production"    = "c2b560ae-0fb1-4fb6-82a6-08a28e83357c",
-    "user_research" = "2d4ffc20-a580-419e-a904-9d8bcf273c1a"
+    "user-research" = "2d4ffc20-a580-419e-a904-9d8bcf273c1a"
   }
 
   zendesk_subscription_guids = {
     "dev"           = null,
     "staging"       = null,
     "production"    = "950c742e-c556-4d96-9e0f-371ee65ae2ca",
-    "user_research" = null
+    "user-research" = null
   }
 
   topic_kms_key_ids = {
     "dev"           = "03fa99fc-e1cf-4cff-97c2-15459178b44b",
     "staging"       = "42d015e1-2ddc-4dd9-a224-8809beadcf3c",
     "production"    = "ca8c379c-b1d8-4087-84fb-f7bed3db8e0b",
-    "user_research" = "7c283803-654c-4928-8427-de48599f8a76"
+    "user-research" = "7c283803-654c-4928-8427-de48599f8a76"
   }
 }
 
