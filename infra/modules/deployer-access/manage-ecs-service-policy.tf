@@ -242,7 +242,8 @@ data "aws_iam_policy_document" "autoscaling" {
     actions = [
       "cloudwatch:*Alarms",
       "cloudwatch:*Alarm",
-      "cloudwatch:ListTagsForResource"
+      "cloudwatch:ListTagsForResource",
+      "cloudwatch:TagResource"
     ]
     resources = [
       "arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.env_name]}:*",

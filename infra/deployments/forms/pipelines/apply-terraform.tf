@@ -7,6 +7,7 @@ locals {
     "forms-runner",
     "forms-api",
     "forms-admin",
+    "health",
     "pipelines",
     "rds",
     "redis",

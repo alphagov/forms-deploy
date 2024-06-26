@@ -59,6 +59,7 @@ data "aws_iam_policy_document" "acm-cert-with-dns-validation" {
 }
 
 data "aws_iam_policy_document" "cloudfront" {
+  #checkov:skip=CKV_AWS_356
   statement {
     sid    = "ManageCloudfrontDistribution"
     effect = "Allow"
@@ -178,7 +179,8 @@ data "aws_iam_policy_document" "cloudfront" {
       "logs:DescribeLogGroups",
       "logs:*LogDelivery",
       "logs:PutResourcePolicy",
-      "logs:DescribeResourcePolicies"
+      "logs:DescribeResourcePolicies",
+      "logs:TagResource"
     ]
     resources = [
       "*",
