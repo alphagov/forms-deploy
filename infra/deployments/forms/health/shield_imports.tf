@@ -166,28 +166,28 @@ import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_api_id[var.environment_name]
-  to = aws_route53_health_check.api
+  to = aws_route53_health_check.api[0]
 }
 
 import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_admin_id[var.environment_name]
-  to = aws_route53_health_check.admin
+  to = aws_route53_health_check.admin[0]
 }
 
 import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_product_page_id[var.environment_name]
-  to = aws_route53_health_check.product_page
+  to = aws_route53_health_check.product_page[0]
 }
 
 import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_runner_id[var.environment_name]
-  to = aws_route53_health_check.runner
+  to = aws_route53_health_check.runner[0]
 }
 
 import {
@@ -201,7 +201,7 @@ import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_cf_total_error_rate_id[var.environment_name]
-  to = aws_route53_health_check.cloudfront_total_error_rate
+  to = aws_route53_health_check.cloudfront_total_error_rate[0]
 }
 
 import {
@@ -215,7 +215,7 @@ import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_ddos_detection_id[var.environment_name]
-  to = aws_route53_health_check.ddos_detection
+  to = aws_route53_health_check.ddos_detection[0]
 }
 
 import {
@@ -229,14 +229,14 @@ import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = local.r53_healthcheck_aggregated_id[var.environment_name]
-  to = aws_route53_health_check.aggregated
+  to = aws_route53_health_check.aggregated[0]
 }
 
 import {
   for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? [1] : []
 
   id = "${local.shield_cloudfront_protection_ids[var.environment_name]}+arn:aws:route53:::healthcheck/${local.r53_healthcheck_aggregated_id[var.environment_name]}"
-  to = aws_shield_protection_health_check_association.system_health
+  to = aws_shield_protection_health_check_association.system_health[0]
 }
 
 import {
