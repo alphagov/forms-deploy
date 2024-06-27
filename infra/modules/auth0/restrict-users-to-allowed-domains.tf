@@ -33,8 +33,3 @@ resource "auth0_trigger_actions" "pre_user_registration_flow" {
     display_name = auth0_action.restrict_users_to_allowed_domains.name
   }
 }
-
-moved {
-  from = auth0_action.restrict_users_to_govuk_domains
-  to   = auth0_action.restrict_users_to_allowed_domains
-}

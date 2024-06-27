@@ -46,32 +46,3 @@ resource "aws_route53_record" "apex-domain" {
     evaluate_target_health = true
   }
 }
-
-removed {
-  from = aws_route53_zone.public
-
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_route53_record.delegate_staging_domain
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_route53_record.delegate_research_domain
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_route53_record.delegate_dev_domain
-  lifecycle {
-    destroy = false
-  }
-}

@@ -19,13 +19,3 @@ module "forms_runner" {
   cloudwatch_metrics_enabled = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled          = var.forms_runner_settings.analytics_enabled
 }
-
-import {
-  to = module.forms_runner.aws_ssm_parameter.forms_api_key
-  id = "/forms-runner-${var.environment_name}/forms-api-key"
-}
-
-import {
-  to = module.forms_runner.aws_ssm_parameter.notify_api_key
-  id = "/forms-runner-${var.environment_name}/notify-api-key"
-}
