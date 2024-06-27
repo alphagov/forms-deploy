@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+##
+# This script is run by invoke-terraform.sh before `terraform init` is called in this directory.
+# It initialises the Ruby projects that this Terraform root depends on.
+##
+
 repo_root="${1}"
 
 init_ruby_project(){
