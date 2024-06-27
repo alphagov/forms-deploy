@@ -1,0 +1,8 @@
+version: 0.2
+artifacts:
+  enable-symlinks: yes
+phases:
+  build:
+    commands:
+      - echo "Waiting for the following services to be stable ${ECS_SERVICES}"
+      - aws ecs wait services-stable --cluster "${ECS_CLUSTER}" --services $(echo "${ECS_SERVICES}" | tr ',' ' ')

@@ -31,7 +31,8 @@ deploy-forms-admin-container = {
 }
 
 apply-terraform = {
-  pipeline_trigger    = "GIT"
-  git_source_branch   = "main"
-  previous_stage_name = null
+  pipeline_trigger         = "GIT"
+  git_source_branch        = "main"
+  previous_stage_name      = null
+  disable_end_to_end_tests = false
 }

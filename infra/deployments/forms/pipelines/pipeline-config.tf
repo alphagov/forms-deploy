@@ -130,6 +130,10 @@ variable "apply-terraform" {
 
     # The name of the pipeline whose success will trigger the pipeline when pipeline_trigger = EVENT
     previous_stage_name = string
+
+    # It isn't possible to perform the end-to-end tests in the user-research environment because
+    # it doesn't have Auth0 configured. Therefore we need to be able disable that step there.
+    disable_end_to_end_tests = bool
   })
 
   validation {
