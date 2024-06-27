@@ -31,7 +31,8 @@ deploy-forms-admin-container = {
 }
 
 apply-terraform = {
-  pipeline_trigger    = "EVENT"
-  git_source_branch   = null
-  previous_stage_name = "staging"
+  pipeline_trigger         = "EVENT"
+  git_source_branch        = null
+  previous_stage_name      = "staging"
+  disable_end_to_end_tests = true
 }

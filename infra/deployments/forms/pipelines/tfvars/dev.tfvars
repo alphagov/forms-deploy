@@ -43,7 +43,8 @@ deploy-forms-admin-container = {
 }
 
 apply-terraform = {
-  pipeline_trigger    = "MANUAL"
-  git_source_branch   = "poc-pipelines-in-environments"
-  previous_stage_name = ""
+  pipeline_trigger         = "MANUAL"
+  git_source_branch        = "poc-pipelines-in-environments"
+  previous_stage_name      = ""
+  disable_end_to_end_tests = false
 }
