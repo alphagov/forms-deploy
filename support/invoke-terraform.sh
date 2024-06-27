@@ -64,21 +64,13 @@ case "${deployment}+${tf_root}" in
         ;;
 esac
 
-case "${environment}+${deployment}" in
-    "deploy+account")
-        # The 'deploy' environment has its own 'account' root module
-        echo "The 'deploy' environment has its own 'account' root module. To configure it, use the 'deploy/account' root"
-        exit 2
-        ;;
-esac
-
 # Handlers
 pre_init() {
   pre_init_script="${src_dir}/pre-init.sh"
   if [ -e "${pre_init_script}" ]; then
     echo "PRE-INIT: Running pre-init script ${pre_init_script}"
     set -e
-    bash "${pre_init_script}" "${root_dir}" | sed  's/^/[PRE-INIT] /'
+    bash "${pre_init_script}" "${root_dir}" "${environment}"| sed  's/^/[PRE-INIT] /'
     set +e
   else
     echo "PRE-INIT: No pre-init script found at ${pre_init_script}"
@@ -106,7 +98,7 @@ pre_apply() {
   if [ -e "${pre_apply_script}" ]; then
     echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
     set -e
-    bash "${pre_apply_script}" "${root_dir}"  | sed  's/^/[PRE-APPLY] /'
+    bash "${pre_apply_script}" "${root_dir}" "${environment}" | sed  's/^/[PRE-APPLY] /'
     set +e
   else
     echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
