@@ -53,51 +53,14 @@ if [ -z "${action}" ] || [ -z "${deployment}" ] || [ -z "${environment}" ]; then
     usage
 fi
 
-init_ruby_project(){
-    DIR="${1}"
-    (
-        echo "Initialising Ruby project at ${DIR}"
-        cd "${DIR}";
-
-        # Use already installed Ruby if running in AWS CodeBuild
-        if [ "${CODEBUILD_CI:-false}" = true ]; then
-          RBENV_VERSION="$(rbenv global)"
-          export RBENV_VERSION
-        fi
-
-        rbenv version
-
-        echo "Setting bundler to install gems locally"
-        bundle config set --local path 'vendor/bundle'
-        echo "Excluding development and test dependency groups"
-        bundle config set --local without "development" "test"
-        bundle install
-        echo "Reverting bundler to install gems globally"
-        bundle config set --local system 'true'
-        echo "Reverting bundler to install development and test dependency groups"
-        bundle config unsset --local without
-    )
-}
-
 # Set source directory
 src_dir="${deployments_dir}/${deployment}/${tf_root}"
+
 ## Consider special combinations of deployment, environment, and root
 case "${deployment}+${tf_root}" in
     "account+account")
         # The `account` deployment is its own root, so doesn't need an extra directory appending
         src_dir="${deployments_dir}/${deployment}"
-        ;;
-    "forms+pipelines")
-        init_ruby_project "infra/deployments/forms/pipelines/pipeline-invoker"
-        init_ruby_project "support/paused-pipeline-detector"
-        ;;
-    "forms+rds")
-        if [ "${TF_VAR_apply_immediately:=false}" == true ]; then
-            echo "Database changes will be applied immediately"
-        else
-            echo "Database changes will be applied at the next maintenance window"
-            echo "To apply changes immediately, set the environment variable 'TF_VAR_apply_immediately' to 'true'"
-        fi
         ;;
 esac
 
@@ -114,7 +77,7 @@ pre_init() {
   pre_init_script="${src_dir}/pre-init.sh"
   if [ -e "${pre_init_script}" ]; then
     echo "PRE-INIT: Running pre-init script ${pre_init_script}"
-    bash "${pre_init_script}" "${root_dir}"
+    bash "${pre_init_script}" "${root_dir}" | sed  's/^/[PRE-INIT] /'
   else
     echo "PRE-INIT: No pre-init script found at ${pre_init_script}"
   fi
@@ -140,7 +103,7 @@ pre_apply() {
   pre_apply_script="${src_dir}/pre-apply.sh"
   if [ -e "${pre_apply_script}" ]; then
     echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
-    bash "${pre_apply_script}" "${root_dir}"
+    bash "${pre_apply_script}" "${root_dir}"  | sed  's/^/[PRE-APPLY] /'
   else
     echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
   fi
@@ -199,6 +162,7 @@ case "${action}" in
         init
         ;;
     plan)
+        pre_apply # We use pre_apply here so that a plan and application look as similar as possible
         plan_apply_validate "plan"
         ;;
 
