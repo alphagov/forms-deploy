@@ -3,6 +3,7 @@
 set -euo pipefail
 
 script_dir="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+root_dir="$(realpath "${script_dir}/../")"
 deployments_dir="$(realpath "${script_dir}/../infra/deployments/")"
 
 action=""
@@ -109,6 +110,16 @@ case "${environment}+${deployment}" in
 esac
 
 # Handlers
+pre_init() {
+  pre_init_script="${src_dir}/pre-init.sh"
+  if [ -e "${pre_init_script}" ]; then
+    echo "PRE-INIT: Running pre-init script ${pre_init_script}"
+    bash "${pre_init_script}" "${root_dir}"
+  else
+    echo "PRE-INIT: No pre-init script found at ${pre_init_script}"
+  fi
+}
+
 init(){
     extra_args=""
 
@@ -123,6 +134,16 @@ init(){
         -reconfigure \
         -upgrade \
         ${extra_args}
+}
+
+pre_apply() {
+  pre_apply_script="${src_dir}/pre-apply.sh"
+  if [ -e "${pre_apply_script}" ]; then
+    echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
+    bash "${pre_apply_script}" "${root_dir}"
+  else
+    echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
+  fi
 }
 
 plan_apply_validate(){
@@ -170,9 +191,11 @@ post_apply() {
 
 case "${action}" in
     apply)
+        pre_apply
         plan_apply_validate "apply"
         ;;
-    init)
+    init)#
+        pre_init
         init
         ;;
     plan)
