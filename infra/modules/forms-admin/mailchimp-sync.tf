@@ -92,7 +92,7 @@ resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
       lastStatus = ["STOPPED"]
       containers = {
         name     = [local.mailchimp_sync_container_definitions.name]
-        exitCode = [{ "anything-but" : ["0"] }]
+        exitCode = [{ "anything-but" : [0] }]
       }
     }
   })
