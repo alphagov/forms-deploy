@@ -95,9 +95,6 @@ data "aws_iam_policy_document" "key_policy" {
 resource "aws_sns_topic" "alert_zendesk" {
   name              = "alert_zendesk_${var.environment}"
   kms_master_key_id = aws_kms_key.topic_sse.key_id
-  policy = jsonencode({
-
-  })
 }
 
 resource "aws_sns_topic_policy" "zendesk_topic_access_policy" {
