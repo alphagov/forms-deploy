@@ -11,6 +11,7 @@ The components which make up the service are:
 https://github.com/alphagov/forms-runner
 https://github.com/alphagov/forms-api
 https://github.com/alphagov/forms-admin
+https://github.com/alphagov/forms-product-page
 
 ## How it works
 Each of the components above has a Dockerfile in its repo which is used to build
@@ -47,6 +48,7 @@ Your directory structure should look like this:
 top-level/
 ├── forms-admin
 ├── forms-api
+├── forms-product-page
 └── forms-runner
 └── forms-deploy
     └── local
@@ -58,6 +60,8 @@ Then run:
 ```bash
 docker-compose up
 ```
+
+Note that you might need to disconnect from the GDS VPN when running this script as otherwise npm might fail to install packages.
 
 Wait a while as the images are downloaded and built. Eventually you should see
 the screen fill with logging information as the postgres, redis and the forms
