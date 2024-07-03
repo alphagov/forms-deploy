@@ -40,3 +40,5 @@ terraform.rc
 
 # Bundler
 **/.bundle/*
+
+.DS_Store
