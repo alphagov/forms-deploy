@@ -10,7 +10,7 @@ gem "aws-sdk-codepipeline", "~> 1.75"
 gem "concurrent-ruby", require: "concurrent"
 gem "rackup", "~> 2.1"
 gem "rspec", "~> 3.13"
-gem "rubocop-govuk", "~> 4.18"
+gem "rubocop-govuk", "~> 5.0"
 gem "sinatra", "~> 4.0"
 
 group :development, :test do
