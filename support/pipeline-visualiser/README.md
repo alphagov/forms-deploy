@@ -12,7 +12,18 @@ It assumes each of the roles described in `config.yml`, reads from the CodePipel
 
 ## How can I run it in development?
 
-To be able to run it in development, you must have at least readonly permission in the `deploy` AWS account. 
+### With fake data
+
+Install the dependencies, and use the Make target `dev`
+
+```
+bundle install
+make dev
+```
+
+### With real data
+
+To be able to run it in development with real data, you must have at least readonly permission in the `deploy` AWS account.
 
 To run the code successfully, first assume the `readonly` role in the `deploy` account
 
