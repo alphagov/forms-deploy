@@ -35,7 +35,8 @@ forms_admin_settings = {
   auth_provider              = "auth0"
   previous_auth_provider     = "gds_sso"
   cloudwatch_metrics_enabled = true
-  analytics_enabled          = true
+  analytics_enabled          = false
+  act_as_user_enabled        = true
   govuk_app_domain           = "staging.publishing.service.gov.uk"
   synchronize_to_mailchimp   = false
 }

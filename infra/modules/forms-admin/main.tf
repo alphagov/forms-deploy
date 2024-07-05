@@ -153,6 +153,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__ANALYTICS_ENABLED",
       value = var.analytics_enabled
+    },
+    {
+      name  = "SETTINGS__ACT_AS_USER_ENABLED",
+      value = var.act_as_user_enabled
     }
   ]
 
