@@ -91,6 +91,7 @@ variable "forms_admin_settings" {
     previous_auth_provider     = string
     cloudwatch_metrics_enabled = bool
     analytics_enabled          = bool
+    act_as_user_enabled        = bool
     govuk_app_domain           = string
     synchronize_to_mailchimp   = bool
   })

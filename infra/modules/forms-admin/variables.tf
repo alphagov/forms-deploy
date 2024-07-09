@@ -83,6 +83,12 @@ variable "analytics_enabled" {
   default     = false
 }
 
+variable "act_as_user_enabled" {
+  description = "Enables act as user functionality for super admins"
+  type        = bool
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
   type        = bool
