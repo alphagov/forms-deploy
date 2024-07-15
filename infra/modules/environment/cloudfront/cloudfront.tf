@@ -325,7 +325,8 @@ resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
     Rule   = "OriginIPRateLimit"
   }
 
-  alarm_actions = [aws_sns_topic.cloudwatch_alarms.arn]
+  treat_missing_data = "notBreaching"
+  alarm_actions      = [aws_sns_topic.cloudwatch_alarms.arn]
 
   depends_on = [aws_sns_topic.cloudwatch_alarms]
 }
