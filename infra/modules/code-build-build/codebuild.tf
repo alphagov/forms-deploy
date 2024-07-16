@@ -2,6 +2,7 @@ locals {
   deployer_roles = {
     "user-research" = "arn:aws:iam::619109835131:role/deployer-user-research"
     "dev"           = "arn:aws:iam::498160065950:role/deployer-dev"
+    "dev-two"       = "arn:aws:iam::590183811416:role/deployer-dev-two"
     "staging"       = "arn:aws:iam::972536609845:role/deployer-staging"
     "production"    = "arn:aws:iam::443944947292:role/deployer-production"
     "deploy"        = "NO_SUCH_ROLE" # Deploy account doesn't have a deployer role
