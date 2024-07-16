@@ -19,6 +19,7 @@ locals {
 
   account_ids = {
     "dev"           = "498160065950"
+    "dev-two"       = "590183811416"
     "staging"       = "972536609845"
     "production"    = "443944947292"
     "user-research" = "619109835131"
