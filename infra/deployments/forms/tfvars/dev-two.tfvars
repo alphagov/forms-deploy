@@ -6,7 +6,7 @@ environment_name = "dev-two"
 environment_type = "development"
 environmental_settings = {
   auth0_domain                             = "govuk-forms-dev.uk.auth0.com"
-  disable_auth0                            = false
+  disable_auth0                            = true
   enable_auth0_splunk_log_stream           = false
   pause_databases_on_inactivity            = false
   pause_databases_after_inactivity_seconds = 300
@@ -20,7 +20,7 @@ environmental_settings = {
 }
 hosted_zone_id             = "Z0681026312FHG53240YA"
 root_domain                = "dev-two.forms.service.gov.uk"
-cloudfront_distribution_id = ""
+cloudfront_distribution_id = "E2WYSRMIAI5DSB"
 codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:590183811416:connection/2df0ab61-2576-48a5-ba47-63f941c398a0"
 container_repository       = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 forms_admin_settings = {

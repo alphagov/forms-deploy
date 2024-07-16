@@ -7,18 +7,18 @@ terraform {
 }
 
 data "aws_ssm_parameter" "auth0_client_id" {
-  count = var.environmental_settings.disable_auth0 ? 0 : 1
+#   count = var.environmental_settings.disable_auth0 ? 0 : 1
   name  = "/terraform/auth0-access/client-id"
 }
 
 data "aws_ssm_parameter" "auth0_client_secret" {
-  count = var.environmental_settings.disable_auth0 ? 0 : 1
+#   count = var.environmental_settings.disable_auth0 ? 0 : 1
   name  = "/terraform/auth0-access/client-secret"
 }
 
 locals {
-  auth0_client_id     = var.environmental_settings.disable_auth0 ? "" : data.aws_ssm_parameter.auth0_client_id[0].value
-  auth0_client_secret = var.environmental_settings.disable_auth0 ? "" : data.aws_ssm_parameter.auth0_client_secret[0].value
+  auth0_client_id     = var.environmental_settings.disable_auth0 ? "" : data.aws_ssm_parameter.auth0_client_id.value
+  auth0_client_secret = var.environmental_settings.disable_auth0 ? "" : data.aws_ssm_parameter.auth0_client_secret.value
 }
 
 provider "auth0" {
