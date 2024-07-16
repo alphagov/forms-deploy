@@ -13,6 +13,13 @@ dns_delegation_records = {
     "ns-593.awsdns-10.net",
   ],
 
+  "dev-two.forms.service.gov.uk" = [
+    "ns-1289.awsdns-33.org",
+    "ns-140.awsdns-17.com",
+    "ns-1715.awsdns-22.co.uk",
+    "ns-841.awsdns-41.net",
+  ],
+
   "staging.forms.service.gov.uk" = [
     "ns-1162.awsdns-17.org",
     "ns-1604.awsdns-08.co.uk",

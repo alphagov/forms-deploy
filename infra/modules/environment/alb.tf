@@ -6,6 +6,7 @@ locals {
   domain_names = {
     user-research = "research.",
     dev           = "dev."
+    dev-two       = "dev-two."
     staging       = "staging.",
     production    = ""
   }
@@ -22,6 +23,12 @@ locals {
       "admin.dev.forms.service.gov.uk",
       "submit.dev.forms.service.gov.uk",
       "www.dev.forms.service.gov.uk",
+    ],
+    dev-two = [
+      "api.dev-two.forms.service.gov.uk",
+      "admin.dev-two.forms.service.gov.uk",
+      "submit.dev-two.forms.service.gov.uk",
+      "www.dev-two.forms.service.gov.uk",
     ],
     staging = [
       "api.staging.forms.service.gov.uk",
