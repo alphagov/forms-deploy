@@ -10,6 +10,7 @@ locals {
   apex_domains = {
     user-research : "research.forms.service.gov.uk",
     dev : "dev.forms.service.gov.uk",
+    dev-two: "dev-two.forms.service.gov.uk",
     staging : "staging.forms.service.gov.uk",
     production : "forms.service.gov.uk",
   }
