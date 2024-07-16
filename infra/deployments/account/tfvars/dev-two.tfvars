@@ -1,0 +1,9 @@
+account_name            = "dev-two"
+aws_account_id          = "590183811416"
+environment_name        = "dev-two"
+environment_type        = "development"
+hosted_zone_id          = ""
+require_vpn_to_access   = false
+apex_domain             = "dev-two.forms.service.gov.uk"
+dns_delegation_records  = {}
+codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:590183811416:connection/2df0ab61-2576-48a5-ba47-63f941c398a0"
