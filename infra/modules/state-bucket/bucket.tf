@@ -18,9 +18,12 @@ resource "aws_s3_bucket_public_access_block" "state" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_acl" "state" {
-  bucket = var.bucket_name
-  acl    = "private"
+resource "aws_s3_bucket_ownership_controls" "owner" {
+  bucket = aws_s3_bucket.state.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "state" {
