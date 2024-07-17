@@ -44,7 +44,7 @@ variable "favicon_url_path" {
 
 variable "idle_session_lifetime" {
   type        = number
-  default     = 24
+  default     = 8
   description = "Number of hours for which a session can be inactive before the user must log in again."
 }
 
@@ -56,7 +56,7 @@ variable "otp_expiry_length" {
 
 variable "session_lifetime" {
   type        = number
-  default     = 24
+  default     = 8
   description = "Number of hours a session will stay valid."
 }
 
