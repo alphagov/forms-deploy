@@ -17,8 +17,7 @@ module "cloudfront" {
     aws_nat_gateway.nat_c.public_ip,
   ]
 
-  subject_alternative_names   = lookup(local.subject_alternative_names, var.env_name)
-  alarm_subscription_endpoint = data.aws_ssm_parameter.email_zendesk.value
+  subject_alternative_names = lookup(local.subject_alternative_names, var.env_name)
 }
 
 resource "aws_ssm_parameter" "email_zendesk" {
@@ -34,10 +33,4 @@ resource "aws_ssm_parameter" "email_zendesk" {
       value
     ]
   }
-}
-
-data "aws_ssm_parameter" "email_zendesk" {
-  name = "/alerting/email-zendesk"
-
-  depends_on = [aws_ssm_parameter.email_zendesk]
 }

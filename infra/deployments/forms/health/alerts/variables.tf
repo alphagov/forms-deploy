@@ -14,3 +14,16 @@ variable "enable_alert_actions" {
   description = "Whether the alerts carry out the actions, for example, notifying us via Slack"
   default     = true
 }
+
+variable "zendesk_alert_topics" {
+  type = object({
+    us_east_1 : string
+  })
+
+  description = "The ARNs of the SNS topics to use to send an alert to Zendesk, per region"
+
+  validation {
+    condition     = alltrue([for p, arn in tomap(var.zendesk_alert_topics) : can(provider::aws::arn_parse(arn))])
+    error_message = "All values must be valid ARNs"
+  }
+}

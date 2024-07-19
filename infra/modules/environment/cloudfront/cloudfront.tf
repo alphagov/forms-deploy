@@ -305,19 +305,6 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
   }
 }
 
-resource "aws_sns_topic" "cloudwatch_alarms" {
-  #checkov:skip=CKV_AWS_26:We don't need this to be encrypted at the moment
-  provider = aws.us-east-1
-  name     = "cloudwatch-alarms"
-}
-
-resource "aws_sns_topic_subscription" "email" {
-  provider  = aws.us-east-1
-  topic_arn = aws_sns_topic.cloudwatch_alarms.arn
-  protocol  = "email"
-  endpoint  = var.alarm_subscription_endpoint
-}
-
 output "cloudfront_dns_name" {
   value = aws_cloudfront_distribution.main.domain_name
 }
@@ -332,6 +319,22 @@ output "cloudfront_distribution_id" {
 
 removed {
   from = aws_cloudwatch_metric_alarm.reached_ip_rate_limit
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_sns_topic.cloudwatch_alarms
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_sns_topic_subscription.email
+
   lifecycle {
     destroy = false
   }

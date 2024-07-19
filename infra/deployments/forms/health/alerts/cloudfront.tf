@@ -1,9 +1,3 @@
-data "aws_sns_topic" "cloudwatch_alarms" {
-  provider = aws.us-east-1
-
-  name = "cloudwatch-alarms"
-}
-
 resource "aws_cloudwatch_metric_alarm" "cloudfront_reached_ip_rate_limit" {
   provider = aws.us-east-1
 
@@ -25,7 +19,5 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_reached_ip_rate_limit" {
   }
 
   treat_missing_data = "notBreaching"
-  alarm_actions      = [data.aws_sns_topic.cloudwatch_alarms.arn]
-
-  depends_on = [data.aws_sns_topic.cloudwatch_alarms]
+  alarm_actions      = [var.zendesk_alert_topics.us_east_1]
 }
