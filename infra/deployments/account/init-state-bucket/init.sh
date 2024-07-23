@@ -36,7 +36,7 @@ fi
 terraform init
 terraform apply -var "bucket_name=${EXPECTED_BUCKET_NAME}" -state "${LOCAL_STATE_FILE_NAME}"
 
-BUCKET_NAME="$(terraform output -state "state-bucket.tfstate" "bucket_name")"
+BUCKET_NAME="$(terraform output -state "${LOCAL_STATE_FILE_NAME}" -raw "bucket_name")"
 
 echo "Uploading state file to s3://${BUCKET_NAME}/${REMOTE_STATE_FILE_NAME}"
 aws s3 cp "${LOCAL_STATE_FILE_NAME}" "s3://${BUCKET_NAME}/${REMOTE_STATE_FILE_NAME}"

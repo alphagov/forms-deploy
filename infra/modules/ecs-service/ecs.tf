@@ -3,11 +3,13 @@ data "aws_ecs_cluster" "forms" {
 }
 
 data "aws_ecs_task_definition" "active_task" {
+  count           = var.image == null ? 1 : 0
   task_definition = local.task_definition_family
 }
 
 data "aws_ecs_container_definition" "active_container" {
-  task_definition = data.aws_ecs_task_definition.active_task.id
+  count           = var.image == null ? 1 : 0
+  task_definition = data.aws_ecs_task_definition.active_task[0].id
   container_name  = var.application
 }
 
@@ -25,7 +27,7 @@ data "aws_subnets" "private" {
 locals {
   task_definition_family = "${var.env_name}_${var.application}"
 
-  image = coalesce(var.image, data.aws_ecs_container_definition.active_container.image)
+  image = var.image == null ? data.aws_ecs_container_definition.active_container[0].image : var.image
 
   task_container_definition = {
     name        = var.application,

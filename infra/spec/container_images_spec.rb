@@ -10,6 +10,7 @@ describe "container images" do
       .split("\n")
       .reject! { |s| s.start_with? "var." }
       .reject! { |s| s.start_with? "local." }
+      .reject! { |s| s.start_with? "null" }
       .reject! { |s| s.start_with? "$INPUT_IMAGE_URI" }
       .reject! { |s| all_terraform_functions.any? { |func| s.start_with? func } }
       .map!(&:strip)
