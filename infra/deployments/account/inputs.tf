@@ -68,12 +68,6 @@ EOF
   nullable    = false
 }
 
-variable "hosted_zone_id" {
-  description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
-  type        = string
-  nullable    = false
-}
-
 variable "codestar_connection_arn" {
   description = "It isn't possible to automate the creation of a CodeStar connection, so we must create it by hand once in each account and hardcode its ARN."
   type        = string
