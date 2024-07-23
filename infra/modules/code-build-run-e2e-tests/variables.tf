@@ -52,3 +52,9 @@ variable "notify_api_key_parameter_name" {
   description = "The parameter name for the Notify API key to use when checking for form submissions"
   type        = string
 }
+
+variable "deploy_account_id" {
+  description = "the account number for deploy account"
+  type        = string
+  nullable    = false
+}

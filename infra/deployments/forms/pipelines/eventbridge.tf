@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "allow_receiving_from_deploy_account" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::711966560482:root"]
+      identifiers = ["arn:aws:iam::${var.deploy_account_id}:root"]
     }
   }
 }
@@ -93,7 +93,7 @@ resource "aws_cloudwatch_event_target" "forward_codepipeline_events_to_deploy_de
   target_id = "${var.environment_name}-codepipeline-events-to-deploy-defualt-bus"
   rule      = aws_cloudwatch_event_rule.codepipeline_events.name
   role_arn  = aws_iam_role.eventbridge_actor.arn
-  arn       = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
+  arn       = "arn:aws:events:eu-west-2:${var.deploy_account_id}:event-bus/default"
 
   dead_letter_config {
     arn = aws_sqs_queue.event_bridge_dlq.arn

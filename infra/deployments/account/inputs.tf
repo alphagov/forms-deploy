@@ -79,3 +79,9 @@ variable "codestar_connection_arn" {
   type        = string
   nullable    = false
 }
+
+variable "deploy_account_id" {
+  description = "the account number for deploy account"
+  type        = string
+  nullable    = false
+}

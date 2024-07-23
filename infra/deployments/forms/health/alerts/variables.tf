@@ -14,3 +14,8 @@ variable "enable_alert_actions" {
   description = "Whether the alerts carry out the actions, for example, notifying us via Slack"
   default     = true
 }
+
+variable "deploy_account_id" {
+  type        = string
+  description = "the account number for the deploy account"
+}

@@ -7,7 +7,7 @@ resource "aws_iam_role" "codepipeline-readonly" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::711966560482:role/deploy-pipeline-visualiser-ecs-task"
+          AWS = "arn:aws:iam::${var.deploy_account_id}:role/deploy-pipeline-visualiser-ecs-task"
         }
       },
     ]

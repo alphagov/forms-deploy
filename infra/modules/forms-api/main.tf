@@ -1,8 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  deploy_account_id = "711966560482"
-  image             = var.image_tag == null ? null : "${local.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
+  image = var.image_tag == null ? null : "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:${var.image_tag}"
 }
 
 module "ecs_service" {

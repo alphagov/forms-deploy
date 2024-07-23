@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "allow_sending_events_to_deploy" {
     actions = [
       "events:PutEvents"
     ]
-    resources = ["arn:aws:events:eu-west-2:711966560482:event-bus/default"]
+    resources = ["arn:aws:events:eu-west-2:${var.deploy_account_id}:event-bus/default"]
   }
 }
 

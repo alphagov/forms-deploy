@@ -33,3 +33,8 @@ variable "smoke_test_alarm_sns_topic_arn" {
   description = "The arn for the SNS topic that the smoke tests CloudWatch alarm will send notifications to."
   type        = string
 }
+
+variable "deploy_account_id" {
+  type        = string
+  description = "the account number for the deploy account"
+}

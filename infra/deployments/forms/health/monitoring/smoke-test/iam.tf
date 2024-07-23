@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "codebuild" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      "arn:aws:ecr:eu-west-2:${local.deploy_account_id}:repository/end-to-end-tests",
+      "arn:aws:ecr:eu-west-2:${var.deploy_account_id}:repository/end-to-end-tests",
     ]
     effect = "Allow"
   }
