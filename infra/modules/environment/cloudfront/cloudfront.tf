@@ -316,26 +316,3 @@ output "cloudfront_arn" {
 output "cloudfront_distribution_id" {
   value = aws_cloudfront_distribution.main.id
 }
-
-removed {
-  from = aws_cloudwatch_metric_alarm.reached_ip_rate_limit
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_sns_topic.cloudwatch_alarms
-
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_sns_topic_subscription.email
-
-  lifecycle {
-    destroy = false
-  }
-}

@@ -14,8 +14,3 @@ module "alerts" {
     us_east_1 : aws_sns_topic.cloudwatch_alarms.arn
   }
 }
-
-import {
-  id = "${var.environment_name}-reached-ip-rate-limit"
-  to = module.alerts.aws_cloudwatch_metric_alarm.cloudfront_reached_ip_rate_limit
-}
