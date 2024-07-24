@@ -305,45 +305,6 @@ resource "aws_wafv2_web_acl_logging_configuration" "this" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "reached_ip_rate_limit" {
-  provider = aws.us-east-1
-
-  alarm_name        = "${var.env_name}-reached-ip-rate-limit"
-  alarm_description = "The number of blocked requests is greater than 1 in a 5-min window. Check Splunk to find the attacking IP and add it to the blocked list"
-
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = 1
-  period              = 300
-  evaluation_periods  = 1
-
-  namespace   = "AWS/WAFV2"
-  metric_name = "BlockedRequests"
-  statistic   = "Sum"
-
-  dimensions = {
-    WebACL = "cloudfront_waf_${var.env_name}"
-    Rule   = "OriginIPRateLimit"
-  }
-
-  treat_missing_data = "notBreaching"
-  alarm_actions      = [aws_sns_topic.cloudwatch_alarms.arn]
-
-  depends_on = [aws_sns_topic.cloudwatch_alarms]
-}
-
-resource "aws_sns_topic" "cloudwatch_alarms" {
-  #checkov:skip=CKV_AWS_26:We don't need this to be encrypted at the moment
-  provider = aws.us-east-1
-  name     = "cloudwatch-alarms"
-}
-
-resource "aws_sns_topic_subscription" "email" {
-  provider  = aws.us-east-1
-  topic_arn = aws_sns_topic.cloudwatch_alarms.arn
-  protocol  = "email"
-  endpoint  = var.alarm_subscription_endpoint
-}
-
 output "cloudfront_dns_name" {
   value = aws_cloudfront_distribution.main.domain_name
 }
@@ -354,4 +315,27 @@ output "cloudfront_arn" {
 
 output "cloudfront_distribution_id" {
   value = aws_cloudfront_distribution.main.id
+}
+
+removed {
+  from = aws_cloudwatch_metric_alarm.reached_ip_rate_limit
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_sns_topic.cloudwatch_alarms
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_sns_topic_subscription.email
+
+  lifecycle {
+    destroy = false
+  }
 }
