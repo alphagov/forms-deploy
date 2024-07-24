@@ -29,7 +29,6 @@ forms_admin_settings = {
   min_capacity               = 3
   max_capacity               = 3
   enable_maintenance_mode    = false
-  groups_feature_flag        = true
   auth_provider              = "auth0"
   previous_auth_provider     = "gds_sso"
   cloudwatch_metrics_enabled = false
