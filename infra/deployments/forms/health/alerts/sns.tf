@@ -91,38 +91,3 @@ data "aws_iam_policy_document" "key_policy" {
     resources = ["*"]
   }
 }
-
-resource "aws_sns_topic" "alert_zendesk" {
-  name              = "alert_zendesk_${var.environment}"
-  kms_master_key_id = aws_kms_key.topic_sse.key_id
-}
-
-resource "aws_sns_topic_policy" "zendesk_topic_access_policy" {
-  arn = aws_sns_topic.alert_zendesk.arn
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid      = "AllowPublishFromServices",
-        Action   = "sns:Publish"
-        Effect   = "Allow"
-        Resource = aws_sns_topic.alert_zendesk.arn
-        Principal = {
-          Service = [
-            "events.amazonaws.com",
-          ]
-        }
-      }
-    ]
-  })
-}
-
-data "aws_ssm_parameter" "zendesk_email" {
-  name = "/alerting/email-zendesk"
-}
-
-resource "aws_sns_topic_subscription" "zendesk_subscription" {
-  topic_arn = aws_sns_topic.alert_zendesk.arn
-  protocol  = "email"
-  endpoint  = data.aws_ssm_parameter.zendesk_email.value
-}
