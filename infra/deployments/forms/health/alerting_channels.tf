@@ -70,6 +70,16 @@ module "pagerduty_eu_west_2" {
   kms_key_arn = aws_kms_key.topic_sse_eu_west_2.key_id
 }
 
+moved {
+  from = module.alerts.aws_sns_topic.alert_pagerduty
+  to   = module.pagerduty_eu_west_2.aws_sns_topic.topic
+}
+
+moved {
+  from = module.alerts.aws_sns_topic_policy.pagerduty_topic_access_policy
+  to   = module.pagerduty_eu_west_2.aws_sns_topic_policy.topic_policy
+}
+
 data "aws_ssm_parameter" "pagerduty_integration_url" {
   name       = "/alerting/${var.environment_name}/pagerduty-integration-url"
   depends_on = [aws_ssm_parameter.pagerduty_integration_url]
@@ -87,11 +97,22 @@ resource "aws_ssm_parameter" "pagerduty_integration_url" {
   }
 }
 
-resource "aws_sns_topic_subscription" "pagerduty_subscription" {
+moved {
+  from = module.alerts.aws_ssm_parameter.pagerduty_integration_url
+  to   = aws_ssm_parameter.pagerduty_integration_url
+}
+
+resource "aws_sns_topic_subscription" "pagerduty_subscription_eu_west_2" {
   topic_arn = module.pagerduty_eu_west_2.topic_arn
   protocol  = "https"
   endpoint  = data.aws_ssm_parameter.pagerduty_integration_url.value
 }
+
+moved {
+  from = module.alerts.aws_sns_topic_subscription.pagerduty_subscription
+  to   = aws_sns_topic_subscription.pagerduty_subscription_eu_west_2
+}
+
 
 ## KMS keys
 resource "aws_kms_key" "topic_sse_us_east_1" {
