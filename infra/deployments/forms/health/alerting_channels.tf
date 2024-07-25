@@ -131,6 +131,11 @@ resource "aws_kms_key" "topic_sse_eu_west_2" {
   enable_key_rotation = true
 }
 
+moved {
+  from = module.alerts.aws_kms_key.topic_sse
+  to   = aws_kms_key.topic_sse_eu_west_2
+}
+
 
 data "aws_iam_policy_document" "key_policy" {
   # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam

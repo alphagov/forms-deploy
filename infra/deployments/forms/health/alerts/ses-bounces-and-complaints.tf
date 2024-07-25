@@ -1,3 +1,9 @@
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
+data "aws_caller_identity" "current" {}
+
 data "aws_sqs_queue" "ses_bounces_and_complaints_queue" {
   name = "ses_bounces_and_complaints_queue"
 }
