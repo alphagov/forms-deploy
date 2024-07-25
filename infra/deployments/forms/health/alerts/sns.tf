@@ -4,55 +4,6 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
-resource "aws_sns_topic" "alert_pagerduty" {
-  name              = "pagerduty_integration_${var.environment}"
-  kms_master_key_id = aws_kms_key.topic_sse.key_id
-}
-
-resource "aws_sns_topic_policy" "pagerduty_topic_access_policy" {
-  arn = aws_sns_topic.alert_pagerduty.arn
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid      = "AllowPublishFromServices",
-        Action   = "sns:Publish"
-        Effect   = "Allow"
-        Resource = aws_sns_topic.alert_pagerduty.arn
-        Principal = {
-          Service = [
-            "cloudwatch.amazonaws.com",
-            "events.amazonaws.com",
-          ]
-        }
-      }
-    ]
-  })
-}
-
-data "aws_ssm_parameter" "pagerduty_integration_url" {
-  name       = "/alerting/${var.environment}/pagerduty-integration-url"
-  depends_on = [aws_ssm_parameter.pagerduty_integration_url]
-}
-
-resource "aws_ssm_parameter" "pagerduty_integration_url" {
-  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
-  # Value is set externally.
-  name  = "/alerting/${var.environment}/pagerduty-integration-url"
-  type  = "SecureString"
-  value = "https://example.org/"
-
-  lifecycle {
-    ignore_changes = [value]
-  }
-}
-
-resource "aws_sns_topic_subscription" "pagerduty_subscription" {
-  topic_arn = aws_sns_topic.alert_pagerduty.arn
-  protocol  = "https"
-  endpoint  = data.aws_ssm_parameter.pagerduty_integration_url.value
-}
-
 resource "aws_kms_key" "topic_sse" {
   description = "For server side encryption of the alerts topic"
   policy      = data.aws_iam_policy_document.key_policy.json
