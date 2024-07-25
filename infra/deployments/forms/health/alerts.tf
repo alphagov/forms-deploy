@@ -13,6 +13,6 @@ module "alerts" {
 
 
   zendesk_alert_topics = {
-    us_east_1 : aws_sns_topic.cloudwatch_alarms.arn
+    us_east_1 : module.zendesk_alert_us_east_1.topic_arn
   }
 }
