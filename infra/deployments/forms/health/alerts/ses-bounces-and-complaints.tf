@@ -37,7 +37,7 @@ EOF
   }
   treat_missing_data = "notBreaching"
 
-  alarm_actions = [aws_sns_topic.alert_zendesk.arn]
+  alarm_actions = [var.zendesk_alert_topics.eu_west_2]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_contains_message" {
@@ -72,5 +72,5 @@ EOF
   }
   treat_missing_data = "notBreaching"
 
-  alarm_actions = [aws_sns_topic.alert_zendesk.arn]
+  alarm_actions = [var.zendesk_alert_topics.eu_west_2]
 }

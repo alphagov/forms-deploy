@@ -14,5 +14,6 @@ module "alerts" {
 
   zendesk_alert_topics = {
     us_east_1 : module.zendesk_alert_us_east_1.topic_arn
+    eu_west_2 : module.zendesk_alert_eu_west_2.topic_arn
   }
 }

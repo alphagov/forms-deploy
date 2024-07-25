@@ -33,6 +33,20 @@ moved {
   to   = aws_sns_topic_subscription.zendesk_email_us_east_1
 }
 
+## Zendesk eu-west-2
+module "zendesk_alert_eu_west_2" {
+  source = "./alert_sns_topic"
+
+  topic_name  = "alert_zendesk_${var.environment_name}"
+  kms_key_arn = aws_kms_key.topic_sse_eu_west_2.key_id
+}
+
+resource "aws_sns_topic_subscription" "email" {
+  topic_arn = module.zendesk_alert_eu_west_2.topic_arn
+  protocol  = "email"
+  endpoint  = data.aws_ssm_parameter.email_zendesk.value
+}
+
 ## KMS keys
 resource "aws_kms_key" "topic_sse_us_east_1" {
   provider = aws.us-east-1
@@ -42,6 +56,14 @@ resource "aws_kms_key" "topic_sse_us_east_1" {
 
   enable_key_rotation = true
 }
+
+resource "aws_kms_key" "topic_sse_eu_west_2" {
+  description = "For server side encryption of the alerts topic"
+  policy      = data.aws_iam_policy_document.key_policy.json
+
+  enable_key_rotation = true
+}
+
 
 data "aws_iam_policy_document" "key_policy" {
   # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam

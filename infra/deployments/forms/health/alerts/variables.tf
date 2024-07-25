@@ -23,6 +23,7 @@ variable "deploy_account_id" {
 variable "zendesk_alert_topics" {
   type = object({
     us_east_1 : string
+    eu_west_2 : string
   })
 
   description = "The ARNs of the SNS topics to use to send an alert to Zendesk, per region"
