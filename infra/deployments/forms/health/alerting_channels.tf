@@ -7,20 +7,30 @@ module "zendesk_alert_us_east_1" {
   providers = {
     aws = aws.us-east-1
   }
-  
+
   topic_name = "cloudwatch-alarms"
-  kms_key_arn = aws_kms_key.topic_sse_us_east_1.key_id
+  kms_key_arn = aws_kms_key.topic_sse_us_east_1.arn
 }
 
 data "aws_ssm_parameter" "email_zendesk" {
   name = "/alerting/email-zendesk"
 }
 
-resource "aws_sns_topic_subscription" "email" {
+moved {
+  from = aws_sns_topic.cloudwatch_alarms
+  to   = module.zendesk_alert_us_east_1.aws_sns_topic.topic
+}
+
+resource "aws_sns_topic_subscription" "zendesk_email_us_east_1" {
   provider  = aws.us-east-1
   topic_arn = module.zendesk_alert_us_east_1.topic_arn
   protocol  = "email"
   endpoint  = data.aws_ssm_parameter.email_zendesk.value
+}
+
+moved {
+  from = aws_sns_topic_subscription.email
+  to   = aws_sns_topic_subscription.zendesk_email_us_east_1
 }
 
 ## KMS keys
