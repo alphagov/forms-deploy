@@ -7,7 +7,6 @@
 data "aws_iam_policy_document" "forms-infra" {
   source_policy_documents = [
     data.aws_iam_policy_document.alerts.json,
-    data.aws_iam_policy_document.auth0.json,
     data.aws_iam_policy_document.dns.json,
     data.aws_iam_policy_document.monitoring.json,
   ]
@@ -92,37 +91,6 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
-    sid = "DescribeSSMParameters"
-    actions = [
-      "ssm:DescribeParameters",
-    ]
-    resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "ManageSSMParameters"
-    actions = [
-      "ssm:AddTagsToResource",
-      "ssm:DeleteParameter",
-      "ssm:PutParameter",
-      "ssm:RemoveTagsFromResource",
-    ]
-    resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/email-zendesk",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/alerting/${var.env_name}/pagerduty-integration-url",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/automated-tests/*",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/pagerduty-email",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/pagerduty-phone-number",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/contact-phone-number",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/account/contact-email",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
     sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
@@ -150,23 +118,6 @@ data "aws_iam_policy_document" "alerts" {
     resources = [
       "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:alarm:alb_healthy_host_count_*",
 
-    ]
-    effect = "Allow"
-  }
-}
-
-data "aws_iam_policy_document" "auth0" {
-  statement {
-    sid = "ManageSSMParametersAuth0"
-    actions = [
-      "ssm:*Tag*",
-      "ssm:*Parameter*",
-    ]
-    resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/ses/auth0/*",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/${var.env_name}/splunk/*",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/terraform/auth0-access/*",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-admin-${var.env_name}/*",
     ]
     effect = "Allow"
   }
@@ -214,17 +165,6 @@ data "aws_iam_policy_document" "rds" {
       "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
     ]
     effect = "Allow"
-  }
-
-  statement {
-    sid    = "GetSSMParams"
-    effect = "Allow"
-    actions = [
-      "ssm:GetParameter",
-    ]
-    resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/database/master-password"
-    ]
   }
 }
 
@@ -684,16 +624,37 @@ data "aws_iam_policy_document" "route53" {
 
 data "aws_iam_policy_document" "ssm" {
   statement {
-    sid = "ManageServiceSSMParameters"
+    sid = "DescribeSSMParameters"
     actions = [
-      "ssm:AddTagsToResource",
-      "ssm:PutParameter",
-      "ssm:RemoveTagsFromResource",
+      "ssm:DescribeParameters",
     ]
     resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/forms-api-key",
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/forms-runner-${var.env_name}/notify-api-key",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
     ]
     effect = "Allow"
+  }
+
+  statement {
+    sid = "ManageSSMParameters"
+    actions = [
+      "ssm:*Tag*",
+      "ssm:*Parameter*",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/*",
+    ]
+    effect = "Allow"
+  }
+
+  # We allow all operations except deleting a parameter. If you need the deployer role to delete a paramter then you can temporarily comment out this block. 
+  statement {
+    sid = "DeleteSSMParameters"
+    actions = [
+      "ssm:DeleteParameter",
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/*",
+    ]
+    effect = "Deny"
   }
 }
