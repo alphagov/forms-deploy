@@ -40,13 +40,6 @@ locals {
       development   = "admin"
       user_research = "admin"
     },
-    "dan.worth" = {
-      deploy        = "admin" # Admin whilst setting up the deploy account
-      staging       = "admin" # Required whilst setting up environments
-      production    = "admin" # Required whilst setting up environments
-      development   = "admin"
-      user_research = "admin"
-    },
     "david.biddle" = {
       deploy        = "support"
       staging       = "support"
