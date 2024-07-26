@@ -6,13 +6,6 @@ locals {
     forms-admin : 300
     forms-product-page : 400
   }
-
-  apex_domains = {
-    user-research : "research.forms.service.gov.uk",
-    dev : "dev.forms.service.gov.uk",
-    staging : "staging.forms.service.gov.uk",
-    production : "forms.service.gov.uk",
-  }
 }
 
 resource "aws_lb_target_group" "tg" {
@@ -56,7 +49,7 @@ resource "aws_lb_listener_rule" "to_app" {
 
   condition {
     host_header {
-      values = ["${var.sub_domain}.*"]
+      values = [var.sub_domain]
     }
   }
 }
@@ -74,7 +67,7 @@ resource "aws_lb_listener_rule" "apex_rule" {
 
   condition {
     host_header {
-      values = ["${lookup(local.apex_domains, var.env_name)}"]
+      values = [var.root_domain]
     }
   }
 }

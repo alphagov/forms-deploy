@@ -35,7 +35,8 @@ module "ecs_service" {
   source                 = "../ecs-service"
   env_name               = var.env_name
   application            = "forms-runner"
-  sub_domain             = "submit"
+  root_domain            = var.root_domain
+  sub_domain             = "submit.${var.root_domain}"
   image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory
