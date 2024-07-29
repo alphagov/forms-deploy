@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "allows_eventbridge_to_deliver_to_sqs" {
     sid       = "AllowEventBridgeToDeliver"
     effect    = "Allow"
     actions   = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"]
+    resources = ["arn:aws:sqs:eu-west-2:${var.deploy_account_id}:eventbridge-dead-letter-queue"]
 
     principals {
       type        = "Service"

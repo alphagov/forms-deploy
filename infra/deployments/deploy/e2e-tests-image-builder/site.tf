@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  allowed_account_ids = ["711966560482"]
+  allowed_account_ids = [var.deploy_account_id]
 
   default_tags {
     tags = {

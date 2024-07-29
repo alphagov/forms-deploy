@@ -2,8 +2,8 @@ locals {
   # We have configured AWS ChatBot for sending messages to Slack.
   # AWS ChatBot does not have an API we can use in Terraform, so we
   # configured it by hand in the one place and hardcoded the SNS topic here.
-  chatbot_deployments_channel_sns_topic = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-deployments-c383f287ab987f0b12d32e4533a145b1c918167d"
-  chatbot_alerts_channel_sns_topic      = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
+  chatbot_deployments_channel_sns_topic = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-deployments-c383f287ab987f0b12d32e4533a145b1c918167d"
+  chatbot_alerts_channel_sns_topic      = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
 
   chatbot_message_input_paths = {
     pipeline = "$.detail.pipeline"
@@ -145,7 +145,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
 }
 
 module "slack_notifications" {
-  for_each = merge(local.other_accounts, { "deploy" = "711966560482" })
+  for_each = merge(local.other_accounts, { "deploy" = var.deploy_account_id })
   source   = "./slack-notifications"
 
 
