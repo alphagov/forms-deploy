@@ -7,9 +7,10 @@ locals {
 module "ecs_service" {
   source                 = "../ecs-service"
   env_name               = var.env_name
-  application            = "forms-api" #
+  application            = "forms-api"
   root_domain            = var.root_domain
   sub_domain             = "api.${var.root_domain}"
+  listener_priority      = 200
   image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory

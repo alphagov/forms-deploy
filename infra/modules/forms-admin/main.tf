@@ -80,6 +80,7 @@ module "ecs_service" {
   application            = "forms-admin"
   root_domain            = var.root_domain
   sub_domain             = "admin.${var.root_domain}"
+  listener_priority      = 300
   image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory

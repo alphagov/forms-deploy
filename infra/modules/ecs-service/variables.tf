@@ -17,6 +17,10 @@ variable "sub_domain" {
   # When we are on Terraform 1.9, we should address this.
 }
 
+variable "listener_priority" {
+  type        = number
+  description = "The priority number for the load balancer listener rule that will be created. Numbers must be distinct across all invocations of this module in a deployment."
+}
 
 variable "application" {
   type        = string

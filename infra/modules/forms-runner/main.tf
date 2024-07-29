@@ -37,6 +37,7 @@ module "ecs_service" {
   application            = "forms-runner"
   root_domain            = var.root_domain
   sub_domain             = "submit.${var.root_domain}"
+  listener_priority      = 100
   image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory
