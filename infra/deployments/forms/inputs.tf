@@ -92,7 +92,6 @@ variable "forms_admin_settings" {
     min_capacity               = number
     max_capacity               = number
     enable_maintenance_mode    = bool
-    groups_feature_flag        = bool
     auth_provider              = string
     previous_auth_provider     = string
     cloudwatch_metrics_enabled = bool

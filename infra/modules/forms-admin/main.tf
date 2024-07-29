@@ -138,10 +138,6 @@ module "ecs_service" {
       value = var.env_name
     },
     {
-      name  = "SETTINGS__FEATURES__GROUPS__ENABLED",
-      value = var.groups_feature_flag
-    },
-    {
       name  = "SETTINGS__FORMS_PRODUCT_PAGE__SUPPORT_URL",
       value = var.forms_product_page_support_url
     },

@@ -19,3 +19,16 @@ variable "deploy_account_id" {
   type        = string
   description = "the account number for the deploy account"
 }
+
+variable "zendesk_alert_topics" {
+  type = object({
+    us_east_1 : string
+  })
+
+  description = "The ARNs of the SNS topics to use to send an alert to Zendesk, per region"
+
+  validation {
+    condition     = alltrue([for p, arn in tomap(var.zendesk_alert_topics) : can(provider::aws::arn_parse(arn))])
+    error_message = "All values must be valid ARNs"
+  }
+}

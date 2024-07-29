@@ -49,12 +49,6 @@ variable "enable_maintenance_mode" {
   type        = bool
 }
 
-variable "groups_feature_flag" {
-  description = "Toggles on/off the groups for user management feature"
-  type        = bool
-  default     = false
-}
-
 variable "forms_product_page_support_url" {
   description = "Sets the support URL for the product page"
   type        = string

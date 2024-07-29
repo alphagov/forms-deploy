@@ -24,11 +24,6 @@ variable "subject_alternative_names" {
   description = "Alternative names for the distribution and its certificate"
 }
 
-variable "alarm_subscription_endpoint" {
-  type        = string
-  description = "Endpoint for alarm notifications from Cloudwatch"
-}
-
 variable "nat_gateway_egress_ips" {
   type        = list(string)
   description = "The IP addresses of all the NAT gateways used for traffic to exit the GOV.UK Forms VPC"
