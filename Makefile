@@ -1,5 +1,6 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CODEBUILD_CI ?= false
+SHELL=/usr/bin/env bash
 
 ##
 # Environment targets
@@ -63,6 +64,7 @@ account:
 	$(eval export TARGET_DEPLOYMENT = account)
 	$(eval export TARGET_TF_ROOT = account)
 	@true
+
 ##
 # Action targets
 ##
@@ -102,9 +104,10 @@ plan: init
 apply: init
 	@./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
-.PHONY:
+.PHONY: validate
 validate: init
 	@./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+
 ##
 # Utility targets
 ##
@@ -132,3 +135,89 @@ checkov:
 spec:
 	(cd infra; bundle install; bundle exec rspec;)
 	(cd support/pipeline-visualiser; bundle install; bundle exec rspec;)
+
+##
+# Help text
+# Keep it at the bottom so it can grow as necessary without cluttering everything above.
+# The formatting may look off in this file, but it should be correct when written to stdout.
+##
+define help_usage_text
+PURPOSE
+	This Makefile has two general use cases:
+	1. Running Terraform
+	2. Running tasks
+
+RUNNING TERRAFORM
+	To run Terraform code use the command
+
+		make <ENV> <ROOT> <ACTION>
+
+	where <ENV> is an environment name, <ROOT> is a Terraform root,
+	and <ACTION> is an action to take with the Terraform code.
+
+	The valid options for <ENV>, <ROOT>, and <ACTION> are documented below.
+
+	To run the Terraform code, you will need to have credentials for the
+	relevant environment. You should use GDS CLI to get them. For example
+
+		gds aws forms-dev-readonly -- make dev forms/environment plan
+
+RUNNING OTHER TASKS
+	To run other tasks use the command
+
+		make <TASK>
+
+	where <TASK> is one of the other tasks documented below.
+
+endef
+export help_usage_text
+
+define help_environments
+ENVIRONMENTS
+	deploy		Central account for things like image repositories, and
+			image building pipelines.
+			n.b. deployments do not take place in this account. The
+			name is a legacy from when they did.
+
+	dev/development		The development environment
+	staging			The staging environment
+	user-research		The user-research environment
+	prod/production		The production environment
+
+endef
+export help_environments
+
+define help_actions
+ACTIONS
+	validate	Validate the syntax of the Terraform files
+	init		Initialise the Terraform root
+	plan		Run a Terraform plan
+	apply		Apply the Terraform
+
+endef
+export help_actions
+
+define help_tasks
+TASKS
+	help		This help text
+	fmt		Automatically format all Terraform code
+	lint		Run all linting tasks
+	checkov		Run Checkov (a Terraform linter) against all Terraform code
+	lint_ruby	Run Rubocop against all Ruby code
+	spec		Run Rspec tests against Ruby and Terraform code
+endef
+export help_tasks
+
+.PHONY: help
+help:
+	@echo "$$help_usage_text"
+	@echo "$$help_environments"
+	@echo "ROOTS"
+	@for r in $(sort account $(FORMS_TF_ROOTS) $(DEPLOY_TF_ROOTS)); do \
+  		printf "\t%s\n" $$r; \
+	done; \
+	echo "" \
+
+	@echo "$$help_actions"
+	@echo "$$help_tasks"
+	@true
