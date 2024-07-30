@@ -2,7 +2,6 @@ account_name          = "production"
 aws_account_id        = "443944947292"
 environment_name      = "production"
 environment_type      = "production"
-hosted_zone_id        = "Z029841414A29LF7J7EDY"
 require_vpn_to_access = true
 apex_domain           = "forms.service.gov.uk"
 dns_delegation_records = {
