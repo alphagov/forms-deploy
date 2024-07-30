@@ -1,9 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  deploy_account_id = "711966560482"
-  aws_account_id    = data.aws_caller_identity.current.account_id
-  project_name      = "${var.app_name}-e2e-tests-${var.environment_name}"
+  aws_account_id = data.aws_caller_identity.current.account_id
+  project_name   = "${var.app_name}-e2e-tests-${var.environment_name}"
 }
 
 resource "aws_codebuild_project" "e2e" {
@@ -25,7 +24,7 @@ resource "aws_codebuild_project" "e2e" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/end-to-end-tests:latest"
+    image        = "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/end-to-end-tests:latest"
     type         = "LINUX_CONTAINER"
 
     image_pull_credentials_type = "SERVICE_ROLE"

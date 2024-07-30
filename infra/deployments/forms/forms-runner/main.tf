@@ -18,4 +18,5 @@ module "forms_runner" {
   enable_maintenance_mode    = var.forms_runner_settings.enable_maintenance_mode
   cloudwatch_metrics_enabled = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled          = var.forms_runner_settings.analytics_enabled
+  deploy_account_id          = var.deploy_account_id
 }

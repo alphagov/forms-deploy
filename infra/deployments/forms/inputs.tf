@@ -36,6 +36,12 @@ variable "container_repository" {
   nullable    = false
 }
 
+variable "deploy_account_id" {
+  description = "the account number for deploy account"
+  type        = string
+  nullable    = false
+}
+
 ##
 # AWS provider
 ##

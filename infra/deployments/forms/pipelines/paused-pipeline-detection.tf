@@ -27,7 +27,7 @@ resource "aws_lambda_function" "paused_pipeline_detection" {
 
   environment {
     variables = {
-      "SLACK_SNS_TOPIC"        = "arn:aws:sns:eu-west-2:711966560482:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd",
+      "SLACK_SNS_TOPIC"        = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd",
       "FORMS_AWS_ACCOUNT_NAME" = var.environment_type
     }
   }
@@ -115,6 +115,6 @@ resource "aws_cloudwatch_event_target" "trigger_paused_pipeline_detector" {
   arn       = aws_lambda_function.paused_pipeline_detection.arn
 
   dead_letter_config {
-    arn = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+    arn = "arn:aws:sqs:eu-west-2:${var.deploy_account_id}:eventbridge-dead-letter-queue"
   }
 }

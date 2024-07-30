@@ -24,4 +24,5 @@ module "forms_admin" {
   analytics_enabled              = var.forms_admin_settings.analytics_enabled
   act_as_user_enabled            = var.forms_admin_settings.act_as_user_enabled
   enable_mailchimp_sync          = var.forms_admin_settings.synchronize_to_mailchimp
+  deploy_account_id              = var.deploy_account_id
 }

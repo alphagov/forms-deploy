@@ -34,3 +34,8 @@ variable "max_capacity" {
   description = "Sets the maximum number of instances"
   type        = number
 }
+
+variable "deploy_account_id" {
+  type        = string
+  description = "the account number for the deploy account"
+}

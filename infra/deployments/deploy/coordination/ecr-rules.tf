@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "ecr_events_log_group_policy" {
     ]
 
     resources = [
-      "arn:aws:logs:eu-west-2:711966560482:log-group:/aws/events/*"
+      "arn:aws:logs:eu-west-2:${var.deploy_account_id}:log-group:/aws/events/*"
     ]
 
     principals {

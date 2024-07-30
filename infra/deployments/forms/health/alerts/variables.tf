@@ -15,6 +15,11 @@ variable "enable_alert_actions" {
   default     = true
 }
 
+variable "deploy_account_id" {
+  type        = string
+  description = "the account number for the deploy account"
+}
+
 variable "zendesk_alert_topics" {
   type = object({
     us_east_1 : string

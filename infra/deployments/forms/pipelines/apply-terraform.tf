@@ -229,7 +229,7 @@ resource "aws_codepipeline" "apply_terroform" {
           },
           {
             name  = "TARGET_EVENT_BUS"
-            value = "arn:aws:events:eu-west-2:711966560482:event-bus/default"
+            value = "arn:aws:events:eu-west-2:${var.deploy_account_id}:event-bus/default"
             type  = "PLAINTEXT"
           }
         ])
@@ -278,6 +278,7 @@ module "run_end_to_end_tests" {
   product_pages_url  = "https://${var.root_domain}"
   artifact_store_arn = module.artifact_bucket.arn
   service_role_arn   = data.aws_iam_role.deployer-role.arn
+  deploy_account_id  = var.deploy_account_id
 
   auth0_user_name_parameter_name     = module.automated_test_parameters[0].auth0_user_name_parameter_name
   auth0_user_password_parameter_name = module.automated_test_parameters[0].auth0_user_password_parameter_name

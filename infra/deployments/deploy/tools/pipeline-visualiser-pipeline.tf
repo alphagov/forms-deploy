@@ -27,7 +27,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
       output_artifacts = ["forms_deploy"]
 
       configuration = {
-        ConnectionArn        = "arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
+        ConnectionArn        = "arn:aws:codestar-connections:eu-west-2:${var.deploy_account_id}:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
         FullRepositoryId     = "alphagov/forms-deploy"
         BranchName           = var.pipeline_source_branch
         DetectChanges        = true
@@ -71,7 +71,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
         EnvironmentVariables = jsonencode([
           {
             name  = "IMAGE_URI"
-            value = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/pipeline-visualiser:#{Build.IMAGE_TAG}"
+            value = "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/pipeline-visualiser:#{Build.IMAGE_TAG}"
             type  = "PLAINTEXT"
           }
         ])
@@ -172,12 +172,12 @@ data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
       "codestar-connections:GetConnection",
       "codestar-connections:ListConnections"
     ]
-    resources = ["arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"]
+    resources = ["arn:aws:codestar-connections:eu-west-2:${var.deploy_account_id}:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"]
     effect    = "Allow"
   }
   statement {
     actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
-    resources = ["arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"]
+    resources = ["arn:aws:codestar-connections:eu-west-2:${var.deploy_account_id}:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"]
     effect    = "Allow"
   }
 

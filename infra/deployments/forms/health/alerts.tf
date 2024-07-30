@@ -9,6 +9,8 @@ module "alerts" {
   environment                = var.environment_name
   minimum_healthy_host_count = 3
   enable_alert_actions       = var.environmental_settings.enable_alert_actions
+  deploy_account_id          = var.deploy_account_id
+
 
   zendesk_alert_topics = {
     us_east_1 : aws_sns_topic.cloudwatch_alarms.arn

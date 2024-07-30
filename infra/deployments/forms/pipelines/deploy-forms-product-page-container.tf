@@ -33,7 +33,7 @@ resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
   "variables": [
     {
       "name": "container_image_uri",
-      "value": "711966560482.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:<image-tag>"
+      "value": "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:<image-tag>"
     }
   ]
 }
@@ -256,6 +256,7 @@ module "deploy_product_pages_end_to_end_tests" {
   product_pages_url  = "https://${var.root_domain}"
   artifact_store_arn = module.artifact_bucket.arn
   service_role_arn   = data.aws_iam_role.deployer-role.arn
+  deploy_account_id  = var.deploy_account_id
 
   auth0_user_name_parameter_name     = module.automated_test_parameters[0].auth0_user_name_parameter_name
   auth0_user_password_parameter_name = module.automated_test_parameters[0].auth0_user_password_parameter_name
@@ -273,7 +274,7 @@ module "pull_forms_product_page_image_retag_and_push" {
   log_group_name             = "codebuild/pull_forms_product_page_image_retag_and_push_${var.environment_name}"
   environment_variables = {
     IMAGE_NAME           = "forms-product-page-deploy"
-    AWS_ACCOUNT_ID       = "711966560482" #TODO: don't hardcode this
+    AWS_ACCOUNT_ID       = var.deploy_account_id
     RETAG                = var.deploy-forms-product-page-container.retag_image_on_success
     RETAG_SED_EXPRESSION = var.deploy-forms-product-page-container.retagging_sed_expression
   }
