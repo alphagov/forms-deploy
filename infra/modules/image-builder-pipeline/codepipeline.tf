@@ -77,8 +77,8 @@ module "docker_build" {
   project_name                   = "${var.application_name}-docker-build"
   project_description            = "Build the ${var.application_name} docker image from a development branch and push into ECR"
   image_name                     = "${var.application_name}-deploy"
-  docker_username_parameter_path = "/development/dockerhub/username"
-  docker_password_parameter_path = "/development/dockerhub/password"
+  docker_username_parameter_path = "/docker/username"
+  docker_password_parameter_path = "/docker/password"
   artifact_store_arn             = module.artifact_bucket.arn
   tag_prefix                     = "stg-"
   codestar_connection_arn        = var.codestar_connection_arn

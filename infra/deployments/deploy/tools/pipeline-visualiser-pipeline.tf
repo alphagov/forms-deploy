@@ -106,8 +106,8 @@ module "pipeline_visualiser_docker_build" {
   project_description            = "Build the Pipleine Visualiser docker image and push into ECR"
   image_name                     = "pipeline-visualiser"
   build_directory                = "support/pipeline-visualiser/"
-  docker_username_parameter_path = "/development/dockerhub/username"
-  docker_password_parameter_path = "/development/dockerhub/password"
+  docker_username_parameter_path = "/docker/username"
+  docker_password_parameter_path = "/docker/password"
   artifact_store_arn             = module.pipeline_visualiser_artifact_bucket.arn
   codestar_connection_arn        = var.codestar_connection_arn
 }
