@@ -9,7 +9,7 @@ module "zendesk_alert_us_east_1" {
   }
 
   topic_name = "cloudwatch-alarms"
-  kms_key_arn = aws_kms_key.topic_sse_us_east_1.arn
+  kms_key_id = aws_kms_key.topic_sse_us_east_1.arn
 }
 
 data "aws_ssm_parameter" "email_zendesk" {
@@ -37,8 +37,8 @@ moved {
 module "zendesk_alert_eu_west_2" {
   source = "./alert_sns_topic"
 
-  topic_name  = "alert_zendesk_${var.environment_name}"
-  kms_key_arn = aws_kms_key.topic_sse_eu_west_2.key_id
+  topic_name = "alert_zendesk_${var.environment_name}"
+  kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
 }
 
 moved {
@@ -66,8 +66,8 @@ moved {
 module "pagerduty_eu_west_2" {
   source = "./alert_sns_topic"
 
-  topic_name  = "pagerduty_integration_${var.environment_name}"
-  kms_key_arn = aws_kms_key.topic_sse_eu_west_2.key_id
+  topic_name = "pagerduty_integration_${var.environment_name}"
+  kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
 }
 
 moved {
