@@ -39,6 +39,11 @@ import {
 }
 
 import {
+  id = "/forms-admin-${var.environment_name}/forms-api-key"
+  to = module.forms_admin.aws_ssm_parameter.forms_api_key
+}
+
+import {
   id = "/forms-admin-${var.environment_name}/notify-api-key"
   to = module.forms_admin.aws_ssm_parameter.notify_api_key
 }

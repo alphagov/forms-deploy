@@ -26,3 +26,8 @@ import {
   id = "/forms-api-${var.environment_name}/sentry/dsn"
   to = module.forms_api.aws_ssm_parameter.sentry_dsn
 }
+
+import {
+  id = "/forms-api-${var.environment_name}/forms-api-key"
+  to = module.forms_api.aws_ssm_parameter.forms_api_key
+}
