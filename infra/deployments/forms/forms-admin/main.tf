@@ -37,3 +37,8 @@ import {
   id = "/forms-admin-${var.environment_name}/sentry/dsn"
   to = module.forms_admin.aws_ssm_parameter.sentry_dsn
 }
+
+import {
+  id = "/forms-admin-${var.environment_name}/notify-api-key"
+  to = module.forms_admin.aws_ssm_parameter.notify_api_key
+}

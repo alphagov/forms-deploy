@@ -45,3 +45,18 @@ resource "aws_ssm_parameter" "sentry_dsn" {
     ]
   }
 }
+
+resource "aws_ssm_parameter" "notify_api_key" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
+  name        = "/forms-admin-${var.env_name}/notify-api-key"
+  description = "API key for forms-admin to connect with GOV.UK Notify (${var.env_name} environment)"
+  type        = "SecureString"
+  value       = "dummy-value"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
