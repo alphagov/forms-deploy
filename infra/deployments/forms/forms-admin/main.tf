@@ -47,3 +47,13 @@ import {
   id = "/forms-admin-${var.environment_name}/notify-api-key"
   to = module.forms_admin.aws_ssm_parameter.notify_api_key
 }
+
+import {
+  id = "/forms-admin-${var.environment_name}/gds-sso-oauth-id"
+  to = module.forms_admin.aws_ssm_parameter.gds_sso_oauth_id
+}
+
+import {
+  id = "/forms-admin-${var.environment_name}/gds-sso-oauth-secret"
+  to = module.forms_admin.aws_ssm_parameter.gds_sso_oauth_secret
+}
