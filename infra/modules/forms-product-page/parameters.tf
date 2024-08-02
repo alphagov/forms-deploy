@@ -34,3 +34,29 @@ resource "aws_ssm_parameter" "sentry_dsn" {
     ]
   }
 }
+
+resource "aws_ssm_parameter" "zendesk_api_user" {
+  #checkov:skip=CKV_AWS_337:KMS managed key is fine
+  name  = "/forms-product-page-${var.env_name}/zendesk/api-user"
+  type  = "SecureString"
+  value = "dummy_value"
+
+  description = "API user to connect to Zendesk"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
+resource "aws_ssm_parameter" "zendesk_api_token" {
+  #checkov:skip=CKV_AWS_337:KMS managed key is fine
+  name  = "/forms-product-page-${var.env_name}/zendesk/api-token"
+  type  = "SecureString"
+  value = "dummy_value"
+
+  description = "API token to connect to Zendesk"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}

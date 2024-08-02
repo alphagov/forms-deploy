@@ -27,3 +27,13 @@ import {
   id = "/forms-product-page-${var.environment_name}/sentry/dsn"
   to = module.forms_product_page.aws_ssm_parameter.sentry_dsn
 }
+
+import {
+  id = "/forms-product-page-${var.environment_name}/zendesk/api-user"
+  to = module.forms_product_page.aws_ssm_parameter.zendesk_api_user
+}
+
+import {
+  id = "/forms-product-page-${var.environment_name}/zendesk/api-token"
+  to = module.forms_product_page.aws_ssm_parameter.zendesk_api_token
+}
