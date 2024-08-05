@@ -23,12 +23,26 @@ variable "deploy_account_id" {
 variable "zendesk_alert_topics" {
   type = object({
     us_east_1 : string
+    eu_west_2 : string
   })
 
   description = "The ARNs of the SNS topics to use to send an alert to Zendesk, per region"
 
   validation {
     condition     = alltrue([for p, arn in tomap(var.zendesk_alert_topics) : can(provider::aws::arn_parse(arn))])
+    error_message = "All values must be valid ARNs"
+  }
+}
+
+variable "pagerduty_alert_topics" {
+  type = object({
+    eu_west_2 : string
+  })
+
+  description = "The ARNs of the SNS topics to use to send an alert to PagerDuty, per region"
+
+  validation {
+    condition     = alltrue([for p, arn in tomap(var.pagerduty_alert_topics) : can(provider::aws::arn_parse(arn))])
     error_message = "All values must be valid ARNs"
   }
 }
