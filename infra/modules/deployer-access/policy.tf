@@ -77,8 +77,8 @@ data "aws_iam_policy_document" "alerts" {
       "kms:ScheduleKeyDeletion"
     ]
     resources = [
-      # TODO: be more specific?
       "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
+      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.env_name)}:key/*",
     ]
     effect = "Allow"
   }
