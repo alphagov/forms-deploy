@@ -38,3 +38,8 @@ variable "vpn" {
   default     = true
   description = "If true then user must be on the VPN to assume the role"
 }
+
+variable "codestar_connection_arn" {
+  type        = string
+  description = "The arn of the github connection to use"
+}

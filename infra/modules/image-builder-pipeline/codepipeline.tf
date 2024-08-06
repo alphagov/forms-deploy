@@ -33,7 +33,7 @@ resource "aws_codepipeline" "main" {
       output_artifacts = ["source_repo"]
 
       configuration = {
-        ConnectionArn        = var.github_connection_arn
+        ConnectionArn        = var.codestar_connection_arn
         FullRepositoryId     = var.source_repository
         BranchName           = "main"
         OutputArtifactFormat = "CODEBUILD_CLONE_REF"
@@ -81,4 +81,5 @@ module "docker_build" {
   docker_password_parameter_path = "/development/dockerhub/password"
   artifact_store_arn             = module.artifact_bucket.arn
   tag_prefix                     = "stg-"
+  codestar_connection_arn        = var.codestar_connection_arn
 }
