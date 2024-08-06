@@ -37,11 +37,12 @@ environmental_settings = {
   ips_to_block                        = []
   enable_shield_advanced_healthchecks = true
 }
-hosted_zone_id             = "Z029841414A29LF7J7EDY"
-root_domain                = "forms.service.gov.uk"
-cloudfront_distribution_id = "EXITHSOVYUXHW"
-codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
-container_repository       = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
+hosted_zone_id                 = "Z029841414A29LF7J7EDY"
+root_domain                    = "forms.service.gov.uk"
+cloudfront_distribution_id     = "EXITHSOVYUXHW"
+codestar_connection_arn        = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
+deploy_codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
+container_repository           = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512

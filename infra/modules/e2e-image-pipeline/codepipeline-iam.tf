@@ -23,12 +23,12 @@ data "aws_iam_policy_document" "main_permissions" {
       "codestar-connections:GetConnection",
       "codestar-connections:ListConnections"
     ]
-    resources = [var.github_connection_arn]
+    resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
   statement {
     actions   = ["codecommit:Get*", "codecommit:Describe*"]
-    resources = [var.github_connection_arn]
+    resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
 
