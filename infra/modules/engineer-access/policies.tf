@@ -2,14 +2,6 @@ data "aws_caller_identity" "current" {}
 
 locals {
   account_id = data.aws_caller_identity.current.account_id
-
-  codestar_connection = {
-    "619109835131" = "6d5b8a26-b0d3-41da-ae2f-11a5f805bc3c" #user-research
-    "498160065950" = "9dcd616c-3f7d-4f20-8a6b-8fca788e674b" #dev
-    "972536609845" = "de05d028-2cbd-4d06-8946-0e4aca60f4ca" #staging
-    "443944947292" = "c253c931-651d-4d48-950a-c1ac2dfd7ca8" #production
-    "711966560482" = "8ad08da2-743c-4431-bee6-ad1ae9efebe7" #deploy
-  }
 }
 
 resource "aws_iam_policy" "manage_deployments" {
@@ -72,7 +64,7 @@ resource "aws_iam_policy" "manage_deployments" {
           "codestar-connections:UseConnection",
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:codestar-connections:eu-west-2:${local.account_id}:connection/${lookup(local.codestar_connection, local.account_id)}"
+        Resource = var.codestar_connection_arn
       },
     ]
   })

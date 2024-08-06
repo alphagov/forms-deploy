@@ -27,7 +27,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
       output_artifacts = ["forms_deploy"]
 
       configuration = {
-        ConnectionArn        = "arn:aws:codestar-connections:eu-west-2:${var.deploy_account_id}:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
+        ConnectionArn        = var.codestar_connection_arn
         FullRepositoryId     = "alphagov/forms-deploy"
         BranchName           = var.pipeline_source_branch
         DetectChanges        = true
@@ -172,12 +172,12 @@ data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
       "codestar-connections:GetConnection",
       "codestar-connections:ListConnections"
     ]
-    resources = ["arn:aws:codestar-connections:eu-west-2:${var.deploy_account_id}:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"]
+    resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
   statement {
     actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
-    resources = ["arn:aws:codestar-connections:eu-west-2:${var.deploy_account_id}:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"]
+    resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
 
