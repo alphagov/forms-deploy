@@ -42,11 +42,11 @@ variable "deploy_account_id" {
   nullable    = false
 }
 
-variable "deploy_codestar_connection_arn" {
-  description = "the arn of the deploy accout github connection"
-  type        = string
-  nullable    = false
-}
+# variable "deploy_codestar_connection_arn" {
+#   description = "the arn of the deploy accout github connection"
+#   type        = string
+#   nullable    = false
+# }
 
 ##
 # AWS provider
