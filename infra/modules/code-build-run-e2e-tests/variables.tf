@@ -26,10 +26,9 @@ variable "product_pages_url" {
   description = "The url for the product pages"
 }
 
-variable "github_connection_arn" {
+variable "codestar_connection_arn" {
   type        = string
-  description = "The arn of the github connection to use"
-  default     = "arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
+  description = "the arn of the deploy account github connection"
 }
 
 variable "service_role_arn" {

@@ -109,6 +109,7 @@ module "pipeline_visualiser_docker_build" {
   docker_username_parameter_path = "/development/dockerhub/username"
   docker_password_parameter_path = "/development/dockerhub/password"
   artifact_store_arn             = module.pipeline_visualiser_artifact_bucket.arn
+  codestar_connection_arn        = var.codestar_connection_arn
 }
 
 module "pipeline_visualiser_generate_container_image_defs" {

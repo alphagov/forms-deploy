@@ -344,6 +344,7 @@ data "aws_iam_policy_document" "code-build-modules" {
     sid    = "ManagePolicies"
     effect = "Allow"
     actions = [
+      "iam:CreatePolicyVersion",
       "iam:CreatePolicy",
       "iam:DeletePolicy",
       "iam:TagPolicy"

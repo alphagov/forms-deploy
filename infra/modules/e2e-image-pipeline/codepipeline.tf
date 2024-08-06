@@ -27,7 +27,7 @@ resource "aws_codepipeline" "main" {
       output_artifacts = ["forms_e2e_tests"]
 
       configuration = {
-        ConnectionArn    = var.github_connection_arn
+        ConnectionArn    = var.codestar_connection_arn
         FullRepositoryId = "alphagov/forms-e2e-tests"
         BranchName       = var.forms_e2e_tests_branch
         DetectChanges    = true
@@ -64,6 +64,7 @@ module "docker_build" {
   docker_password_parameter_path = "/development/dockerhub/password"
   artifact_store_arn             = module.artifact_bucket.arn
   build_directory                = "."
+  codestar_connection_arn        = var.codestar_connection_arn
 
   # Selenium is not compatible with aarch64.
   code_build_project_compute_arch = "LINUX_CONTAINER"
