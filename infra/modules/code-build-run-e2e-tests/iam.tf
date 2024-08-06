@@ -17,12 +17,12 @@ data "aws_iam_policy_document" "codebuild" {
       "codestar-connections:GetConnection",
       "codestar-connections:ListConnections"
     ]
-    resources = [var.deploy_codestar_connection_arn]
+    resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
   statement {
     actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
-    resources = [var.deploy_codestar_connection_arn]
+    resources = [var.codestar_connection_arn]
     effect    = "Allow"
   }
   statement {

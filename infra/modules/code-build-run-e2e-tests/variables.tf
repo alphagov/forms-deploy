@@ -26,7 +26,7 @@ variable "product_pages_url" {
   description = "The url for the product pages"
 }
 
-variable "deploy_codestar_connection_arn" {
+variable "codestar_connection_arn" {
   type        = string
   description = "the arn of the deploy account github connection"
 }
