@@ -2,15 +2,25 @@ variable "env_name" {
   type = string
 }
 
+variable "root_domain" {
+  type        = string
+  description = "The root domain for this deployment of GOV.UK Forms. For example: forms.service.gov.uk"
+}
+
 variable "sub_domain" {
   type        = string
   description = "The subdomain for this service."
-  validation {
-    condition     = contains(["submit", "admin", "www", "api"], var.sub_domain)
-    error_message = "Valid values for sub_domain are: submit, admin, www, api"
-  }
+
+  # We would like to validate that the sub_domain value ends with the root_domain value
+  # but variable validation cannot refer to other variables prior to Terraform 1.9.
+  #
+  # When we are on Terraform 1.9, we should address this.
 }
 
+variable "listener_priority" {
+  type        = number
+  description = "The priority number for the load balancer listener rule that will be created. Numbers must be distinct across all invocations of this module in a deployment."
+}
 
 variable "application" {
   type        = string

@@ -8,7 +8,9 @@ module "ecs_service" {
   source                 = "../ecs-service"
   env_name               = var.env_name
   application            = "forms-product-page"
-  sub_domain             = "www"
+  root_domain            = var.root_domain
+  sub_domain             = "www.${var.root_domain}"
+  listener_priority      = 400
   image                  = local.image
   cpu                    = var.cpu
   memory                 = var.memory

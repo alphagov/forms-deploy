@@ -3,6 +3,11 @@ variable "env_name" {
   description = "The name of the environment to be used in resource names."
 }
 
+variable "root_domain" {
+  type        = string
+  description = "The root domain for this deployment of GOV.UK Forms. For example: forms.service.gov.uk"
+}
+
 variable "image_tag" {
   type     = string
   nullable = true

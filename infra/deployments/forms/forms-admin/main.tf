@@ -8,6 +8,7 @@ variable "image_tag" {
 module "forms_admin" {
   source                         = "../../../modules/forms-admin"
   env_name                       = var.environment_name
+  root_domain                    = var.root_domain
   image_tag                      = var.image_tag
   cpu                            = var.forms_admin_settings.cpu
   memory                         = var.forms_admin_settings.memory

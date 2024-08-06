@@ -8,6 +8,7 @@ variable "image_tag" {
 module "forms_runner" {
   source                     = "../../../modules/forms-runner"
   env_name                   = var.environment_name
+  root_domain                = var.root_domain
   image_tag                  = var.image_tag
   cpu                        = var.forms_runner_settings.cpu
   memory                     = var.forms_runner_settings.memory
