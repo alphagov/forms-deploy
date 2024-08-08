@@ -74,3 +74,14 @@ variable "deploy_account_id" {
   type        = string
   description = "the account number for the deploy account"
 }
+
+variable "csv_submission_enabled" {
+  description = "Enables attaching CSV submission data to submission emails for all forms."
+  type        = bool
+  default     = false
+}
+
+variable "csv_submission_enabled_for_form_ids" {
+  description = "Enables attaching CSV submission data to submission emails for specific forms. This is only relevant if csv_submission_enabled is set to false. This is a comma separated list of form IDs in a string"
+  type        = string
+}
