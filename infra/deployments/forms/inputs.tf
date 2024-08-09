@@ -81,6 +81,37 @@ variable "hosted_zone_id" {
   nullable    = false
 }
 
+variable "additional_dns_records" {
+  description = <<EOF
+Additional DNS records to set in the environment. Some environments have DNS records that must be set, which other environments don't need.
+
+Record names should be limited the subdomain portion of the name. They will be suffixed with the value of the root_domain variable.
+
+To add records for the root domain, set name to the empt string.
+EOF
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+
+  validation {
+    condition     = alltrue([for r in var.additional_dns_records : !endswith(r.name, ".")])
+    error_message = "DNS record names must not end with a dot"
+  }
+
+  validation {
+    condition     = alltrue([for r in var.additional_dns_records : (length(r.records) > 0)])
+    error_message = "All DNS records must have at least 1 value in the records list"
+  }
+
+  validation {
+    condition     = length([for r in var.additional_dns_records : [r.name, r.type]]) == length(distinct([for r in var.additional_dns_records : [r.name, r.type]]))
+    error_message = "All DNS record name must be unique for a given type. If you need to add another value, add the value to its records list"
+  }
+}
+
 ##
 # Settings
 ##
