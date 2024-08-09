@@ -40,6 +40,7 @@ environmental_settings = {
 hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"
 cloudfront_distribution_id = "EXITHSOVYUXHW"
+additional_dns_records     = []
 codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
 container_repository       = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 forms_admin_settings = {
