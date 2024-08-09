@@ -51,21 +51,21 @@ additional_dns_records = [
   },
   {
     # Validation record for submit.
-    name    = "_asvdns-677c95c4-4883-49c1-aaaf-d5d357de6214"
+    name    = "_asvdns-677c95c4-4883-49c1-aaaf-d5d357de6214.submit"
     type    = "TXT"
     ttl     = 86400
     records = ["asvdns_1562e193-1dda-4dff-b80f-30a51d40f9fa"]
   },
   {
     # Validation record for admin.
-    name    = "_asvdns-7ccd9131-fdea-4bcf-9ee3-980f751ccff6"
+    name    = "_asvdns-7ccd9131-fdea-4bcf-9ee3-980f751ccff6.admin"
     type    = "TXT"
     ttl     = 86400
     records = ["asvdns_c563af35-dcf1-40c6-b2c0-bc2719a2c2fc"]
   },
   {
     # Validation record for www.
-    name    = "_asvdns-b4f022ae-7033-40d5-bd61-1465c9ea5a30"
+    name    = "_asvdns-b4f022ae-7033-40d5-bd61-1465c9ea5a30.www"
     type    = "TXT"
     ttl     = 86400
     records = ["asvdns_61809fb0-4bf0-4e8e-82e2-e6febfba9faa"]
