@@ -40,9 +40,39 @@ environmental_settings = {
 hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"
 cloudfront_distribution_id = "EXITHSOVYUXHW"
-additional_dns_records     = []
-codestar_connection_arn    = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
-container_repository       = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
+additional_dns_records = [
+  # Records in support of MyNCSC Web Check
+  {
+    # Validation record for apex domain
+    name    = "_asvdns-3135bcc2-f3a6-4575-99e3-107b802607ab"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["asvdns_ba7549ac-6142-4838-a85d-aad0cd4e3238"]
+  },
+  {
+    # Validation record for submit.
+    name    = "_asvdns-677c95c4-4883-49c1-aaaf-d5d357de6214"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["asvdns_1562e193-1dda-4dff-b80f-30a51d40f9fa"]
+  },
+  {
+    # Validation record for admin.
+    name    = "_asvdns-7ccd9131-fdea-4bcf-9ee3-980f751ccff6"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["asvdns_c563af35-dcf1-40c6-b2c0-bc2719a2c2fc"]
+  },
+  {
+    # Validation record for www.
+    name    = "_asvdns-b4f022ae-7033-40d5-bd61-1465c9ea5a30"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["asvdns_61809fb0-4bf0-4e8e-82e2-e6febfba9faa"]
+  }
+]
+codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
+container_repository    = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512
