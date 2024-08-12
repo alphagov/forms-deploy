@@ -105,7 +105,7 @@ pre_apply() {
   fi
 }
 
-plan_apply_validate(){
+plan_apply(){
     action="$1"
     extra_args=""
 
@@ -141,6 +141,12 @@ plan_apply_validate(){
     fi
 }
 
+validate() {
+  terraform \
+    -chdir="${src_dir}" \
+    validate
+}
+
 post_apply() {
     if [ "${deployment}+${tf_root}" = "account+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
         echo "Performing post-apply actions"
@@ -151,7 +157,7 @@ post_apply() {
 case "${action}" in
     apply)
         pre_apply
-        plan_apply_validate "apply"
+        plan_apply "apply"
         ;;
     init)#
         pre_init
@@ -159,11 +165,11 @@ case "${action}" in
         ;;
     plan)
         pre_apply # We use pre_apply here so that a plan and application look as similar as possible
-        plan_apply_validate "plan"
+        plan_apply "plan"
         ;;
 
     validate)
-        plan_apply_validate "validate"
+        validate
         ;;
 esac
 
