@@ -214,6 +214,57 @@ resource "aws_iam_policy" "manage_dashboards" {
   })
 }
 
+resource "aws_iam_policy" "manage_maintenance_page" {
+  name        = "manage-maintenance-page"
+  path        = "/"
+  description = "Permission to manage maintenance page"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecs:DeregisterTaskDefinition",
+        ]
+        Effect   = "Allow"
+        Resource = ["*"]
+      },
+      {
+        Action = [
+          "ecs:RegisterTaskDefinition",
+          "ecs:TagResource"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/${var.env_name}_forms-admin:*",
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/${var.env_name}_forms-runner:*"
+        ]
+      },
+      {
+        Action = [
+          "ecs:UpdateService"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:ecs:eu-west-2:${local.account_id}:service/forms-${var.env_name}/forms-admin",
+          "arn:aws:ecs:eu-west-2:${local.account_id}:service/forms-${var.env_name}/forms-runner"
+        ]
+      },
+      {
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate",
+          "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate/*"
+        ]
+      },
+    ]
+  })
+}
+
 resource "aws_iam_policy" "deny_parameter_store" {
   name        = "deny-parameter-store-read-access"
   path        = "/"

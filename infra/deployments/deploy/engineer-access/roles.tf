@@ -8,6 +8,7 @@ module "engineer_access" {
   support                 = module.users.with_role["deploy_support"]
   readonly                = module.users.with_role["deploy_readonly"]
   env_name                = "deploy"
+  environment_type        = "deploy"
   codestar_connection_arn = var.codestar_connection_arn
 
   # Pentesters may not have GDS domains so our pattern using the 'users' module

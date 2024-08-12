@@ -5,6 +5,7 @@ module "users" {
 module "engineer_access" {
   source                  = "../../modules/engineer-access"
   env_name                = var.account_name
+  environment_type        = var.environment_type
   admins                  = module.users.with_role["${var.environment_type}_admin"]
   support                 = module.users.with_role["${var.environment_type}_support"]
   readonly                = module.users.with_role["${var.environment_type}_readonly"]
