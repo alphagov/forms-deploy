@@ -114,7 +114,7 @@ module "ecs_service" {
     },
     {
       name  = "SETTINGS__FEATURES__CSV_SUBMISSION__ENABLED_FOR_FORM_IDS"
-      value = var.csv_submission_enabled_for_form_ids
+      value = join(",", var.csv_submission_enabled_for_form_ids)
     }
   ]
 
