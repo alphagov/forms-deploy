@@ -103,3 +103,77 @@ resource "aws_db_cluster_snapshot" "snapshot" {
     create_before_destroy = true
   }
 }
+
+
+resource "aws_rds_cluster" "cluster_aurora_v2" {
+  snapshot_identifier = aws_db_cluster_snapshot.snapshot.id
+  cluster_identifier = "aurora-v2-cluster-${var.env_name}"
+
+  availability_zones = var.availability_zones
+
+  master_username = "root"
+  master_password = data.aws_ssm_parameter.database_password.value
+  port            = local.rds_port
+
+  engine         = "aurora-postgresql"
+  engine_mode    = "provisioned"
+  engine_version = "13.12"
+
+  vpc_security_group_ids = [aws_security_group.rds.id]
+  db_subnet_group_name   = aws_db_subnet_group.rds.id
+
+  enable_http_endpoint = true
+
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgres_v13.id
+
+  apply_immediately            = var.apply_immediately
+  preferred_maintenance_window = var.rds_maintenance_window
+
+  skip_final_snapshot       = false
+  final_snapshot_identifier = "forms-${var.env_name}-${local.timestamp_sanitized}"
+  copy_tags_to_snapshot     = true
+  storage_encrypted         = true
+  backup_retention_period   = var.backup_retention_period
+  deletion_protection       = true
+
+  serverlessv2_scaling_configuration {
+    max_capacity = var.max_capacity
+    min_capacity = var.min_capacity
+  }
+
+  lifecycle {
+    # Do not remove "restore_to_point_in_time" from this block unless you are trying
+    # to create a new database from a point in time.
+    #
+    # We specified version 11.18 when we created the database clusters
+    # but since then AWS have provided automatic minor version upgrades.
+    #
+    # We don't wish for Terraform to attempt to downgrade the engine version,
+    # or to have to update our config every time there's a new minor version.
+    # Instead, we ignore any changes to the engine version, and allow AWS to
+    # be the arbiter of the exact version.
+    #
+    # When we want to perform major version upgrades, we can remove this lifecycle
+    # "engine_version" configuration, and replace it once the upgrade is complete.
+    ignore_changes = [
+      snapshot_identifier,
+      engine_version,
+      db_cluster_parameter_group_name,
+      restore_to_point_in_time
+    ]
+  }
+
+  depends_on = [
+    aws_db_cluster_snapshot.snapshot,
+    aws_rds_cluster_parameter_group.aurora_postgres_v13
+  ]
+}
+
+resource "aws_rds_cluster_instance" "member" {
+  cluster_identifier = aws_rds_cluster.cluster_aurora_v2.id
+  engine             = "aurora-postgresql"
+  instance_class     = "db.serverless"
+  identifier         = "primary"
+
+  depends_on = [aws_db_cluster_snapshot.snapshot]
+}
