@@ -27,6 +27,7 @@ module "support_role" {
     aws_iam_policy.manage_parameter_store.arn,
     aws_iam_policy.manage_dashboards.arn,
     aws_iam_policy.manage_deployments.arn,
+    aws_iam_policy.manage_maintenance_page.arn,
     var.env_name != "deploy" ? [aws_iam_policy.query_rds_with_data_api[0].arn, aws_iam_policy.run_task[0].arn, aws_iam_policy.stop_task[0].arn] : []
   ])
   ip_restrictions = local.vpn_ip_restrictions

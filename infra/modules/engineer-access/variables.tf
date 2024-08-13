@@ -3,6 +3,11 @@ variable "env_name" {
   description = "The name of the environment to be used in resource names."
 }
 
+variable "environment_type" {
+  type        = string
+  description = "The type of the environment to be used in resource names."
+}
+
 variable "admins" {
   type        = list(string)
   default     = []
