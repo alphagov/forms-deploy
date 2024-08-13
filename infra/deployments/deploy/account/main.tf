@@ -19,11 +19,6 @@ resource "aws_ssm_parameter" "docker_username" {
   }
 }
 
-import {
-  id = "/development/dockerhub/username"
-  to = aws_ssm_parameter.docker_username
-}
-
 resource "aws_ssm_parameter" "docker_password" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
@@ -37,9 +32,4 @@ resource "aws_ssm_parameter" "docker_password" {
       value
     ]
   }
-}
-
-import {
-  id = "/development/dockerhub/password"
-  to = aws_ssm_parameter.docker_password
 }

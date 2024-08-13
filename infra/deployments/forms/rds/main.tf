@@ -16,28 +16,3 @@ module "rds" {
 }
 
 data "aws_caller_identity" "current" {}
-
-import {
-  id = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/database/master-password"
-  to = module.rds.aws_ssm_parameter.database_password_for_master_user
-}
-
-import {
-  id = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.environment_name}/database/password"
-  to = module.rds.aws_ssm_parameter.database_password_for_forms_admin_app
-}
-
-import {
-  id = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.environment_name}/database/url"
-  to = module.rds.aws_ssm_parameter.database_url_for_forms_admin_app
-}
-
-import {
-  id = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.environment_name}/database/password"
-  to = module.rds.aws_ssm_parameter.database_password_for_forms_api_app
-}
-
-import {
-  id = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-api-${var.environment_name}/database/url"
-  to = module.rds.aws_ssm_parameter.database_url_for_forms_api_app
-}
