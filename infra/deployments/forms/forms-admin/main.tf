@@ -27,3 +27,8 @@ module "forms_admin" {
   enable_mailchimp_sync          = var.forms_admin_settings.synchronize_to_mailchimp
   deploy_account_id              = var.deploy_account_id
 }
+
+import {
+  id = "/forms-admin-${var.environment_name}/secret-key-base"
+  to = module.forms_admin.aws_ssm_parameter.secret_key_base
+}

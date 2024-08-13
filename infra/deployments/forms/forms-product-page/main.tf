@@ -17,3 +17,8 @@ module "forms_product_page" {
   max_capacity      = var.forms_product_page_settings.max_capacity
   deploy_account_id = var.deploy_account_id
 }
+
+import {
+  id = "/forms-product-page-${var.environment_name}/secret-key-base"
+  to = module.forms_product_page.aws_ssm_parameter.secret_key_base
+}

@@ -16,3 +16,8 @@ module "forms_api" {
   max_capacity      = var.forms_api_settings.max_capacity
   deploy_account_id = var.deploy_account_id
 }
+
+import {
+  id = "/forms-api-${var.environment_name}/secret-key-base"
+  to = module.forms_api.aws_ssm_parameter.secret_key_base
+}
