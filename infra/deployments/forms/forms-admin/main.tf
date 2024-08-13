@@ -27,3 +27,33 @@ module "forms_admin" {
   enable_mailchimp_sync          = var.forms_admin_settings.synchronize_to_mailchimp
   deploy_account_id              = var.deploy_account_id
 }
+
+import {
+  id = "/forms-admin-${var.environment_name}/secret-key-base"
+  to = module.forms_admin.aws_ssm_parameter.secret_key_base
+}
+
+import {
+  id = "/forms-admin-${var.environment_name}/sentry/dsn"
+  to = module.forms_admin.aws_ssm_parameter.sentry_dsn
+}
+
+import {
+  id = "/forms-admin-${var.environment_name}/forms-api-key"
+  to = module.forms_admin.aws_ssm_parameter.forms_api_key
+}
+
+import {
+  id = "/forms-admin-${var.environment_name}/notify-api-key"
+  to = module.forms_admin.aws_ssm_parameter.notify_api_key
+}
+
+import {
+  id = "/forms-admin-${var.environment_name}/gds-sso-oauth-id"
+  to = module.forms_admin.aws_ssm_parameter.gds_sso_oauth_id
+}
+
+import {
+  id = "/forms-admin-${var.environment_name}/gds-sso-oauth-secret"
+  to = module.forms_admin.aws_ssm_parameter.gds_sso_oauth_secret
+}

@@ -60,8 +60,8 @@ module "docker_build" {
   project_description            = "Build the image used to run the end to end tests"
   image_name                     = "end-to-end-tests"
   tag_latest                     = true
-  docker_username_parameter_path = "/development/dockerhub/username"
-  docker_password_parameter_path = "/development/dockerhub/password"
+  docker_username_parameter_path = "/docker/username"
+  docker_password_parameter_path = "/docker/password"
   artifact_store_arn             = module.artifact_bucket.arn
   build_directory                = "."
   codestar_connection_arn        = var.codestar_connection_arn

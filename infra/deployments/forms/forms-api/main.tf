@@ -16,3 +16,18 @@ module "forms_api" {
   max_capacity      = var.forms_api_settings.max_capacity
   deploy_account_id = var.deploy_account_id
 }
+
+import {
+  id = "/forms-api-${var.environment_name}/secret-key-base"
+  to = module.forms_api.aws_ssm_parameter.secret_key_base
+}
+
+import {
+  id = "/forms-api-${var.environment_name}/sentry/dsn"
+  to = module.forms_api.aws_ssm_parameter.sentry_dsn
+}
+
+import {
+  id = "/forms-api-${var.environment_name}/forms-api-key"
+  to = module.forms_api.aws_ssm_parameter.forms_api_key
+}

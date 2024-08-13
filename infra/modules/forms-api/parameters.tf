@@ -1,23 +1,10 @@
 resource "aws_ssm_parameter" "forms_api_key" {
   #checkov:skip=CKV_AWS_337:KMS managed key is fine
-  name  = "/forms-runner-${var.env_name}/forms-api-key"
+  name  = "/forms-api-${var.env_name}/forms-api-key"
   type  = "SecureString"
   value = "dummy_value"
 
   description = "API key to access forms-api"
-
-  lifecycle {
-    ignore_changes = [value]
-  }
-}
-
-resource "aws_ssm_parameter" "notify_api_key" {
-  #checkov:skip=CKV_AWS_337:KMS managed key is fine
-  name  = "/forms-runner-${var.env_name}/notify-api-key"
-  type  = "SecureString"
-  value = "dummy_value"
-
-  description = "API key to connect with GOV.UK Notify"
 
   lifecycle {
     ignore_changes = [value]
@@ -32,8 +19,8 @@ resource "aws_ssm_parameter" "notify_api_key" {
 resource "aws_ssm_parameter" "secret_key_base" {
   #checkov:skip=CKV_AWS_337:KMS managed key is fine
 
-  name        = "/forms-runner-${var.env_name}/secret-key-base"
-  description = "Rails secret_key_base value for forms-runner in the ${var.env_name} environment"
+  name        = "/forms-api-${var.env_name}/secret-key-base"
+  description = "Rails secret_key_base value for forms-api in the ${var.env_name} environment"
   type        = "SecureString"
   value       = "dummy-value"
 
@@ -49,8 +36,8 @@ resource "aws_ssm_parameter" "secret_key_base" {
 resource "aws_ssm_parameter" "sentry_dsn" {
   #checkov:skip=CKV_AWS_337:KMS managed key is fine
 
-  name        = "/forms-runner-${var.env_name}/sentry/dsn"
-  description = "Sentry DSN value for forms-runner in the ${var.env_name} environment"
+  name        = "/forms-api-${var.env_name}/sentry/dsn"
+  description = "Sentry DSN value for forms-api in the ${var.env_name} environment"
   type        = "SecureString"
   value       = "dummy-value"
 

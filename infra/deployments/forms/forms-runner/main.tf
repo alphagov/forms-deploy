@@ -23,3 +23,13 @@ module "forms_runner" {
   csv_submission_enabled              = var.forms_runner_settings.csv_submission_enabled
   csv_submission_enabled_for_form_ids = var.forms_runner_settings.csv_submission_enabled_for_form_ids
 }
+
+import {
+  id = "/forms-runner-${var.environment_name}/secret-key-base"
+  to = module.forms_runner.aws_ssm_parameter.secret_key_base
+}
+
+import {
+  id = "/forms-runner-${var.environment_name}/sentry/dsn"
+  to = module.forms_runner.aws_ssm_parameter.sentry_dsn
+}
