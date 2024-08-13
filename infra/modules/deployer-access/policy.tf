@@ -30,6 +30,7 @@ data "aws_iam_policy_document" "forms-infra-2" {
     data.aws_iam_policy_document.cloudwatch_logging.json,
     data.aws_iam_policy_document.shield.json,
     data.aws_iam_policy_document.route53.json,
+    data.aws_iam_policy_document.forms_runner.json
   ]
 }
 
@@ -657,5 +658,28 @@ data "aws_iam_policy_document" "ssm" {
       "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/*",
     ]
     effect = "Deny"
+  }
+}
+
+data "aws_iam_policy_document" "forms_runner" {
+  statement {
+    sid = "ManageRunnerSpecificRoles"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:CreateServiceLinkedRole",
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:GetRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
+      "iam:UpdateRole",
+    ]
+
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/govuk-forms-csv-submissions-${var.env_name}",
+    ]
   }
 }

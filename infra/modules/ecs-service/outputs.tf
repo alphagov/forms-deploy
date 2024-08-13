@@ -12,3 +12,7 @@ output "task_definition" {
 output "task_container_definition" {
   value = local.task_container_definition
 }
+
+output "task_role_arn" {
+  value = aws_iam_role.ecs_task_role.arn
+}
