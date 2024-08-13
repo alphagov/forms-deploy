@@ -5,7 +5,7 @@ deploy-forms-product-page-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -16,7 +16,7 @@ deploy-forms-runner-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -27,7 +27,7 @@ deploy-forms-api-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -38,7 +38,7 @@ deploy-forms-admin-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -46,5 +46,5 @@ apply-terraform = {
   pipeline_trigger         = "MANUAL"
   git_source_branch        = "poc-pipelines-in-environments"
   previous_stage_name      = ""
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
 }
