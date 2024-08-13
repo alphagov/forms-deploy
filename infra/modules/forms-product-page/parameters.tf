@@ -17,3 +17,20 @@ resource "aws_ssm_parameter" "secret_key_base" {
     ]
   }
 }
+
+# Sentry Data Source Name (DSN)
+# This value tells Sentry where to send events to that they are associated with the correct project
+resource "aws_ssm_parameter" "sentry_dsn" {
+  #checkov:skip=CKV_AWS_337:KMS managed key is fine
+
+  name        = "/forms-product-page-${var.env_name}/sentry/dsn"
+  description = "Sentry DSN value for forms-product-page in the ${var.env_name} environment"
+  type        = "SecureString"
+  value       = "dummy-value"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}

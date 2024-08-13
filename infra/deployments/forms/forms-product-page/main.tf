@@ -22,3 +22,8 @@ import {
   id = "/forms-product-page-${var.environment_name}/secret-key-base"
   to = module.forms_product_page.aws_ssm_parameter.secret_key_base
 }
+
+import {
+  id = "/forms-product-page-${var.environment_name}/sentry/dsn"
+  to = module.forms_product_page.aws_ssm_parameter.sentry_dsn
+}

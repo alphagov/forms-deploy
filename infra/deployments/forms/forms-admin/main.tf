@@ -32,3 +32,8 @@ import {
   id = "/forms-admin-${var.environment_name}/secret-key-base"
   to = module.forms_admin.aws_ssm_parameter.secret_key_base
 }
+
+import {
+  id = "/forms-admin-${var.environment_name}/sentry/dsn"
+  to = module.forms_admin.aws_ssm_parameter.sentry_dsn
+}

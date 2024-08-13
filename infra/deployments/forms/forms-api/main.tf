@@ -21,3 +21,8 @@ import {
   id = "/forms-api-${var.environment_name}/secret-key-base"
   to = module.forms_api.aws_ssm_parameter.secret_key_base
 }
+
+import {
+  id = "/forms-api-${var.environment_name}/sentry/dsn"
+  to = module.forms_api.aws_ssm_parameter.sentry_dsn
+}
