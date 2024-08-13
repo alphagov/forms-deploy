@@ -166,7 +166,7 @@ variable "forms_runner_settings" {
     cloudwatch_metrics_enabled          = bool
     analytics_enabled                   = bool
     csv_submission_enabled              = bool
-    csv_submission_enabled_for_form_ids = list(number)
+    csv_submission_enabled_for_form_ids = list(string)
   })
 }
 

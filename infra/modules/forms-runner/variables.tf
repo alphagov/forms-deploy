@@ -83,5 +83,5 @@ variable "csv_submission_enabled" {
 
 variable "csv_submission_enabled_for_form_ids" {
   description = "A list of form IDs to enable attaching CSV submission data to submission emails for. This is only relevant if csv_submission_enabled is set to false."
-  type        = list(number)
+  type        = list(string)
 }
