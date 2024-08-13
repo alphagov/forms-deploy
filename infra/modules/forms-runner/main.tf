@@ -115,6 +115,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__CSV_SUBMISSION__ENABLED_FOR_FORM_IDS"
       value = join(",", var.csv_submission_enabled_for_form_ids)
+    },
+    {
+      name  = "SETTINGS_FEATURES__CSV_SUBMISSION__IAM_ROLE_ARN",
+      value = aws_iam_role.csv-submissions-role.arn
     }
   ]
 
