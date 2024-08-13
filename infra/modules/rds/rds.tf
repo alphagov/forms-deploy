@@ -106,8 +106,15 @@ resource "aws_db_cluster_snapshot" "snapshot" {
 
 
 resource "aws_rds_cluster" "cluster_aurora_v2" {
+  #checkov:skip=CKV2_AWS_8:AWS RDS inbuilt backup process is sufficient
+  #checkov:skip=CKV2_AWS_27:Query logging is not required at this time
+  #checkov:skip=CKV_AWS_128:IAM auth to be considered: https://trello.com/c/nY2TcBXb/418-consider-rds-iam-auth
+  #checkov:skip=CKV_AWS_162:Duplicate of CKV_AWS_128
+  #checkov:skip=CKV_AWS_324:Log capture is not required at this time
+  #checkov:skip=CKV_AWS_327:Database is already encrypted with the default key, and we feel this is sufficient
+
   snapshot_identifier = aws_db_cluster_snapshot.snapshot.id
-  cluster_identifier = "aurora-v2-cluster-${var.env_name}"
+  cluster_identifier  = "aurora-v2-cluster-${var.env_name}"
 
   availability_zones = var.availability_zones
 
@@ -170,10 +177,16 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
 }
 
 resource "aws_rds_cluster_instance" "member" {
+  #checkov:skip=CKV_AWS_118:We don't currently have enhanced monitoring
+  #checkov:skip=CKV_AWS_353:We don't currently use performance insights
+  #checkov:skip=CKV_AWS_354:We don't currently use performance insights
+
   cluster_identifier = aws_rds_cluster.cluster_aurora_v2.id
   engine             = "aurora-postgresql"
   instance_class     = "db.serverless"
   identifier         = "primary"
+
+  auto_minor_version_upgrade = true
 
   depends_on = [aws_db_cluster_snapshot.snapshot]
 }
