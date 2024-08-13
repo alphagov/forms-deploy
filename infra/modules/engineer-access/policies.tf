@@ -185,7 +185,7 @@ resource "aws_iam_policy" "manage_parameter_store" {
         ]
         Effect = "Deny"
         Resource = [
-          "arn:aws:ssm:*:*:parameter/database/master-password"
+          "arn:aws:ssm:*:*:parameter/${var.env_name}/database/root-password"
         ]
       },
     ]
