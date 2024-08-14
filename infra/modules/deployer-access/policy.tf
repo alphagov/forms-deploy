@@ -158,6 +158,7 @@ data "aws_iam_policy_document" "rds" {
     sid = "ManageRDS"
     actions = [
       "rds:*DBCluster*",
+      "rds:*DBInstance*",
       "rds:*SecurityGroup*",
       "rds:*SubnetGroup*",
       "rds:*Tag*",
