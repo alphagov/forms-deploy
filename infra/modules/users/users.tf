@@ -41,9 +41,9 @@ locals {
       user_research = "admin"
     },
     "david.biddle" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
+      deploy        = "admin"
+      staging       = "admin"
+      production    = "admin"
       development   = "admin"
       user_research = "admin"
     },
@@ -83,9 +83,9 @@ locals {
       user_research = "support"
     },
     "samuel.culley" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
+      deploy        = "admin"
+      staging       = "admin"
+      production    = "admin"
       development   = "admin"
       user_research = "admin"
     },
@@ -97,16 +97,16 @@ locals {
       user_research = "admin"
     },
     "stephen.daly" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
+      deploy        = "admin"
+      staging       = "admin"
+      production    = "admin"
       development   = "admin"
       user_research = "admin"
     },
     "tom.iles" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
+      deploy        = "admin"
+      staging       = "admin"
+      production    = "admin"
       development   = "admin"
       user_research = "admin"
     },
