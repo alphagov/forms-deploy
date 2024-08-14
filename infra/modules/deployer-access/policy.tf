@@ -326,6 +326,7 @@ data "aws_iam_policy_document" "code-build-modules" {
     actions = [
       "iam:AttachRolePolicy",
       "iam:CreateRole",
+      "iam:DeletePolicyVersion",
       "iam:DeleteRolePolicy",
       "iam:DetachRolePolicy",
       "iam:DeleteRole",
@@ -335,6 +336,7 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:TagRole"
     ]
     resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
