@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 # The database passwords were manually generated when creating the environments
 resource "aws_ssm_parameter" "database_password_for_master_user" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
