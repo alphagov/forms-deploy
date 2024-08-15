@@ -18,11 +18,6 @@ resource "aws_ssm_parameter" "auth0_access_client_id" {
   }
 }
 
-import {
-  id = "/terraform/auth0-access/client-id"
-  to = aws_ssm_parameter.auth0_access_client_id
-}
-
 resource "aws_ssm_parameter" "auth0_access_client_secret" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
@@ -36,9 +31,4 @@ resource "aws_ssm_parameter" "auth0_access_client_secret" {
       value
     ]
   }
-}
-
-import {
-  id = "/terraform/auth0-access/client-secret"
-  to = aws_ssm_parameter.auth0_access_client_secret
 }
