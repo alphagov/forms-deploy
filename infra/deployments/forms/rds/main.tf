@@ -16,3 +16,43 @@ module "rds" {
 }
 
 data "aws_caller_identity" "current" {}
+
+removed {
+  from = module.rds.aws_ssm_parameter.database_password_for_master_user
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.rds.aws_ssm_parameter.database_password_for_forms_admin_app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.rds.aws_ssm_parameter.database_url_for_forms_admin_app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.rds.aws_ssm_parameter.database_password_for_forms_api_app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.rds.aws_ssm_parameter.database_url_for_forms_api_app
+
+  lifecycle {
+    destroy = false
+  }
+}
