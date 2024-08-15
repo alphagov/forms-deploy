@@ -678,6 +678,7 @@ data "aws_iam_policy_document" "forms_runner" {
       "iam:ListAttachedRolePolicies",
       "iam:PutRolePolicy",
       "iam:TagRole",
+      "iam:UpdateAssumeRolePolicy",
       "iam:UpdateRole",
     ]
 
