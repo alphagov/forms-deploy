@@ -31,6 +31,7 @@ environmental_settings = {
     "@dounreay.com",
     "@marinemanagement.org.uk",
     "@gov.scot",
+    "@dhsc.egresscloud.com"
   ]
   forms_product_page_support_url      = "https://www.forms.service.gov.uk/support"
   rds_maintenance_window              = "wed:04:00-wed:04:30"
