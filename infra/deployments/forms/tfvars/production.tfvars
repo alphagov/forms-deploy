@@ -69,6 +69,22 @@ additional_dns_records = [
     type    = "TXT"
     ttl     = 86400
     records = ["asvdns_61809fb0-4bf0-4e8e-82e2-e6febfba9faa"]
+  },
+
+  # Records in support of MyNCSC MailCheck
+  {
+    # DMARC reporting record for apex domain
+    name    = "_dmarc.forms.service.gov.uk"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["v=DMARC1; p=none; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
+  },
+  {
+    # DMARC reporting record for submit.
+    name    = "_dmarc.submit.forms.service.gov.uk"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["v=DMARC1; p=none; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
   }
 ]
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
