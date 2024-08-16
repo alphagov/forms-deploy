@@ -34,10 +34,11 @@ describe Invoke do
   end
 
   describe '#main' do
-    it 'invokes the AWS CodePipeline API' do
-        expect(codepipeline_client).to receive(:start_pipeline_execution)
+    it 'creates an Aws::CodePipeline::Client with the correct region' do
+      expect(Aws::CodePipeline::Client).to receive(:new).with(region: 'eu-west-2').and_return(codepipeline_client)
+      expect(codepipeline_client).to receive(:start_pipeline_execution)
 
-        Invoke.main(event: event, context: double('context'))
+      Invoke.main(event: event, context: double('context'))
     end
 
     it 'invokes the AWS CodePipeline API with correct parameters' do
