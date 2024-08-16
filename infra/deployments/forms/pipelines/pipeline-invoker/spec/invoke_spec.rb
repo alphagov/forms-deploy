@@ -21,9 +21,9 @@ describe Invoke do
       ],
       'sourceRevisions' => [
         {
-          'actionName' => 'actionName',
-          'revisionType' => 'revisionType',
-          'revisionValue' => 'revisionValue'
+          'actionName' => 'some_action',
+          'revisionType' => 'some_revision_type',
+          'revisionValue' => 'some_revision_value'
         }
       ]
     }
@@ -46,9 +46,9 @@ describe Invoke do
           name: pipeline_name,
           source_revisions: [
             {
-              action_name: 'actionName',
-              revision_type: 'revisionType',
-              revision_value: 'revisionValue'
+              action_name: 'some_action',
+              revision_type: 'some_revision_type',
+              revision_value: 'some_revision_value'
             }
           ],
           variables: [
