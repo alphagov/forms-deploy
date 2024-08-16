@@ -4,7 +4,15 @@ require "aws-sdk-codepipeline"
 
 # Expecting event to take this form
 # {
+#   "clientRequestToken": "string"
 #   "name": "PIPELINE_TO_INVOKE",
+#    "sourceRevisions": [
+#       {
+#          "actionName": "string",
+#          "revisionType": "string",
+#          "revisionValue": "string"
+#       }
+#    ],
 #   "variables": [
 #       {
 #           "name": "container_image_uri",
