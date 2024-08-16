@@ -5,7 +5,8 @@ require "spec_helper"
 
 require_relative "../invoke"
 
-describe Invoke do
+describe PipelineInvoker::Handler do
+  let(:pipeline_invoker) { described_class.new }
   let(:codepipeline_client) { instance_double(Aws::CodePipeline::Client) }
   let(:pipeline_name) { "PIPELINE_TO_INVOKE" }
   let(:container_image_uri) { "CONTAINER_IMAGE_URI" }
@@ -33,12 +34,12 @@ describe Invoke do
     allow(Aws::CodePipeline::Client).to receive(:new).and_return(codepipeline_client)
   end
 
-  describe "#main" do
+  describe "#process" do
     it "creates an Aws::CodePipeline::Client with the correct region" do
       expect(Aws::CodePipeline::Client).to receive(:new).with(region: "eu-west-2").and_return(codepipeline_client)
       expect(codepipeline_client).to receive(:start_pipeline_execution)
 
-      Invoke.main(event:, context: double("context"))
+      pipeline_invoker.process(event:, context: double("context"))
     end
 
     it "invokes the AWS CodePipeline API with correct parameters" do
@@ -62,7 +63,7 @@ describe Invoke do
 
       expect(codepipeline_client).to receive(:start_pipeline_execution).with(expected_params)
 
-      Invoke.main(event:, context: double("context"))
+      pipeline_invoker.process(event:, context: double("context"))
     end
   end
 end
