@@ -157,4 +157,28 @@ describe PipelineInvoker::Handler do
       pipeline_invoker.process(event:, context: double("context"))
     end
   end
+
+  it "gracefully handles AWS CodePipeline errors using structured logging" do
+    error = Aws::CodePipeline::Errors::ServiceError.new(nil, "A generic ServiceError")
+
+    allow(Logger).to receive(:new).and_return(logger)
+    allow(codepipeline_client).to receive(:start_pipeline_execution).and_raise(error)
+
+    expected_log_entry = {
+      level: "error",
+      message: "AWS CodePipeline API error occurred",
+      error_type: error.class.to_s,
+      error_message: "A generic ServiceError",
+      pipeline_name:,
+      context: {
+        region: "eu-west-2",
+        event_details: event,
+      },
+    }.to_json
+
+    expect(logger).to receive(:info)
+    expect(logger).to receive(:error).with(expected_log_entry)
+
+    pipeline_invoker.process(event:, context: double("context"))
+  end
 end

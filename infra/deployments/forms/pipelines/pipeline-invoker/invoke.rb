@@ -62,12 +62,29 @@ module PipelineInvoker
       logger.info(log_payload.to_json)
 
       client = Aws::CodePipeline::Client.new(region: "eu-west-2")
-      client.start_pipeline_execution(
-        name: payload["name"],
-        variables: payload["variables"],
-        source_revisions: payload["source_revisions"],
-        client_request_token: payload["client_request_token"],
-      )
+
+      begin
+        client.start_pipeline_execution(
+          name: payload["name"],
+          variables: payload["variables"],
+          source_revisions: payload["source_revisions"],
+          client_request_token: payload["client_request_token"],
+        )
+      rescue Aws::CodePipeline::Errors::ServiceError => e
+        log_entry = {
+          level: "error",
+          message: "AWS CodePipeline API error occurred",
+          error_type: e.class.to_s,
+          error_message: e.message,
+          pipeline_name: event["name"],
+          context: {
+            region: "eu-west-2",
+            event_details: event,
+          },
+        }
+
+        logger.error(log_entry.to_json)
+      end
     end
   end
 end
