@@ -98,4 +98,8 @@ resource "aws_db_cluster_snapshot" "snapshot" {
   #checkov:skip=CKV_AWS_146: the snapshot uses the same as the database which we have configured with "storage_encrypted = true"
   db_cluster_identifier          = aws_rds_cluster.forms.id
   db_cluster_snapshot_identifier = "${aws_rds_cluster.forms.cluster_identifier}-pre-upgrade-${formatdate("YYYYMMDDhhmmss", timestamp())}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
