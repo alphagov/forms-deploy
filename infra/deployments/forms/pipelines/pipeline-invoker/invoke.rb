@@ -71,20 +71,24 @@ module PipelineInvoker
           client_request_token: payload["client_request_token"],
         )
       rescue Aws::CodePipeline::Errors::ServiceError => e
-        log_entry = {
-          level: "error",
-          message: "AWS CodePipeline API error occurred",
-          error_type: e.class.to_s,
-          error_message: e.message,
-          pipeline_name: event["name"],
-          context: {
-            region: "eu-west-2",
-            event_details: event,
-          },
-        }
-
-        logger.error(log_entry.to_json)
+        handle_error(e, event, logger)
       end
+    end
+
+    def handle_error(error, event, logger)
+      log_entry = {
+        level: "error",
+        message: "AWS CodePipeline API error occurred",
+        error_type: error.class.to_s,
+        error_message: error.message,
+        pipeline_name: event["name"],
+        context: {
+          region: "eu-west-2",
+          event_details: event,
+        },
+      }
+
+      logger.error(log_entry.to_json)
     end
   end
 end
