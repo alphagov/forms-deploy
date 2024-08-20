@@ -38,6 +38,7 @@ forms_admin_settings = {
   act_as_user_enabled        = false
   govuk_app_domain           = ""
   synchronize_to_mailchimp   = false
+  repeatable_page_enabled    = false
 }
 forms_api_settings = {
   cpu          = 256

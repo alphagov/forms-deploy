@@ -88,6 +88,12 @@ variable "act_as_user_enabled" {
   default     = false
 }
 
+variable "repeatable_page_enabled" {
+  description = "Enables editing pages to add another answer to them"
+  type        = bool
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
   type        = bool
