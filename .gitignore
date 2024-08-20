@@ -42,3 +42,6 @@ terraform.rc
 **/.bundle/*
 
 .DS_Store
+
+# Log files
+logs/
