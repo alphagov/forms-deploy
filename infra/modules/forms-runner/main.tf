@@ -117,8 +117,12 @@ module "ecs_service" {
       value = join(",", var.csv_submission_enabled_for_form_ids)
     },
     {
-      name  = "SETTINGS_FEATURES__CSV_SUBMISSION__IAM_ROLE_ARN",
+      name  = "SETTINGS__AWS_S3_SUBMISSIONS__IAM_ROLE_ARN",
       value = aws_iam_role.csv-submissions-role.arn
+    },
+    {
+      name  = "SETTINGS__AWS_S3_SUBMISSIONS__BUCKET_NAME",
+      value = "govuk-forms-csv-form-submissions-dummy"
     }
   ]
 
