@@ -75,14 +75,14 @@ additional_dns_records = [
   # Records in support of MyNCSC MailCheck
   {
     # DMARC reporting record for apex domain
-    name    = "_dmarc.forms.service.gov.uk"
+    name    = "_dmarc"
     type    = "TXT"
     ttl     = 86400
     records = ["v=DMARC1; p=none; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
   },
   {
     # DMARC reporting record for submit.
-    name    = "_dmarc.submit.forms.service.gov.uk"
+    name    = "_dmarc.submit"
     type    = "TXT"
     ttl     = 86400
     records = ["v=DMARC1; p=none; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
