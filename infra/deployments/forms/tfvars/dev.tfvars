@@ -60,7 +60,7 @@ forms_runner_settings = {
   cloudwatch_metrics_enabled          = false
   analytics_enabled                   = true
   csv_submission_enabled              = false
-  csv_submission_enabled_for_form_ids = []
+  csv_submission_enabled_for_form_ids = ["11734", "11896"]
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true
