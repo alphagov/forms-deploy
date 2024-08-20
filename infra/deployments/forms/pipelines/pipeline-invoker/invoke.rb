@@ -32,31 +32,7 @@ module PipelineInvoker
       log_payload = {}
       log_payload["event_received"] = event
 
-      payload = {}
-      payload["name"] = event["name"]
-
-      payload["variables"] = []
-      unless event["variables"].nil?
-        event["variables"].each do |var|
-          payload["variables"] << {
-            name: var["name"],
-            value: var["value"],
-          }
-        end
-      end
-
-      payload["source_revisions"] = []
-      unless event["sourceRevisions"].nil?
-        event["sourceRevisions"].each do |revision|
-          payload["source_revisions"] << {
-            action_name: revision["actionName"],
-            revision_type: revision["revisionType"],
-            revision_value: revision["revisionValue"],
-          }
-        end
-      end
-
-      payload["client_request_token"] = event["client_request_token"]
+      payload = build_payload(event)
 
       log_payload["api_payload"] = payload
       logger.info(log_payload.to_json)
@@ -89,6 +65,37 @@ module PipelineInvoker
       }
 
       logger.error(log_entry.to_json)
+    end
+
+    def build_payload(event)
+      payload = {}
+
+      payload["name"] = event["name"]
+
+      payload["variables"] = []
+      unless event["variables"].nil?
+        event["variables"].each do |var|
+          payload["variables"] << {
+            name: var["name"],
+            value: var["value"],
+          }
+        end
+      end
+
+      payload["source_revisions"] = []
+      unless event["sourceRevisions"].nil?
+        event["sourceRevisions"].each do |revision|
+          payload["source_revisions"] << {
+            action_name: revision["actionName"],
+            revision_type: revision["revisionType"],
+            revision_value: revision["revisionValue"],
+          }
+        end
+      end
+
+      payload["client_request_token"] = event["client_request_token"]
+
+      payload
     end
   end
 end
