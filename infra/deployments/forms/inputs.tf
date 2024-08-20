@@ -158,15 +158,16 @@ variable "forms_product_page_settings" {
 variable "forms_runner_settings" {
   description = "Forms Runner configuration values"
   type = object({
-    cpu                                 = number
-    memory                              = number
-    min_capacity                        = number
-    max_capacity                        = number
-    enable_maintenance_mode             = bool
-    cloudwatch_metrics_enabled          = bool
-    analytics_enabled                   = bool
-    csv_submission_enabled              = bool
-    csv_submission_enabled_for_form_ids = list(string)
+    cpu                                                      = number
+    memory                                                   = number
+    min_capacity                                             = number
+    max_capacity                                             = number
+    enable_maintenance_mode                                  = bool
+    cloudwatch_metrics_enabled                               = bool
+    analytics_enabled                                        = bool
+    csv_submission_enabled                                   = bool
+    csv_submission_enabled_for_form_ids                      = list(string)
+    allow_human_readonly_roles_to_assume_csv_submission_role = bool
   })
 }
 
