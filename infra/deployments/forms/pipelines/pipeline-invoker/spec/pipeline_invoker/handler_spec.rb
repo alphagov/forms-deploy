@@ -3,7 +3,7 @@ require "aws-sdk-codepipeline"
 require "logger"
 require "spec_helper"
 
-require_relative "../invoke"
+require_relative "../../pipeline_invoker"
 
 describe PipelineInvoker::Handler do
   let(:pipeline_invoker) { described_class.new }
@@ -11,6 +11,9 @@ describe PipelineInvoker::Handler do
   let(:logger) { instance_double(Logger) }
   let(:pipeline_name) { "PIPELINE_TO_INVOKE" }
   let(:container_image_uri) { "CONTAINER_IMAGE_URI" }
+  # rubocop:disable RSpec/VerifiedDoubles
+  let(:context) { double("context") }
+  # rubocop:enable RSpec/VerifiedDoubles
   let(:event) do
     {
       "client_request_token" => "some_token",
@@ -37,10 +40,10 @@ describe PipelineInvoker::Handler do
 
   describe "#process" do
     it "creates an Aws::CodePipeline::Client with the correct region" do
-      expect(Aws::CodePipeline::Client).to receive(:new).with(region: "eu-west-2").and_return(codepipeline_client)
+      allow(Aws::CodePipeline::Client).to receive(:new).with(region: "eu-west-2").and_return(codepipeline_client)
       expect(codepipeline_client).to receive(:start_pipeline_execution)
 
-      pipeline_invoker.process(event:, context: double("context"))
+      pipeline_invoker.process(event:, context:)
     end
 
     it "invokes the AWS CodePipeline API with correct parameters" do
@@ -64,7 +67,7 @@ describe PipelineInvoker::Handler do
 
       expect(codepipeline_client).to receive(:start_pipeline_execution).with(expected_params)
 
-      pipeline_invoker.process(event:, context: double("context"))
+      pipeline_invoker.process(event:, context:)
     end
   end
 
@@ -90,7 +93,7 @@ describe PipelineInvoker::Handler do
       expect(logger).to receive(:info)
       expect(logger).to receive(:error).with(expected_log_entry)
 
-      pipeline_invoker.process(event:, context: double("context"))
+      pipeline_invoker.process(event:, context:)
     end
   end
 
