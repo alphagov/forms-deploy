@@ -117,15 +117,16 @@ forms_product_page_settings = {
   max_capacity = 9
 }
 forms_runner_settings = {
-  cpu                                 = 1024
-  memory                              = 2048
-  min_capacity                        = 6
-  max_capacity                        = 36
-  enable_maintenance_mode             = false
-  cloudwatch_metrics_enabled          = true
-  analytics_enabled                   = true
-  csv_submission_enabled              = false
-  csv_submission_enabled_for_form_ids = ["4073"]
+  cpu                                                      = 1024
+  memory                                                   = 2048
+  min_capacity                                             = 6
+  max_capacity                                             = 36
+  enable_maintenance_mode                                  = false
+  cloudwatch_metrics_enabled                               = true
+  analytics_enabled                                        = true
+  csv_submission_enabled                                   = false
+  csv_submission_enabled_for_form_ids                      = ["4073"]
+  allow_human_readonly_roles_to_assume_csv_submission_role = false
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true
