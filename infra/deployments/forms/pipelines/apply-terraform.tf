@@ -1,10 +1,10 @@
 locals {
   running_order = yamldecode(file("../../running-order.yml"))
-  layers = [ for l in local.running_order.running-order.layers : l if !l.manual]
+  layers        = [for layer in local.running_order.running-order.layers : layer if !layer.manual]
   all_roots = toset(flatten([
-    for l in local.layers: [
-      for p in l.phases: [
-        for r in p.roots : replace(r, "/", "_")
+    for layer in local.layers : [
+      for phase in layer.phases : [
+        for root in phase.roots : replace(root, "/", "_")
       ]
     ]
   ]))
@@ -127,22 +127,45 @@ resource "aws_codepipeline" "apply_terroform" {
   }
 
   stage {
-    name = "terraform-apply"
+
+    name = "apply-terraform"
 
     dynamic "action" {
-      # don't run pipelines because we did it in the previous stage
-      for_each = setsubtract(local.all_roots, ["forms/pipelines"])
+      # Reduce config to a list of objects like
+      # {
+      #   layer: environment
+      #   root: forms/dns
+      #   phase_idx: 2
+      #   run_order: 102
+      # }
+      #
+      # Actions with the same run order will be executed simultaneously,
+      # which we use to allow us to have all the roots in one phase done
+      # at once
+      for_each = flatten([
+        for layer_index, layer in local.layers : [
+          for phase_index, phase in layer.phases : [
+            for root in phase.roots :
+            {
+              layer : layer.name,
+              root : replace(root, "/", "_"),
+              phase_idx : phase_index + 1,
+              run_order : ((layer_index + 1) * 100) + (phase_index + 1)
+            } if root != "forms/pipelines"
+          ]
+        ]
+      ])
 
       content {
-        name            = "terraform-apply-${action.value}"
+        name            = "${action.value.layer}-phase${action.value.phase_idx}-${replace(action.value.root, "/", "_")}"
         category        = "Build"
-        run_order       = 1
+        run_order       = action.value.run_order
         owner           = "AWS"
         provider        = "CodeBuild"
         version         = "1"
         input_artifacts = ["forms_deploy"]
         configuration = {
-          ProjectName = module.terraform_apply[action.value].name
+          ProjectName = module.terraform_apply[action.value.root].name
         }
       }
     }
@@ -150,7 +173,7 @@ resource "aws_codepipeline" "apply_terroform" {
     action {
       name            = "await-ecs-deployments"
       category        = "Build"
-      run_order       = 2
+      run_order       = 998 #998 to ensure this ALWAYS runs second-to-last within the stage
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
@@ -185,7 +208,7 @@ resource "aws_codepipeline" "apply_terroform" {
       content {
         name            = "run-end-to-end-tests"
         category        = "Build"
-        run_order       = 3
+        run_order       = 999 #999 to ensure this ALWAYS runs last within the stage
         owner           = "AWS"
         provider        = "CodeBuild"
         version         = "1"
@@ -239,7 +262,7 @@ module "terraform_apply" {
   # deploy one of the apps. They have their own pipelines.
   for_each            = local.all_roots
   source              = "../../../modules/code-build-build"
-  project_name        = "${each.value}-deploy-${var.environment_name}"
+  project_name        = "${var.environment_name}-apply-${each.value}"
   project_description = "Terraform apply ${each.value} in ${var.environment_name}"
   environment_variables = {
     "ROOT_NAME" = each.value
