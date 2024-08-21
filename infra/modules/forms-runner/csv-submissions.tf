@@ -4,10 +4,10 @@ resource "aws_iam_role" "csv-submissions-role" {
 }
 
 data "aws_iam_policy_document" "csv_submission_assume_role_policy" {
-  source_policy_documents = [
+  source_policy_documents = compact([
     data.aws_iam_policy_document.allow_ecs_task_role_to_assumerole.json,
-    data.aws_iam_policy_document.allow_additional_csv_submission_role_assumers.json
-  ]
+    length(var.additional_csv_submission_role_assumers) > 0 ? data.aws_iam_policy_document.allow_additional_csv_submission_role_assumers.json : null
+  ])
 }
 
 data "aws_iam_policy_document" "allow_ecs_task_role_to_assumerole" {
