@@ -1,17 +1,17 @@
 locals {
   roots = toset([
-    "auth0",
-    "dns",
-    "environment",
-    "forms-product-page",
-    "forms-runner",
-    "forms-api",
-    "forms-admin",
-    "health",
-    "pipelines",
-    "rds",
-    "redis",
-    "ses",
+    "forms/auth0",
+    "forms/dns",
+    "forms/environment",
+    "forms/forms-product-page",
+    "forms/forms-runner",
+    "forms/forms-api",
+    "forms/forms-admin",
+    "forms/health",
+    "forms/pipelines",
+    "forms/rds",
+    "forms/redis",
+    "forms/ses",
   ])
 }
 
@@ -126,7 +126,7 @@ resource "aws_codepipeline" "apply_terroform" {
       version         = "1"
       input_artifacts = ["forms_deploy"]
       configuration = {
-        ProjectName = module.terraform_apply["pipelines"].name
+        ProjectName = module.terraform_apply["forms/pipelines"].name
       }
     }
   }
@@ -136,7 +136,7 @@ resource "aws_codepipeline" "apply_terroform" {
 
     dynamic "action" {
       # don't run pipelines because we did it in the previous stage
-      for_each = setsubtract(local.roots, ["pipelines"])
+      for_each = setsubtract(local.roots, ["forms/pipelines"])
 
       content {
         name            = "terraform-apply-${action.value}"
@@ -245,7 +245,7 @@ module "terraform_apply" {
   for_each            = local.roots
   source              = "../../../modules/code-build-build"
   project_name        = "${each.value}-deploy-${var.environment_name}"
-  project_description = "Terraform apply forms/${each.value} in ${var.environment_name}"
+  project_description = "Terraform apply ${each.value} in ${var.environment_name}"
   environment_variables = {
     "ROOT_NAME" = each.value
   }
