@@ -1,18 +1,13 @@
 locals {
-  roots = toset([
-    "forms/auth0",
-    "forms/dns",
-    "forms/environment",
-    "forms/forms-product-page",
-    "forms/forms-runner",
-    "forms/forms-api",
-    "forms/forms-admin",
-    "forms/health",
-    "forms/pipelines",
-    "forms/rds",
-    "forms/redis",
-    "forms/ses",
-  ])
+  running_order = yamldecode(file("../../running-order.yml"))
+  layers = [ for l in local.running_order.running-order.layers : l if !l.manual]
+  all_roots = toset(flatten([
+    for l in local.layers: [
+      for p in l.phases: [
+        for r in p.roots : replace(r, "/", "_")
+      ]
+    ]
+  ]))
 }
 
 resource "aws_cloudwatch_event_rule" "apply_terraform_on_previous_stage" {
@@ -126,7 +121,7 @@ resource "aws_codepipeline" "apply_terroform" {
       version         = "1"
       input_artifacts = ["forms_deploy"]
       configuration = {
-        ProjectName = module.terraform_apply["forms/pipelines"].name
+        ProjectName = module.terraform_apply["forms_pipelines"].name
       }
     }
   }
@@ -136,7 +131,7 @@ resource "aws_codepipeline" "apply_terroform" {
 
     dynamic "action" {
       # don't run pipelines because we did it in the previous stage
-      for_each = setsubtract(local.roots, ["forms/pipelines"])
+      for_each = setsubtract(local.all_roots, ["forms/pipelines"])
 
       content {
         name            = "terraform-apply-${action.value}"
@@ -242,7 +237,7 @@ resource "aws_codepipeline" "apply_terroform" {
 module "terraform_apply" {
   # All roots under `infra/deployments/forms/`, excluding the roots which
   # deploy one of the apps. They have their own pipelines.
-  for_each            = local.roots
+  for_each            = local.all_roots
   source              = "../../../modules/code-build-build"
   project_name        = "${each.value}-deploy-${var.environment_name}"
   project_description = "Terraform apply ${each.value} in ${var.environment_name}"
