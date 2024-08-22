@@ -26,7 +26,7 @@ require "aws-sdk-codepipeline"
 module PipelineInvoker
   class Handler
     # rubocop:disable Lint/UnusedMethodArgument
-    def process(event:, context:)
+    def self.process(event:, context:)
       # rubocop:enable Lint/UnusedMethodArgument
       logger = Logger.new($stdout)
       log_payload = {}
@@ -51,7 +51,7 @@ module PipelineInvoker
       end
     end
 
-    def handle_error(error, event, logger)
+    def self.handle_error(error, event, logger)
       log_entry = {
         level: "error",
         message: "AWS CodePipeline API error occurred",
@@ -67,7 +67,7 @@ module PipelineInvoker
       logger.error(log_entry.to_json)
     end
 
-    def build_payload(event)
+    def self.build_payload(event)
       payload = {}
 
       payload["name"] = event["name"]

@@ -6,14 +6,11 @@ require "spec_helper"
 require_relative "../../pipeline_invoker"
 
 describe PipelineInvoker::Handler do
-  let(:pipeline_invoker) { described_class.new }
   let(:codepipeline_client) { instance_double(Aws::CodePipeline::Client) }
   let(:logger) { instance_double(Logger) }
   let(:pipeline_name) { "PIPELINE_TO_INVOKE" }
   let(:container_image_uri) { "CONTAINER_IMAGE_URI" }
-  # rubocop:disable RSpec/VerifiedDoubles
-  let(:context) { double("context") }
-  # rubocop:enable RSpec/VerifiedDoubles
+  let(:context) { double("context") } # rubocop:disable RSpec/VerifiedDoubles
   let(:event) do
     {
       "client_request_token" => "some_token",
@@ -43,7 +40,7 @@ describe PipelineInvoker::Handler do
       allow(Aws::CodePipeline::Client).to receive(:new).with(region: "eu-west-2").and_return(codepipeline_client)
       expect(codepipeline_client).to receive(:start_pipeline_execution)
 
-      pipeline_invoker.process(event:, context:)
+      PipelineInvoker::Handler.process(event:, context:) # rubocop:disable RSpec/DescribedClass
     end
 
     it "invokes the AWS CodePipeline API with correct parameters" do
@@ -67,7 +64,7 @@ describe PipelineInvoker::Handler do
 
       expect(codepipeline_client).to receive(:start_pipeline_execution).with(expected_params)
 
-      pipeline_invoker.process(event:, context:)
+      PipelineInvoker::Handler.process(event:, context:) # rubocop:disable RSpec/DescribedClass
     end
   end
 
@@ -93,19 +90,19 @@ describe PipelineInvoker::Handler do
       expect(logger).to receive(:info)
       expect(logger).to receive(:error).with(expected_log_entry)
 
-      pipeline_invoker.process(event:, context:)
+      PipelineInvoker::Handler.process(event:, context:) # rubocop:disable RSpec/DescribedClass
     end
   end
 
   describe "#build_payload" do
     it "initializes payload with the correct name from event" do
-      payload = pipeline_invoker.build_payload(event)
+      payload = PipelineInvoker::Handler.build_payload(event) # rubocop:disable RSpec/DescribedClass
 
       expect(payload["name"]).to eq(pipeline_name)
     end
 
     it "populates payload['variables'] when event['variables'] is not nil" do
-      payload = pipeline_invoker.build_payload(event)
+      payload = PipelineInvoker::Handler.build_payload(event) # rubocop:disable RSpec/DescribedClass
 
       expect(payload["variables"]).to eq([
         { name: "container_image_uri", value: container_image_uri },
@@ -115,13 +112,13 @@ describe PipelineInvoker::Handler do
     it "sets payload['variables'] to an empty array when event['variables'] is nil" do
       event_with_nil_variables = { "name" => pipeline_name, "variables" => nil }
 
-      payload = pipeline_invoker.build_payload(event_with_nil_variables)
+      payload = PipelineInvoker::Handler.build_payload(event_with_nil_variables) # rubocop:disable RSpec/DescribedClass
 
       expect(payload["variables"]).to eq([])
     end
 
     it "sets payload['sourceRevisions'] when event['sourceRevisions'] is not nil" do
-      payload = pipeline_invoker.build_payload(event)
+      payload = PipelineInvoker::Handler.build_payload(event) # rubocop:disable RSpec/DescribedClass
 
       expect(payload["source_revisions"]).to eq([{
         action_name: "some_action",
@@ -137,7 +134,7 @@ describe PipelineInvoker::Handler do
         "sourceRevisions" => nil,
       }
 
-      payload = pipeline_invoker.build_payload(event_with_nil_source_revisions)
+      payload = PipelineInvoker::Handler.build_payload(event_with_nil_source_revisions) # rubocop:disable RSpec/DescribedClass
 
       expect(payload["source_revisions"]).to eq([])
     end
