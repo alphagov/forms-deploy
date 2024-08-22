@@ -3,4 +3,5 @@
 source "https://rubygems.org"
 
 gem "aws-sdk-codepipeline", "~> 1.78"
+gem "rspec", "~> 3.13"
 gem "rubocop-govuk", "~> 5.0"
