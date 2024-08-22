@@ -283,3 +283,10 @@ resource "aws_iam_policy" "deny_parameter_store" {
     ]
   })
 }
+resource "aws_iam_policy" "lock_state_files" {
+  name = "lock-state-files"
+  path = "/"
+
+  description = "Allow reading and writing from a DynamoDB table used for Terraform state file locking"
+
+}
