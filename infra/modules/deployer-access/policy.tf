@@ -3,9 +3,9 @@
 # you should focus on create, update, delete, or otherwise mutating
 # actions. The role has full read-only access.
 ##
-
 data "aws_iam_policy_document" "forms-infra" {
   source_policy_documents = [
+    data.aws_iam_policy_document.lock_state_files.json,
     data.aws_iam_policy_document.alerts.json,
     data.aws_iam_policy_document.dns.json,
     data.aws_iam_policy_document.monitoring.json,
@@ -66,6 +66,19 @@ resource "aws_iam_role_policy_attachment" "full_read_only" {
   role       = aws_iam_role.deployer.id
 }
 
+data "aws_iam_policy_document" "lock_state_files" {
+  statement {
+    sid    = "AllowStateFileLocking"
+    effect = "Allow"
+    actions = [
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem"
+    ]
+    resources = [var.dynamodb_state_file_locks_table_arn]
+  }
+}
 data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "ManageKMSKeyAlerts"
