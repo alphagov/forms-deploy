@@ -11,6 +11,8 @@ data "aws_sqs_queue" "ses_bounces_and_complaints_queue" {
 resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_buildup" {
   alarm_name          = "ses_bounces_and_complaints_queue_buildup"
   alarm_description   = <<EOF
+    There is a queue buildup in ${data.aws_sqs_queue.ses_bounces_and_complaints_queue.name} in the ${var.environment} account.
+
     When SES sends an email to a user and the email bounces or is marked as spam ('complaints'),
     SES will log the event as a message on an SQS queue. We want to avoid a buildup
     of messages on the queue.
@@ -34,7 +36,7 @@ EOF
   namespace           = "AWS/SQS"
   metric_name         = "ApproximateNumberOfMessagesVisible"
   statistic           = "Minimum"
-  period              = 30
+  period              = 600
   threshold           = 10
 
   dimensions = {
@@ -49,6 +51,8 @@ EOF
 resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_contains_message" {
   alarm_name          = "ses_bounces_and_complaints_queue_contains_message"
   alarm_description   = <<EOF
+    There is a message in ${data.aws_sqs_queue.ses_bounces_and_complaints_queue.name} in the ${var.environment} account.
+    
     When SES sends an email to a user and the email bounces or is marked as spam ('complaints'),
     SES will log the event as a message on an SQS queue.
 
@@ -70,7 +74,7 @@ EOF
   namespace           = "AWS/SQS"
   metric_name         = "ApproximateNumberOfMessagesVisible"
   statistic           = "Minimum"
-  period              = 30
+  period              = 600
   threshold           = 1
 
   dimensions = {
