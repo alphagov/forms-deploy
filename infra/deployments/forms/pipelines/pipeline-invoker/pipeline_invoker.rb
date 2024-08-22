@@ -45,11 +45,12 @@ def process(event:, context:)
       client_request_token: payload["client_request_token"],
     )
   rescue Aws::CodePipeline::Errors::ServiceError => e
-    handle_error(e, event, logger)
+    log_error(e, event, logger)
+    raise e
   end
 end
 
-def handle_error(error, event, logger)
+def log_error(error, event, logger)
   log_entry = {
     level: "error",
     message: "AWS CodePipeline API error occurred",

@@ -66,9 +66,8 @@ describe "#process" do
     process(event:, context:)
   end
 
-  it "gracefully handles AWS CodePipeline errors using structured logging" do
+  it "handles AWS CodePipeline API failures by raising an error" do
     error = Aws::CodePipeline::Errors::ServiceError.new(nil, "A generic ServiceError")
-
     allow(Logger).to receive(:new).and_return(logger)
     allow(codepipeline_client).to receive(:start_pipeline_execution).and_raise(error)
 
@@ -87,7 +86,7 @@ describe "#process" do
     expect(logger).to receive(:info)
     expect(logger).to receive(:error).with(expected_log_entry)
 
-    process(event:, context:)
+    expect { process(event:, context:) }.to raise_error(Aws::CodePipeline::Errors::ServiceError)
   end
 
   describe "#build_payload" do
