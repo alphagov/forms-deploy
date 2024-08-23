@@ -2,7 +2,7 @@
 # Naming
 ##
 variable "environment_type" {
-  description = "The type of environment this is. For example 'dev', 'staging', 'productions'."
+  description = "The type of environment this is. For example 'dev', 'staging', 'production'."
   type        = string
   nullable    = false
   validation {
@@ -19,6 +19,12 @@ variable "environment_name" {
     condition     = can(regex("^[a-zA-Z0-9_-]+$", var.environment_name))
     error_message = "variable 'environment_name' must contain only alphanumeric characters, underscores, and hyphens; it must be a valid part of a DNS name"
   }
+}
+
+variable "account_name" {
+  description = "The name of the account. For example 'dev', 'staging', 'production'. This is distinct from the environment name, but will sometimes be the same value."
+  type        = string
+  nullable    = false
 }
 
 ##
