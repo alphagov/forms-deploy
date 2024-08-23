@@ -3,6 +3,11 @@ variable "env_name" {
   description = "The name of the environment to be used in resource names."
 }
 
+variable "environment_type" {
+  type        = string
+  description = "The type of environment the deployer-access role is being used in"
+}
+
 variable "hosted_zone_id" {
   description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
   type        = string

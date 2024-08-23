@@ -62,9 +62,7 @@ data "aws_iam_policy_document" "codebuild" {
   statement {
     actions = ["ssm:GetParameter", "ssm:GetParameters"]
     resources = [
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.docker_username_parameter_path}",
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter${var.docker_password_parameter_path}",
-      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter/dev/*"
+      "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter/*"
     ]
     effect = "Allow"
   }

@@ -71,7 +71,9 @@ resource "aws_iam_policy" "manage_deployments" {
 }
 
 resource "aws_iam_policy" "query_rds_with_data_api" {
-  count       = var.env_name != "deploy" ? 1 : 0
+  # TODO: #Decoupling. I'm not sure we mean `environment` here, shouldn't this be `account`?
+  # There are a couple other resource in this file with the same ternary operator
+  count       = var.allow_rds_data_api_access ? 1 : 0
   name        = "query-rds-with-data-api"
   path        = "/"
   description = "Permission to use the data api to query RDS"
@@ -103,7 +105,7 @@ resource "aws_iam_policy" "query_rds_with_data_api" {
 }
 
 resource "aws_iam_policy" "run_task" {
-  count       = var.env_name != "deploy" ? 1 : 0
+  count       = var.allow_ecs_task_usage ? 1 : 0
   name        = "run-task"
   path        = "/"
   description = "Permission to run task on ECS"
@@ -140,7 +142,7 @@ resource "aws_iam_policy" "run_task" {
 }
 
 resource "aws_iam_policy" "stop_task" {
-  count       = var.env_name != "deploy" ? 1 : 0
+  count       = var.allow_ecs_task_usage ? 1 : 0
   name        = "stop-task"
   path        = "/"
   description = "Permission to stop task on ECS"
