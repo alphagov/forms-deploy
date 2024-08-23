@@ -85,3 +85,8 @@ variable "csv_submission_enabled_for_form_ids" {
   description = "A list of form IDs to enable attaching CSV submission data to submission emails for. This is only relevant if csv_submission_enabled is set to false."
   type        = list(string)
 }
+
+variable "additional_csv_submission_role_assumers" {
+  description = "A list of role ARNs which are also allowed to assume the CSV submission role"
+  type        = list(string)
+}

@@ -5,7 +5,7 @@ locals {
 }
 
 data "aws_ssm_parameter" "database_password" {
-  name = "/database/master-password"
+  name = "/${var.env_name}/database/root-password"
 }
 
 resource "aws_rds_cluster_parameter_group" "aurora_postgres" {

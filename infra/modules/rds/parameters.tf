@@ -1,9 +1,10 @@
 # The database passwords were manually generated when creating the environments
-resource "aws_ssm_parameter" "database_password_for_master_user" {
+# Note that the RDS docs use the terminology 'master password' - we are using 'root password'
+resource "aws_ssm_parameter" "database_password_for_root_user" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
-  name        = "/database/master-password"
-  description = "Password for the default master user created by Terraform"
+  name        = "/${var.env_name}/database/root-password"
+  description = "Password for the default root user created by Terraform"
   type        = "SecureString"
   value       = "dummy-value"
 
