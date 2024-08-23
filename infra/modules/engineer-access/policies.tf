@@ -283,3 +283,25 @@ resource "aws_iam_policy" "deny_parameter_store" {
     ]
   })
 }
+resource "aws_iam_policy" "lock_state_files" {
+  name = "lock-state-files"
+  path = "/"
+
+  description = "Allow reading and writing from a DynamoDB table used for Terraform state file locking"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:DescribeTable",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = [var.dynamodb_state_file_locks_table_arn]
+      }
+    ]
+  })
+}

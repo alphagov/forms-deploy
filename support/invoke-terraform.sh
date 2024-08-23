@@ -10,10 +10,11 @@ action=""
 deployment=""
 environment=""
 tf_root=""
+lock_id=""
 
 usage() {
     cat <<EOF >&2
-Usage: $0 -a apply|init|plan|validate -d deployment -e environment [-r terraform_root]
+Usage: $0 -a apply|init|plan|validate|unlock -d deployment -e environment [-r terraform_root] [-l lock_id]
 
 This helper script invokes Terraform in the correct manner, given the deployment,
 environment, and root. It encodes the different arguments required for different
@@ -24,11 +25,11 @@ EOF
 }
 
 # Parse args
-while getopts "a:d:e:r:" opt; do
+while getopts "a:d:e:r:l:" opt; do
     case "${opt}" in
         a)
             action="${OPTARG}"
-            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" ]] ||  usage
+            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" ]] ||  usage
             ;;
         d)
             deployment="${OPTARG}"
@@ -38,6 +39,10 @@ while getopts "a:d:e:r:" opt; do
             ;;
         r)
             tf_root="${OPTARG}"
+            ;;
+
+        l)
+            lock_id="${OPTARG}"
             ;;
 
         *)
@@ -50,6 +55,11 @@ done
 shift $((OPTIND-1))
 # Validate require args were set
 if [ -z "${action}" ] || [ -z "${deployment}" ] || [ -z "${environment}" ]; then
+    usage
+fi
+
+if [[ $action == "unlock" ]] && [ -z "${lock_id}" ]; then
+    >&2 echo "Lock id must be set"
     usage
 fi
 
@@ -147,12 +157,19 @@ validate() {
     validate
 }
 
+unlock() {
+  terraform \
+    -chdir="${src_dir}" \
+    force-unlock \
+    "${lock_id}"
+}
+
 post_apply() {
     if [ "${deployment}+${tf_root}" = "account+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
         echo "Performing post-apply actions"
         "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
     fi
- }
+}
 
 case "${action}" in
     apply)
@@ -170,6 +187,10 @@ case "${action}" in
 
     validate)
         validate
+        ;;
+
+    unlock)
+        unlock
         ;;
 esac
 

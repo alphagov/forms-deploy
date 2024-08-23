@@ -48,3 +48,8 @@ variable "codestar_connection_arn" {
   type        = string
   description = "The arn of the github connection to use"
 }
+
+variable "dynamodb_state_file_locks_table_arn" {
+  type        = string
+  description = "The arn of the DynamoDB table being used for state file locking"
+}

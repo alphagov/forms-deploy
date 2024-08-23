@@ -108,6 +108,11 @@ apply: init
 validate: init
 	@./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
+.PHONY: unlock
+unlock: target_environment_set target_tf_root_set aws_credentials_available show_info
+	$(if ${LOCK_ID},,$(error Must set lock id with LOCK_ID="lock_id" at the end of this target))
+	@./support/invoke-terraform.sh -a unlock -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}" -l "$${LOCK_ID}"
+
 ##
 # Utility targets
 ##
@@ -194,6 +199,7 @@ ACTIONS
 	init		Initialise the Terraform root
 	plan		Run a Terraform plan
 	apply		Apply the Terraform
+	unlock		Forcibly release the lock with the given lock id
 
 endef
 export help_actions

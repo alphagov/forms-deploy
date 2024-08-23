@@ -14,6 +14,11 @@ variable "codestar_connection_arn" {
   description = "ARN of the CodeStar connection in the account"
 }
 
+variable "dynamodb_state_file_locks_table_arn" {
+  type        = string
+  description = "The arn of the DynamoDB table being used for state file locking"
+}
+
 locals {
   deploy_account_id = "711966560482"
 
