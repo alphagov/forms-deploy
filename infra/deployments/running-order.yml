@@ -1,0 +1,57 @@
+##
+# This file serves two purposes
+#
+# 1. To document what order our Terraform needs to be run in to create a new
+#    environment, or otherwise to successfully apply it to an existing one
+#
+# 2. To be parsed and turned into a running order in a pipeline. Driving
+#    pipeline structure from this document means this document must always
+#    be up-to-date and correct.
+#
+# N.B. It does not cover how to run the Terraform for the deploy account.
+#
+# The running order is made up of layers and phases.
+#
+# A layer is a logical grouping of Terraform roots that combine to fulfil some
+# responsibility, such as configuring an AWS account with IAM roles, password
+# policies etc.
+#
+# A layer is broken up into one or more phases. A phase contains a set of
+# Terraform roots which can be run in parallel because they aren't
+# interdependent.
+#
+# Additional phases are used when one or more Terraform roots have a dependency
+# on a resource or value from another Terraform root in the same layer.
+#
+# Terraform root names are relative to the `infra/deployments` directory (the
+# same as elsewhere in this repository(
+##
+---
+running-order:
+  layers:
+    - name: Account
+      manual: true
+      phases:
+        - roots:
+            - account
+
+    - name: GOV.UKForms
+      manual: false
+      phases:
+        - roots:
+            - forms/environment
+            - forms/ses
+            - forms/auth0
+        - roots:
+            - forms/redis
+            - forms/rds
+        - roots:
+            - forms/forms-product-page
+            - forms/forms-api
+            - forms/forms-admin
+            - forms/forms-runner
+            - forms/health
+            - forms/pipelines
+        - roots:
+            - forms/dns
+

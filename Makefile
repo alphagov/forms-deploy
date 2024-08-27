@@ -79,6 +79,13 @@ aws_credentials_available:
  	fi;
 	@true
 
+not_ci:
+	@if [ "${CODEBUILD_CI}" = true ]; then \
+		>&2 echo "This target should not be run from a CI system. It may require human intervention"; \
+		false; \
+	fi;
+	@true
+
 show_info:
 	@echo ""
 	@echo "========[Terraform target information]"
@@ -112,6 +119,28 @@ validate: init
 unlock: target_environment_set target_tf_root_set aws_credentials_available show_info
 	$(if ${LOCK_ID},,$(error Must set lock id with LOCK_ID="lock_id" at the end of this target))
 	@./support/invoke-terraform.sh -a unlock -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}" -l "$${LOCK_ID}"
+
+.PHONY: forms_apply_all
+forms_apply_all: target_environment_set not_ci aws_credentials_available
+	@ORDER=$$(yq '.running-order.layers[] | .phases[].roots[]' "./infra/deployments/running-order.yml"); \
+	TIMESTAMP=$$(date "+%Y%m%d%H%M%S"); \
+	LOG_PATH="./logs/$${TIMESTAMP}"; \
+	mkdir -p "$${LOG_PATH}"; \
+	echo "========[Applying Forms Terraform]"; \
+	echo "=> Target environment:     $${TARGET_ENVIRONMENT}"; \
+	echo "=> Log file path:          $${LOG_PATH}"; \
+	echo "=> Running order:"; \
+	echo "$${ORDER}" | xargs printf "\t%s\n"; \
+	echo "========"; \
+	set -euo pipefail ;\
+	echo ""; \
+	I=1; \
+	for root in $${ORDER}; do \
+	  	LOG_FILE="$${LOG_PATH}/$$(printf "%02d" "$${I}")-$$(echo "$${root}" | tr "/" "_")"; \
+	  	touch "$${LOG_FILE}"; \
+		$(MAKE) "$${TARGET_ENVIRONMENT}" "$${root}" apply 2>&1 | tee >(sed -e 's/\x1b\[[0-9;]*[mGKHF]//g' > "$${LOG_FILE}"); \
+		I=$$((I + 1)); \
+	done;
 
 ##
 # Utility targets
@@ -163,6 +192,13 @@ RUNNING TERRAFORM
 
 	The valid options for <ENV>, <ROOT>, and <ACTION> are documented below.
 
+	You can also apply all of the Terraform for a GOV.UK Forms environment
+	in the correct order by running
+
+		make <ENV> forms_apply_all
+
+	where <ENV> is an environment name.
+
 	To run the Terraform code, you will need to have credentials for the
 	relevant environment. You should use GDS CLI to get them. For example
 
@@ -200,6 +236,9 @@ ACTIONS
 	plan		Run a Terraform plan
 	apply		Apply the Terraform
 	unlock		Forcibly release the lock with the given lock id
+
+	forms_apply_all		Apply all of the Terraform for a GOV.UK Forms
+				environment in the correct order
 
 endef
 export help_actions

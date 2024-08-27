@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "properties": {
+    "running-order": {
+      "type": "object",
+      "properties": {
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9.@\\-_]+$"
+              },
+              "manual": {
+                "type": "boolean"
+              },
+              "phases": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "roots": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "roots"
+                  ]
+                }
+              }
+            },
+            "required": ["name", "manual", "phases"]
+          }
+        }
+      },
+      "required": ["layers"]
+    }
+  },
+  "required": ["running-order"]
+}
