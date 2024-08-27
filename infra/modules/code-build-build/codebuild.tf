@@ -1,14 +1,5 @@
 locals {
-  deployer_roles = {
-    "user-research" = "arn:aws:iam::619109835131:role/deployer-user-research"
-    "dev"           = "arn:aws:iam::498160065950:role/deployer-dev"
-    "staging"       = "arn:aws:iam::972536609845:role/deployer-staging"
-    "production"    = "arn:aws:iam::443944947292:role/deployer-production"
-    "deploy"        = "NO_SUCH_ROLE" # Deploy account doesn't have a deployer role
-  }
-
   environment_variables = {
-    "DEPLOYER_ROLE_ARN" = lookup(local.deployer_roles, var.environment)
     "ENVIRONMENT"       = var.environment
     "TERRAFORM_VERSION" = var.terraform_version
   }
