@@ -265,7 +265,7 @@ module "terraform_apply" {
   project_name        = "${var.environment_name}-apply-${each.value}"
   project_description = "Terraform apply ${each.value} in ${var.environment_name}"
   environment_variables = {
-    "ROOT_NAME" = each.value
+    "ROOT_NAME" = replace(each.value, "_", "/") # Undo the replacement we've had to do for the name
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
