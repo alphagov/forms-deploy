@@ -21,7 +21,6 @@ environmental_settings = {
   ips_to_block                        = []
   enable_shield_advanced_healthchecks = false
 }
-hosted_zone_id             = "Z05508474P9CXBK9UAH3"
 root_domain                = "staging.forms.service.gov.uk"
 cloudfront_distribution_id = "E3PQV6DYYCB9KW"
 additional_dns_records     = []

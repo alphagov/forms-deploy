@@ -87,12 +87,6 @@ variable "cloudfront_distribution_id" {
   nullable    = false
 }
 
-variable "hosted_zone_id" {
-  description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
-  type        = string
-  nullable    = false
-}
-
 variable "additional_dns_records" {
   description = <<EOF
 Additional DNS records to set in the environment. Some environments have DNS records that must be set, which other environments don't need.

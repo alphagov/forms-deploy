@@ -38,7 +38,6 @@ environmental_settings = {
   ips_to_block                        = []
   enable_shield_advanced_healthchecks = true
 }
-hosted_zone_id             = "Z029841414A29LF7J7EDY"
 root_domain                = "forms.service.gov.uk"
 cloudfront_distribution_id = "EXITHSOVYUXHW"
 additional_dns_records = [
