@@ -115,4 +115,69 @@ jobs:
           GIT_FROM: ${{github.event.pull_request.base.sha}}
           GIT_TO: ${{github.event.pull_request.head.sha}}
           TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
-        run: "# shellcheck disable=SC2199\n# shellcheck disable=SC2076\nset -e -u -o pipefail\nmkdir \"$TF_PLUGIN_CACHE_DIR\"\n\nif [[ $(git diff \"${GIT_FROM}\"...\"${GIT_TO}\" --name-only -- \"*.tf\" \"*.tf.json\" | wc -l) -eq 0 ]]; then\n  echo \"No Terraform files have changed. Stopping\";\n  exit 0\nfi\n\ngit diff \"${GIT_FROM}\"...\"${GIT_TO}\" --name-only -- \"*.tf\" \"*.tf.json\" \\\n| xargs dirname \\\n| sort \\\n| uniq \\\n> modified-tf-dirs.txt\n\nall_roots=$(find infra/deployments -type d \\\n  -mindepth 1 -maxdepth 2 \\\n  -not -path \"*/tfvars\" \\\n  -not -path \"infra/deployments/forms\" \\\n  -not -path \"infra/deployments/deploy\"\n)\n\nfor start in ${all_roots}; do\n  echo \"Inspecting ${start}\"\n  stack=(\"${start}\")\n  visited=()\n\n  while [[ \"${#stack[@]}\" -gt 0 ]]; do\n    \n    path=\"${stack[0]}\"\n    stack=(\"${stack[@]:1}\") # Shift the front element off\n    \n\n    if [[ \"${visited[@]}\" =~ \"${path}\" ]]; then\n      # Skip because it's already been visited\n      continue\n    fi\n    \n    visited+=(\"${path}\")\n    \n    declare -a new_paths\n    readarray -t new_paths < <(terraform-config-inspect --json \"${path}\" \\\n      | jq -r '.module_calls | to_entries | .[] | .value.source' \\\n      | sort \\\n      | uniq \\\n      | xargs -I{} readlink -f \"${path}/{}\" \\\n      | xargs -I{} realpath --relative-to \"$(pwd)\" \"{}\" \\\n      | sort\n    )\n    \n    if [[ \"${#new_paths[@]}\" -gt 0 ]]; then\n      stack+=( \"${stack[@]}\" \"${new_paths[@]}\" )\n    fi\n  done\n\n  printf '%s\\n' \"${visited[@]}\" | sort | uniq > \"${start}/directories.txt\"\n\n  matching_lines=\"$(comm -1 -2 modified-tf-dirs.txt \"${start}/directories.txt\")\"\n\n  if [[ -n \"$matching_lines\" ]]; then\n    echo \"Requires validation\"\n    terraform -chdir=\"${start}\" init -backend=false || exit\n    terraform -chdir=\"${start}\" validate\n  else\n    echo \"Does not require validation\"\n  fi\ndone;          \n"
+        run: |
+          # shellcheck disable=SC2199
+          # shellcheck disable=SC2076
+          set -e -u -o pipefail
+          mkdir "$TF_PLUGIN_CACHE_DIR"
+          if [[ $(git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json" | wc -l) -eq 0 ]]; then
+            echo "No Terraform files have changed. Stopping";
+            exit 0
+          fi
+          git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json" \
+          | xargs dirname \
+          | sort \
+          | uniq \
+          > modified-tf-dirs.txt
+          
+          all_roots=$(find infra/deployments -type d \
+            -mindepth 1 -maxdepth 2 \
+            -not -path "*/tfvars" \
+            -not -path "infra/deployments/forms" \
+            -not -path "infra/deployments/deploy"
+          )
+          
+          for start in ${all_roots}; do
+            echo "Inspecting ${start}"
+            stack=("${start}")
+            visited=()
+          
+            while [[ "${#stack[@]}" -gt 0 ]]; do
+          
+              path="${stack[0]}"
+              stack=("${stack[@]:1}") # Shift the front element off
+          
+              if [[ "${visited[@]}" =~ "${path}" ]]; then
+                # Skip because it's already been visited
+                continue
+              fi
+          
+              visited+=("${path}")
+          
+              declare -a new_paths
+              readarray -t new_paths < <(terraform-config-inspect --json "${path}" \
+                | jq -r '.module_calls | to_entries | .[] | .value.source' \
+                | sort \
+                | uniq \
+                | xargs -I{} readlink -f "${path}/{}" \
+                | xargs -I{} realpath --relative-to "$(pwd)" "{}" \
+                | sort
+              )
+          
+              if [[ "${#new_paths[@]}" -gt 0 ]]; then
+                stack+=( "${stack[@]}" "${new_paths[@]}" )
+              fi
+            done
+          
+            printf '%s\n' "${visited[@]}" | sort | uniq > "${start}/directories.txt"
+          
+            matching_lines="$(comm -1 -2 modified-tf-dirs.txt "${start}/directories.txt")"
+          
+            if [[ -n "$matching_lines" ]]; then
+              echo "Requires validation"
+              terraform -chdir="${start}" init -backend=false || exit
+              terraform -chdir="${start}" validate
+            else
+              echo "Does not require validation"
+            fi
+          done;    
