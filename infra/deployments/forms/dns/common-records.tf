@@ -3,7 +3,7 @@ data "aws_cloudfront_distribution" "main" {
 }
 
 resource "aws_route53_record" "runner" {
-  zone_id = var.hosted_zone_id
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = "submit.${var.root_domain}"
   type    = "CNAME"
   ttl     = 300
@@ -11,7 +11,7 @@ resource "aws_route53_record" "runner" {
 }
 
 resource "aws_route53_record" "admin" {
-  zone_id = var.hosted_zone_id
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = "admin.${var.root_domain}"
   type    = "CNAME"
   ttl     = 300
@@ -19,7 +19,7 @@ resource "aws_route53_record" "admin" {
 }
 
 resource "aws_route53_record" "api" {
-  zone_id = var.hosted_zone_id
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = "api.${var.root_domain}"
   type    = "CNAME"
   ttl     = 60
@@ -27,7 +27,7 @@ resource "aws_route53_record" "api" {
 }
 
 resource "aws_route53_record" "product-page" {
-  zone_id = var.hosted_zone_id
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = "www.${var.root_domain}"
   type    = "CNAME"
   ttl     = 300
@@ -36,7 +36,7 @@ resource "aws_route53_record" "product-page" {
 
 resource "aws_route53_record" "apex-domain" {
   #checkov:skip=CKV2_AWS_23:Not applicable to alias records
-  zone_id = var.hosted_zone_id
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = var.root_domain
   type    = "A"
 

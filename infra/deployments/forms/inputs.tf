@@ -42,6 +42,18 @@ variable "deploy_account_id" {
   nullable    = false
 }
 
+variable "bucket" {
+  description = "Name of the state file bucket. This is named to match the key in the S3 type backend"
+  type        = string
+  nullable    = false
+}
+
+variable "dynamodb_table" {
+  description = "Name of the DynamoDB table used for state file locking. This is named to match the key in the S3 type backend"
+  type        = string
+  nullable    = false
+}
+
 ##
 # AWS provider
 ##
