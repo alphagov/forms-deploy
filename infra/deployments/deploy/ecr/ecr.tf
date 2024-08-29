@@ -1,13 +1,10 @@
-locals {
-  accounts = {
-    "user-research" : "619109835131",
-    "dev" : "498160065950",
-    "staging" : "972536609845",
-    "production" : "443944947292"
-  }
+module "all-accounts" {
+  source = "../../../modules/all-accounts"
+}
 
+locals {
   deployer_roles = [
-    for acct, id in local.accounts :
+    for acct, id in module.all-accounts.environment_accounts_id :
     "arn:aws:iam::${id}:role/deployer-${acct}"
   ]
 }
@@ -86,7 +83,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts :
+        for _, id in module.all-accounts.environment_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -129,7 +126,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts :
+        for _, id in module.all-accounts.environment_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -172,7 +169,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts :
+        for _, id in module.all-accounts.environment_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -214,7 +211,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts :
+        for _, id in module.all-accounts.environment_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -257,7 +254,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_end_to_end_tests" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in local.accounts :
+        for _, id in module.all-accounts.environment_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -280,7 +277,3 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_end_to_end_tests" {
     }
   }
 }
-
-## TODO
-## Allow arn:aws:iam::ACCOUNT_ID:root to read repository images
-## so that the IAM roles of that account can all pull images
