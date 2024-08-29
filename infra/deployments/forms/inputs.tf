@@ -42,6 +42,18 @@ variable "deploy_account_id" {
   nullable    = false
 }
 
+variable "bucket" {
+  description = "Name of the state file bucket. This is named to match the key in the S3 type backend"
+  type        = string
+  nullable    = false
+}
+
+variable "dynamodb_table" {
+  description = "Name of the DynamoDB table used for state file locking. This is named to match the key in the S3 type backend"
+  type        = string
+  nullable    = false
+}
+
 ##
 # AWS provider
 ##
@@ -71,12 +83,6 @@ variable "root_domain" {
 
 variable "cloudfront_distribution_id" {
   description = "The ID of the cloudfront distribution to point the domins at"
-  type        = string
-  nullable    = false
-}
-
-variable "hosted_zone_id" {
-  description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
   type        = string
   nullable    = false
 }

@@ -117,7 +117,7 @@ pre_apply() {
 
 plan_apply(){
     action="$1"
-    extra_args=""
+    extra_args="-var-file ${deployments_dir}/account/tfvars/backends/${environment}.tfvars"
 
     if [ "${deployment}" == "forms" ]; then
         extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars";
