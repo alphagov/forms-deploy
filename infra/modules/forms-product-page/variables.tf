@@ -44,3 +44,8 @@ variable "deploy_account_id" {
   type        = string
   description = "the account number for the deploy account"
 }
+
+variable "container_repository" {
+  description = "The complete URI of the container repository."
+  type        = string
+}

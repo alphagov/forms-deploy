@@ -30,8 +30,8 @@ variable "codestar_connection_arn" {
   nullable    = false
 }
 
-variable "container_repository" {
-  description = "The container repository from which images should be pulled"
+variable "container_registry" {
+  description = "The container registry from which images should be pulled"
   type        = string
   nullable    = false
 }
