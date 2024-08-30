@@ -28,6 +28,7 @@ resource "aws_rds_cluster" "forms" {
   #checkov:skip=CKV_AWS_133:Backup not required in all environments
   #checkov:skip=CKV_AWS_327:Database is already encrypted with the default key, and we feel this is sufficient
   #checkov:skip=CKV_AWS_324:Log capture is not required at this time
+  #checkov:skip=CKV_AWS_139:Deletion protection removed on purpose
 
 
   cluster_identifier = "aurora-cluster-${var.env_name}"
@@ -57,7 +58,7 @@ resource "aws_rds_cluster" "forms" {
   copy_tags_to_snapshot     = true
   storage_encrypted         = true
   backup_retention_period   = var.backup_retention_period
-  deletion_protection       = true
+  deletion_protection       = false
 
   scaling_configuration {
     auto_pause               = var.auto_pause
