@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-image = var.image_tag == null ? null : "${var.container_repository}:${var.image_tag}"
+  image = var.image_tag == null ? null : "${var.container_repository}:${var.image_tag}"
 }
 
 module "ecs_service" {
