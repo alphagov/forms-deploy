@@ -67,3 +67,8 @@ variable "redis_snapshot_window" {
   type        = string
   default     = "04:30-05:30"
 }
+
+variable "elasticache_replication_group_name" {
+  description = "Name suffix for the ElastiCache replication group"
+  type        = string
+}

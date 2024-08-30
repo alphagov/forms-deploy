@@ -2,12 +2,14 @@ locals {
   redis_port = 6379
 }
 
+
 resource "aws_elasticache_replication_group" "forms-runner" {
   #checkov:skip=CKV_AWS_31:Password protection is not necessary
   #checkov:skip=CKV_AWS_191:AWS Managed SSE is sufficient.
   #checkov:skip=CKV2_AWS_50:Failover not required for all environments.
 
-  replication_group_id       = "forms-runner-${var.env_name}"
+  replication_group_id = "forms-runner-${var.elasticache_replication_group_name}"
+
   description                = "redis replication group for forms-runner"
   num_cache_clusters         = var.number_cache_clusters
   node_type                  = var.redis_node_type
@@ -53,4 +55,8 @@ resource "aws_elasticache_parameter_group" "redis_parameter_group" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+output "replication_group_name" {
+  value = aws_elasticache_replication_group.redis_replication_group.id
 }
