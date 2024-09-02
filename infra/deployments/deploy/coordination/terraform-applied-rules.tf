@@ -1,5 +1,3 @@
-# TODO: #Decoupling. a number of these resources hardcode account names
-# I think I need to talk through this file to see what needs changing (if anything)
 locals {
   source_to_dest_accts = {
     "development" = [

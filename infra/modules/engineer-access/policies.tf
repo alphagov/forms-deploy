@@ -71,8 +71,6 @@ resource "aws_iam_policy" "manage_deployments" {
 }
 
 resource "aws_iam_policy" "query_rds_with_data_api" {
-  # TODO: #Decoupling. I'm not sure we mean `environment` here, shouldn't this be `account`?
-  # There are a couple other resource in this file with the same ternary operator
   count       = var.allow_rds_data_api_access ? 1 : 0
   name        = "query-rds-with-data-api"
   path        = "/"
