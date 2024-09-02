@@ -117,14 +117,14 @@ pre_apply() {
 
 plan_apply(){
     action="$1"
-    extra_args="-var-file ${deployments_dir}/account/tfvars/backends/${environment}.tfvars"
+    extra_args=""
 
     if [ "${deployment}" == "forms" ]; then
-        extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars";
+        extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/account/tfvars/backends/${environment}.tfvars";
     fi
 
     if [ "${deployment}" == "account" ]; then
-        extra_args="${extra_args} -var-file ${deployments_dir}/account/tfvars/${environment}.tfvars";
+        extra_args="${extra_args} -var-file ${deployments_dir}/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/account/tfvars/backends/${environment}.tfvars";
     fi
 
     case "${deployment}+${tf_root}" in
