@@ -485,7 +485,7 @@ data "aws_iam_policy_document" "ecr" {
   }
 
   statement {
-    # CodePipeline appears to peform GetAuthorizationToken
+    # CodePipeline appears to perform GetAuthorizationToken
     # with resource "*", and a statement with an ARN
     # like "arn:aws:ecr::ACCT_ID:*" is insufficient to grant
     # it permission
@@ -664,7 +664,7 @@ data "aws_iam_policy_document" "ssm" {
     effect = "Allow"
   }
 
-  # We allow all operations except deleting a parameter. If you need the deployer role to delete a paramter then you can temporarily comment out this block. 
+  # We allow all operations except deleting a parameter. If you need the deployer role to delete a parameter then you can temporarily comment out this block.
   statement {
     sid = "DeleteSSMParameters"
     actions = [

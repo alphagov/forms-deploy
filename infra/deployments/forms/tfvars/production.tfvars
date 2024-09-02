@@ -1,5 +1,6 @@
 allowed_account_ids = ["443944947292"]
 deploy_account_id   = "711966560482"
+account_name        = "production"
 default_tags = {
   Environment = "production"
 }

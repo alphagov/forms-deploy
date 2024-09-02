@@ -28,8 +28,8 @@ data "aws_iam_policy_document" "ecs" {
       "s3:ListBucket"
     ]
     resources = [
-      "arn:aws:s3:::gds-forms-${var.env_name != "dev" ? var.env_name : "development"}-tfstate/*",
-      "arn:aws:s3:::gds-forms-${var.env_name != "dev" ? var.env_name : "development"}-tfstate",
+      "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate/*",
+      "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate",
     ]
     effect = "Allow"
   }

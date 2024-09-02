@@ -53,3 +53,13 @@ variable "dynamodb_state_file_locks_table_arn" {
   type        = string
   description = "The arn of the DynamoDB table being used for state file locking"
 }
+
+variable "allow_rds_data_api_access" {
+  type        = bool
+  description = "Whether appropriate engineer roles should have access to the AWS RDS Data API"
+}
+
+variable "allow_ecs_task_usage" {
+  type        = bool
+  description = "Whether appropriate engineer roles should be able to run tasks in AWS ECS"
+}

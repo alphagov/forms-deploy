@@ -1,5 +1,6 @@
 allowed_account_ids = ["619109835131"]
 deploy_account_id   = "711966560482"
+account_name        = "user-research"
 default_tags = {
   Environment = "user-research"
 }

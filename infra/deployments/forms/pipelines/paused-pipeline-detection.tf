@@ -28,7 +28,7 @@ resource "aws_lambda_function" "paused_pipeline_detection" {
   environment {
     variables = {
       "SLACK_SNS_TOPIC"        = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd",
-      "FORMS_AWS_ACCOUNT_NAME" = var.environment_type
+      "FORMS_AWS_ACCOUNT_NAME" = var.account_name
     }
   }
 

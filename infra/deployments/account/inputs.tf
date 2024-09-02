@@ -4,7 +4,7 @@ variable "account_name" {
   nullable    = false
   validation {
     condition     = can(regex("^[A-Za-z-_]+$", var.account_name))
-    error_message = "'account_name' may only contain alphaetic characters, dashes, and underscores"
+    error_message = "'account_name' may only contain alphabetic characters, dashes, and underscores"
   }
 }
 
