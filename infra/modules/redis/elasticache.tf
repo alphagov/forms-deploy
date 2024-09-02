@@ -58,5 +58,5 @@ resource "aws_elasticache_parameter_group" "redis_parameter_group" {
 }
 
 output "replication_group_name" {
-  value = aws_elasticache_replication_group.redis_replication_group.id
+  value = aws_elasticache_replication_group.forms-runner.id
 }
