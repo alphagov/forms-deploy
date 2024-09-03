@@ -90,3 +90,8 @@ variable "additional_csv_submission_role_assumers" {
   description = "A list of role ARNs which are also allowed to assume the CSV submission role"
   type        = list(string)
 }
+
+variable "container_repository" {
+  description = "The complete URI of the container repository."
+  type        = string
+}
