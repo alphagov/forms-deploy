@@ -126,7 +126,7 @@ forms_runner_settings = {
   cloudwatch_metrics_enabled                               = true
   analytics_enabled                                        = true
   csv_submission_enabled                                   = false
-  csv_submission_enabled_for_form_ids                      = ["4073"]
+  csv_submission_enabled_for_form_ids                      = ["143", "477", "696", "777", "1994", "2634", "3408", "4073"]
   allow_human_readonly_roles_to_assume_csv_submission_role = false
 }
 scheduled_smoke_tests_settings = {
