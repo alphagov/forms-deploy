@@ -46,5 +46,5 @@ module "forms_runner" {
   csv_submission_enabled_for_form_ids     = var.forms_runner_settings.csv_submission_enabled_for_form_ids
   additional_csv_submission_role_assumers = local.allowed_csv_role_assumers
   container_repository                    = "${var.container_registry}/forms-runner-deploy"
-  elasticache_replication_group_name      = module.redis.replication_group_name
+  elasticache_replication_group_name      = data.terraform_remote_state.forms_redis.outputs.replication_group_name
 }
