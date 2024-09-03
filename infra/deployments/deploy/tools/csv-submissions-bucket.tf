@@ -9,7 +9,7 @@ module "csv_submissions_bucket" {
 
 data "aws_iam_policy_document" "allow_writes_from_other_accounts" {
   dynamic "statement" {
-    for_each = [for _, id in local.other_accounts : id]
+    for_each = [for _, id in module.other_accounts.environment_accounts_id : id]
 
     content {
       sid    = "AllowAcct${statement.value}"

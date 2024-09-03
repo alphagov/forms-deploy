@@ -72,7 +72,7 @@ resource "aws_sns_topic_policy" "alerts_topic_access_policy" {
         Effect   = "Allow"
         Resource = aws_sns_topic.alerts_topic.arn
         Principal = {
-          AWS = [for _, id in local.other_accounts : "arn:aws:iam::${id}:root"]
+          AWS = [for _, id in module.other_accounts.environment_accounts_id : "arn:aws:iam::${id}:root"]
         }
       }
     ]
@@ -137,7 +137,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
         Effect   = "Allow"
         Resource = aws_sns_topic.deployments_topic.arn
         Principal = {
-          AWS = [for _, id in local.other_accounts : "arn:aws:iam::${id}:root"]
+          AWS = [for _, id in module.other_accounts.environment_accounts_id : "arn:aws:iam::${id}:root"]
         }
       }
     ]
@@ -145,7 +145,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
 }
 
 module "slack_notifications" {
-  for_each = merge(local.other_accounts, { "deploy" = var.deploy_account_id })
+  for_each = module.other_accounts.all_accounts_id
   source   = "./slack-notifications"
 
 

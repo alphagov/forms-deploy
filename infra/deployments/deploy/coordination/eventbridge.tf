@@ -4,10 +4,10 @@ data "aws_cloudwatch_event_bus" "default" {
 
 data "aws_iam_policy_document" "allow_receiving_from_other_accounts" {
   dynamic "statement" {
-    for_each = local.other_accounts
+    for_each = module.other_accounts.environment_accounts_id
 
     content {
-      sid    = "AllowEventsFrom${statement.key}"
+      sid    = "AllowEventsFrom${replace(statement.key, "-", "")}"
       effect = "Allow"
       actions = [
         "events:PutEvents"
@@ -23,10 +23,10 @@ data "aws_iam_policy_document" "allow_receiving_from_other_accounts" {
 
 data "aws_iam_policy_document" "allow_sending_events_to_other_accounts" {
   dynamic "statement" {
-    for_each = local.other_accounts
+    for_each = module.other_accounts.environment_accounts_id
 
     content {
-      sid    = "AllowEventsTo${statement.key}"
+      sid    = "AllowEventsTo${replace(statement.key, "-", "")}"
       effect = "Allow"
       actions = [
         "events:PutEvents"
