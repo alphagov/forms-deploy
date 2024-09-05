@@ -90,3 +90,13 @@ variable "additional_csv_submission_role_assumers" {
   description = "A list of role ARNs which are also allowed to assume the CSV submission role"
   type        = list(string)
 }
+
+variable "elasticache_port" {
+  description = "The port number for the Redis ElastiCache cluster"
+  type        = number
+}
+
+variable "elasticache_primary_endpoint_address" {
+  description = "The Redis ElastiCache unique address used to by applications to connect to the database"
+  type        = string
+}
