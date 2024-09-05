@@ -1,5 +1,7 @@
 data "aws_caller_identity" "current" {}
 
+# This is a data lookup and we don't want to get values this
+# This needs to be deleted
 data "aws_elasticache_replication_group" "forms_runner" {
   replication_group_id = "forms-runner-${var.env_name}"
 }
@@ -57,7 +59,12 @@ module "ecs_service" {
 
   environment_variables = [
     {
-      name  = "REDIS_URL",
+      name = "REDIS_URL",
+      # This is where we're using the data block
+      # The data lookup is finding the primary_endpoint_address and port
+      # associated with the aws_elasticache_replication_group
+      # We need to get the primary_endpoint_address and port in a different way
+      # NOT using the data lookup
       value = "rediss://${data.aws_elasticache_replication_group.forms_runner.primary_endpoint_address}:${data.aws_elasticache_replication_group.forms_runner.port}"
     },
     {
