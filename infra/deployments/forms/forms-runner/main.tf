@@ -47,4 +47,5 @@ module "forms_runner" {
   additional_csv_submission_role_assumers = local.allowed_csv_role_assumers
   elasticache_port                        = data.terraform_remote_state.redis.outputs.elasticache_port
   elasticache_primary_endpoint_address    = data.terraform_remote_state.redis.outputs.elasticache_primary_endpoint_address
+  container_repository                    = "${var.container_registry}/forms-runner-deploy"
 }

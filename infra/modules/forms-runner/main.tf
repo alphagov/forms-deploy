@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  image                       = var.image_tag == null ? null : "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
+  image                       = var.image_tag == null ? null : "${var.container_repository}:${var.image_tag}"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
 }
 

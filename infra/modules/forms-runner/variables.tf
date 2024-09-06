@@ -100,3 +100,8 @@ variable "elasticache_primary_endpoint_address" {
   description = "The Redis ElastiCache unique address used to by applications to connect to the database"
   type        = string
 }
+
+variable "container_repository" {
+  description = "The name of the container repository to use"
+  type        = string
+}
