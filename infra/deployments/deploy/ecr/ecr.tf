@@ -5,7 +5,7 @@ module "all-accounts" {
 locals {
   deployer_roles = [
     for acct, id in module.all-accounts.environment_accounts_id :
-    "arn:aws:iam::${id}:role/deployer-${acct}"
+    "arn:aws:iam::${id}:role/deployer-${acct == "development" ? "dev" : acct}"
   ]
 }
 
