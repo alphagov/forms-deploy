@@ -1,11 +1,7 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_elasticache_replication_group" "forms_runner" {
-  replication_group_id = "forms-runner-${var.env_name}"
-}
-
 locals {
-  image                       = var.image_tag == null ? null : "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:${var.image_tag}"
+  image                       = var.image_tag == null ? null : "${var.container_repository}:${var.image_tag}"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
 }
 
@@ -58,7 +54,7 @@ module "ecs_service" {
   environment_variables = [
     {
       name  = "REDIS_URL",
-      value = "rediss://${data.aws_elasticache_replication_group.forms_runner.primary_endpoint_address}:${data.aws_elasticache_replication_group.forms_runner.port}"
+      value = "rediss://${var.elasticache_primary_endpoint_address}:${var.elasticache_port}"
     },
     {
       name  = "SETTINGS__FORMS_API__BASE_URL",
