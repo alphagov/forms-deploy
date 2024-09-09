@@ -8,6 +8,11 @@ variable "root_domain" {
   description = "The root domain for this deployment of GOV.UK Forms. For example: forms.service.gov.uk"
 }
 
+variable "container_repository" {
+  type        = string
+  description = "The name of the container repository to use"
+}
+
 variable "image_tag" {
   type     = string
   nullable = true
