@@ -67,3 +67,18 @@ variable "redis_snapshot_window" {
   type        = string
   default     = "04:30-05:30"
 }
+
+variable "vpc_id" {
+  type        = string
+  description = "Id of the VPC in which the database will be created"
+}
+
+variable "subnet_ids" {
+  type        = list(string)
+  description = "List of subnet ids which should form the database's subnet group"
+}
+
+variable "ingress_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks from which ingress will be permitted"
+}

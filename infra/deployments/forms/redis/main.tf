@@ -1,5 +1,10 @@
 module "redis" {
-  source   = "../../../modules/redis"
-  env_name = var.environment_name
+  source              = "../../../modules/redis"
+  env_name            = var.environment_name
+  vpc_id              = data.terraform_remote_state.forms_environment.outputs.vpc_id
+  subnet_ids          = [for id in data.terraform_remote_state.forms_environment.outputs.private_subnet_ids : id]
+  ingress_cidr_blocks = [data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block]
+
 }
+
 
