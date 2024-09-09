@@ -2,6 +2,21 @@ variable "env_name" {
   type = string
 }
 
+variable "vpc_id" {
+  type        = string
+  description = "Id of the VPC in which the database will be created"
+}
+
+variable "subnet_ids" {
+  type        = list(string)
+  description = "List of subnet ids which should form the database's subnet group"
+}
+
+variable "ingress_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks from which ingress will be permitted"
+}
+
 variable "availability_zones" {
   type        = list(string)
   description = "The AZs to run the RDS cluster within"
