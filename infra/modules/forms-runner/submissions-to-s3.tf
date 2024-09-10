@@ -6,7 +6,7 @@ resource "aws_iam_role" "submissions_to_s3_role" {
 data "aws_iam_policy_document" "submissions_to_s3_assume_role_policy" {
   source_policy_documents = compact([
     data.aws_iam_policy_document.allow_ecs_task_role_to_assumerole.json,
-    length(var.additional_csv_submission_role_assumers) > 0 ? data.aws_iam_policy_document.allow_additional_csv_submission_role_assumers.json : null
+    length(var.additional_submissions_to_s3_role_assumers) > 0 ? data.aws_iam_policy_document.allow_additional_submissions_to_s3_role_assumers.json : null
   ])
 }
 
@@ -21,11 +21,11 @@ data "aws_iam_policy_document" "allow_ecs_task_role_to_assumerole" {
   }
 }
 
-data "aws_iam_policy_document" "allow_additional_csv_submission_role_assumers" {
+data "aws_iam_policy_document" "allow_additional_submissions_to_s3_role_assumers" {
   statement {
     effect = "Allow"
     principals {
-      identifiers = var.additional_csv_submission_role_assumers
+      identifiers = var.additional_submissions_to_s3_role_assumers
       type        = "AWS"
     }
     actions = ["sts:AssumeRole"]
