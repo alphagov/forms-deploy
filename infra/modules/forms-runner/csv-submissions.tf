@@ -1,9 +1,9 @@
-resource "aws_iam_role" "csv-submissions-role" {
+resource "aws_iam_role" "submissions_to_s3_role" {
   name               = "govuk-forms-submissions-to-s3-${var.env_name}"
-  assume_role_policy = data.aws_iam_policy_document.csv_submission_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.submissions_to_s3_assume_role_policy.json
 }
 
-data "aws_iam_policy_document" "csv_submission_assume_role_policy" {
+data "aws_iam_policy_document" "submissions_to_s3_assume_role_policy" {
   source_policy_documents = compact([
     data.aws_iam_policy_document.allow_ecs_task_role_to_assumerole.json,
     length(var.additional_csv_submission_role_assumers) > 0 ? data.aws_iam_policy_document.allow_additional_csv_submission_role_assumers.json : null
@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "allow_additional_csv_submission_role_assumers" {
 }
 
 resource "aws_iam_role_policy" "allow_s3_actions" {
-  role = aws_iam_role.csv-submissions-role.id
+  role = aws_iam_role.submissions_to_s3_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

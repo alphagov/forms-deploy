@@ -114,7 +114,7 @@ module "ecs_service" {
     },
     {
       name  = "SETTINGS__AWS_S3_SUBMISSIONS__IAM_ROLE_ARN",
-      value = aws_iam_role.csv-submissions-role.arn
+      value = aws_iam_role.submissions_to_s3_role.arn
     },
     {
       name  = "SETTINGS__AWS_S3_SUBMISSIONS__BUCKET_NAME",
