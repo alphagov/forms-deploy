@@ -118,7 +118,7 @@ module "ecs_service" {
     },
     {
       name  = "SETTINGS__AWS_S3_SUBMISSIONS__BUCKET_NAME",
-      value = "govuk-forms-csv-form-submissions-dummy"
+      value = "govuk-forms-submissions-to-s3-test"
     }
   ]
 
