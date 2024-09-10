@@ -1,13 +1,9 @@
-data "aws_cloudfront_distribution" "main" {
-  id = var.cloudfront_distribution_id
-}
-
 resource "aws_route53_record" "runner" {
   zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = "submit.${var.root_domain}"
   type    = "CNAME"
   ttl     = 300
-  records = [data.aws_cloudfront_distribution.main.domain_name]
+  records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
 resource "aws_route53_record" "admin" {
@@ -15,7 +11,7 @@ resource "aws_route53_record" "admin" {
   name    = "admin.${var.root_domain}"
   type    = "CNAME"
   ttl     = 300
-  records = [data.aws_cloudfront_distribution.main.domain_name]
+  records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
 resource "aws_route53_record" "api" {
@@ -23,7 +19,7 @@ resource "aws_route53_record" "api" {
   name    = "api.${var.root_domain}"
   type    = "CNAME"
   ttl     = 60
-  records = [data.aws_cloudfront_distribution.main.domain_name]
+  records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
 resource "aws_route53_record" "product-page" {
@@ -31,7 +27,7 @@ resource "aws_route53_record" "product-page" {
   name    = "www.${var.root_domain}"
   type    = "CNAME"
   ttl     = 300
-  records = [data.aws_cloudfront_distribution.main.domain_name]
+  records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
 resource "aws_route53_record" "apex-domain" {
@@ -41,8 +37,8 @@ resource "aws_route53_record" "apex-domain" {
   type    = "A"
 
   alias {
-    name                   = data.aws_cloudfront_distribution.main.domain_name
-    zone_id                = data.aws_cloudfront_distribution.main.hosted_zone_id
+    name                   = data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name
+    zone_id                = data.terraform_remote_state.forms_environment.outputs.cloudfront_hosted_zone_id
     evaluate_target_health = true
   }
 }
