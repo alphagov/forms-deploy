@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "allow_writes_from_other_accounts" {
 
       condition {
         test     = "ArnLike"
-        values   = ["arn:aws:iam::${statement.value}:role/govuk-forms-csv-submissions-*"]
+        values   = ["arn:aws:iam::${statement.value}:role/govuk-forms-submissions-to-s3-*"]
         variable = "aws:PrincipalArn"
       }
 
