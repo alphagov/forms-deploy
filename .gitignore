@@ -45,3 +45,6 @@ terraform.rc
 
 # Log files
 logs/
+
+# Ignore .idea/
+ .idea/
