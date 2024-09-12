@@ -87,12 +87,6 @@ variable "root_domain" {
   nullable    = false
 }
 
-variable "cloudfront_distribution_id" {
-  description = "The ID of the cloudfront distribution to point the domins at"
-  type        = string
-  nullable    = false
-}
-
 variable "additional_dns_records" {
   description = <<EOF
 Additional DNS records to set in the environment. Some environments have DNS records that must be set, which other environments don't need.

@@ -13,3 +13,19 @@ output "private_subnet_ids" {
     "c" = aws_subnet.private_c.id
   }
 }
+
+output "cloudfront_arn" {
+  value = module.cloudfront[0].cloudfront_arn
+}
+
+output "cloudfront_distribution_id" {
+  value = module.cloudfront[0].cloudfront_distribution_id
+}
+
+output "cloudfront_domain_name" {
+  value = module.cloudfront[0].cloudfront_domain_name
+}
+
+output "cloudfront_hosted_zone_id" {
+  value = module.cloudfront[0].cloudfront_hosted_zone_id
+}

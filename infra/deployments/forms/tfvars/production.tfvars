@@ -39,8 +39,7 @@ environmental_settings = {
   ips_to_block                        = []
   enable_shield_advanced_healthchecks = true
 }
-root_domain                = "forms.service.gov.uk"
-cloudfront_distribution_id = "EXITHSOVYUXHW"
+root_domain = "forms.service.gov.uk"
 additional_dns_records = [
   # Records in support of MyNCSC Web Check
   {

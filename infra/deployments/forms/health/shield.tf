@@ -10,7 +10,7 @@ data "aws_s3_bucket" "logs_bucket" {
 
 locals {
   account_id     = data.aws_caller_identity.current.account_id
-  cloudfront_arn = "arn:aws:cloudfront::${local.account_id}:distribution/${var.cloudfront_distribution_id}"
+  cloudfront_arn = data.terraform_remote_state.forms_environment.outputs.cloudfront_arn
 }
 
 resource "aws_shield_protection" "cloudfront" {
