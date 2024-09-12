@@ -1,5 +1,5 @@
 resource "aws_iam_role" "csv-submissions-role" {
-  name               = "govuk-forms-csv-submissions-${var.env_name}"
+  name               = "govuk-forms-submissions-to-s3-${var.env_name}"
   assume_role_policy = data.aws_iam_policy_document.csv_submission_assume_role_policy.json
 }
 
