@@ -49,3 +49,13 @@ variable "container_repository" {
   description = "The complete URI of the container repository."
   type        = string
 }
+
+variable "vpc_id" {
+  type        = string
+  description = "vpc_id"
+}
+
+variable "vpc_cidr_block" {
+  type        = string
+  description = "vpc_cidr_block"
+}

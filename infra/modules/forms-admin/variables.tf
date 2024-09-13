@@ -104,3 +104,13 @@ variable "deploy_account_id" {
   type        = string
   description = "the account number for the deploy account"
 }
+
+variable "vpc_id" {
+  type        = string
+  description = "vpc_id"
+}
+
+variable "vpc_cidr_block" {
+  type        = string
+  description = "vpc_cidr_block"
+}
