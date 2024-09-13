@@ -29,6 +29,7 @@ resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV2_AWS_32:Checkov error, response headers policy is set.
   #checkov:skip=CKV2_AWS_47:We don't use log4j
   #checkov:skip=CKV_AWS_310:We don't have a backup origin to fail over to
+  #checkov:skip=CKV_AWS_374:We currently don't geo restrict
 
   origin {
     domain_name = var.alb_dns_name
