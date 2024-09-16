@@ -1,10 +1,15 @@
-module "csv_submissions_bucket" {
+module "submissions_to_s3_test_bucket" {
   source = "../../../modules/secure-bucket"
 
-  name = "govuk-forms-csv-form-submissions-dummy"
+  name = "govuk-forms-submissions-to-s3-test"
   extra_bucket_policies = [
     data.aws_iam_policy_document.allow_writes_from_other_accounts.json
   ]
+}
+
+moved {
+  from = module.csv_submissions_bucket
+  to   = module.submissions_to_s3_test_bucket
 }
 
 data "aws_iam_policy_document" "allow_writes_from_other_accounts" {
@@ -33,8 +38,8 @@ data "aws_iam_policy_document" "allow_writes_from_other_accounts" {
       }
 
       resources = [
-        "arn:aws:s3:::govuk-forms-csv-form-submissions-dummy",
-        "arn:aws:s3:::govuk-forms-csv-form-submissions-dummy/*"
+        "arn:aws:s3:::govuk-forms-submissions-to-s3-test",
+        "arn:aws:s3:::govuk-forms-submissions-to-s3-test/*"
       ]
     }
   }
