@@ -48,4 +48,6 @@ module "forms_runner" {
   elasticache_port                           = data.terraform_remote_state.redis.outputs.elasticache_port
   elasticache_primary_endpoint_address       = data.terraform_remote_state.redis.outputs.elasticache_primary_endpoint_address
   container_repository                       = "${var.container_registry}/forms-runner-deploy"
+  vpc_id                                     = data.terraform_remote_state.forms_environment.outputs.vpc_id
+  vpc_cidr_block                             = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
 }

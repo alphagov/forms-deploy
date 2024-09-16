@@ -17,4 +17,6 @@ module "forms_product_page" {
   max_capacity         = var.forms_product_page_settings.max_capacity
   deploy_account_id    = var.deploy_account_id
   container_repository = "${var.container_registry}/forms-product-page-deploy"
+  vpc_id               = data.terraform_remote_state.forms_environment.outputs.vpc_id
+  vpc_cidr_block       = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
 }

@@ -40,7 +40,8 @@ module "ecs_service" {
   container_port         = 3000
   permit_internet_egress = true
   permit_redis_egress    = true
-
+  vpc_id                 = var.vpc_id
+  vpc_cidr_block         = var.vpc_cidr_block
   scaling_rules = {
     min_capacity                                = var.min_capacity
     max_capacity                                = var.max_capacity

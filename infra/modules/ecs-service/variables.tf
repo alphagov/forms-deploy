@@ -111,3 +111,13 @@ variable "scaling_rules" {
     scale_out_cooldown                          = number
   })
 }
+
+variable "vpc_id" {
+  description = "vpc id"
+  type        = string
+}
+
+variable "vpc_cidr_block" {
+  description = "The CIDR block of the VPC"
+  type        = string
+}

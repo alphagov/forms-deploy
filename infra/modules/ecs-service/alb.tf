@@ -12,7 +12,7 @@ resource "aws_lb_target_group" "tg" {
   name        = "${var.application}-${var.env_name}"
   port        = var.container_port
   protocol    = "HTTP"
-  vpc_id      = data.aws_vpc.forms.id
+  vpc_id      = var.vpc_id
   target_type = "ip"
 
   deregistration_delay = "60"

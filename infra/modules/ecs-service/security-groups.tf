@@ -1,12 +1,5 @@
-data "aws_vpc" "forms" {
-  filter {
-    name   = "tag:Name"
-    values = ["forms-${var.env_name}"]
-  }
-}
-
 data "aws_vpc_endpoint" "s3" {
-  vpc_id       = data.aws_vpc.forms.id
+  vpc_id       = var.vpc_id
   service_name = "com.amazonaws.eu-west-2.s3"
 }
 
@@ -18,7 +11,7 @@ resource "aws_security_group" "baseline" {
   #checkov:skip=CKV2_AWS_5:The security groups are attached in ecs.tf
   name        = "${var.application}-${var.env_name}"
   description = "Ingress from VPC, egress to VPC and S3"
-  vpc_id      = data.aws_vpc.forms.id
+  vpc_id      = var.vpc_id
 }
 
 resource "aws_security_group_rule" "ingress_from_vpc" {
@@ -27,7 +20,7 @@ resource "aws_security_group_rule" "ingress_from_vpc" {
   from_port         = var.container_port
   to_port           = var.container_port
   protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.forms.cidr_block]
+  cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.baseline.id
 }
 
@@ -47,7 +40,7 @@ resource "aws_security_group_rule" "egress_to_vpc" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.forms.cidr_block]
+  cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.baseline.id
 }
 
@@ -59,7 +52,7 @@ resource "aws_security_group_rule" "egress_to_redis" {
   from_port         = 6379
   to_port           = 6379
   protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.forms.cidr_block]
+  cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.baseline.id
 }
 
@@ -71,7 +64,7 @@ resource "aws_security_group_rule" "egress_to_rds" {
   from_port         = 5432
   to_port           = 5432
   protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.forms.cidr_block]
+  cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.baseline.id
 }
 

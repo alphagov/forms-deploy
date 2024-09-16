@@ -105,3 +105,12 @@ variable "container_repository" {
   description = "The name of the container repository to use"
   type        = string
 }
+variable "vpc_id" {
+  type        = string
+  description = "vpc_id"
+}
+
+variable "vpc_cidr_block" {
+  type        = string
+  description = "vpc_cidr_block"
+}
