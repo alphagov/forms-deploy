@@ -109,26 +109,3 @@ module "log_codepipeline_events" {
 
   event_pattern = aws_cloudwatch_event_rule.codepipeline_events.event_pattern
 }
-
-## Dead letter queue
-removed {
-  from = aws_sqs_queue.event_bridge_dlq
-
-  lifecycle {
-    destroy = false
-  }
-}
-
-data "aws_iam_policy_document" "allows_eventbridge_to_deliver_to_sqs" {
-  statement {
-    sid       = "AllowEventBridgeToDeliver"
-    effect    = "Allow"
-    actions   = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:${var.environment_name}-eventbridge-dead-letter-queue"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["events.amazonaws.com"]
-    }
-  }
-}
