@@ -70,7 +70,7 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
   }
 
   dead_letter_config {
-    arn = "arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:${var.env_name}-eventbridge-dead-letter-queue"
+    arn = var.eventbridge_dead_letter_queue_arn
   }
 }
 
@@ -119,7 +119,7 @@ resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
   }
 
   dead_letter_config {
-    arn = "arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:${var.env_name}-eventbridge-dead-letter-queue"
+    arn = var.eventbridge_dead_letter_queue_arn
   }
 }
 
