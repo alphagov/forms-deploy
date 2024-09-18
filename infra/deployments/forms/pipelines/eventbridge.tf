@@ -111,10 +111,12 @@ module "log_codepipeline_events" {
 }
 
 ## Dead letter queue
-resource "aws_sqs_queue" "event_bridge_dlq" {
-  #checkov:skip=CKV_AWS_27: We're OK with dead letters from EventBridge not being encrypted
-  name   = "${var.environment_name}-eventbridge-dead-letter-queue"
-  policy = data.aws_iam_policy_document.allows_eventbridge_to_deliver_to_sqs.json
+removed {
+  from = aws_sqs_queue.event_bridge_dlq
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 data "aws_iam_policy_document" "allows_eventbridge_to_deliver_to_sqs" {
