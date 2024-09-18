@@ -131,7 +131,7 @@ services:
   postgres:
     environment:
       POSTGRES_PASSWORD: postgres
-    image: postgres:11
+    image: postgres:13
     ports:
       - "5432:5432"
     restart: always
