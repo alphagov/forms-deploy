@@ -75,17 +75,6 @@ variable "deploy_account_id" {
   description = "the account number for the deploy account"
 }
 
-variable "csv_submission_enabled" {
-  description = "Enables attaching CSV submission data to submission emails for all forms."
-  type        = bool
-  default     = false
-}
-
-variable "csv_submission_enabled_for_form_ids" {
-  description = "A list of form IDs to enable attaching CSV submission data to submission emails for. This is only relevant if csv_submission_enabled is set to false."
-  type        = list(string)
-}
-
 variable "api_v2_enabled" {
   description = "Use v2 API of forms-api when enabled."
   type        = bool

@@ -42,8 +42,6 @@ module "forms_runner" {
   cloudwatch_metrics_enabled                 = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled                          = var.forms_runner_settings.analytics_enabled
   deploy_account_id                          = var.deploy_account_id
-  csv_submission_enabled                     = var.forms_runner_settings.csv_submission_enabled
-  csv_submission_enabled_for_form_ids        = var.forms_runner_settings.csv_submission_enabled_for_form_ids
   api_v2_enabled                             = var.forms_runner_settings.api_v2_enabled
   additional_submissions_to_s3_role_assumers = local.allowed_submissions_to_s3_role_assumers
   elasticache_port                           = data.terraform_remote_state.redis.outputs.elasticache_port
