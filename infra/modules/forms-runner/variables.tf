@@ -86,6 +86,12 @@ variable "csv_submission_enabled_for_form_ids" {
   type        = list(string)
 }
 
+variable "api_v2_enabled" {
+  description = "Use v2 API of forms-api when enabled."
+  type        = bool
+  default     = false
+}
+
 variable "additional_submissions_to_s3_role_assumers" {
   description = "A list of role ARNs which are also allowed to assume the role for submissions to s3"
   type        = list(string)
