@@ -61,6 +61,7 @@ forms_runner_settings = {
   analytics_enabled                                           = false
   csv_submission_enabled                                      = false
   csv_submission_enabled_for_form_ids                         = []
+  api_v2_enabled                                              = false
   allow_human_readonly_roles_to_assume_submissions_to_s3_role = false
 }
 scheduled_smoke_tests_settings = {
