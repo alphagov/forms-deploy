@@ -70,6 +70,14 @@ additional_dns_records = [
     ttl     = 86400
     records = ["asvdns_61809fb0-4bf0-4e8e-82e2-e6febfba9faa"]
   },
+  {
+    # Validation record for api.
+    name    = "_asvdns-453532a6-2653-4d64-a5b2-8bd02812ccea.api"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["asvdns_1d96d003-5726-4840-b265-4b5f6e08094a"]
+  },
+
 
   # Records in support of MyNCSC MailCheck
   {
