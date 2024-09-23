@@ -8,6 +8,7 @@ resource "auth0_client" "forms_admin" {
   callbacks = [
     "${var.admin_base_url}${var.app_auth_callback_path}"
   ]
+  cross_origin_auth = false
 
   is_first_party = true
 
