@@ -106,12 +106,8 @@ module "ecs_service" {
       value = var.analytics_enabled
     },
     {
-      name  = "SETTINGS__FEATURES__CSV_SUBMISSION__ENABLED",
-      value = var.csv_submission_enabled
-    },
-    {
-      name  = "SETTINGS__FEATURES__CSV_SUBMISSION__ENABLED_FOR_FORM_IDS"
-      value = join(",", var.csv_submission_enabled_for_form_ids)
+      name  = "SETTINGS__FEATURES__API_V2",
+      value = var.api_v2_enabled
     },
     {
       name  = "SETTINGS__AWS_S3_SUBMISSIONS__IAM_ROLE_ARN",

@@ -70,6 +70,14 @@ additional_dns_records = [
     ttl     = 86400
     records = ["asvdns_61809fb0-4bf0-4e8e-82e2-e6febfba9faa"]
   },
+  {
+    # Validation record for api.
+    name    = "_asvdns-453532a6-2653-4d64-a5b2-8bd02812ccea.api"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["asvdns_1d96d003-5726-4840-b265-4b5f6e08094a"]
+  },
+
 
   # Records in support of MyNCSC MailCheck
   {
@@ -124,8 +132,7 @@ forms_runner_settings = {
   enable_maintenance_mode                                     = false
   cloudwatch_metrics_enabled                                  = true
   analytics_enabled                                           = true
-  csv_submission_enabled                                      = false
-  csv_submission_enabled_for_form_ids                         = ["89", "143", "477", "696", "777", "1693", "1694", "1994", "2634", "2765", "3069", "3408", "4073"]
+  api_v2_enabled                                              = false
   allow_human_readonly_roles_to_assume_submissions_to_s3_role = false
 }
 scheduled_smoke_tests_settings = {

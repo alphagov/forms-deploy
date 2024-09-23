@@ -172,8 +172,7 @@ variable "forms_runner_settings" {
     enable_maintenance_mode                                     = bool
     cloudwatch_metrics_enabled                                  = bool
     analytics_enabled                                           = bool
-    csv_submission_enabled                                      = bool
-    csv_submission_enabled_for_form_ids                         = list(string)
+    api_v2_enabled                                              = bool
     allow_human_readonly_roles_to_assume_submissions_to_s3_role = bool
   })
 }
