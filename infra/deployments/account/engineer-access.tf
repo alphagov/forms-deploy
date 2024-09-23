@@ -11,7 +11,7 @@ module "engineer_access" {
   readonly                            = module.users.with_role["${var.environment_type}_readonly"]
   vpn                                 = var.require_vpn_to_access
   codestar_connection_arn             = var.codestar_connection_arn
-  dynamodb_state_file_locks_table_arn = "arn:aws:dynamodb:eu-west-2:${var.aws_account_id}:table/govuk-forms-${var.environment_type}-tfstate-locking"
+  dynamodb_state_file_locks_table_arn = "arn:aws:dynamodb:eu-west-2:${var.aws_account_id}:table/${local.dynamodb_table_name}"
   allow_rds_data_api_access           = true
   allow_ecs_task_usage                = true
 }
