@@ -1,8 +1,8 @@
 module "environment" {
-  source   = "../../../modules/environment"
-  env_name = var.environment_name
-  env_type = var.environment_type
-
+  source      = "../../../modules/environment"
+  env_name    = var.environment_name
+  env_type    = var.environment_type
+  root_domain = var.root_domain
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1

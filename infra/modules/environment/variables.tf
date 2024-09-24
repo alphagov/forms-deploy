@@ -47,3 +47,8 @@ variable "scheduled_smoke_tests_settings" {
     enable_alerting   = bool # Whether to send notification to govuk-forms-alerts channel
   })
 }
+
+variable "root_domain" {
+  description = "The root domain for the service."
+  type        = string
+}

@@ -129,7 +129,7 @@ module "acm_certicate_with_validation" {
     aws.certificate = aws # Create the certificate in the default eu-west-2
   }
 
-  domain_name               = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
+  domain_name               = var.root_domain
   subject_alternative_names = lookup(local.subject_alternative_names, var.env_name)
 }
 
