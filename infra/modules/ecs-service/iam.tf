@@ -74,7 +74,8 @@ data "aws_iam_policy_document" "ecs_task_exec_additional_policies" {
       "ssm:GetParameters"
     ]
     resources = [
-      "arn:aws:ssm:*:*:parameter/${var.application}-${var.env_name}/*"
+      for secret in flatten(var.secrets) : secret.valueFrom
+      if startswith(secret.valueFrom, "arn:aws:ssm")
     ]
     effect = "Allow"
   }
