@@ -23,7 +23,7 @@ resource "aws_cloudwatch_metric_alarm" "event_bridge_dlq_delivery_alarm" {
     2. Go look at the message in SQS console by visiting the URL below and
     presing "Poll for messages". Error details are found in the message "Attributes" tab.
 
-    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/${data.aws_caller_identity.current.account_id}/${var.environment_name}-eventbridge-dead-letter-queue")}/send-receive
+    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode(var.eventbridge_dead_letter_queue_url)}/send-receive
 
     3. When you've resolved the problem, delete the message from the queue
     EOF

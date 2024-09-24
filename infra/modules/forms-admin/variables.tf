@@ -114,3 +114,8 @@ variable "vpc_cidr_block" {
   type        = string
   description = "vpc_cidr_block"
 }
+
+variable "eventbridge_dead_letter_queue_arn" {
+  description = "The ARN of the EventBridge dead letter queue where Mailchimp sync failures are sent"
+  type        = string
+}

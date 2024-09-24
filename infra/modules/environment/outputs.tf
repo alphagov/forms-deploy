@@ -29,3 +29,11 @@ output "cloudfront_domain_name" {
 output "cloudfront_hosted_zone_id" {
   value = module.cloudfront[0].cloudfront_hosted_zone_id
 }
+
+output "eventbridge_dead_letter_queue_arn" {
+  value = aws_sqs_queue.event_bridge_dlq.arn
+}
+
+output "eventbridge_dead_letter_queue_url" {
+  value = aws_sqs_queue.event_bridge_dlq.url
+}

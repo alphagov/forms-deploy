@@ -62,7 +62,7 @@ module "log_ecr_push_events" {
 
   environment_name      = var.environment_name
   log_group_subject     = "ecr_push_events"
-  dead_letter_queue_arn = aws_sqs_queue.event_bridge_dlq.arn
+  dead_letter_queue_arn = data.terraform_remote_state.forms_environment.outputs.eventbridge_dead_letter_queue_arn
   event_pattern = jsonencode({
     source = ["aws.ecr", "uk.gov.service.forms"]
     detail = {
@@ -96,7 +96,7 @@ resource "aws_cloudwatch_event_target" "forward_codepipeline_events_to_deploy_de
   arn       = "arn:aws:events:eu-west-2:${var.deploy_account_id}:event-bus/default"
 
   dead_letter_config {
-    arn = aws_sqs_queue.event_bridge_dlq.arn
+    arn = data.terraform_remote_state.forms_environment.outputs.eventbridge_dead_letter_queue_arn
   }
 }
 
@@ -105,28 +105,7 @@ module "log_codepipeline_events" {
 
   environment_name      = var.environment_name
   log_group_subject     = "codepipeline"
-  dead_letter_queue_arn = aws_sqs_queue.event_bridge_dlq.arn
+  dead_letter_queue_arn = data.terraform_remote_state.forms_environment.outputs.eventbridge_dead_letter_queue_arn
 
   event_pattern = aws_cloudwatch_event_rule.codepipeline_events.event_pattern
-}
-
-## Dead letter queue
-resource "aws_sqs_queue" "event_bridge_dlq" {
-  #checkov:skip=CKV_AWS_27: We're OK with dead letters from EventBridge not being encrypted
-  name   = "${var.environment_name}-eventbridge-dead-letter-queue"
-  policy = data.aws_iam_policy_document.allows_eventbridge_to_deliver_to_sqs.json
-}
-
-data "aws_iam_policy_document" "allows_eventbridge_to_deliver_to_sqs" {
-  statement {
-    sid       = "AllowEventBridgeToDeliver"
-    effect    = "Allow"
-    actions   = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:${var.environment_name}-eventbridge-dead-letter-queue"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["events.amazonaws.com"]
-    }
-  }
 }

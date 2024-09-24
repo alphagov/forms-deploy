@@ -38,3 +38,8 @@ variable "deploy_account_id" {
   type        = string
   description = "the account number for the deploy account"
 }
+
+variable "eventbridge_dead_letter_queue_url" {
+  description = "The EventBridge dead letter queue URL where failed invocations are sent"
+  type        = string
+}

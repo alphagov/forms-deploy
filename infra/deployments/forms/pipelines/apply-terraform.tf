@@ -52,7 +52,7 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
   }
 
   dead_letter_config {
-    arn = aws_sqs_queue.event_bridge_dlq.arn
+    arn = data.terraform_remote_state.forms_environment.outputs.eventbridge_dead_letter_queue_arn
   }
 }
 

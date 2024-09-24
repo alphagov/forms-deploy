@@ -25,3 +25,11 @@ output "cloudfront_distribution_domain_name" {
 output "cloudfront_hosted_zone_id" {
   value = module.environment.cloudfront_hosted_zone_id
 }
+
+output "eventbridge_dead_letter_queue_arn" {
+  value = module.environment.eventbridge_dead_letter_queue_arn
+}
+
+output "eventbridge_dead_letter_queue_url" {
+  value = module.environment.eventbridge_dead_letter_queue_url
+}
