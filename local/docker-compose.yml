@@ -36,7 +36,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - ../../forms-admin:/app:cached
       - forms-admin-bundle:/usr/local/bundle
@@ -62,7 +62,7 @@ services:
       - RAILS_ENV=development
       - SECRET_KEY_BASE=dummy_value
     ports:
-      - "9292:9292"
+      - "127.0.0.1:9292:9292"
     volumes:
       - ../../forms-api:/app:cached
       - forms-api-bundle:/usr/local/bundle
@@ -89,7 +89,7 @@ services:
       - RAILS_ENV=development
       - SECRET_KEY_BASE=dummyvalue
     ports:
-      - "3002:3002"
+      - "127.0.0.1:3002:3002"
     volumes:
       - ../../forms-product-page:/app:cached
       - forms-product-page-bundle:/usr/local/bundle
@@ -121,7 +121,7 @@ services:
       - SECRET_KEY_BASE=dummyvalue
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL}
     ports:
-      - "3001:3001"
+      - "127.0.0.1:3001:3001"
     volumes:
       - ../../forms-runner:/app:cached
       - forms-runner-bundle:/usr/local/bundle
@@ -133,7 +133,7 @@ services:
       POSTGRES_PASSWORD: postgres
     image: postgres:13
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     restart: always
     volumes:
       - postgres:/var/lib/postgresql/data
@@ -142,7 +142,7 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis-data:/data
 
