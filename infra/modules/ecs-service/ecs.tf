@@ -13,17 +13,6 @@ data "aws_ecs_container_definition" "active_container" {
   container_name  = var.application
 }
 
-data "aws_subnets" "private" {
-  filter {
-    name = "tag:Name"
-    values = [
-      "private-a-${var.env_name}",
-      "private-b-${var.env_name}",
-      "private-c-${var.env_name}"
-    ]
-  }
-}
-
 locals {
   task_definition_family = "${var.env_name}_${var.application}"
 
@@ -54,7 +43,7 @@ locals {
   # to local variable so we can ensure the same configuration is used
   # for any pre-deploy tasks
   ecs_service_network_configuration = {
-    subnets        = data.aws_subnets.private.ids
+    subnets        = var.private_subnet_ids
     securityGroups = [aws_security_group.baseline.id]
     assignPublicIp = false
   }

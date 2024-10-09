@@ -109,3 +109,8 @@ variable "vpc_cidr_block" {
   type        = string
   description = "vpc_cidr_block"
 }
+
+variable "private_subnet_ids" {
+  type        = list(string)
+  description = "List of private subnet ids used in the ECS service network configuration"
+}

@@ -42,6 +42,7 @@ module "ecs_service" {
   permit_redis_egress    = true
   vpc_id                 = var.vpc_id
   vpc_cidr_block         = var.vpc_cidr_block
+  private_subnet_ids     = var.private_subnet_ids
   scaling_rules = {
     min_capacity                                = var.min_capacity
     max_capacity                                = var.max_capacity

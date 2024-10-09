@@ -49,4 +49,6 @@ module "forms_runner" {
   container_repository                       = "${var.container_registry}/forms-runner-deploy"
   vpc_id                                     = data.terraform_remote_state.forms_environment.outputs.vpc_id
   vpc_cidr_block                             = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
+  private_subnet_ids                         = [for id in data.terraform_remote_state.forms_environment.outputs.private_subnet_ids : id]
 }
+

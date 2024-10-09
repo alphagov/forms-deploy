@@ -119,3 +119,8 @@ variable "eventbridge_dead_letter_queue_arn" {
   description = "The ARN of the EventBridge dead letter queue where Mailchimp sync failures are sent"
   type        = string
 }
+
+variable "private_subnet_ids" {
+  type        = list(string)
+  description = "List of private subnet ids used in the ECS service network configuration"
+}
