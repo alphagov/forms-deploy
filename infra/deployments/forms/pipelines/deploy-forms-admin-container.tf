@@ -168,7 +168,7 @@ resource "aws_codepipeline" "deploy_admin_container" {
           },
           {
             name  = "TASK_DEFINITION_NAME"
-            value = "${var.environment_name}_forms-admin"
+            value = "${var.environment_name}_${data.terraform_remote_state.forms_admin.outputs.task_definition_name}"
             type  = "PLAINTEXT"
           },
           {
