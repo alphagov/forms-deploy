@@ -15,13 +15,13 @@ variable "apply_immediately" {
 
 variable "availability_zones" {
   type        = list(string)
-  description = "The availbility zones to run the redis cluster in"
+  description = "The availability zones to run the redis cluster in"
   default     = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
 }
 
 variable "engine_version" {
-  default     = "7.0"
   description = "The version of Redis to use"
+  default     = "7.0"
 }
 
 variable "number_cache_clusters" {
@@ -31,8 +31,8 @@ variable "number_cache_clusters" {
 }
 
 variable "automatic_failover_enabled" {
-  default     = true
   description = "If the primary node fails it will failover to a replica"
+  default     = true
 }
 
 variable "parameter_group_families" {
@@ -58,13 +58,13 @@ variable "redis_node_type" {
 
 variable "redis_maintenance_window" {
   type        = string
-  default     = "tue:03:00-tue:04:00"
   description = "When planned maintenance will take place such as minor and major version upgrades"
+  default     = "tue:03:00-tue:04:00"
 }
 
 variable "redis_snapshot_window" {
-  description = "The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. The minimum snapshot window is a 60 minute period"
   type        = string
+  description = "The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. The minimum snapshot window is a 60 minute period"
   default     = "04:30-05:30"
 }
 

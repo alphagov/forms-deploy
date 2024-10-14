@@ -19,5 +19,5 @@ variable "source_repository" {
 
 variable "codestar_connection_arn" {
   type        = string
-  description = "the arn of the github connection to use"
+  description = "The arn of the github connection to use"
 }

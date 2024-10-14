@@ -42,7 +42,7 @@ variable "max_capacity" {
 
 variable "deploy_account_id" {
   type        = string
-  description = "the account number for the deploy account"
+  description = "The account number for the deploy account"
 }
 
 variable "container_repository" {
@@ -52,15 +52,15 @@ variable "container_repository" {
 
 variable "vpc_id" {
   type        = string
-  description = "vpc_id"
+  description = "The VPC in which the service resides"
 }
 
 variable "vpc_cidr_block" {
   type        = string
-  description = "vpc_cidr_block"
+  description = "The CIDR block associated with the service's VPC"
 }
 
 variable "private_subnet_ids" {
   type        = list(string)
-  description = "List of private subnet ids used in the ECS service network configuration"
+  description = "The list of private subnet ids used in the ECS service network configuration"
 }

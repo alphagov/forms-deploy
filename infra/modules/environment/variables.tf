@@ -38,7 +38,6 @@ variable "enable_shield_advanced_healthchecks" {
 }
 
 variable "scheduled_smoke_tests_settings" {
-  description = "Configuration for the scheduled smoke tests"
   type = object({
     enable_scheduled_smoke_tests = bool
     # This form is created specifically for the runner smoke tests. See https://github.com/alphagov/forms-e2e-tests/blob/main/spec/smoke_tests/smoke_test_runner_spec.rb
@@ -46,9 +45,10 @@ variable "scheduled_smoke_tests_settings" {
     frequency_minutes = number
     enable_alerting   = bool # Whether to send notification to govuk-forms-alerts channel
   })
+  description = "Configuration for the scheduled smoke tests"
 }
 
 variable "root_domain" {
-  description = "The root domain for the service."
   type        = string
+  description = "The root domain for the service."
 }

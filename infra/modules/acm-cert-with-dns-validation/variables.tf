@@ -5,5 +5,5 @@ variable "domain_name" {
 
 variable "subject_alternative_names" {
   type        = list(string)
-  description = "Subject alternative names for the certficate. Must be within the same domain as domain_name"
+  description = "Subject alternative names for the certificate. Must be within the same domain as domain_name"
 }

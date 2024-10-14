@@ -61,6 +61,6 @@ variable "min_capacity" {
 
 variable "rds_maintenance_window" {
   type        = string
-  default     = "wed:04:00-wed:04:30"
   description = "When planned maintenance will take place such as minor and major version upgrades"
+  default     = "wed:04:00-wed:04:30"
 }

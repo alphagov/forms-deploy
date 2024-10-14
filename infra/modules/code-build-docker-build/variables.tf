@@ -66,7 +66,7 @@ variable "code_build_project_compute_size" {
 
 variable "code_build_project_compute_arch" {
   type        = string
-  description = "The archecture of the container"
+  description = "The architecture of the container"
   default     = "ARM_CONTAINER"
 }
 
@@ -77,6 +77,6 @@ variable "codestar_connection_arn" {
 
 variable "extra_env_vars" {
   type        = list(map(string))
-  description = "Additinal environment variables to set in the container"
+  description = "Additional environment variables to set in the container"
   default     = []
 }
