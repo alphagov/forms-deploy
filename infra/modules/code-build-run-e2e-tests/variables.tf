@@ -38,22 +38,22 @@ variable "service_role_arn" {
 }
 
 variable "auth0_user_name_parameter_name" {
-  description = "The parameter name for the username for Auth0 login into forms-admin"
   type        = string
+  description = "The parameter name for the username for Auth0 login into forms-admin"
 }
 
 variable "auth0_user_password_parameter_name" {
-  description = "The parameter name for the password for Auth0 login into forms-admin"
   type        = string
+  description = "The parameter name for the password for Auth0 login into forms-admin"
 }
 
 variable "notify_api_key_parameter_name" {
-  description = "The parameter name for the Notify API key to use when checking for form submissions"
   type        = string
+  description = "The parameter name for the Notify API key to use when checking for form submissions"
 }
 
 variable "deploy_account_id" {
-  description = "the account number for deploy account"
   type        = string
+  description = "The account number for deploy account"
   nullable    = false
 }

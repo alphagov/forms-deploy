@@ -22,41 +22,41 @@ variable "memory" {
 }
 
 variable "api_base_url" {
-  description = "The url for connecting to forms-api"
   type        = string
+  description = "The url for connecting to forms-api"
 }
 
 variable "runner_base" {
-  description = "The url for redirecting to forms-runner"
   type        = string
+  description = "The url for redirecting to forms-runner"
 }
 
 variable "auth_provider" {
-  description = "Controls how users are authenticated"
   type        = string
+  description = "Controls how users are authenticated"
   default     = "gds_sso"
 }
 
 variable "previous_auth_provider" {
-  description = "The previous auth provider changing to preserve env vars and allow users to logout"
   type        = string
+  description = "The previous auth provider changing to preserve env vars and allow users to logout"
   default     = ""
 }
 
 variable "govuk_app_domain" {
-  description = "The domain name for the Signon integration for auth flow"
   type        = string
+  description = "The domain name for the Signon integration for auth flow"
   default     = ""
 }
 
 variable "enable_maintenance_mode" {
-  description = "Controls whether the maintenance page is shown"
   type        = bool
+  description = "Controls whether the maintenance page is shown"
 }
 
 variable "forms_product_page_support_url" {
-  description = "Sets the support URL for the product page"
   type        = string
+  description = "Sets the support URL for the product page"
   default     = ""
 }
 
@@ -71,32 +71,32 @@ variable "max_capacity" {
 }
 
 variable "cloudwatch_metrics_enabled" {
-  description = "Enables metrics being sent to CloudWatch"
   type        = bool
+  description = "Enables metrics being sent to CloudWatch"
   default     = false
 }
 
 variable "analytics_enabled" {
-  description = "Enables Google analytics"
   type        = bool
+  description = "Enables Google analytics"
   default     = false
 }
 
 variable "act_as_user_enabled" {
-  description = "Enables act as user functionality for super admins"
   type        = bool
+  description = "Enables act as user functionality for super admins"
   default     = false
 }
 
 variable "repeatable_page_enabled" {
-  description = "Enables editing pages to add another answer to them"
   type        = bool
+  description = "Enables editing pages to add another answer to them"
   default     = false
 }
 
 variable "enable_mailchimp_sync" {
-  description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
   type        = bool
+  description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
   default     = false
 }
 
@@ -107,17 +107,17 @@ variable "deploy_account_id" {
 
 variable "vpc_id" {
   type        = string
-  description = "vpc_id"
+  description = "The VPC in which the service resides"
 }
 
 variable "vpc_cidr_block" {
   type        = string
-  description = "vpc_cidr_block"
+  description = "The CIDR block associated with the service's VPC"
 }
 
 variable "eventbridge_dead_letter_queue_arn" {
-  description = "The ARN of the EventBridge dead letter queue where Mailchimp sync failures are sent"
   type        = string
+  description = "The ARN of the EventBridge dead letter queue where Mailchimp sync failures are sent"
 }
 
 variable "private_subnet_ids" {

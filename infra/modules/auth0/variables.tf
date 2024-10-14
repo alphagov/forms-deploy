@@ -44,20 +44,20 @@ variable "favicon_url_path" {
 
 variable "idle_session_lifetime" {
   type        = number
-  default     = 8
   description = "Number of hours for which a session can be inactive before the user must log in again."
+  default     = 8
 }
 
 variable "otp_expiry_length" {
   type        = number
-  default     = 900
   description = "Number of seconds that a one time password is valid for."
+  default     = 900
 }
 
 variable "session_lifetime" {
   type        = number
-  default     = 8
   description = "Number of hours a session will stay valid."
+  default     = 8
 }
 
 variable "env_name" {

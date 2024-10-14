@@ -48,14 +48,14 @@ variable "memory" {
 
 variable "environment_variables" {
   type        = list(any)
-  default     = []
   description = "Environment variables to set in the task environment"
+  default     = []
 }
 
 variable "secrets" {
   type        = list(any)
-  default     = []
   description = "Secret values to look up form SSM Parameter store and set in the task environment"
+  default     = []
 }
 
 variable "container_port" {
@@ -65,20 +65,20 @@ variable "container_port" {
 
 variable "permit_internet_egress" {
   type        = bool
-  default     = false
   description = "If true then the app's security group will permit egress to the internet on port 443"
+  default     = false
 }
 
 variable "permit_postgres_egress" {
   type        = bool
-  default     = false
   description = "If true then the app's security group will permit egress to the postgres on port 5432"
+  default     = false
 }
 
 variable "permit_redis_egress" {
   type        = bool
-  default     = false
   description = "If true then the app's security group will permit egress to the redis on port 6379"
+  default     = false
 }
 
 variable "ecs_task_role_policy_json" {
@@ -89,7 +89,6 @@ variable "ecs_task_role_policy_json" {
 
 variable "pre_deploy_script" {
   type        = string
-  default     = ""
   description = <<EOF
 Absolute path to a script to run before a new task definition is run. Arguments are given as environment variables
 
@@ -100,6 +99,7 @@ CONTAINER_DEFINITION_JSON: The task's container definition in JSON
 
 If left empty, no script will be run.
 EOF
+  default     = ""
 }
 
 variable "scaling_rules" {
@@ -113,8 +113,8 @@ variable "scaling_rules" {
 }
 
 variable "vpc_id" {
-  description = "vpc id"
   type        = string
+  description = "The VPC ID in which the ECS services reside"
 }
 
 variable "vpc_cidr_block" {
@@ -124,5 +124,5 @@ variable "vpc_cidr_block" {
 
 variable "private_subnet_ids" {
   type        = list(string)
-  description = "List of private subnet ids used in the ECS service network configuration"
+  description = "The list of private subnet ids used in the ECS service network configuration"
 }

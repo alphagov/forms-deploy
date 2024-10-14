@@ -1,6 +1,6 @@
 variable "environment_name" {
   type        = string
-  description = "The name of the enviroment the logging is being deployed to  "
+  description = "The name of the environment the logging is being deployed to  "
 }
 
 variable "log_group_subject" {
