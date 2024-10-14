@@ -19,5 +19,5 @@ module "forms_product_page" {
   container_repository = "${var.container_registry}/forms-product-page-deploy"
   vpc_id               = data.terraform_remote_state.forms_environment.outputs.vpc_id
   vpc_cidr_block       = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
-  private_subnet_ids   = [for id in data.terraform_remote_state.forms_environment.outputs.private_subnet_ids : id]
+  private_subnet_ids   = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
 }

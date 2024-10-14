@@ -29,6 +29,6 @@ module "forms_admin" {
   repeatable_page_enabled           = var.forms_admin_settings.repeatable_page_enabled
   vpc_id                            = data.terraform_remote_state.forms_environment.outputs.vpc_id
   vpc_cidr_block                    = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
-  private_subnet_ids                = [for id in data.terraform_remote_state.forms_environment.outputs.private_subnet_ids : id]
+  private_subnet_ids                = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
   eventbridge_dead_letter_queue_arn = data.terraform_remote_state.forms_environment.outputs.eventbridge_dead_letter_queue_arn
 }

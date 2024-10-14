@@ -18,6 +18,6 @@ module "forms_api" {
   deploy_account_id    = var.deploy_account_id
   vpc_id               = data.terraform_remote_state.forms_environment.outputs.vpc_id
   vpc_cidr_block       = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
-  private_subnet_ids   = [for id in data.terraform_remote_state.forms_environment.outputs.private_subnet_ids : id]
+  private_subnet_ids   = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
 }
 

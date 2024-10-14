@@ -7,11 +7,11 @@ output "vpc_cidr_block" {
 }
 
 output "private_subnet_ids" {
-  value = {
-    "a" = aws_subnet.private_a.id
-    "b" = aws_subnet.private_b.id
-    "c" = aws_subnet.private_c.id
-  }
+  value = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id
+  ]
 }
 
 output "cloudfront_arn" {
