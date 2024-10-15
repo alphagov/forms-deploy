@@ -84,7 +84,7 @@ moved {
 }
 
 data "aws_ssm_parameter" "pagerduty_integration_url" {
-  name = "/alerting/${var.environment_name}/pagerduty-integration-url"
+  name       = "/alerting/${var.environment_name}/pagerduty-integration-url"
   # Temporarily commenting out the `depends_on` while we
   # complete the transfer of these resources to modules/environment
   # depends_on = [aws_ssm_parameter.pagerduty_integration_url]
