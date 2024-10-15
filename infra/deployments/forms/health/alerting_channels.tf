@@ -47,10 +47,12 @@ moved {
   to   = module.zendesk_alert_eu_west_2.aws_sns_topic.topic
 }
 
-resource "aws_sns_topic_subscription" "zendesk_email_eu_west_2" {
-  topic_arn = module.zendesk_alert_eu_west_2.topic_arn
-  protocol  = "email"
-  endpoint  = data.aws_ssm_parameter.email_zendesk.value
+removed {
+  from = aws_sns_topic_subscription.zendesk_email_eu_west_2
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
@@ -103,10 +105,12 @@ moved {
   to   = aws_ssm_parameter.pagerduty_integration_url
 }
 
-resource "aws_sns_topic_subscription" "pagerduty_subscription_eu_west_2" {
-  topic_arn = module.pagerduty_eu_west_2.topic_arn
-  protocol  = "https"
-  endpoint  = data.aws_ssm_parameter.pagerduty_integration_url.value
+removed {
+  from = aws_sns_topic_subscription.pagerduty_subscription_eu_west_2
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
