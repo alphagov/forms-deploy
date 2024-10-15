@@ -98,9 +98,13 @@ def set_github_actions_version_constraint(gha_workflow_path, new_tf_constraint)
   # "on" is a key used in GitHub Actions workflow files and
   # changing it to true breaks the workflow.
   #
-  # To avoid that problem, we invoke YQ to target the specific key.
-  system("yq", "-i", ".env.TF_VERSION=\"#{new_tf_constraint}\"", gha_workflow_path)
-  raise "yq invocation failed" unless $CHILD_STATUS.exitstatus.zero?
+  # We could call out to YQ to manipulate YAML for us, but there is a bug with
+  # the YAML parser it uses that causes it to mangle multi-line strings
+  # https://github.com/mikefarah/yq/discussions/1584
+  #
+  # Instead we use sed to find and replace a specific string. It's not perfect.
+  system("sed", "-E", "-i", ".bak", "s#^[[:space:]]{2}TF_VERSION\: \"(.*)\"$#  TF_VERSION: \"#{new_tf_constraint}\"#g;", gha_workflow_path)
+  raise "sed invocation failed" unless $CHILD_STATUS.exitstatus.zero?
 end
 
 def terraform(env_vars, *args)
