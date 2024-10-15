@@ -21,11 +21,12 @@ moved {
   to   = module.zendesk_alert_us_east_1.aws_sns_topic.topic
 }
 
-resource "aws_sns_topic_subscription" "zendesk_email_us_east_1" {
-  provider  = aws.us-east-1
-  topic_arn = module.zendesk_alert_us_east_1.topic_arn
-  protocol  = "email"
-  endpoint  = data.aws_ssm_parameter.email_zendesk.value
+removed {
+  from = aws_sns_topic_subscription.zendesk_email_us_east_1
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
