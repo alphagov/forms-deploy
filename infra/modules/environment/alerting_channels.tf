@@ -12,6 +12,8 @@ module "zendesk_alert_us_east_1" {
   kms_key_id = aws_kms_key.topic_sse_us_east_1.arn
 }
 
+
+
 data "aws_ssm_parameter" "email_zendesk" {
   name = "/alerting/email-zendesk"
 }
@@ -21,39 +23,27 @@ moved {
   to   = module.zendesk_alert_us_east_1.aws_sns_topic.topic
 }
 
-removed {
-  from = aws_sns_topic_subscription.zendesk_email_us_east_1
-
-  lifecycle {
-    destroy = false
-  }
-}
-
 moved {
   from = aws_sns_topic_subscription.email
   to   = aws_sns_topic_subscription.zendesk_email_us_east_1
 }
 
 ## Zendesk eu-west-2
-module "zendesk_alert_eu_west_2" {
-  source = "./alert_sns_topic"
+# Temporarily comment out module while we complete import of
+# KMS keys and zendesk_alert_us_east_1 module
 
-  topic_name = "alert_zendesk_${var.environment_name}"
-  kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
-}
+# module "zendesk_alert_eu_west_2" {
+#   source = "./alert_sns_topic"
+
+#   topic_name = "alert_zendesk_${var.env_name}"
+#   kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
+# }
 
 moved {
   from = module.alerts.aws_sns_topic.alert_zendesk
   to   = module.zendesk_alert_eu_west_2.aws_sns_topic.topic
 }
 
-removed {
-  from = aws_sns_topic_subscription.zendesk_email_eu_west_2
-
-  lifecycle {
-    destroy = false
-  }
-}
 
 moved {
   from = module.alerts.aws_sns_topic_subscription.zendesk_subscription
@@ -66,12 +56,15 @@ moved {
 }
 
 ## Pagerduty eu-west-2
-module "pagerduty_eu_west_2" {
-  source = "./alert_sns_topic"
+# Temporarily comment out module while we complete import of
+# KMS keys and zendesk_alert_us_east_1 module
 
-  topic_name = "pagerduty_integration_${var.environment_name}"
-  kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
-}
+# module "pagerduty_eu_west_2" {
+#   source = "./alert_sns_topic"
+
+#   topic_name = "pagerduty_integration_${var.env_name}"
+#   kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
+# }
 
 moved {
   from = module.alerts.aws_sns_topic.alert_pagerduty
@@ -84,31 +77,15 @@ moved {
 }
 
 data "aws_ssm_parameter" "pagerduty_integration_url" {
-  name       = "/alerting/${var.environment_name}/pagerduty-integration-url"
+  name = "/alerting/${var.env_name}/pagerduty-integration-url"
   # Temporarily commenting out the `depends_on` while we
   # complete the transfer of these resources to modules/environment
   # depends_on = [aws_ssm_parameter.pagerduty_integration_url]
 }
 
-removed {
-  from = aws_ssm_parameter.pagerduty_integration_url
-
-  lifecycle {
-    destroy = false
-  }
-}
-
 moved {
   from = module.alerts.aws_ssm_parameter.pagerduty_integration_url
   to   = aws_ssm_parameter.pagerduty_integration_url
-}
-
-removed {
-  from = aws_sns_topic_subscription.pagerduty_subscription_eu_west_2
-
-  lifecycle {
-    destroy = false
-  }
 }
 
 moved {
@@ -118,23 +95,20 @@ moved {
 
 
 ## KMS keys
+resource "aws_kms_key" "topic_sse_us_east_1" {
+  provider = aws.us-east-1
 
+  description = "For server side encryption of the alerts topic"
+  policy      = data.aws_iam_policy_document.key_policy.json
 
-removed {
-  from = aws_kms_key.topic_sse_us_east_1
-
-  lifecycle {
-    destroy = false
-  }
-
+  enable_key_rotation = true
 }
 
-removed {
-  from = aws_kms_key.topic_sse_eu_west_2
+resource "aws_kms_key" "topic_sse_eu_west_2" {
+  description = "For server side encryption of the alerts topic"
+  policy      = data.aws_iam_policy_document.key_policy.json
 
-  lifecycle {
-    destroy = false
-  }
+  enable_key_rotation = true
 }
 
 moved {
