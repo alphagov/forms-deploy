@@ -118,20 +118,23 @@ moved {
 
 
 ## KMS keys
-resource "aws_kms_key" "topic_sse_us_east_1" {
-  provider = aws.us-east-1
 
-  description = "For server side encryption of the alerts topic"
-  policy      = data.aws_iam_policy_document.key_policy.json
 
-  enable_key_rotation = true
+removed {
+  from = aws_kms_key.topic_sse_us_east_1
+
+  lifecycle {
+    destroy = false
+  }
+
 }
 
-resource "aws_kms_key" "topic_sse_eu_west_2" {
-  description = "For server side encryption of the alerts topic"
-  policy      = data.aws_iam_policy_document.key_policy.json
+removed {
+  from = aws_kms_key.topic_sse_eu_west_2
 
-  enable_key_rotation = true
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
