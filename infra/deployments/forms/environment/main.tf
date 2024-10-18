@@ -45,9 +45,9 @@ import {
   id = local.eu_west_2_kms_key_ids[var.environment_name]
 }
 
-# We are using two locals blocks to conditionally import the cloudwatch-alarm
-# SNS topic subscriptions. We need to do this because the topic subscription is
-# "PendingConfirmation" in both staging and user-research and doesn't have an ARN.
+# We are using locals blocks to conditionally import SNS topic subscriptions.
+# We need to do this because the topic subscriptions are "PendingConfirmation" in
+# both staging and user-research and doesn't have an ARN.
 # We also need to temporarily hard code the ARNs because Terraform doesn't support
 # aws_sns_topic_subscription data sources.
 
@@ -72,4 +72,18 @@ import {
 
   id = local.us_east_1_sns_topic_subscription_arns[var.environment_name]
   to = module.environment.aws_sns_topic_subscription.zendesk_email_us_east_1
+}
+
+locals {
+  alert_zendesk_topic_subscription_arns = {
+    dev        = "arn:aws:sns:eu-west-2:498160065950:alert_zendesk_dev:ee0de826-6bc4-4c01-a41d-9f0c20e42187"
+    production = "arn:aws:sns:eu-west-2:443944947292:alert_zendesk_production:950c742e-c556-4d96-9e0f-371ee65ae2ca"
+  }
+}
+
+import {
+  for_each = local.import_resource[var.environment_name] ? [1] : []
+
+  id = local.alert_zendesk_topic_subscription_arns[var.environment_name]
+  to = module.environment.aws_sns_topic_subscription.zendesk_email_eu_west_2
 }

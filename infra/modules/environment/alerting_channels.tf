@@ -36,15 +36,18 @@ moved {
 }
 
 ## Zendesk eu-west-2
-# Temporarily comment out module while we complete import of
-# KMS keys and zendesk_alert_us_east_1 module
+module "zendesk_alert_eu_west_2" {
+  source = "./alert_sns_topic"
 
-# module "zendesk_alert_eu_west_2" {
-#   source = "./alert_sns_topic"
+  topic_name = "alert_zendesk_${var.env_name}"
+  kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
+}
 
-#   topic_name = "alert_zendesk_${var.env_name}"
-#   kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
-# }
+resource "aws_sns_topic_subscription" "zendesk_email_eu_west_2" {
+  topic_arn = module.zendesk_alert_eu_west_2.topic_arn
+  protocol  = "email"
+  endpoint  = data.aws_ssm_parameter.email_zendesk.value
+}
 
 moved {
   from = module.alerts.aws_sns_topic.alert_zendesk
