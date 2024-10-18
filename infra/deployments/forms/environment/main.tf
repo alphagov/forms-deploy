@@ -54,22 +54,15 @@ import {
 
 locals {
   us_east_1_sns_topic_subscription_arns = {
-    dev        = "arn:aws:sns:us-east-1:498160065950:cloudwatch-alarms:401ebe3e-3334-416b-bf15-0d77b6e2a691"
-    production = "arn:aws:sns:us-east-1:443944947292:cloudwatch-alarms:5fa4dd7d-a3f7-4f7c-a332-32a79ade0bfb"
-  }
-}
-
-locals {
-  import_resource = {
-    dev           = true
-    staging       = false
-    user-research = false
-    production    = true
+    dev           = "arn:aws:sns:us-east-1:498160065950:cloudwatch-alarms:401ebe3e-3334-416b-bf15-0d77b6e2a691"
+    staging       = null
+    user-research = null
+    production    = "arn:aws:sns:us-east-1:443944947292:cloudwatch-alarms:5fa4dd7d-a3f7-4f7c-a332-32a79ade0bfb"
   }
 }
 
 import {
-  for_each = local.import_resource[var.environment_name] ? [1] : []
+  for_each = local.us_east_1_sns_topic_subscription_arns[var.environment_name] != null ? [1] : []
 
   id = local.us_east_1_sns_topic_subscription_arns[var.environment_name]
   to = module.environment.aws_sns_topic_subscription.zendesk_email_us_east_1
@@ -77,13 +70,15 @@ import {
 
 locals {
   alert_zendesk_topic_subscription_arns = {
-    dev        = "arn:aws:sns:eu-west-2:498160065950:alert_zendesk_dev:ee0de826-6bc4-4c01-a41d-9f0c20e42187"
-    production = "arn:aws:sns:eu-west-2:443944947292:alert_zendesk_production:950c742e-c556-4d96-9e0f-371ee65ae2ca"
+    dev           = "arn:aws:sns:eu-west-2:498160065950:alert_zendesk_dev:ee0de826-6bc4-4c01-a41d-9f0c20e42187"
+    staging       = null
+    user-research = null
+    production    = "arn:aws:sns:eu-west-2:443944947292:alert_zendesk_production:950c742e-c556-4d96-9e0f-371ee65ae2ca"
   }
 }
 
 import {
-  for_each = local.import_resource[var.environment_name] ? [1] : []
+  for_each = local.alert_zendesk_topic_subscription_arns[var.environment_name] != null ? [1] : []
 
   id = local.alert_zendesk_topic_subscription_arns[var.environment_name]
   to = module.environment.aws_sns_topic_subscription.zendesk_email_eu_west_2
@@ -106,4 +101,66 @@ locals {
 import {
   id = local.pagerduty_topic_subscription_arns[var.environment_name]
   to = module.environment.aws_sns_topic_subscription.pagerduty_subscription_eu_west_2
+}
+
+locals {
+  kms_key_ids = {
+    dev = {
+      us-east-1 = "03fa99fc-e1cf-4cff-97c2-15459178b44b"
+      eu-west-2 = "5027ecd9-0650-4d82-8bd6-5863231736af"
+    }
+
+    staging = {
+      us-east-1 = "fb038ad8-6b68-4f5c-9d10-978c4b5a58ee"
+      eu-west-2 = "42d015e1-2ddc-4dd9-a224-8809beadcf3c"
+    }
+
+    user-research = {
+      us-east-1 = "afe2c545-a7b0-47e4-92a0-8e05aff5cac0"
+      eu-west-2 = "7c283803-654c-4928-8427-de48599f8a76"
+    }
+
+    production = {
+      us-east-1 = "c3a9b72e-b854-4516-8619-df57e5b711d9"
+      eu-west-2 = "ca8c379c-b1d8-4087-84fb-f7bed3db8e0b"
+    }
+  }
+}
+
+data "aws_region" "current" {}
+
+# CloudWatch Topic
+import {
+  id = "arn:aws:sns:us-east-1:${data.aws_caller_identity.current.account_id}:cloudwatch-alarms"
+  to = module.environment.module.zendesk_alert_us_east_1.aws_sns_topic.topic
+}
+
+# CloudWatch SNS Topic Policy
+import {
+  id = "arn:aws:sns:us-east-1:${data.aws_caller_identity.current.account_id}:cloudwatch-alarms"
+  to = module.environment.module.zendesk_alert_us_east_1.aws_sns_topic_policy.topic_policy
+}
+
+# Alert Zendesk Topic
+import {
+  id = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alert_zendesk_${var.environment_name}"
+  to = module.environment.module.zendesk_alert_eu_west_2.aws_sns_topic.topic
+}
+
+# Alert Zendesk Topic Policy
+import {
+  id = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alert_zendesk_${var.environment_name}"
+  to = module.environment.module.zendesk_alert_eu_west_2.aws_sns_topic_policy.topic_policy
+}
+
+# Pagerduty Topic
+import {
+  id = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:pagerduty_integration_${var.environment_name}"
+  to = module.environment.module.pagerduty_eu_west_2.aws_sns_topic.topic
+}
+
+# Pagerduty Topic Policy
+import {
+  id = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:pagerduty_integration_${var.environment_name}"
+  to = module.environment.module.pagerduty_eu_west_2.aws_sns_topic_policy.topic_policy
 }
