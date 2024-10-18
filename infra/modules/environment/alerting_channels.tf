@@ -88,9 +88,19 @@ moved {
 
 data "aws_ssm_parameter" "pagerduty_integration_url" {
   name = "/alerting/${var.env_name}/pagerduty-integration-url"
-  # Temporarily commenting out the `depends_on` while we
-  # complete the transfer of these resources to modules/environment
-  # depends_on = [aws_ssm_parameter.pagerduty_integration_url]
+  depends_on = [aws_ssm_parameter.pagerduty_integration_url]
+}
+
+resource "aws_ssm_parameter" "pagerduty_integration_url" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+  # Value is set externally.
+  name  = "/alerting/${var.env_name}/pagerduty-integration-url"
+  type  = "SecureString"
+  value = "https://example.org/"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 moved {

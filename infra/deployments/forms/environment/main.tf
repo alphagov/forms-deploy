@@ -87,3 +87,8 @@ import {
   id = local.alert_zendesk_topic_subscription_arns[var.environment_name]
   to = module.environment.aws_sns_topic_subscription.zendesk_email_eu_west_2
 }
+
+import {
+  id = "/alerting/${var.environment_name}/pagerduty-integration-url"
+  to = module.environment.aws_ssm_parameter.pagerduty_integration_url
+}
