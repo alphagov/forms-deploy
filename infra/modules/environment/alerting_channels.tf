@@ -66,15 +66,18 @@ moved {
 }
 
 ## Pagerduty eu-west-2
-# Temporarily comment out module while we complete import of
-# KMS keys and zendesk_alert_us_east_1 module
+module "pagerduty_eu_west_2" {
+  source = "./alert_sns_topic"
 
-# module "pagerduty_eu_west_2" {
-#   source = "./alert_sns_topic"
+  topic_name = "pagerduty_integration_${var.env_name}"
+  kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
+}
 
-#   topic_name = "pagerduty_integration_${var.env_name}"
-#   kms_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
-# }
+resource "aws_sns_topic_subscription" "pagerduty_subscription_eu_west_2" {
+  topic_arn = module.pagerduty_eu_west_2.topic_arn
+  protocol  = "https"
+  endpoint  = data.aws_ssm_parameter.pagerduty_integration_url.value
+}
 
 moved {
   from = module.alerts.aws_sns_topic.alert_pagerduty

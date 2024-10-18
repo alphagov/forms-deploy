@@ -45,11 +45,12 @@ import {
   id = local.eu_west_2_kms_key_ids[var.environment_name]
 }
 
-# We are using locals blocks to conditionally import SNS topic subscriptions.
+# We are using locals blocks to conditionally import the
+# SNS topic subscriptions: cloudwatch-alarms and alert_zendesk_<env>.
 # We need to do this because the topic subscriptions are "PendingConfirmation" in
 # both staging and user-research and doesn't have an ARN.
-# We also need to temporarily hard code the ARNs because Terraform doesn't support
-# aws_sns_topic_subscription data sources.
+# We also need to temporarily hard code SNS topic subscription ARNs because
+# Terraform doesn't support aws_sns_topic_subscription data sources.
 
 locals {
   us_east_1_sns_topic_subscription_arns = {
@@ -91,4 +92,18 @@ import {
 import {
   id = "/alerting/${var.environment_name}/pagerduty-integration-url"
   to = module.environment.aws_ssm_parameter.pagerduty_integration_url
+}
+
+locals {
+  pagerduty_topic_subscription_arns = {
+    dev           = "arn:aws:sns:eu-west-2:498160065950:pagerduty_integration_dev:3915fc62-57c5-4e30-a6a6-e809a2ee24fb"
+    staging       = "arn:aws:sns:eu-west-2:972536609845:pagerduty_integration_staging:d30668e5-ac00-44b5-bec0-44a687a6f56b"
+    user-research = "arn:aws:sns:eu-west-2:619109835131:pagerduty_integration_user-research:ed88b257-992b-41fc-9c51-d08bb731b120"
+    production    = "arn:aws:sns:eu-west-2:443944947292:pagerduty_integration_production:a69df9c7-e229-4b58-b02e-05f718c83803"
+  }
+}
+
+import {
+  id = local.pagerduty_topic_subscription_arns[var.environment_name]
+  to = module.environment.aws_sns_topic_subscription.pagerduty_subscription_eu_west_2
 }
