@@ -226,8 +226,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
   threshold           = 100
   treat_missing_data  = "notBreaching"
   actions_enabled     = true
-  alarm_actions       = [module.zendesk_alert_us_east_1.topic_arn]
-  ok_actions          = [module.zendesk_alert_us_east_1.topic_arn]
+  alarm_actions       = [data.terraform_remote_state.forms_environment.outputs.zendesk_alert_us_east_1_topic_arn]
+  ok_actions          = [data.terraform_remote_state.forms_environment.outputs.zendesk_alert_us_east_1_topic_arn]
 
   dimensions = {
     DistributionId = local.cloudfront_arn
@@ -262,8 +262,8 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
   threshold           = 0
 
   actions_enabled = true
-  alarm_actions   = [module.zendesk_alert_us_east_1.topic_arn]
-  ok_actions      = [module.zendesk_alert_us_east_1.topic_arn]
+  alarm_actions   = [data.terraform_remote_state.forms_environment.outputs.zendesk_alert_us_east_1_topic_arn]
+  ok_actions      = [data.terraform_remote_state.forms_environment.outputs.zendesk_alert_us_east_1_topic_arn]
 }
 
 resource "aws_route53_health_check" "ddos_detection" {

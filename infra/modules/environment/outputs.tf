@@ -37,3 +37,16 @@ output "eventbridge_dead_letter_queue_arn" {
 output "eventbridge_dead_letter_queue_url" {
   value = aws_sqs_queue.event_bridge_dlq.url
 }
+
+output "zendesk_alert_us_east_1_topic_arn" {
+  value = module.zendesk_alert_us_east_1.topic_arn
+}
+
+output "zendesk_alert_eu_west_2_topic_arn" {
+  value = module.zendesk_alert_eu_west_2.topic_arn
+}
+
+output "pagerduty_eu_west_2_topic_arn" {
+  value = module.pagerduty_eu_west_2.topic_arn
+}
+
