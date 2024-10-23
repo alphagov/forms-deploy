@@ -81,11 +81,21 @@ resource "aws_kms_key" "topic_sse_us_east_1" {
   enable_key_rotation = true
 }
 
+resource "aws_kms_alias" "topic_sse_us_east_1" {
+  name          = "alias/alert-topic-encryption-${var.env_name}"
+  target_key_id = aws_kms_key.topic_sse_us_east_1.key_id
+}
+
 resource "aws_kms_key" "topic_sse_eu_west_2" {
   description = "For server side encryption of the alerts topic"
   policy      = data.aws_iam_policy_document.key_policy.json
 
   enable_key_rotation = true
+}
+
+resource "aws_kms_alias" "topic_sse_eu_west_2" {
+  name          = "alias/alert-topic-encryption-${var.env_name}"
+  target_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
 }
 
 data "aws_iam_policy_document" "key_policy" {
