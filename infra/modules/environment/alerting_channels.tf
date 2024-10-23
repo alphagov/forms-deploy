@@ -1,4 +1,7 @@
 ## Zendesk us-east-1
+# SNS topic to send CloudWatch alarms to Zendesk
+# Required since Shield and some Cloudwatch resources
+# send alerts outside of eu-west-2
 module "zendesk_alert_us_east_1" {
   source = "./alert_sns_topic"
 
