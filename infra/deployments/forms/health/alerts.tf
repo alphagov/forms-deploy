@@ -13,11 +13,11 @@ module "alerts" {
 
 
   zendesk_alert_topics = {
-    us_east_1 : module.zendesk_alert_us_east_1.topic_arn
-    eu_west_2 : module.zendesk_alert_eu_west_2.topic_arn
+    us_east_1 : data.terraform_remote_state.forms_environment.outputs.zendesk_alert_us_east_1_topic_arn
+    eu_west_2 : data.terraform_remote_state.forms_environment.outputs.zendesk_alert_eu_west_2_topic_arn
   }
 
   pagerduty_alert_topics = {
-    eu_west_2 : module.pagerduty_eu_west_2.topic_arn
+    eu_west_2 : data.terraform_remote_state.forms_environment.outputs.pagerduty_eu_west_2_topic_arn
   }
 }
