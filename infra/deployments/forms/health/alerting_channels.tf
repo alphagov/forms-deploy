@@ -21,11 +21,12 @@ moved {
   to   = module.zendesk_alert_us_east_1.aws_sns_topic.topic
 }
 
-resource "aws_sns_topic_subscription" "zendesk_email_us_east_1" {
-  provider  = aws.us-east-1
-  topic_arn = module.zendesk_alert_us_east_1.topic_arn
-  protocol  = "email"
-  endpoint  = data.aws_ssm_parameter.email_zendesk.value
+removed {
+  from = aws_sns_topic_subscription.zendesk_email_us_east_1
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
@@ -46,10 +47,12 @@ moved {
   to   = module.zendesk_alert_eu_west_2.aws_sns_topic.topic
 }
 
-resource "aws_sns_topic_subscription" "zendesk_email_eu_west_2" {
-  topic_arn = module.zendesk_alert_eu_west_2.topic_arn
-  protocol  = "email"
-  endpoint  = data.aws_ssm_parameter.email_zendesk.value
+removed {
+  from = aws_sns_topic_subscription.zendesk_email_eu_west_2
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
@@ -81,19 +84,17 @@ moved {
 }
 
 data "aws_ssm_parameter" "pagerduty_integration_url" {
-  name       = "/alerting/${var.environment_name}/pagerduty-integration-url"
-  depends_on = [aws_ssm_parameter.pagerduty_integration_url]
+  name = "/alerting/${var.environment_name}/pagerduty-integration-url"
+  # Temporarily commenting out the `depends_on` while we
+  # complete the transfer of these resources to modules/environment
+  # depends_on = [aws_ssm_parameter.pagerduty_integration_url]
 }
 
-resource "aws_ssm_parameter" "pagerduty_integration_url" {
-  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
-  # Value is set externally.
-  name  = "/alerting/${var.environment_name}/pagerduty-integration-url"
-  type  = "SecureString"
-  value = "https://example.org/"
+removed {
+  from = aws_ssm_parameter.pagerduty_integration_url
 
   lifecycle {
-    ignore_changes = [value]
+    destroy = false
   }
 }
 
@@ -102,10 +103,12 @@ moved {
   to   = aws_ssm_parameter.pagerduty_integration_url
 }
 
-resource "aws_sns_topic_subscription" "pagerduty_subscription_eu_west_2" {
-  topic_arn = module.pagerduty_eu_west_2.topic_arn
-  protocol  = "https"
-  endpoint  = data.aws_ssm_parameter.pagerduty_integration_url.value
+removed {
+  from = aws_sns_topic_subscription.pagerduty_subscription_eu_west_2
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 moved {
