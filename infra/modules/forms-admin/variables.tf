@@ -124,8 +124,3 @@ variable "private_subnet_ids" {
   type        = list(string)
   description = "List of private subnet ids used in the ECS service network configuration"
 }
-
-variable "zendesk_sns_topic_arn" {
-  type        = string
-  description = "The ARN of the Zendesk SNS topic where Mailchimp sync failures are sent (eu-west-2)"
-}
