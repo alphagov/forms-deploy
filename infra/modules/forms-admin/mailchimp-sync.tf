@@ -102,7 +102,7 @@ resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
   rule = aws_cloudwatch_event_rule.sync_cron_job_failed.name
 
   # defined in 'alerts' module. Sends alarms/errors via ZenDesk
-  arn = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:alert_zendesk_${var.env_name}"
+  arn = var.zendesk_sns_arn
 
   input_transformer {
     input_template = <<EOF

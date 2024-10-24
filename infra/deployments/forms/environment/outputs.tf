@@ -45,3 +45,7 @@ output "zendesk_alert_eu_west_2_topic_arn" {
 output "pagerduty_eu_west_2_topic_arn" {
   value = module.environment.pagerduty_eu_west_2_topic_arn
 }
+
+output "zendesk_sns_arn" {
+  value = module.environment.zendesk_sns_arn
+}
