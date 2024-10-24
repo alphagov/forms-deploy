@@ -1,7 +1,4 @@
 ## Zendesk us-east-1
-# SNS topic to send CloudWatch alarms to Zendesk
-# Required since Shield and some Cloudwatch resources
-# send alerts outside of eu-west-2
 module "zendesk_alert_us_east_1" {
   source = "./alert_sns_topic"
 
@@ -81,21 +78,11 @@ resource "aws_kms_key" "topic_sse_us_east_1" {
   enable_key_rotation = true
 }
 
-resource "aws_kms_alias" "topic_sse_us_east_1" {
-  name          = "alias/alert-topic-encryption-${var.env_name}"
-  target_key_id = aws_kms_key.topic_sse_us_east_1.key_id
-}
-
 resource "aws_kms_key" "topic_sse_eu_west_2" {
   description = "For server side encryption of the alerts topic"
   policy      = data.aws_iam_policy_document.key_policy.json
 
   enable_key_rotation = true
-}
-
-resource "aws_kms_alias" "topic_sse_eu_west_2" {
-  name          = "alias/alert-topic-encryption-${var.env_name}"
-  target_key_id = aws_kms_key.topic_sse_eu_west_2.key_id
 }
 
 data "aws_iam_policy_document" "key_policy" {
