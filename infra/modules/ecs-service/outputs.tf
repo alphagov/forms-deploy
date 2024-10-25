@@ -16,3 +16,7 @@ output "task_container_definition" {
 output "task_role_arn" {
   value = aws_iam_role.ecs_task_role.arn
 }
+
+output "application_log_group_name" {
+  value = aws_cloudwatch_log_group.log.name
+}
