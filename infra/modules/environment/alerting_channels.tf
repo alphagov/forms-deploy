@@ -82,6 +82,8 @@ resource "aws_kms_key" "topic_sse_us_east_1" {
 }
 
 resource "aws_kms_alias" "topic_sse_us_east_1" {
+  provider = aws.us-east-1
+
   name          = "alias/alert-topic-encryption-${var.env_name}"
   target_key_id = aws_kms_key.topic_sse_us_east_1.key_id
 }
