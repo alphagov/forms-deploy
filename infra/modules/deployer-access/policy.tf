@@ -105,6 +105,20 @@ data "aws_iam_policy_document" "alerts" {
   }
 
   statement {
+    sid = "CreateKMSKeyAliases"
+    actions = [
+      "kms:CreateAlias"
+    ]
+    resources = [
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:alias/*",
+      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.env_name)}:key/*",
+      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.env_name)}:alias/*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid = "ManageSNS"
     actions = [
       "sns:*Topic*",
