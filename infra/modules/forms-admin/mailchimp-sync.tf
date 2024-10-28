@@ -12,7 +12,7 @@ locals {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group         = "forms-admin-${var.env_name}",
+          awslogs-group         = module.ecs_service.application_log_group_name,
           awslogs-region        = "eu-west-2",
           awslogs-stream-prefix = "forms-admin-${var.env_name}-mailchimp-sync"
         }
@@ -20,6 +20,7 @@ locals {
     }
   )
 }
+
 resource "aws_ecs_task_definition" "cron_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
