@@ -27,6 +27,7 @@ module "forms_admin" {
   enable_mailchimp_sync             = var.forms_admin_settings.synchronize_to_mailchimp
   deploy_account_id                 = var.deploy_account_id
   repeatable_page_enabled           = var.forms_admin_settings.repeatable_page_enabled
+  branch_routing_enabled            = var.forms_admin_settings.branch_routing_enabled
   vpc_id                            = data.terraform_remote_state.forms_environment.outputs.vpc_id
   vpc_cidr_block                    = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
   private_subnet_ids                = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
