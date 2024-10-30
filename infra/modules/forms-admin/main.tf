@@ -90,6 +90,7 @@ module "ecs_service" {
   vpc_id                 = var.vpc_id
   vpc_cidr_block         = var.vpc_cidr_block
   private_subnet_ids     = var.private_subnet_ids
+  ecs_cluster_arn        = var.ecs_cluster_arn
   scaling_rules = {
     min_capacity                                = var.min_capacity
     max_capacity                                = var.max_capacity

@@ -1,7 +1,3 @@
-output "cluster_arn" {
-  value = data.aws_ecs_cluster.forms.arn
-}
-
 output "service" {
   value = aws_ecs_service.app_service
 }

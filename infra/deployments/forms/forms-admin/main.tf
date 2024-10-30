@@ -32,4 +32,5 @@ module "forms_admin" {
   private_subnet_ids                = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
   eventbridge_dead_letter_queue_arn = data.terraform_remote_state.forms_environment.outputs.eventbridge_dead_letter_queue_arn
   zendesk_sns_topic_arn             = data.terraform_remote_state.forms_environment.outputs.zendesk_alert_eu_west_2_topic_arn
+  ecs_cluster_arn                   = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_arn
 }
