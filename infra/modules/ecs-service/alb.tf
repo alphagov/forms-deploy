@@ -9,6 +9,7 @@ locals {
 }
 
 resource "aws_lb_target_group" "tg" {
+  #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
   name        = "${var.application}-${var.env_name}"
   port        = var.container_port
   protocol    = "HTTP"
