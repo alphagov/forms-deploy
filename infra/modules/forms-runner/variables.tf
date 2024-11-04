@@ -114,3 +114,8 @@ variable "private_subnet_ids" {
   type        = list(string)
   description = "The list of private subnet ids used in the ECS service network configuration"
 }
+
+variable "ecs_cluster_arn" {
+  type        = string
+  description = "The arn for the ECS cluster"
+}

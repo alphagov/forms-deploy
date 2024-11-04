@@ -54,7 +54,7 @@ resource "aws_cloudwatch_event_rule" "sync_cron_job" {
 resource "aws_cloudwatch_event_target" "ecs_sync_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
-  arn      = module.ecs_service.cluster_arn
+  arn      = var.ecs_cluster_arn
   rule     = aws_cloudwatch_event_rule.sync_cron_job[0].name
   role_arn = aws_iam_role.ecs_cron_scheduler[0].arn
 

@@ -135,3 +135,8 @@ variable "zendesk_sns_topic_arn" {
   type        = string
   description = "The ARN of the Zendesk SNS topic where Mailchimp sync failures are sent (eu-west-2)"
 }
+
+variable "ecs_cluster_arn" {
+  type        = string
+  description = "The arn for the ECS cluster"
+}

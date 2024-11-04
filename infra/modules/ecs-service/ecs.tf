@@ -1,7 +1,3 @@
-data "aws_ecs_cluster" "forms" {
-  cluster_name = "forms-${var.env_name}"
-}
-
 data "aws_ecs_task_definition" "active_task" {
   count           = var.image == null ? 1 : 0
   task_definition = local.task_definition_family
@@ -70,7 +66,7 @@ resource "aws_ecs_task_definition" "task" {
 resource "aws_ecs_service" "app_service" {
   #checkov:skip=CKV_AWS_332:We don't want to target "LATEST" and get a surprise when a new version is released.
   name                               = var.application
-  cluster                            = data.aws_ecs_cluster.forms.id
+  cluster                            = var.ecs_cluster_arn
   task_definition                    = "${aws_ecs_task_definition.task.family}:${aws_ecs_task_definition.task.revision}"
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
