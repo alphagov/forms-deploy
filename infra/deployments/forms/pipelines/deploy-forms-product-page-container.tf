@@ -180,7 +180,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
       run_order       = 2
       input_artifacts = ["image-defs-json"]
       configuration = {
-        ClusterName       = "forms-${var.environment_name}"
+        ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
         ServiceName       = "forms-product-page"
         DeploymentTimeout = 15
         FileName          = "image-defs.json"

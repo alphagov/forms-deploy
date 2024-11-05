@@ -158,7 +158,7 @@ resource "aws_codepipeline" "deploy_api_container" {
         EnvironmentVariables = jsonencode([
           {
             name  = "CLUSTER_NAME"
-            value = "forms-${var.environment_name}"
+            value = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
             type  = "PLAINTEXT"
           },
           {

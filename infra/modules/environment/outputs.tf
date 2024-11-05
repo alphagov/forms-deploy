@@ -53,3 +53,7 @@ output "pagerduty_eu_west_2_topic_arn" {
 output "ecs_cluster_arn" {
   value = aws_ecs_cluster.forms.arn
 }
+
+output "ecs_cluster_name" {
+  value = aws_ecs_cluster.forms.name
+}

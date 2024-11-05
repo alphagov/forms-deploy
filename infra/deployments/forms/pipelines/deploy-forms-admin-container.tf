@@ -158,7 +158,7 @@ resource "aws_codepipeline" "deploy_admin_container" {
         EnvironmentVariables = jsonencode([
           {
             name  = "CLUSTER_NAME"
-            value = "forms-${var.environment_name}"
+            value = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
             type  = "PLAINTEXT"
           },
           {
@@ -215,7 +215,7 @@ resource "aws_codepipeline" "deploy_admin_container" {
       run_order       = 2
       input_artifacts = ["image-defs-json"]
       configuration = {
-        ClusterName       = "forms-${var.environment_name}"
+        ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
         ServiceName       = "forms-admin"
         DeploymentTimeout = 15
         FileName          = "image-defs.json"

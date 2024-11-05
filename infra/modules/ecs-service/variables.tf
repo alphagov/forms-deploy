@@ -131,3 +131,8 @@ variable "ecs_cluster_arn" {
   type        = string
   description = "The arn for the ECS cluster"
 }
+
+variable "ecs_cluster_name" {
+  type        = string
+  description = "The name for the ECS cluster"
+}
