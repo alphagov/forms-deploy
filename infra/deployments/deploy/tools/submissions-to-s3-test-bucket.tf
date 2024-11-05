@@ -23,7 +23,8 @@ data "aws_iam_policy_document" "allow_writes_from_other_accounts" {
         "s3:GetObject",
         "s3:GetObjectVersion",
         "s3:ListBucket",
-        "s3:PutObject"
+        "s3:PutObject",
+        "s3:DeleteObject"
       ]
 
       principals {
