@@ -26,6 +26,11 @@ variable "product_pages_url" {
   description = "The url for the product pages"
 }
 
+variable "forms_runner_url" {
+  type        = string
+  description = "The url for forms runner"
+}
+
 variable "codestar_connection_arn" {
   type        = string
   description = "the arn of the deploy account github connection"
@@ -56,4 +61,19 @@ variable "deploy_account_id" {
   type        = string
   description = "The account number for deploy account"
   nullable    = false
+}
+
+variable "aws_s3_role_arn" {
+  type        = string
+  description = "The arn of the role which has permissions to submit to the s3 bucket"
+}
+
+variable "aws_s3_bucket" {
+  type        = string
+  description = "The s3 bucket where test forms are sent"
+}
+
+variable "s3_form_id" {
+  type        = string
+  description = "The id of the form that you want to run the s3 submission type end to end tests against"
 }

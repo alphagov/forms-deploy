@@ -711,6 +711,7 @@ data "aws_iam_policy_document" "forms_runner" {
 
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/govuk-forms-submissions-to-s3-${var.env_name}",
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/govuk-s3-end-to-end-test-${var.env_name}",
     ]
   }
 }
