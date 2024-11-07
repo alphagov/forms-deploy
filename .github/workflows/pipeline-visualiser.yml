@@ -61,7 +61,7 @@ jobs:
         run: |
           echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby@c04af2bb7258bb6a03df1d3c1865998ac9390972 # v1.194.0
+        uses: ruby/setup-ruby@46ca53beb334a2329bcd0e46a694816a6ae6d173 # v1.201.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
