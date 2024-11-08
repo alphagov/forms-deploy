@@ -3,12 +3,9 @@
 
 provider "registry.terraform.io/auth0/auth0" {
   version     = "1.7.1"
-  constraints = "~> 1.7.1"
+  constraints = "1.7.1"
   hashes = [
-    "h1:DW2GwhMMKLI30bcKBJ19NZtqXuZqA+7o8JXeyQlOVvg=",
-    "h1:hdZJ2j+BADdfYu9h7u6D/uEyJZB7ZZHwNywAEfj+ZIs=",
-    "h1:kUcFAjg535Njid3o8qWDPGzhoM2qUb3D+iq/TecGjeo=",
-    "h1:wWl+eW8V0lmsbg3cBXbonGjhF++Qw384OhDJEIB8+VI=",
+    "h1:uKl4wOHbQOPqWneEZwDRNeo511TLDdM6tbqLqTXVwQo=",
     "zh:0507d40f7eccf341f3cf4f76e20f2dd5b65aff0735ad611346652e4a8e02cba6",
     "zh:20daab1414acc6d4d67666cfc5365e3392a8232d6016637f06ed87ebc59befb7",
     "zh:33013b1f2ffd068327e8757c54759ae2538aeea040472b36e4652449ee2f1f04",
@@ -57,6 +54,7 @@ provider "registry.terraform.io/hashicorp/aws" {
     "h1:BkYfMmqLJIqLkLLz9sDRWJR5+7GCXTocNPN4pIHkhQo=",
     "h1:ZSJLLwInUKiZ1fHNduFkIXJDXbLy5t4wZ6hFH1Lz1fE=",
     "h1:ZpM0d+tK1vhOi6llGqex5PgzdlOURa543XU9uYvjA2E=",
+    "h1:jhd5O5o0CfZCNEwwN0EiDAzb7ApuFrtxJqa6HXW4EKE=",
     "h1:vxyASKtB4cH3WR1Rcd8n93hO1Ge++3I/Iuc1MMWceKI=",
     "zh:0dea6843836e926d33469b48b948744079023816d16a2ff7666bcfb6aa3522d4",
     "zh:195fa9513f75800a0d62797ebec75ee73e9b8c28d713fe9b63d3b1d1eec129b3",
