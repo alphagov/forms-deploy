@@ -168,7 +168,7 @@ resource "aws_codepipeline" "deploy_api_container" {
           },
           {
             name  = "TASK_DEFINITION_NAME"
-            value = "${var.environment_name}_forms-api"
+            value = data.terraform_remote_state.forms_api.outputs.task_definition_family
             type  = "PLAINTEXT"
           },
           {

@@ -19,3 +19,14 @@ data "terraform_remote_state" "forms_admin" {
     dynamodb_table = var.dynamodb_table
   }
 }
+
+data "terraform_remote_state" "forms_api" {
+  backend = "s3"
+
+  config = {
+    key            = "forms_api.tfstate"
+    bucket         = var.bucket
+    region         = "eu-west-2"
+    dynamodb_table = var.dynamodb_table
+  }
+}
