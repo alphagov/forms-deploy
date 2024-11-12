@@ -63,7 +63,7 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
-      name  = "AWS_S3_ROLE_ARN"
+      name  = "SETTINGS__AWS_S3_SUBMISSIONS__IAM_ROLE_ARN"
       value = var.aws_s3_role_arn
     }
 
