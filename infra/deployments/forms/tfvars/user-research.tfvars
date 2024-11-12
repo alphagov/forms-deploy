@@ -69,3 +69,9 @@ scheduled_smoke_tests_settings = {
   frequency_minutes            = 10
   enable_alerting              = false
 }
+end_to_end_test_settings = {
+  # user research doesn't run e2e tests, but the module still needs something to be passed in here
+  aws_s3_role_arn = ""
+  aws_s3_bucket   = ""
+  s3_form_id      = ""
+}
