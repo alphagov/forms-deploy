@@ -5,9 +5,10 @@ resource "aws_iam_role" "s3-end-to-end-test_role" {
 
 
 data "aws_iam_policy_document" "s3-end-to-end-test_role_policy" {
-  source_policy_documents = [
+  source_policy_documents = compact([
     data.aws_iam_policy_document.allow_deployer_role_to_assumerole.json,
-  ]
+    length(var.additional_submissions_to_s3_role_assumers) > 0 ? data.aws_iam_policy_document.allow_additional_submissions_to_s3_role_assumers.json : null
+  ])
 }
 
 resource "aws_iam_role_policy" "allow_s3_actions_for_e2e_tests" {
