@@ -205,3 +205,12 @@ variable "scheduled_smoke_tests_settings" {
     enable_alerting              = bool # Whether to send notification to govuk-forms-alerts channel
   })
 }
+
+variable "end_to_end_test_settings" {
+  description = "Configuration for the end to end tests"
+  type = object({
+    aws_s3_role_arn = string
+    aws_s3_bucket   = string
+    s3_form_id      = string
+  })
+}

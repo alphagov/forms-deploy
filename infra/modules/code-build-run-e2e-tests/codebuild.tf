@@ -53,8 +53,28 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
+      name  = "FORMS_RUNNER_URL"
+      value = var.forms_runner_url
+    }
+
+    environment_variable {
       name  = "PRODUCT_PAGES_URL"
       value = var.product_pages_url
+    }
+
+    environment_variable {
+      name  = "AWS_S3_ROLE_ARN"
+      value = var.aws_s3_role_arn
+    }
+
+    environment_variable {
+      name  = "AWS_S3_BUCKET"
+      value = var.aws_s3_bucket
+    }
+
+    environment_variable {
+      name  = "S3_FORM_ID"
+      value = var.s3_form_id
     }
 
     environment_variable {
