@@ -1,5 +1,5 @@
 resource "aws_codebuild_project" "github_actions_runner" {
-  name = "github-runner"
+  name = "githubRunner"
   description = "AWS CodeBuild-hosted GitHub Actions runner"
   service_role = aws_iam_role.github_actions_runner.arn
   build_timeout = 10
@@ -16,7 +16,7 @@ resource "aws_codebuild_project" "github_actions_runner" {
   }
 
   source {
-    type = "GITHUB"
+    type = "GITHUB_ENTERPRISE" #NOTE: Not GITHUB. Only GITHUB_ENTERPRISE supports CodeStar Connections.
     location = "https://github.com/alphagov/forms-deploy"
     git_clone_depth = 1
   }
