@@ -2,8 +2,8 @@ name: "Actions On CodeBuild prototype"
 on:
   pull_request:
     branches: [main]
-  jobs:
-    Run-On-CodeBuild:
-      runs-on: "codebuild-github-runner-${{ github.run_id }}-${{ github.run_attempt }}"
-      steps:
-        - run: "Hello from CodeBuild"
+jobs:
+  Run-On-CodeBuild:
+    runs-on: "codebuild-github-runner-${{ github.run_id }}-${{ github.run_attempt }}"
+    steps:
+      - run: "Hello from CodeBuild"
