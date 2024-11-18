@@ -24,6 +24,7 @@ root_domain             = "research.forms.service.gov.uk"
 additional_dns_records  = []
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:619109835131:connection/6d5b8a26-b0d3-41da-ae2f-11a5f805bc3c"
 container_registry      = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
+dlq_arn                 = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512

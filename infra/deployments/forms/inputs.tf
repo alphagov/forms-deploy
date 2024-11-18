@@ -60,6 +60,12 @@ variable "dynamodb_table" {
   nullable    = false
 }
 
+variable "dlq_arn" {
+  description = "The ARN of the dead letter queue for paused pipeline detection"
+  type        = string
+  nullable    = false
+}
+
 ##
 # AWS provider
 ##
