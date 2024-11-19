@@ -115,6 +115,6 @@ resource "aws_cloudwatch_event_target" "trigger_paused_pipeline_detector" {
   arn       = aws_lambda_function.paused_pipeline_detection.arn
 
   dead_letter_config {
-    arn = "arn:aws:sqs:eu-west-2:${var.deploy_account_id}:eventbridge-dead-letter-queue"
+    arn = var.dlq_arn
   }
 }
