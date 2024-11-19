@@ -14,6 +14,16 @@ locals {
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/basic-auth/password"
       }
     ],
+    user_research = [
+      {
+        name      = "SETTINGS__USER_RESEARCH__AUTH__USERNAME",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth/username"
+      },
+      {
+        name      = "SETTINGS__USER_RESEARCH__AUTH__PASSWORD",
+        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth/password"
+      }
+    ],
     gds_sso = [
       {
         name      = "GDS_SSO_OAUTH_ID",
