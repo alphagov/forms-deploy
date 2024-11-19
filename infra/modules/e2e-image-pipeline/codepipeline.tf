@@ -82,6 +82,11 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
+      name  = "FORMS_RUNNER_URL"
+      value = "https://submit.dev.forms.service.gov.uk"
+      type  = "PLAINTEXT"
+    },
+    {
       name  = "SMOKE_TEST_FORM_URL"
       value = "https://submit.forms.service.gov.uk/form/2570/scheduled-smoke-test"
       type  = "PLAINTEXT"
@@ -100,6 +105,21 @@ module "docker_build" {
       name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
       value = "/dev/automated-tests/e2e/notify/api-key"
       type  = "PARAMETER_STORE"
+    },
+    {
+      name  = "SETTINGS__AWS_S3_SUBMISSIONS__IAM_ROLE_ARN"
+      value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
+      type  = "PLAINTEXT"
+    },
+    {
+      name  = "AWS_S3_BUCKET"
+      value = "govuk-forms-submissions-to-s3-test"
+      type  = "PLAINTEXT"
+    },
+    {
+      name  = "S3_FORM_ID"
+      value = "12457"
+      type  = "PLAINTEXT"
     },
   ]
 }
