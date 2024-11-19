@@ -32,7 +32,7 @@ data "aws_iam_policy_document" "allow_deployer_role_to_assumerole" {
     principals {
       identifiers = [
         "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/deployer-${var.env_name}",
-        "arn:aws:iam::${var.deploy_account_id}:role/codepipeline-e2e-image"
+        "arn:aws:iam::${var.deploy_account_id}:role/codebuild-docker-build-e2e-tests"
       ]
       type = "AWS"
     }

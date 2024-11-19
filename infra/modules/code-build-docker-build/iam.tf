@@ -1,3 +1,7 @@
+module "other_accounts" {
+  source = "../all-accounts"
+}
+
 data "aws_iam_policy_document" "codebuild" {
   statement {
     actions = [
@@ -63,6 +67,16 @@ data "aws_iam_policy_document" "codebuild" {
     actions = ["ssm:GetParameter", "ssm:GetParameters"]
     resources = [
       "arn:aws:ssm:eu-west-2:${local.aws_account_id}:parameter/*"
+    ]
+    effect = "Allow"
+  }
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+    resources = [
+      # this doesn't allow this role to assume all roles in dev, only the roles specified in their trust policies
+      "arn:aws:iam::${module.other_accounts.environment_accounts_id["development"]}:role/*",
     ]
     effect = "Allow"
   }
