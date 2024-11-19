@@ -71,7 +71,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
         EnvironmentVariables = jsonencode([
           {
             name  = "IMAGE_URI"
-            value = "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/pipeline-visualiser:#{Build.IMAGE_TAG}"
+            value = "${data.terraform_remote_state.deploy_ecr.outputs.ecr_repository_url}:#{Build.IMAGE_TAG}"
             type  = "PLAINTEXT"
           }
         ])
