@@ -46,10 +46,13 @@ GEM
     minitest (5.25.1)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
+    nio4r (2.7.4)
     parallel (1.26.3)
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
+    puma (6.4.3)
+      nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.8)
     rack-protection (4.1.0)
@@ -133,6 +136,7 @@ DEPENDENCIES
   aws-sdk-codepipeline (~> 1.90)
   concurrent-ruby
   libxml-ruby (~> 5.0.3)
+  puma (~> 6.4)
   rackup (~> 2.2)
   rspec (~> 3.13)
   rubocop-govuk (~> 5.0)
