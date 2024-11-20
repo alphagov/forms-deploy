@@ -55,7 +55,7 @@ resource "aws_lb_listener_rule" "to_app" {
 }
 
 resource "aws_lb_listener_rule" "apex_rule" {
-  count = var.application == "forms-product-page" ? 1 : 0
+  count = var.include_domain_root_listener ? 1 : 0
 
   listener_arn = data.aws_lb_listener.main.arn
   priority     = var.listener_priority + 1
