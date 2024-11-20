@@ -1,8 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.2.1)
+    activesupport (8.0.0)
       base64
+      benchmark (>= 0.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.3.1)
       connection_pool (>= 2.2.5)
@@ -12,6 +13,7 @@ GEM
       minitest (>= 5.1)
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
+      uri (>= 0.13.1)
     activesupport-duration-human_string (1.0.0)
       activesupport (>= 5.2)
     ast (2.4.2)
@@ -28,18 +30,19 @@ GEM
     aws-sigv4 (1.10.1)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
+    benchmark (0.4.0)
     bigdecimal (3.1.8)
     concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
     diff-lcs (1.5.1)
     drb (2.2.1)
-    i18n (1.14.5)
+    i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
     json (2.7.2)
     language_server-protocol (3.17.0.3)
     libxml-ruby (5.0.3)
-    logger (1.6.0)
+    logger (1.6.1)
     minitest (5.25.1)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
@@ -107,7 +110,7 @@ GEM
       rubocop (~> 1.61)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    securerandom (0.3.1)
+    securerandom (0.3.2)
     sinatra (4.1.0)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
@@ -120,6 +123,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    uri (1.0.2)
 
 PLATFORMS
   arm64-darwin-22
@@ -128,7 +132,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  activesupport (~> 7.2)
+  activesupport (~> 8.0)
   activesupport-duration-human_string (~> 1.0)
   aws-sdk-codepipeline (~> 1.90)
   concurrent-ruby
