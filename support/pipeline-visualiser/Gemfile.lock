@@ -55,9 +55,8 @@ GEM
       rack (>= 3.0.0, < 4)
     rack-session (2.0.0)
       rack (>= 3.0.0)
-    rackup (2.1.0)
+    rackup (2.2.1)
       rack (>= 3)
-      webrick (~> 1.8)
     rainbow (3.1.1)
     regexp_parser (2.9.2)
     rexml (3.3.1)
@@ -121,7 +120,6 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
-    webrick (1.8.1)
 
 PLATFORMS
   arm64-darwin-22
@@ -135,7 +133,7 @@ DEPENDENCIES
   aws-sdk-codepipeline (~> 1.90)
   concurrent-ruby
   libxml-ruby (~> 5.0.3)
-  rackup (~> 2.1)
+  rackup (~> 2.2)
   rspec (~> 3.13)
   rubocop-govuk (~> 5.0)
   sinatra (~> 4.1)
