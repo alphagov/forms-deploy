@@ -19,6 +19,7 @@ resource "aws_lambda_function" "paused_pipeline_detection" {
   runtime                        = "ruby3.3"
   handler                        = "index.main"
   reserved_concurrent_executions = 50
+  timeout                        = 10
 
   s3_bucket = module.paused_pipeline_lambda_bucket.name
   s3_key    = "paused-pipeline-lambda.zip"
