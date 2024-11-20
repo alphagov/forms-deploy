@@ -2,4 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "rubocop-govuk", "~> 5.1"
+group :development, :test do
+  gem "rubocop-govuk", "~> 5.1"
+end

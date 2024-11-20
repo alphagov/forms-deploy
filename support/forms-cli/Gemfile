@@ -5,9 +5,12 @@ source "https://rubygems.org"
 gem "aws-sdk", "~> 3"
 gem "colorize"
 gem "notifications-ruby-client"
-gem "rexml", "~> 3.4" # aws-sdk-secretsmanager an xml library
-gem "rspec"
-gem "rubocop-govuk", "~> 5.1"
+gem "rexml", "~> 3.4" # aws-sdk-secretsmanager requires an xml library
+
+group :development, :test do
+  gem "rspec"
+  gem "rubocop-govuk", "~> 5.1"
+end
 
 group :development do
   gem "debug"
