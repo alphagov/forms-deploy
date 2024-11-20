@@ -22,6 +22,11 @@ variable "listener_priority" {
   description = "The priority number for the load balancer listener rule that will be created. Numbers must be distinct across all invocations of this module in a deployment."
 }
 
+variable "include_domain_root_listener" {
+  type        = bool
+  description = "Whether an ALB listener should be created for the root domain as well as for the subdomain"
+}
+
 variable "application" {
   type        = string
   description = "The name of the application e.g. forms-admin"

@@ -5,23 +5,24 @@ locals {
 }
 
 module "ecs_service" {
-  source                 = "../ecs-service"
-  env_name               = var.env_name
-  application            = "forms-product-page"
-  root_domain            = var.root_domain
-  sub_domain             = "www.${var.root_domain}"
-  listener_priority      = 400
-  image                  = local.image
-  cpu                    = var.cpu
-  memory                 = var.memory
-  container_port         = 3000
-  permit_internet_egress = true # Required for Sentry.io and AWS SSM
-  permit_postgres_egress = true
-  vpc_id                 = var.vpc_id
-  vpc_cidr_block         = var.vpc_cidr_block
-  private_subnet_ids     = var.private_subnet_ids
-  ecs_cluster_arn        = var.ecs_cluster_arn
-  ecs_cluster_name       = var.ecs_cluster_name
+  source                       = "../ecs-service"
+  env_name                     = var.env_name
+  application                  = "forms-product-page"
+  root_domain                  = var.root_domain
+  sub_domain                   = "www.${var.root_domain}"
+  listener_priority            = 400
+  include_domain_root_listener = true
+  image                        = local.image
+  cpu                          = var.cpu
+  memory                       = var.memory
+  container_port               = 3000
+  permit_internet_egress       = true # Required for Sentry.io and AWS SSM
+  permit_postgres_egress       = true
+  vpc_id                       = var.vpc_id
+  vpc_cidr_block               = var.vpc_cidr_block
+  private_subnet_ids           = var.private_subnet_ids
+  ecs_cluster_arn              = var.ecs_cluster_arn
+  ecs_cluster_name             = var.ecs_cluster_name
   scaling_rules = {
     min_capacity                                = var.min_capacity
     max_capacity                                = var.max_capacity
