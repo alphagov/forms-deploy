@@ -16,11 +16,6 @@ resource "aws_ssm_parameter" "auth0_access_client_id" {
   }
 }
 
-moved {
-  from = aws_ssm_parameter.auth0_access_client_id_env_specific
-  to   = aws_ssm_parameter.auth0_access_client_id
-}
-
 resource "aws_ssm_parameter" "auth0_access_client_secret" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
@@ -34,9 +29,4 @@ resource "aws_ssm_parameter" "auth0_access_client_secret" {
       value
     ]
   }
-}
-
-moved {
-  from = aws_ssm_parameter.auth0_access_client_secret_env_specific
-  to   = aws_ssm_parameter.auth0_access_client_secret
 }
