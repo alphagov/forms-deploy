@@ -2,6 +2,13 @@ variable "environment" {
   type = string
 }
 
+variable "container_registry" {
+  description = "The container registry from which images should be pulled"
+  type        = string
+  nullable    = false
+}
+
+
 variable "frequency_minutes" {
   description = "How often the scheduled smoke tests should run"
   type        = number

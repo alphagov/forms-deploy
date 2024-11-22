@@ -31,7 +31,7 @@ resource "aws_codebuild_project" "run_test" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/end-to-end-tests:latest"
+    image        = "${var.container_registry}/end-to-end-tests:latest"
     type         = "LINUX_CONTAINER"
 
     image_pull_credentials_type = "SERVICE_ROLE"

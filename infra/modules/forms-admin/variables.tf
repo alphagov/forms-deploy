@@ -8,6 +8,12 @@ variable "root_domain" {
   description = "The root domain for this deployment of GOV.UK Forms. For example: forms.service.gov.uk"
 }
 
+variable "container_registry" {
+  description = "The container registry from which images should be pulled"
+  type        = string
+  nullable    = false
+}
+
 variable "image_tag" {
   type     = string
   nullable = true

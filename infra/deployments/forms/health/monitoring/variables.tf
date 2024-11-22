@@ -18,6 +18,13 @@ variable "environment_type" {
   }
 }
 
+
+variable "container_registry" {
+  description = "The container registry from which images should be pulled"
+  type        = string
+  nullable    = false
+}
+
 variable "scheduled_smoke_tests_settings" {
   description = "Configuration for the scheduled smoke tests"
   type = object({

@@ -9,6 +9,7 @@ module "runner_scheduled_smoke_tests" {
   source = "./smoke-test"
 
   environment         = var.environment_name
+  container_registry  = var.container_registry
   deploy_account_id   = var.deploy_account_id
   frequency_minutes   = var.scheduled_smoke_tests_settings.frequency_minutes
   enable_alerting     = var.scheduled_smoke_tests_settings.enable_alerting
