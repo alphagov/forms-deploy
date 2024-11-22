@@ -9,6 +9,7 @@ module "forms_admin" {
   source                            = "../../../modules/forms-admin"
   env_name                          = var.environment_name
   root_domain                       = var.root_domain
+  container_registry                = var.container_registry
   image_tag                         = var.image_tag
   cpu                               = var.forms_admin_settings.cpu
   memory                            = var.forms_admin_settings.memory
