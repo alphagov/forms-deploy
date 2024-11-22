@@ -33,7 +33,7 @@ resource "aws_cloudwatch_event_target" "trigger_product_page_pipeline" {
   "variables": [
     {
       "name": "container_image_uri",
-      "value": "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-product-page-deploy:<image-tag>"
+      "value": "${var.container_registry}/forms-product-page-deploy:<image-tag>"
     }
   ]
 }

@@ -33,7 +33,7 @@ resource "aws_cloudwatch_event_target" "trigger_runner_pipeline" {
   "variables": [
     {
       "name": "container_image_uri",
-      "value": "${var.deploy_account_id}.dkr.ecr.eu-west-2.amazonaws.com/forms-runner-deploy:<image-tag>"
+      "value": "${var.container_registry}/forms-runner-deploy:<image-tag>"
     }
   ]
 }
