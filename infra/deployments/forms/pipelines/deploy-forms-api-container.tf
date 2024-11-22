@@ -298,6 +298,7 @@ module "deploy_api_end_to_end_tests" {
   source                  = "../../../modules/code-build-run-e2e-tests"
   app_name                = "forms-api"
   environment_name        = var.environment_name
+  container_registry      = var.container_registry
   forms_admin_url         = "https://admin.${var.root_domain}"
   product_pages_url       = "https://${var.root_domain}"
   forms_runner_url        = "https://submit.${var.root_domain}"

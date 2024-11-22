@@ -2,6 +2,12 @@ variable "environment_name" {
   type = string
 }
 
+variable "container_registry" {
+  description = "The container registry from which images should be pulled"
+  type        = string
+  nullable    = false
+}
+
 variable "app_name" {
   type        = string
   description = "The name of the application e.g. forms-admin"
