@@ -17,7 +17,7 @@ GEM
     ast (2.4.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.1013.0)
-    aws-sdk-codepipeline (1.90.0)
+    aws-sdk-codepipeline (1.91.0)
       aws-sdk-core (~> 3, >= 3.210.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-core (3.213.0)
@@ -108,7 +108,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  aws-sdk-codepipeline (~> 1.90)
+  aws-sdk-codepipeline (~> 1.91)
   aws-sdk-sns (~> 1.92)
   rspec (~> 3.13)
   rubocop-govuk (~> 5.0)
