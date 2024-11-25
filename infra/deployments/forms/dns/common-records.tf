@@ -42,3 +42,21 @@ resource "aws_route53_record" "apex-domain" {
     evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "root_spf" {
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
+  name    = var.root_domain
+  type    = "TXT"
+  ttl     = 86400
+
+  records = ["v=spf1 include:amazonses.com ~all"]
+}
+
+resource "aws_route53_record" "mail_spf" {
+  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
+  name    = "mail.${var.root_domain}"
+  type    = "TXT"
+  ttl     = 86400
+
+  records = ["v=spf1 include:amazonses.com ~all"]
+}
