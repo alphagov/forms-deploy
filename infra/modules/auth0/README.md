@@ -2,7 +2,9 @@
 
 This module configures Auth0 tenants for authenticating users of the GOV.UK Forms admin app.
 
-### Secrets
+The module assumes you have already created an Auth0 tenancy. If you have not, you can [follow our wiki guide on creating Auth0 tenancies](https://github.com/alphagov/forms-team/wiki/Creating-Auth0-tenancies).
+
+### Configuration and secrets storage
 
 To be able to use this module, you will need the client ID and client secret of the machine to machine application in the GOV.UK Forms tenant for the environment you are terraforming. Store these secrets in the AWS SSM Parameter Store for the related AWS account. The deployment module should then configure the provider with these values (see [/infra/deployments/development/auth0/main.tf]() for an example).
 
