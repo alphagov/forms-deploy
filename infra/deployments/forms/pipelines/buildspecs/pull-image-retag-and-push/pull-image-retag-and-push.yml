@@ -5,8 +5,8 @@ env:
 phases:
   pre_build:
     commands:
-      - echo "Logging to Amazon ECR repository ${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
-      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
+      - echo "Logging to Amazon ECR repository ${CONTAINER_REGISTRY}"
+      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${CONTAINER_REGISTRY}"
 
       - |
          CURRENT_IMAGE_URI="$(cat image-defs.json | jq -r '.[0].imageUri')"
@@ -19,7 +19,7 @@ phases:
          set -x
          export EPOCH_SECONDS="$(date '+%s')"
          PROMOTED_IMAGE_TAG="$(echo "${CURRENT_IMAGE_TAG}" | sed "${RETAG_SED_EXPRESSION}" | envsubst '${EPOCH_SECONDS}')"
-         PROMOTED_IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${IMAGE_NAME}:${PROMOTED_IMAGE_TAG}"
+         PROMOTED_IMAGE_URI="${CONTAINER_REGISTRY}/${IMAGE_NAME}:${PROMOTED_IMAGE_TAG}"
          echo "New image tag will be ${PROMOTED_IMAGE_TAG}"
          echo "New image uri will be ${PROMOTED_IMAGE_URI}"
   build:
