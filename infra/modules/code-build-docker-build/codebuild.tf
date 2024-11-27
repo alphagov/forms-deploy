@@ -73,6 +73,13 @@ resource "aws_codebuild_project" "main" {
       type  = "PARAMETER_STORE"
     }
 
+    # NOTE: ECR repository URL includes the image name
+    # Example: 1234567890.dkr.ecr.<region>.amazonaws.com/repository-name
+    environment_variable {
+      name  = "ECR_REPOSITORY_URL"
+      value = var.ecr_repository_url
+    }
+
     dynamic "environment_variable" {
       for_each = var.extra_env_vars
 
