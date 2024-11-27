@@ -80,3 +80,9 @@ variable "extra_env_vars" {
   description = "Additional environment variables to set in the container"
   default     = []
 }
+
+variable "ecr_repository_url" {
+  description = "The container repository from which images should be pulled"
+  type        = string
+  nullable    = false
+}

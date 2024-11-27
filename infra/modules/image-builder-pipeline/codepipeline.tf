@@ -82,4 +82,5 @@ module "docker_build" {
   artifact_store_arn             = module.artifact_bucket.arn
   tag_prefix                     = "stg-"
   codestar_connection_arn        = var.codestar_connection_arn
+  ecr_repository_url             = var.ecr_repository_url
 }

@@ -65,6 +65,7 @@ module "docker_build" {
   artifact_store_arn             = module.artifact_bucket.arn
   build_directory                = "."
   codestar_connection_arn        = var.codestar_connection_arn
+  ecr_repository_url             = var.ecr_repository_url
 
   # Selenium is not compatible with aarch64.
   code_build_project_compute_arch = "LINUX_CONTAINER"
