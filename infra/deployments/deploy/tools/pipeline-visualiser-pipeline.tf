@@ -103,7 +103,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
 module "pipeline_visualiser_docker_build" {
   source                         = "../../../modules/code-build-docker-build"
   project_name                   = "pipeline-visualiser-docker-build"
-  project_description            = "Build the Pipleine Visualiser docker image and push into ECR"
+  project_description            = "Build the Pipeline Visualiser docker image and push into ECR"
   image_name                     = "pipeline-visualiser"
   build_directory                = "support/pipeline-visualiser/"
   docker_username_parameter_path = "/docker/username"
