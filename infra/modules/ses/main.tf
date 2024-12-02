@@ -76,6 +76,13 @@ resource "aws_route53_record" "ses_email_receiving" {
   ttl     = 3600
 }
 
+resource "aws_route53_record" "ses_feedback" {
+  zone_id = var.hosted_zone_id
+  name    = "mail.${aws_ses_domain_identity.ses.domain}"
+  type    = "MX"
+  records = ["10 feedback-smtp.eu-west-2.amazonaws.com"]
+  ttl     = 3600
+}
 
 resource "aws_ses_domain_mail_from" "mail" {
   domain           = aws_ses_domain_identity.ses.domain
