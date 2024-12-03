@@ -71,7 +71,7 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
         EnvironmentVariables = jsonencode([
           {
             name  = "IMAGE_URI"
-            value = "${data.terraform_remote_state.deploy_ecr.outputs.ecr_repository_url}:#{Build.IMAGE_TAG}"
+            value = "${data.terraform_remote_state.deploy_ecr.outputs.pipeline_visualiser_ecr_repository_url}:#{Build.IMAGE_TAG}"
             type  = "PLAINTEXT"
           }
         ])
@@ -103,13 +103,14 @@ resource "aws_codepipeline" "deploy-pipeline-visualiser" {
 module "pipeline_visualiser_docker_build" {
   source                         = "../../../modules/code-build-docker-build"
   project_name                   = "pipeline-visualiser-docker-build"
-  project_description            = "Build the Pipleine Visualiser docker image and push into ECR"
+  project_description            = "Build the Pipeline Visualiser docker image and push into ECR"
   image_name                     = "pipeline-visualiser"
   build_directory                = "support/pipeline-visualiser/"
   docker_username_parameter_path = "/docker/username"
   docker_password_parameter_path = "/docker/password"
   artifact_store_arn             = module.pipeline_visualiser_artifact_bucket.arn
   codestar_connection_arn        = var.codestar_connection_arn
+  ecr_repository_url             = data.terraform_remote_state.deploy_ecr.outputs.pipeline_visualiser_ecr_repository_url
 }
 
 module "pipeline_visualiser_generate_container_image_defs" {

@@ -8,3 +8,9 @@ variable "forms_e2e_tests_branch" {
   description = "The branch of forms-e2e-tests to use"
   default     = "main"
 }
+
+variable "ecr_repository_url" {
+  description = "The container repository URL from which image should be pulled"
+  type        = string
+  nullable    = false
+}

@@ -283,5 +283,6 @@ module "pull_forms_product_page_image_retag_and_push" {
     AWS_ACCOUNT_ID       = var.deploy_account_id
     RETAG                = var.deploy-forms-product-page-container.retag_image_on_success
     RETAG_SED_EXPRESSION = var.deploy-forms-product-page-container.retagging_sed_expression
+    CONTAINER_REGISTRY   = var.container_registry
   }
 }
