@@ -75,3 +75,9 @@ resource "aws_route53_record" "ses_email_receiving" {
   records = ["10 inbound-smtp.eu-west-2.amazonaws.com"]
   ttl     = 3600
 }
+
+
+resource "aws_ses_domain_mail_from" "mail" {
+  domain           = aws_ses_domain_identity.ses.domain
+  mail_from_domain = "mail.${aws_ses_domain_identity.ses.domain}"
+}
