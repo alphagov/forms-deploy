@@ -1,16 +1,16 @@
 module "file_upload_bucket" {
-  source = "../../../modules/secure-bucket"
+  source = "../secure-bucket"
   name   = "govuk-forms-file-upload"
 
-  extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_access.json]
+  extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
 }
 
-data "aws_iam_policy_document" "forms_runner_access" {
+data "aws_iam_policy_document" "forms_runner_file_upload" {
   statement {
-    sid = "Allow runner to manage objects"
+    sid = "Allow runner to manage s3 objects"
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.environment_name}-forms-runner-ecs-task"]
+      identifiers = [module.ecs_service.task_role_arn]
     }
     actions = [
       "s3:GetObject",
@@ -32,23 +32,21 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.this.arn
+      kms_master_key_id = aws_kms_key.file_upload.arn
       sse_algorithm     = "aws:kms"
     }
   }
 }
 
-resource "aws_kms_key" "this" {
+resource "aws_kms_key" "file_upload" {
   description             = "This key is used to encrypt/decrypt bucket objects"
   enable_key_rotation     = true
   deletion_window_in_days = 10
 
-  policy = data.aws_iam_policy_document.key_policy.json
+  policy = data.aws_iam_policy_document.file_upload.json
 }
 
-data "aws_caller_identity" "current" {}
-
-data "aws_iam_policy_document" "key_policy" {
+data "aws_iam_policy_document" "file_upload" {
   statement {
     sid    = "Enable Iam Access"
     effect = "Allow"
@@ -65,7 +63,7 @@ data "aws_iam_policy_document" "key_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.environment_name}-forms-runner-ecs-task"]
+      identifiers = [module.ecs_service.task_role_arn]
     }
     actions = [
       "kms:DescribeKey",
