@@ -133,6 +133,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__AWS_S3_SUBMISSIONS__BUCKET_NAME",
       value = "govuk-forms-submissions-to-s3-test"
+    },
+    {
+      name  = "SETTINGS__AWS__FILE_UPLOAD_S3_BUCKET_NAME",
+      value = module.file_upload_bucket.name
     }
   ]
 
