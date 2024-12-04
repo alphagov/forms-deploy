@@ -25,6 +25,14 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
       ]
     }
   }
+
+  statement {
+    sid = "SESPermissions"
+
+    effect    = "Allow"
+    actions   = ["ses:SendRawEmail"]
+    resources = ["arn:aws:ses:eu-west-2:${data.aws_caller_identity.current.account_id}:identity/*"]
+  }
 }
 
 module "ecs_service" {
