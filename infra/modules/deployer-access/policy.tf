@@ -424,6 +424,15 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
+    sid     = "ManageFormsRunnerBuckets"
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      "arn:aws:s3:::govuk-forms-file-upload",
+    ]
+  }
+
+  statement {
     sid    = "ManageLambdaFunctions"
     effect = "Allow"
     actions = [
