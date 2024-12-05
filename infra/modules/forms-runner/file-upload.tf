@@ -1,6 +1,10 @@
+locals {
+  file_upload_bucket_name = "govuk-forms-${var.env_name}-file-upload"
+}
+
 module "file_upload_bucket" {
   source = "../secure-bucket"
-  name   = "govuk-forms-file-upload"
+  name   = local.file_upload_bucket_name
 
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
 }
@@ -19,8 +23,8 @@ data "aws_iam_policy_document" "forms_runner_file_upload" {
       "s3:PutObject"
     ]
     resources = [
-      "arn:aws:s3:::govuk-forms-file-upload",
-      "arn:aws:s3:::govuk-forms-file-upload/*"
+      "arn:aws:s3:::${local.file_upload_bucket_name}",
+      "arn:aws:s3:::${local.file_upload_bucket_name}/*"
     ]
   }
 }
