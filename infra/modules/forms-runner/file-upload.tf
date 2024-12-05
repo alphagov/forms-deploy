@@ -50,6 +50,11 @@ resource "aws_kms_key" "file_upload" {
   policy = data.aws_iam_policy_document.file_upload.json
 }
 
+resource "aws_kms_alias" "file_upload" {
+  name          = "alias/file-upload-${var.env_name}"
+  target_key_id = aws_kms_key.file_upload.key_id
+}
+
 data "aws_iam_policy_document" "file_upload" {
   # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
   #checkov:skip=CKV_AWS_111:AWS suggest the EnableIamAccess statement for key policies.
@@ -77,7 +82,8 @@ data "aws_iam_policy_document" "file_upload" {
     actions = [
       "kms:DescribeKey",
       "kms:Decrypt",
-      "kms:Encrypt"
+      "kms:Encrypt",
+      "kms:GenerateDataKey"
     ]
     resources = ["*"]
   }
