@@ -132,6 +132,16 @@ variable "private_subnet_ids" {
   description = "The list of private subnet ids used in the ECS service network configuration"
 }
 
+variable "alb_arn_suffix" {
+  type        = string
+  description = "The suffix of the Application Load Balancer ARN. Used with CloudWatch metrics"
+}
+
+variable "alb_listener_arn" {
+  type        = string
+  description = "The ARN of the load balancer listener to which the application will be attached"
+}
+
 variable "ecs_cluster_arn" {
   type        = string
   description = "The arn for the ECS cluster"

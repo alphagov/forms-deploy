@@ -69,3 +69,13 @@ variable "ecs_cluster_arn" {
   type        = string
   description = "The arn for the ECS cluster"
 }
+
+variable "alb_arn_suffix" {
+  type        = string
+  description = "The suffix of the Application Load Balancer ARN. Used with CloudWatch metrics"
+}
+
+variable "alb_listener_arn" {
+  type        = string
+  description = "The ARN of the load balancer listener to which forms-product-page will be attached"
+}

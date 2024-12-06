@@ -51,4 +51,6 @@ module "forms_runner" {
   vpc_cidr_block                             = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
   private_subnet_ids                         = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
   ecs_cluster_arn                            = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_arn
+  alb_arn_suffix                             = data.terraform_remote_state.forms_environment.outputs.alb_arn_suffix
+  alb_listener_arn                           = data.terraform_remote_state.forms_environment.outputs.alb_main_listener_arn
 }

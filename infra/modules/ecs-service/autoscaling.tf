@@ -80,7 +80,7 @@ resource "aws_cloudwatch_metric_alarm" "service_target_response_time_high" {
   extended_statistic = "p95"
   dimensions = {
     "TargetGroup"  = aws_lb_target_group.tg.arn_suffix
-    "LoadBalancer" = data.aws_lb.alb.arn_suffix
+    "LoadBalancer" = var.alb_arn_suffix
   }
 
   alarm_actions = [aws_appautoscaling_policy.scale_out.arn]
@@ -96,7 +96,7 @@ resource "aws_cloudwatch_metric_alarm" "service_target_response_time_low" {
   evaluation_periods  = 2
   dimensions = {
     "TargetGroup"  = aws_lb_target_group.tg.arn_suffix
-    "LoadBalancer" = data.aws_lb.alb.arn_suffix
+    "LoadBalancer" = var.alb_arn_suffix
   }
 
   namespace          = "AWS/ApplicationELB"
