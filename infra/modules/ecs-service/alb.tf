@@ -62,8 +62,13 @@ resource "aws_lb_listener_rule" "apex_rule" {
   priority     = var.listener_priority + 1
 
   action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.tg.arn
+    type = "redirect"
+    redirect {
+      host        = var.sub_domain
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 
   condition {
