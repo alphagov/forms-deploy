@@ -428,7 +428,7 @@ data "aws_iam_policy_document" "pipelines" {
     effect  = "Allow"
     actions = ["s3:*"]
     resources = [
-      "arn:aws:s3:::govuk-forms-${var.env_name}-file-upload",
+      "arn:aws:s3:::govuk-forms-${var.env_name}-file-upload*",
     ]
   }
 
