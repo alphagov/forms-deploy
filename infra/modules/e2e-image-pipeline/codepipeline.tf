@@ -113,6 +113,11 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
+      name  = "SETTINGS__AWS__S3_SUBMISSION_IAM_ROLE_ARN"
+      value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
+      type  = "PLAINTEXT"
+    },
+    {
       name  = "AWS_S3_BUCKET"
       value = "govuk-forms-submissions-to-s3-test"
       type  = "PLAINTEXT"
