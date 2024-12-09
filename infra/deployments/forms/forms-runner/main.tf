@@ -30,6 +30,7 @@ locals {
 module "forms_runner" {
   source                                     = "../../../modules/forms-runner"
   env_name                                   = var.environment_name
+  environment_type                           = var.environment_type
   root_domain                                = var.root_domain
   image_tag                                  = var.image_tag
   cpu                                        = var.forms_runner_settings.cpu
