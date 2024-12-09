@@ -10,6 +10,14 @@ output "private_subnet_ids" {
   value = module.environment.private_subnet_ids
 }
 
+output "alb_arn_suffix" {
+  value = module.environment.alb_arn_suffix
+}
+
+output "alb_main_listener_arn" {
+  value = module.environment.alb_main_listener_arn
+}
+
 output "cloudfront_arn" {
   value = module.environment.cloudfront_arn
 }

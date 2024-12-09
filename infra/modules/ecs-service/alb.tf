@@ -30,17 +30,8 @@ resource "aws_lb_target_group" "tg" {
   }
 }
 
-data "aws_lb" "alb" {
-  name = "forms-${var.env_name}"
-}
-
-data "aws_lb_listener" "main" {
-  load_balancer_arn = data.aws_lb.alb.arn
-  port              = 443
-}
-
 resource "aws_lb_listener_rule" "to_app" {
-  listener_arn = data.aws_lb_listener.main.arn
+  listener_arn = var.alb_listener_arn
   priority     = var.listener_priority
 
   action {
@@ -58,12 +49,17 @@ resource "aws_lb_listener_rule" "to_app" {
 resource "aws_lb_listener_rule" "apex_rule" {
   count = var.include_domain_root_listener ? 1 : 0
 
-  listener_arn = data.aws_lb_listener.main.arn
+  listener_arn = var.alb_listener_arn
   priority     = var.listener_priority + 1
 
   action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.tg.arn
+    type = "redirect"
+    redirect {
+      host        = var.sub_domain
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 
   condition {
