@@ -7,6 +7,8 @@ module "file_upload_bucket" {
   name   = local.file_upload_bucket_name
 
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
+  # In order to use KMS for server side encryption we need to disable the defaul AES256 encyrption in the module
+  AES256_encryption_configuration = false
 }
 
 data "aws_iam_policy_document" "forms_runner_file_upload" {
