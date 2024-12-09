@@ -91,3 +91,42 @@ data "aws_iam_policy_document" "file_upload" {
     resources = ["*"]
   }
 }
+
+# Configure logging
+# We are not using CloudTrail because we cannot edit the existing trail
+# New trails are pricey
+module "file_upload_bucket_logs" {
+  source = "../secure-bucket"
+  name   = "${local.file_upload_bucket_name}-logs"
+
+  extra_bucket_policies = [data.aws_iam_policy_document.file_upload_bucket_logs.json]
+}
+
+resource "aws_s3_bucket_logging" "file_upload" {
+  bucket = module.file_upload_bucket.name
+
+  target_bucket = module.file_upload_bucket_logs.name
+  target_prefix = "s3-access-logs"
+
+  target_object_key_format {
+    partitioned_prefix {
+      partition_date_source = "DeliveryTime"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "file_upload_bucket_logs" {
+  statement {
+    sid    = "S3ServerAccessLogsPolicy"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logging.s3.amazonaws.com"]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+    resources = ["arn:aws:s3:::${module.file_upload_bucket_logs.name}/*"]
+  }
+}
+
