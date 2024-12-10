@@ -24,13 +24,18 @@ data "aws_iam_policy_document" "forms-infra-1" {
 data "aws_iam_policy_document" "forms-infra-2" {
   source_policy_documents = [
     data.aws_iam_policy_document.ses.json,
-    data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.ecr.json,
     data.aws_iam_policy_document.eventbridge.json,
     data.aws_iam_policy_document.cloudwatch_logging.json,
     data.aws_iam_policy_document.shield.json,
     data.aws_iam_policy_document.route53.json,
     data.aws_iam_policy_document.forms_runner.json
+  ]
+}
+
+data "aws_iam_policy_document" "forms-infra-3" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.pipelines.json,
   ]
 }
 
@@ -58,6 +63,15 @@ resource "aws_iam_policy" "forms-infra-2" {
 
 resource "aws_iam_role_policy_attachment" "forms-infra-2" {
   policy_arn = aws_iam_policy.forms-infra-2.arn
+  role       = aws_iam_role.deployer.id
+}
+
+resource "aws_iam_policy" "forms-infra-3" {
+  policy = data.aws_iam_policy_document.forms-infra-3.json
+}
+
+resource "aws_iam_role_policy_attachment" "forms-infra-3" {
+  policy_arn = aws_iam_policy.forms-infra-3.arn
   role       = aws_iam_role.deployer.id
 }
 
@@ -107,7 +121,8 @@ data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "CreateKMSKeyAliases"
     actions = [
-      "kms:CreateAlias"
+      "kms:CreateAlias",
+      "kms:DeleteAlias"
     ]
     resources = [
       "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
@@ -420,6 +435,15 @@ data "aws_iam_policy_document" "pipelines" {
 
       "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection",
       "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection/*",
+    ]
+  }
+
+  statement {
+    sid     = "ManageFormsRunnerBuckets"
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      "arn:aws:s3:::govuk-forms-${var.env_name}-file-upload*",
     ]
   }
 

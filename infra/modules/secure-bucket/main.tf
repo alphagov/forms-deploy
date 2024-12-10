@@ -1,13 +1,3 @@
-variable "name" {
-  type = string
-}
-
-variable "extra_bucket_policies" {
-  type        = list(string)
-  description = "extra bucket policies to apply to this bucket. List of json policies"
-  default     = []
-}
-
 resource "aws_s3_bucket" "this" {
   #checkov:skip=CKV_AWS_18:Review S3 access logging in https://trello.com/c/qUzZfopX/416-review-s3-bucket-access-logging
   #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
@@ -44,6 +34,7 @@ resource "aws_s3_bucket_versioning" "this" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   #checkov:skip=CKV2_AWS_67:Not using CMK so CMK rotation not applicable.
+  count  = var.AES256_encryption_configuration ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
   rule {
@@ -91,12 +82,4 @@ resource "aws_s3_bucket_ownership_controls" "owner" {
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
-}
-
-output "name" {
-  value = aws_s3_bucket.this.id
-}
-
-output "arn" {
-  value = aws_s3_bucket.this.arn
 }

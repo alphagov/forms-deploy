@@ -27,6 +27,22 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
   }
 
   statement {
+    sid = "FileUploadKMS"
+
+    effect = "Allow"
+    actions = [
+      "kms:DescribeKey",
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = [
+      "arn:aws:kms:eu-west-2:${data.aws_caller_identity.current.account_id}:alias/file-upload-${var.env_name}",
+    ]
+
+  }
+
+  statement {
     sid = "SESPermissions"
 
     effect    = "Allow"
@@ -133,6 +149,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__AWS_S3_SUBMISSIONS__BUCKET_NAME",
       value = "govuk-forms-submissions-to-s3-test"
+    },
+    {
+      name  = "SETTINGS__AWS__FILE_UPLOAD_S3_BUCKET_NAME",
+      value = module.file_upload_bucket.name
     }
   ]
 
