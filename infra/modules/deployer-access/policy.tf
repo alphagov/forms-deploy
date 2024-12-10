@@ -107,7 +107,8 @@ data "aws_iam_policy_document" "alerts" {
   statement {
     sid = "CreateKMSKeyAliases"
     actions = [
-      "kms:CreateAlias"
+      "kms:CreateAlias",
+      "kms:DeleteAlias"
     ]
     resources = [
       "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
