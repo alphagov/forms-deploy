@@ -108,11 +108,6 @@ module "docker_build" {
       type  = "PARAMETER_STORE"
     },
     {
-      name  = "SETTINGS__AWS_S3_SUBMISSIONS__IAM_ROLE_ARN"
-      value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
-      type  = "PLAINTEXT"
-    },
-    {
       name  = "SETTINGS__AWS__S3_SUBMISSION_IAM_ROLE_ARN"
       value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
       type  = "PLAINTEXT"
