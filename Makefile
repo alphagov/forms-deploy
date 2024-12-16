@@ -34,6 +34,11 @@ deploy:
 	$(eval export TARGET_ENVIRONMENT = deploy)
 	@true
 
+.PHONY: integration
+integration:
+    $(eval export TARGET_ENVIRONMENT = integration)
+    @true
+
 ##
 # Terraform root targets
 #
