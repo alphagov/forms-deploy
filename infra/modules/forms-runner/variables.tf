@@ -91,6 +91,16 @@ variable "additional_submissions_to_s3_role_assumers" {
   description = "A list of role ARNs which are also allowed to assume the role for submissions to s3"
 }
 
+variable "ses_submission_email_from_email_address" {
+  type        = string
+  description = "The email address SES sends submission emails from"
+}
+
+variable "ses_submission_email_reply_to_email_address" {
+  type        = string
+  description = "The reply-to email address for submission emails send by SES"
+}
+
 variable "elasticache_port" {
   type        = number
   description = "The port number for the Redis ElastiCache cluster"

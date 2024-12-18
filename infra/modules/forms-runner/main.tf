@@ -148,6 +148,18 @@ module "ecs_service" {
     {
       name  = "SETTINGS__AWS__FILE_UPLOAD_S3_BUCKET_NAME",
       value = module.file_upload_bucket.name
+    },
+    {
+      name  = "SETTINGS__AWS__SES_SUBMISSION_EMAIL_CONFIGURATION_SET_NAME",
+      value = "bounces_and_complaints_handling_rule"
+    },
+    {
+      name  = "SETTINGS__SES_SUBMISSION_EMAIL__FROM_EMAIL_ADDRESS",
+      value = var.ses_submission_email_from_email_address
+    },
+    {
+      name  = "SETTINGS__SES_SUBMISSION_EMAIL__REPLY_TO_EMAIL_ADDRESS",
+      value = var.ses_submission_email_reply_to_email_address
     }
   ]
 
