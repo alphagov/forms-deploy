@@ -84,9 +84,7 @@
             "properties": {
                 "metrics": [
                     [ "AWS/ElastiCache", "CPUUtilization", { "region": "eu-west-2", "yAxis": "left" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId} MetricName=\"CPUUtilization\" forms-runner', 'Maximum')", "label": "", "id": "e1" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -238,9 +236,9 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-admin-${environment_name}/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
-                    [ "...", { "region": "eu-west-2", "stat": "Maximum" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'Average')", "label": "Average", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'p99')", "label": "p99", "id": "e2" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'Maximum')", "label": "Max", "id": "e3" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -624,9 +622,9 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-runner-${environment_name}/dc1ef6b38be73050", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
-                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
-                    [ "...", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-runner', 'Average')", "label": "Average", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-runner', 'p99')", "label": "p99", "id": "e2" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-runner', 'Maximum')", "label": "Max", "id": "e3" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -644,9 +642,9 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-product-page-${environment_name}/eea72df3bd4e7081", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
-                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
-                    [ "...", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-product-page', 'Average')", "label": "Average", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-product-page', 'p99')", "label": "p99", "id": "e2" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-product-page', 'Maximum')", "label": "Max", "id": "e3" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -664,9 +662,9 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-api-${environment_name}/c0855c3550515fa1", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
-                    [ "...", { "region": "eu-west-2", "stat": "p99" } ],
-                    [ "...", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-api', 'Average')", "label": "Average", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-api', 'p99')", "label": "p99", "id": "e2" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-api', 'Maximum')", "label": "Max", "id": "e3" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -684,8 +682,8 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "NewConnectionCount", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ ".", "ActiveConnectionCount", ".", ".", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer} MetricName=\"NewConnectionCount\" forms-${environment_name}', 'Average')", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer} MetricName=\"ActiveConnectionCount\" forms-${environment_name}', 'Average')", "id": "e2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
