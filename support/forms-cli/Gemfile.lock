@@ -1568,7 +1568,7 @@ GEM
     regexp_parser (2.9.3)
     reline (0.5.0)
       io-console (~> 0.5)
-    rexml (3.3.9)
+    rexml (3.4.0)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -1635,7 +1635,7 @@ DEPENDENCIES
   colorize
   debug
   notifications-ruby-client
-  rexml (~> 3.3)
+  rexml (~> 3.4)
   rspec
   rubocop-govuk (~> 5.0)
 
