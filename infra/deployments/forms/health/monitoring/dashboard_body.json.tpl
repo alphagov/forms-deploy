@@ -12,14 +12,14 @@
                     [ { "expression": "100*(m2/m6)", "id": "e2", "label": "forms-api", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m3/m7)", "id": "e1", "label": "forms-runner", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m4/m8)", "id": "e4", "label": "forms-product-page", "region": "eu-west-2" } ],
-                    [ "ECS/ContainerInsights", "CpuUtilized", "TaskDefinitionFamily", "production_forms-admin", "ClusterName", "forms-production", { "id": "m1", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "production_forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "production_forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "production_forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
+                    [ "ECS/ContainerInsights", "CpuUtilized", "TaskDefinitionFamily", "${environment_name}_forms-admin", "ClusterName", "forms-${environment_name}", { "id": "m1", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "${environment_name}_forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "${environment_name}_forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "${environment_name}_forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
                     [ ".", "CpuReserved", ".", "forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "production_forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "production_forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "production_forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "visible": false } ]
+                    [ "...", "${environment_name}_forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "${environment_name}_forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "visible": false } ],
+                    [ "...", "${environment_name}_forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "visible": false } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -52,7 +52,7 @@
                     [ { "expression": "100*(m2/m6)", "label": "forms-api", "id": "e2", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m3/m7)", "label": "forms-runner", "id": "e3", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m4/m8)", "label": "forms-product-page", "id": "e4", "region": "eu-west-2" } ],
-                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "forms-admin", "ClusterName", "forms-production", { "id": "m1", "region": "eu-west-2", "visible": false } ],
+                    [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "forms-admin", "ClusterName", "forms-${environment_name}", { "id": "m1", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
@@ -84,9 +84,9 @@
             "properties": {
                 "metrics": [
                     [ "AWS/ElastiCache", "CPUUtilization", { "region": "eu-west-2", "yAxis": "left" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
+                    [ ".", ".", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -104,10 +104,10 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "targetgroup/forms-runner-production/dc1ef6b38be73050", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-api-production/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", ".", ".", { "region": "eu-west-2" } ]
+                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "targetgroup/forms-runner-${environment_name}/dc1ef6b38be73050", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-api-${environment_name}/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-product-page-${environment_name}/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-admin-${environment_name}/3f3c0ec1ec914bdb", ".", ".", { "region": "eu-west-2" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
@@ -144,11 +144,11 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ ".", ".", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-api-production/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-runner-production/dc1ef6b38be73050", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-product-page-production/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ]
+                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ ".", ".", "TargetGroup", "targetgroup/forms-admin-${environment_name}/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-api-${environment_name}/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-runner-${environment_name}/dc1ef6b38be73050", ".", ".", { "region": "eu-west-2" } ],
+                    [ "...", "targetgroup/forms-product-page-${environment_name}/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -244,7 +244,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-admin-production/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-admin-${environment_name}/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
                     [ "...", { "region": "eu-west-2", "stat": "p99" } ],
                     [ "...", { "region": "eu-west-2", "stat": "Maximum" } ]
                 ],
@@ -264,7 +264,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "ProcessedBytes", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ]
+                    [ "AWS/ApplicationELB", "ProcessedBytes", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -313,9 +313,9 @@
             "properties": {
                 "metrics": [
                     [ "AWS/ElastiCache", "DatabaseMemoryUsagePercentage", { "region": "eu-west-2" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
+                    [ ".", ".", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -333,12 +333,12 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ElastiCache", "CurrItems", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ],
-                    [ ".", "Evictions", ".", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ],
+                    [ "AWS/ElastiCache", "CurrItems", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ],
+                    [ ".", "Evictions", ".", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ],
                     [ ".", "CurrItems", { "region": "eu-west-2" } ],
                     [ ".", "Evictions", { "region": "eu-west-2" } ]
                 ],
@@ -360,12 +360,12 @@
                 "metrics": [
                     [ "AWS/ElastiCache", "CurrConnections", { "region": "eu-west-2" } ],
                     [ ".", "NewConnections", { "region": "eu-west-2" } ],
-                    [ ".", "CurrConnections", "CacheClusterId", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnections", ".", "forms-runner-production-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-production-003", { "region": "eu-west-2" } ]
+                    [ ".", "CurrConnections", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ],
+                    [ ".", "NewConnections", ".", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
+                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -383,7 +383,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-admin", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-admin", "ClusterName", "forms-${environment_name}", { "region": "eu-west-2" } ],
                     [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
                     [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
                 ],
@@ -459,7 +459,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-runner", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-runner", "ClusterName", "forms-${environment_name}", { "region": "eu-west-2" } ],
                     [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
                     [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
                 ],
@@ -516,7 +516,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-product-page", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-product-page", "ClusterName", "forms-${environment_name}", { "region": "eu-west-2" } ],
                     [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
                     [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
                 ],
@@ -573,7 +573,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-api", "ClusterName", "forms-production", { "region": "eu-west-2" } ],
+                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-api", "ClusterName", "forms-${environment_name}", { "region": "eu-west-2" } ],
                     [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
                     [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
                 ],
@@ -630,7 +630,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-runner-production/dc1ef6b38be73050", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-runner-${environment_name}/dc1ef6b38be73050", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
                     [ "...", { "region": "eu-west-2", "stat": "p99" } ],
                     [ "...", { "region": "eu-west-2" } ]
                 ],
@@ -650,7 +650,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-product-page-production/eea72df3bd4e7081", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-product-page-${environment_name}/eea72df3bd4e7081", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
                     [ "...", { "region": "eu-west-2", "stat": "p99" } ],
                     [ "...", { "region": "eu-west-2" } ]
                 ],
@@ -670,7 +670,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-api-production/c0855c3550515fa1", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
+                    [ "AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", "targetgroup/forms-api-${environment_name}/c0855c3550515fa1", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2", "stat": "Average" } ],
                     [ "...", { "region": "eu-west-2", "stat": "p99" } ],
                     [ "...", { "region": "eu-west-2" } ]
                 ],
@@ -690,7 +690,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "NewConnectionCount", "LoadBalancer", "app/forms-production/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
+                    [ "AWS/ApplicationELB", "NewConnectionCount", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
                     [ ".", "ActiveConnectionCount", ".", ".", { "region": "eu-west-2" } ]
                 ],
                 "view": "timeSeries",

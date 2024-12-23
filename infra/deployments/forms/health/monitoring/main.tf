@@ -1,6 +1,10 @@
 resource "aws_cloudwatch_dashboard" "overview" {
   dashboard_name = "Overview"
-  dashboard_body = file("${path.module}/dashboard_body.json.tpl")
+  dashboard_body = templatefile("${path.module}/dashboard_body.json.tpl", {
+    environment_name = var.environment_name,
+    # We use the metric math function ${LAST} in CloudWatch but Terraform interprets it as a variable substitution. To get around that we're providing the string ${LAST} to substitute into the template file. We also need to escape the "$" character by adding another "$" in front.
+    LAST = "$${LAST}"
+  })
 }
 
 module "runner_scheduled_smoke_tests" {
