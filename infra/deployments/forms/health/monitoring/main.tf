@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_dashboard" "overview" {
   dashboard_name = "Overview"
-  dashboard_body = file("${path.module}/dashboard_body.json")
+  dashboard_body = file("${path.module}/dashboard_body.json.tpl")
 }
 
 module "runner_scheduled_smoke_tests" {
