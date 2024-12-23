@@ -104,10 +104,7 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "HealthyHostCount", "TargetGroup", "targetgroup/forms-runner-${environment_name}/dc1ef6b38be73050", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-api-${environment_name}/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-product-page-${environment_name}/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-admin-${environment_name}/3f3c0ec1ec914bdb", ".", ".", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"HealthyHostCount\"', 'Maximum')", "label": "", "id": "e1" } ]
                 ],
                 "view": "singleValue",
                 "stacked": false,
@@ -144,11 +141,8 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ ".", ".", "TargetGroup", "targetgroup/forms-admin-${environment_name}/3f3c0ec1ec914bdb", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-api-${environment_name}/c0855c3550515fa1", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-runner-${environment_name}/dc1ef6b38be73050", ".", ".", { "region": "eu-west-2" } ],
-                    [ "...", "targetgroup/forms-product-page-${environment_name}/eea72df3bd4e7081", ".", ".", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"RequestCount\"', 'Sum')", "label": "", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer} MetricName=\"RequestCount\"', 'Sum')", "label": "", "id": "e2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
