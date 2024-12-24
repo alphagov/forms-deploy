@@ -375,37 +375,6 @@
                 "title": "ECS Pending/Running Task Count - Forms Admin",
                 "period": 300,
                 "stat": "Maximum",
-                "yAxis": {
-                    "left": {
-                        "min": 0,
-                        "max": 3
-                    }
-                },
-                "annotations": {
-                    "horizontal": [
-                        {
-                            "visible": false,
-                            "color": "#b2df8d",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "below"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#d62728",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "above"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#ff7f0e",
-                            "label": "Untitled annotation",
-                            "value": 0,
-                            "fill": "above"
-                        }
-                    ]
-                },
                 "setPeriodToTimeRange": false,
                 "legend": {
                     "position": "bottom"
@@ -451,37 +420,6 @@
                 "title": "ECS Pending/Running Task Count - Forms Runner",
                 "period": 300,
                 "stat": "Maximum",
-                "yAxis": {
-                    "left": {
-                        "min": 0,
-                        "max": 3
-                    }
-                },
-                "annotations": {
-                    "horizontal": [
-                        {
-                            "visible": false,
-                            "color": "#b2df8d",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "below"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#d62728",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "above"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#ff7f0e",
-                            "label": "Untitled annotation",
-                            "value": 0,
-                            "fill": "above"
-                        }
-                    ]
-                },
                 "setPeriodToTimeRange": false,
                 "legend": {
                     "position": "bottom"
@@ -508,37 +446,6 @@
                 "title": "ECS Pending/Running Task Count - Forms-Product-page",
                 "period": 300,
                 "stat": "Maximum",
-                "yAxis": {
-                    "left": {
-                        "min": 0,
-                        "max": 3
-                    }
-                },
-                "annotations": {
-                    "horizontal": [
-                        {
-                            "visible": false,
-                            "color": "#b2df8d",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "below"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#d62728",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "above"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#ff7f0e",
-                            "label": "Untitled annotation",
-                            "value": 0,
-                            "fill": "above"
-                        }
-                    ]
-                },
                 "setPeriodToTimeRange": false,
                 "legend": {
                     "position": "bottom"
@@ -565,37 +472,6 @@
                 "title": "ECS Pending/Running Task Count - Forms API",
                 "period": 300,
                 "stat": "Maximum",
-                "yAxis": {
-                    "left": {
-                        "min": 0,
-                        "max": 3
-                    }
-                },
-                "annotations": {
-                    "horizontal": [
-                        {
-                            "visible": false,
-                            "color": "#b2df8d",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "below"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#d62728",
-                            "label": "Untitled annotation",
-                            "value": 3.1,
-                            "fill": "above"
-                        },
-                        {
-                            "visible": false,
-                            "color": "#ff7f0e",
-                            "label": "Untitled annotation",
-                            "value": 0,
-                            "fill": "above"
-                        }
-                    ]
-                },
                 "setPeriodToTimeRange": false,
                 "legend": {
                     "position": "bottom"
