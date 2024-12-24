@@ -477,7 +477,12 @@
                 "region": "eu-west-2",
                 "title": "forms-admin: ALB Latency metrics (Target Response Time)",
                 "period": 60,
-                "stat": "Average"
+                "stat": "Average",
+                "yAxis": {
+                    "left": {
+                        "label": "Seconds"
+                    }
+                }
             }
         },
         {
@@ -497,7 +502,12 @@
                 "region": "eu-west-2",
                 "title": "forms-runner: ALB Latency metrics (Target Response Time)",
                 "period": 60,
-                "stat": "Maximum"
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "label": "Seconds"
+                    }
+                }
             }
         },
         {
@@ -517,7 +527,12 @@
                 "region": "eu-west-2",
                 "title": "forms-product-page: ALB Latency (Target Response Time)",
                 "period": 60,
-                "stat": "Maximum"
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "label": "Seconds"
+                    }
+                }
             }
         },
         {
@@ -537,7 +552,12 @@
                 "region": "eu-west-2",
                 "title": "forms-api: ALB Latency (Target Response Time)",
                 "period": 60,
-                "stat": "Maximum"
+                "stat": "Maximum",
+                "yAxis": {
+                    "left": {
+                        "label": "Seconds"
+                    }
+                }
             }
         },
         {
