@@ -214,13 +214,13 @@
                     "horizontal": [
                         {
                             "color": "#d62728",
-                            "label": "broken things (https://repost.aws/knowledge-center/elasticache-swap-activity)",
+                            "label": "Unusual swap usage (https://repost.aws/knowledge-center/elasticache-swap-activity)",
                             "value": 300000000,
                             "fill": "above"
                         },
                         {
                             "color": "#2ca02c",
-                            "label": "Untitled annotation",
+                            "label": "Ok",
                             "value": 300000000,
                             "fill": "below"
                         }
