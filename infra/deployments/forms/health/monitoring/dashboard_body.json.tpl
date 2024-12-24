@@ -256,14 +256,14 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ApplicationELB", "ProcessedBytes", "LoadBalancer", "app/forms-${environment_name}/ca3f9a7d949e0ddd", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer} MetricName=\"ProcessedBytes\" forms-${environment_name}', 'Sum')", "label": "Sum", "id": "e1" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
                 "title": "ALB Traffic metrics (ProcessedBytes)",
                 "period": 300,
-                "stat": "Average"
+                "stat": "Sum"
             }
         },
         {
