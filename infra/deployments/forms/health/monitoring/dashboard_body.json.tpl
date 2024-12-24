@@ -243,7 +243,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ALB Forms-admin Latency metrics (Target Response Time)",
+                "title": "forms-admin: ALB Latency metrics (Target Response Time)",
                 "period": 60,
                 "stat": "Average"
             }
@@ -372,7 +372,7 @@
                 "view": "singleValue",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ECS Pending/Running Task Count - Forms Admin",
+                "title": "forms-admin: ECS Pending/Running Task Count",
                 "period": 300,
                 "stat": "Maximum",
                 "setPeriodToTimeRange": false,
@@ -417,7 +417,7 @@
                 "view": "singleValue",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ECS Pending/Running Task Count - Forms Runner",
+                "title": "forms-runner: ECS Pending/Running Task Count",
                 "period": 300,
                 "stat": "Maximum",
                 "setPeriodToTimeRange": false,
@@ -443,7 +443,7 @@
                 "view": "singleValue",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ECS Pending/Running Task Count - Forms-Product-page",
+                "title": "forms-product-page: ECS Pending/Running Task Count",
                 "period": 300,
                 "stat": "Maximum",
                 "setPeriodToTimeRange": false,
@@ -469,7 +469,7 @@
                 "view": "singleValue",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ECS Pending/Running Task Count - Forms API",
+                "title": "forms-api: ECS Pending/Running Task Count",
                 "period": 300,
                 "stat": "Maximum",
                 "setPeriodToTimeRange": false,
@@ -495,7 +495,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ALB Forms-runner Latency metrics (Target Response Time)",
+                "title": "forms-runner: ALB Latency metrics (Target Response Time)",
                 "period": 60,
                 "stat": "Maximum"
             }
@@ -515,7 +515,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ALB Forms-Product-page Latency (Target Response Time)",
+                "title": "forms-product-page: ALB Latency (Target Response Time)",
                 "period": 60,
                 "stat": "Maximum"
             }
@@ -535,7 +535,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
-                "title": "ALB Forms-api Latency (Target Response Time)",
+                "title": "forms-api: ALB Latency (Target Response Time)",
                 "period": 60,
                 "stat": "Maximum"
             }
