@@ -78,46 +78,6 @@
         {
             "height": 6,
             "width": 8,
-            "y": 25,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/ElastiCache", "CPUUtilization", { "region": "eu-west-2", "yAxis": "left" } ],
-                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId} MetricName=\"CPUUtilization\" forms-runner', 'Maximum')", "label": "", "id": "e1" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "stat": "Maximum",
-                "period": 5,
-                "title": "Redis Maximum CPU Utilization per 5 seconds"
-            }
-        },
-        {
-            "height": 3,
-            "width": 24,
-            "y": 0,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"HealthyHostCount\"', 'Maximum')", "label": "", "id": "e1" } ]
-                ],
-                "view": "singleValue",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "ALB HealthyHostCount",
-                "period": 300,
-                "stat": "Maximum",
-                "sparkline": true,
-                "setPeriodToTimeRange": false,
-                "trend": true
-            }
-        },
-        {
-            "height": 6,
-            "width": 8,
             "y": 19,
             "x": 0,
             "type": "metric",
@@ -129,25 +89,6 @@
                 ],
                 "region": "eu-west-2",
                 "title": "RDS CPU Utilization"
-            }
-        },
-        {
-            "height": 5,
-            "width": 24,
-            "y": 9,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"RequestCount\"', 'Sum')", "label": "", "id": "e1" } ],
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer} MetricName=\"RequestCount\"', 'Sum')", "label": "", "id": "e2" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "period": 60,
-                "stat": "Sum",
-                "title": "ALB RequestCount"
             }
         },
         {
@@ -189,66 +130,6 @@
             }
         },
         {
-            "height": 6,
-            "width": 8,
-            "y": 31,
-            "x": 8,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/ElastiCache", "SwapUsage", { "region": "eu-west-2" } ]
-                ],
-                "view": "gauge",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "Redis Swap Usage",
-                "period": 300,
-                "stat": "Average",
-                "yAxis": {
-                    "left": {
-                        "min": 0,
-                        "max": 500000000
-                    }
-                },
-                "annotations": {
-                    "horizontal": [
-                        {
-                            "color": "#d62728",
-                            "label": "Unusual swap usage (https://repost.aws/knowledge-center/elasticache-swap-activity)",
-                            "value": 300000000,
-                            "fill": "above"
-                        },
-                        {
-                            "color": "#2ca02c",
-                            "label": "Ok",
-                            "value": 300000000,
-                            "fill": "below"
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "height": 6,
-            "width": 6,
-            "y": 42,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'Average')", "label": "Average", "id": "e1" } ],
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'p99')", "label": "p99", "id": "e2" } ],
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'Maximum')", "label": "Max", "id": "e3" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "forms-admin: ALB Latency metrics (Target Response Time)",
-                "period": 60,
-                "stat": "Average"
-            }
-        },
-        {
             "height": 5,
             "width": 12,
             "y": 37,
@@ -264,6 +145,65 @@
                 "title": "ALB Traffic metrics (ProcessedBytes)",
                 "period": 300,
                 "stat": "Sum"
+            }
+        },
+        {
+            "height": 5,
+            "width": 24,
+            "y": 9,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"RequestCount\"', 'Sum')", "label": "", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer} MetricName=\"RequestCount\"', 'Sum')", "label": "", "id": "e2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "period": 60,
+                "stat": "Sum",
+                "title": "ALB RequestCount"
+            }
+        },
+        {
+            "height": 3,
+            "width": 24,
+            "y": 0,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"HealthyHostCount\"', 'Maximum')", "label": "", "id": "e1" } ]
+                ],
+                "view": "singleValue",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "ALB HealthyHostCount",
+                "period": 300,
+                "stat": "Maximum",
+                "sparkline": true,
+                "setPeriodToTimeRange": false,
+                "trend": true
+            }
+        },
+        {
+            "height": 6,
+            "width": 8,
+            "y": 25,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ElastiCache", "CPUUtilization", { "region": "eu-west-2", "yAxis": "left" } ],
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId} MetricName=\"CPUUtilization\" forms-runner', 'Maximum')", "label": "", "id": "e1" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "stat": "Maximum",
+                "period": 5,
+                "title": "Redis Maximum CPU Utilization per 5 seconds"
             }
         },
         {
@@ -358,6 +298,65 @@
             }
         },
         {
+            "height": 6,
+            "width": 8,
+            "y": 31,
+            "x": 8,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/ElastiCache", "SwapUsage", { "region": "eu-west-2" } ]
+                ],
+                "view": "gauge",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "Redis Swap Usage",
+                "period": 300,
+                "stat": "Average",
+                "yAxis": {
+                    "left": {
+                        "min": 0,
+                        "max": 500000000
+                    }
+                },
+                "annotations": {
+                    "horizontal": [
+                        {
+                            "color": "#d62728",
+                            "label": "Unusual swap usage (https://repost.aws/knowledge-center/elasticache-swap-activity)",
+                            "value": 300000000,
+                            "fill": "above"
+                        },
+                        {
+                            "color": "#2ca02c",
+                            "label": "Ok",
+                            "value": 300000000,
+                            "fill": "below"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "height": 9,
+            "width": 24,
+            "y": 48,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ "AWS/SES", "Delivery", { "region": "eu-west-2" } ],
+                    [ ".", "Send", { "region": "eu-west-2" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "title": "SES Send and Deliver (Sample Count 1 minute)",
+                "region": "eu-west-2",
+                "stat": "SampleCount",
+                "period": 60
+            }
+        },
+        {
             "height": 3,
             "width": 12,
             "y": 3,
@@ -381,25 +380,6 @@
                 },
                 "sparkline": true,
                 "trend": true
-            }
-        },
-        {
-            "height": 9,
-            "width": 24,
-            "y": 48,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "AWS/SES", "Delivery", { "region": "eu-west-2" } ],
-                    [ ".", "Send", { "region": "eu-west-2" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "title": "SES Send and Deliver (Sample Count 1 minute)",
-                "region": "eu-west-2",
-                "stat": "SampleCount",
-                "period": 60
             }
         },
         {
@@ -478,6 +458,26 @@
                 },
                 "sparkline": true,
                 "trend": true
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 42,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'Average')", "label": "Average", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'p99')", "label": "p99", "id": "e2" } ],
+                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-admin', 'Maximum')", "label": "Max", "id": "e3" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "eu-west-2",
+                "title": "forms-admin: ALB Latency metrics (Target Response Time)",
+                "period": 60,
+                "stat": "Average"
             }
         },
         {
