@@ -305,9 +305,7 @@
             "properties": {
                 "metrics": [
                     [ "AWS/ElastiCache", "DatabaseMemoryUsagePercentage", { "region": "eu-west-2" } ],
-                    [ ".", ".", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId} MetricName=\"DatabaseMemoryUsagePercentage\" forms-runner-${environment_name}', 'Average')", "id": "e1" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -325,14 +323,10 @@
             "type": "metric",
             "properties": {
                 "metrics": [
-                    [ "AWS/ElastiCache", "CurrItems", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ],
-                    [ ".", "Evictions", ".", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ],
-                    [ ".", "CurrItems", { "region": "eu-west-2" } ],
-                    [ ".", "Evictions", { "region": "eu-west-2" } ]
+                    [ "AWS/ElastiCache", "CurrItems", { "region": "eu-west-2" } ],
+                    [ ".", "Evictions", { "region": "eu-west-2" } ],
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId, CacheNodeId} MetricName=\"CurrItems\" forms-runner-${environment_name}', 'Maximum')", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId, CacheNodeId} MetricName=\"Evictions\" forms-runner-${environment_name}', 'Maximum')", "id": "e2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -352,12 +346,8 @@
                 "metrics": [
                     [ "AWS/ElastiCache", "CurrConnections", { "region": "eu-west-2" } ],
                     [ ".", "NewConnections", { "region": "eu-west-2" } ],
-                    [ ".", "CurrConnections", "CacheClusterId", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ],
-                    [ ".", "NewConnections", ".", "forms-runner-${environment_name}-001", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-002", { "region": "eu-west-2" } ],
-                    [ "...", "forms-runner-${environment_name}-003", { "region": "eu-west-2" } ]
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId} MetricName=\"CurrConnections\" forms-runner-${environment_name}', 'Maximum')", "id": "e1" } ],
+                    [ { "expression": "SEARCH('{AWS/ElastiCache, CacheClusterId} MetricName=\"NewConnections\" forms-runner-${environment_name}', 'Maximum')", "id": "e2" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
