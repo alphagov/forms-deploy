@@ -275,15 +275,15 @@
             "properties": {
                 "metrics": [
                     [ "AWS/ElastiCache", "CacheHitRate", { "region": "eu-west-2", "yAxis": "left" } ],
-                    [ ".", "CacheHits", { "region": "eu-west-2", "yAxis": "left" } ],
-                    [ ".", "CacheMisses", { "region": "eu-west-2", "yAxis": "left" } ]
+                    [ ".", "CacheHits", { "region": "eu-west-2", "yAxis": "right" } ],
+                    [ ".", "CacheMisses", { "region": "eu-west-2", "yAxis": "right" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "eu-west-2",
                 "title": "Redis CacheHitRate, CacheHits, CacheMisses",
                 "period": 60,
-                "stat": "Maximum",
+                "stat": "Average",
                 "yAxis": {
                     "left": {
                         "label": "Cache Hit Ratio",
