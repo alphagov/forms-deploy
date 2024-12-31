@@ -1,5 +1,14 @@
 require "open3"
 
+# Feedback from pairing session with Laurence 31/12/24
+
+# Ruby `system` command could be a useful alternative to Open3 and backticks
+# Preferably to use system command vs backticks
+
+# Private methods. Generally at bottom of page. Don't really need them in this context, but there's no harm done. Implies
+# that the other methods are not private which begs the question of who is going to use these 'public' methods. Private methods
+# make mores sense in a class/module, not as much sense in a stand alone script (no other consumers).
+
 def main
   remind_to_connect_vpn
 

@@ -2,6 +2,19 @@ require "open3"
 
 require_relative "../lib/terraform_checker"
 
+# Feedback from pairing session with Laurence 31/12/24
+
+# Re: checking output is how rspec would expect me to (hurrah! I did it correctly)
+
+# Mocking and stubbing. Different opinions (some say never mock things, some say mock things you can control).
+# Mock what I can control, think about moving mocking to be outside of my code. Instead of mocking response of Open3, how can I make a stub version of the command. Script depends on file system
+# and running external commands. No reason not to create filesystem in tmp folder. Also could look at shell mock. Could be easier in Bash and BATS.
+# How to make it so I have a pretend environment to work in?
+
+# Bash vs Ruby. Ruby is more testable. Easier to write script in bash, maintaining is harder. Check with Infra team. Look at the code for homebrew (what are their tests like? What's the code like?)
+
+# Checkout the rspec style guide!
+
 describe "#remind_to_connect_vpn" do
   context "when the user runs the script" do
     it "prints a reminder to connect to the VPN" do
