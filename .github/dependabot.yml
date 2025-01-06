@@ -21,6 +21,12 @@ updates:
 
   # Maintain Ruby dependencies
   - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "bundler"
     directory: "/support/forms-cli"
     schedule:
       interval: "daily"
