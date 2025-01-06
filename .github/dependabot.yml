@@ -21,37 +21,13 @@ updates:
 
   # Maintain Ruby dependencies
   - package-ecosystem: "bundler"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: "bundler"
-    directory: "/support/forms-cli"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: "bundler"
-    directory: "/support/pipeline-visualiser"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: "bundler"
-    directory: "/support/paused-pipeline-detector"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: "bundler"
-    directory: "/infra/deployments/forms/pipelines/pipeline-invoker"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: "bundler"
-    directory: "/infra"
+    directories:
+      - "/"
+      - "/infra"
+      - "/support/forms-cli"
+      - "/support/pipeline-visualiser"
+      - "/support/paused-pipeline-detector"
+      - "/infra/deployments/forms/pipelines/pipeline-invoker"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
