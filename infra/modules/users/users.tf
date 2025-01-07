@@ -54,7 +54,7 @@ locals {
       development   = "admin"
       user_research = "admin"
     },
-    "jamie.wilkinson" = {
+    "jamie.wilkinson1" = {
       deploy        = "support"
       staging       = "support"
       production    = "support"
