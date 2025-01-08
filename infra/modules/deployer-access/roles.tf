@@ -32,6 +32,7 @@ locals {
     "staging"       = "972536609845"
     "production"    = "443944947292"
     "user-research" = "619109835131"
+    "integration"   = "842676007477"
   }
 }
 
