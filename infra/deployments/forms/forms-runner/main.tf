@@ -1,4 +1,4 @@
-variable "image_tag" {
+variable "forms_runner_image_tag" {
   type        = string
   description = "The image tag to deploy"
   nullable    = true
@@ -32,7 +32,7 @@ module "forms_runner" {
   env_name                                    = var.environment_name
   environment_type                            = var.environment_type
   root_domain                                 = var.root_domain
-  image_tag                                   = var.image_tag
+  image_tag                                   = var.forms_runner_image_tag
   cpu                                         = var.forms_runner_settings.cpu
   memory                                      = var.forms_runner_settings.memory
   min_capacity                                = var.forms_runner_settings.min_capacity
