@@ -33,13 +33,10 @@ describe PipelineSummary do
           .to receive(:new)
           .and_return(codepipeline_stub)
 
-        allow(codepipeline_stub)
-          .to receive(:list_pipelines)
-          .and_return(CodePipelineFixtures.list_pipelines)
-
-        allow(codepipeline_stub)
-          .to receive(:get_pipeline_state)
-          .and_return(CodePipelineFixtures.get_pipeline_state)
+        allow(codepipeline_stub).to receive_messages(
+          list_pipelines: CodePipelineFixtures.list_pipelines,
+          get_pipeline_state: CodePipelineFixtures.get_pipeline_state,
+        )
       end
 
       it "prints all of the pipeline summaries" do

@@ -15,15 +15,13 @@ describe Notify do
     let(:notify_mock) do
       notify_mock = instance_double(Notifications::Client)
 
-      allow(notify_mock)
-        .to receive(:get_notifications)
-        .and_return(Notifications::Client::NotificationsCollection.new({
+      allow(notify_mock).to receive_messages(
+        get_notifications: Notifications::Client::NotificationsCollection.new({
           links: [],
           "notifications" => [],
-        }))
-      allow(notify_mock)
-        .to receive(:get_notification)
-        .and_return(Notifications::Client::Notification.new({}))
+        }),
+        get_notification: Notifications::Client::Notification.new({}),
+      )
 
       notify_mock
     end

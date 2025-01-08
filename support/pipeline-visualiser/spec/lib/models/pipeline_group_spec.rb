@@ -14,7 +14,7 @@ describe PipelineGroup do
   let(:pipeline_b) { StubSummary.new }
   let(:pipeline_c) { StubSummary.new }
 
-  describe "state shows the worst state in the group and " do
+  describe "state shows the worst state in the group and" do
     # %w[]
     # %w[Cancelled Failed]
     it "Succeeded is the best state" do
