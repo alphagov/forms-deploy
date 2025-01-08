@@ -5,6 +5,5 @@ environment_type        = "integration"
 require_vpn_to_access   = false
 apex_domain             = "review.forms.service.gov.uk"
 dns_delegation_records  = {}
-# I believe this has to be done manually in the account
-# codestar_connection_arn = "TBC"
+codestar_connection_arn = "arn:aws:codeconnections:eu-west-2:842676007477:connection/ccaca0a3-ee66-45dc-89ab-aa3f3339020a"
 deploy_account_id       = "711966560482"
