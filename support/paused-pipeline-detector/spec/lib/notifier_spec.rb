@@ -9,7 +9,7 @@ describe Notifier do
   end
 
   let(:sns_client) do
-    instance_double("Aws::SNS::Client")
+    instance_double(Aws::SNS::Client)
   end
 
   let(:topic_arn) do
