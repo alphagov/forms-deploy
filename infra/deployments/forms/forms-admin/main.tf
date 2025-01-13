@@ -1,4 +1,4 @@
-variable "image_tag" {
+variable "forms_admin_image_tag" {
   type        = string
   description = "The image tag to deploy"
   nullable    = true
@@ -10,7 +10,7 @@ module "forms_admin" {
   env_name                          = var.environment_name
   root_domain                       = var.root_domain
   container_registry                = var.container_registry
-  image_tag                         = var.image_tag
+  image_tag                         = var.forms_admin_image_tag
   cpu                               = var.forms_admin_settings.cpu
   memory                            = var.forms_admin_settings.memory
   min_capacity                      = var.forms_admin_settings.min_capacity

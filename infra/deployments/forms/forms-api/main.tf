@@ -1,4 +1,4 @@
-variable "image_tag" {
+variable "forms_api_image_tag" {
   type        = string
   description = "The image tag to deploy"
   nullable    = true
@@ -10,7 +10,7 @@ module "forms_api" {
   env_name             = var.environment_name
   root_domain          = var.root_domain
   container_repository = "${var.container_registry}/forms-api-deploy"
-  image_tag            = var.image_tag
+  image_tag            = var.forms_api_image_tag
   cpu                  = var.forms_api_settings.cpu
   memory               = var.forms_api_settings.memory
   min_capacity         = var.forms_api_settings.min_capacity
