@@ -285,6 +285,8 @@ resource "aws_iam_policy" "deny_parameter_store" {
 }
 
 resource "aws_iam_policy" "lock_state_files" {
+  count = var.dynamodb_state_file_locks_table_arn != null ? 1 : 0
+
   name = "lock-state-files"
   path = "/"
 
