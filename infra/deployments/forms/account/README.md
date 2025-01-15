@@ -1,7 +1,7 @@
-# infra/deployments/account
+# infra/deployments/forms/account
 
 This Terraform root deployment lays the groundwork in an AWS account, ready for
-the subsequent deployment of one of the other deployments in `infra/deployments`.
+the subsequent deployment of the rest of the `forms` deployment (`infra/deployment/forms`).
 
 Example of things configured in this root are:
 * Account contact details
