@@ -52,6 +52,7 @@ variable "codestar_connection_arn" {
 variable "dynamodb_state_file_locks_table_arn" {
   type        = string
   description = "The arn of the DynamoDB table being used for state file locking"
+  nullable    = true
 }
 
 variable "allow_rds_data_api_access" {
