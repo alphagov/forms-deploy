@@ -28,7 +28,7 @@ make $ACCOUNT $ROOT $ACTION
 where
 
 * `$ACCOUNT` is the name of the account you have assumed a role in (one of `deploy`, `development`, `staging`, and `production`)
-* `$ROOT` is a Terraform root module folder under `infra/deployments`. For example `forms/rds` or `deploy/ecr`. The `account` root is a special case and can be applied as `account`.
+* `$ROOT` is a Terraform root module folder under `infra/deployments`. For example `forms/rds` or `deploy/ecr`.
 * `$ACTION` is the Terraform action you want to take. One of `plan`, `apply,` and `validate`.
 
 > [!TIP]
