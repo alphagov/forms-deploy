@@ -66,14 +66,6 @@ fi
 # Set source directory
 src_dir="${deployments_dir}/${deployment}/${tf_root}"
 
-## Consider special combinations of deployment, environment, and root
-case "${deployment}+${tf_root}" in
-    "account+account")
-        # The `account` deployment is its own root, so doesn't need an extra directory appending
-        src_dir="${deployments_dir}/${deployment}"
-        ;;
-esac
-
 # Handlers
 pre_init() {
   pre_init_script="${src_dir}/pre-init.sh"
@@ -90,8 +82,8 @@ pre_init() {
 init(){
     extra_args=""
 
-    if [ "${deployment}" == "forms" ] || [ "${deployment}" == "account" ]; then
-        extra_args="${extra_args} -backend-config ${deployments_dir}/account/tfvars/backends/${environment}.tfvars"
+    if [ "${deployment}" == "forms" ]; then
+        extra_args="${extra_args} -backend-config ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars"
     fi
 
     # shellcheck disable=SC2086
@@ -119,12 +111,11 @@ plan_apply(){
     action="$1"
     extra_args=""
 
-    if [ "${deployment}" == "forms" ]; then
-        extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/account/tfvars/backends/${environment}.tfvars";
-    fi
-
-    if [ "${deployment}" == "account" ]; then
-        extra_args="${extra_args} -var-file ${deployments_dir}/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/account/tfvars/backends/${environment}.tfvars";
+    ## forms/account needs different vars files to other forms/roots
+    if [ "${deployment}" == "forms" ] && [ "${tf_root}" == "account" ]; then
+        extra_args="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
+    elif [ "${deployment}" == "forms" ] ; then
+      extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
     fi
 
     case "${deployment}+${tf_root}" in
@@ -165,7 +156,7 @@ unlock() {
 }
 
 post_apply() {
-    if [ "${deployment}+${tf_root}" = "account+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
+    if [ "${deployment}+${tf_root}" = "forms+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
         echo "Performing post-apply actions"
         "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
     fi
