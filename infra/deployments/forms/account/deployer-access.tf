@@ -8,7 +8,7 @@ locals {
   "govuk-forms-${var.environment_type}-tfstate-locking")
 }
 module "deployer_access" {
-  source                              = "../../modules/deployer-access"
+  source                              = "../../../modules/deployer-access"
   env_name                            = var.environment_name
   environment_type                    = replace(var.environment_type, "_", "-") # See comment about dynamodb table name
   hosted_zone_id                      = aws_route53_zone.public.id
