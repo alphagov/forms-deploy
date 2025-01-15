@@ -75,6 +75,13 @@ locals {
       development   = "admin"
       user_research = "admin"
     },
+    "max.fitzhugh" = {
+      deploy        = "readonly"
+      staging       = "readonly"
+      production    = "readonly"
+      development   = "readonly"
+      user_research = "readonly"
+    },
     "samuel.culley" = {
       deploy        = "admin"
       staging       = "admin"
