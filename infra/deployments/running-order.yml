@@ -33,7 +33,7 @@ running-order:
       manual: true
       phases:
         - roots:
-            - account
+            - forms/account
 
     - name: GOV.UKForms
       manual: false
