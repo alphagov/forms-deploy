@@ -1,3 +1,11 @@
+locals {
+  # We have configured AWS ChatBot for sending messages to Slack.
+  # AWS ChatBot does not have an API we can use in Terraform, so we
+  # configured it by hand in the one place and hardcoded the SNS topic here.
+  chatbot_alerts_channel_sns_topic      = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
+  chatbot_deployments_channel_sns_topic = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-deployments-c383f287ab987f0b12d32e4533a145b1c918167d"
+}
+
 module "paused_pipeline_lambda_bucket" {
   source = "../../../modules/secure-bucket"
   name   = "govuk-forms-${var.environment_name}-paused-pipeline-detection"
@@ -28,7 +36,7 @@ resource "aws_lambda_function" "paused_pipeline_detection" {
 
   environment {
     variables = {
-      "SLACK_SNS_TOPIC"        = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd",
+      "SLACK_SNS_TOPIC"        = var.environment_name == "dev" ? local.chatbot_deployments_channel_sns_topic : local.chatbot_alerts_channel_sns_topic,
       "FORMS_AWS_ACCOUNT_NAME" = var.account_name
     }
   }
