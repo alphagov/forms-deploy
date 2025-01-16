@@ -118,6 +118,10 @@ plan_apply(){
       extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
     fi
 
+    if [ "${deployment}" == "integration" ]; then
+        extra_args="${extra_args} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars";
+    fi
+
     case "${deployment}+${tf_root}" in
         "forms+pipelines")
             extra_args="${extra_args} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars";
