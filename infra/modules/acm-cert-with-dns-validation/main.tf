@@ -4,6 +4,7 @@
 # passed.
 
 resource "aws_acm_certificate" "cert" {
+  #checkov:skip=CKV2_AWS_71:we can't tell Checkov that domain_name won't include * here
   provider = aws.certificate
 
   domain_name               = var.domain_name
