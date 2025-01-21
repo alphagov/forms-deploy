@@ -59,12 +59,6 @@ $(DEPLOY_TF_ROOTS):
 	$(eval export TARGET_DEPLOYMENT = deploy)
 	$(eval export TARGET_TF_ROOT = $(@:deploy/%=%))
 	@true
-
-account:
-	$(eval export TARGET_DEPLOYMENT = account)
-	$(eval export TARGET_TF_ROOT = account)
-	@true
-
 ##
 # Action targets
 ##
@@ -259,7 +253,7 @@ help:
 	@echo "$$help_usage_text"
 	@echo "$$help_environments"
 	@echo "ROOTS"
-	@for r in $(sort account $(FORMS_TF_ROOTS) $(DEPLOY_TF_ROOTS)); do \
+	@for r in $(sort $(FORMS_TF_ROOTS) $(DEPLOY_TF_ROOTS)); do \
   		printf "\t%s\n" $$r; \
 	done; \
 	echo "" \

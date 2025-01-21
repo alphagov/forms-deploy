@@ -22,7 +22,7 @@ The `modules` directory contains reusable Terraform modules which are referenced
 
 The majority of the roots are applied automatically as part of deployment pipelines. However, those for the `deploy` account (under [the `deployments/deploy` directory](deployments/deploy/)) are currently applied manually.
 
-This is also true for the `account` root, which is intended to only ever be run by a human. The `account` root lays the groundwork within an AWS account, and manages things like engineer access.
+This is also true for the `forms/account` root, which is intended to only ever be run by a human. The `forms/account` root lays the groundwork within an AWS account, and manages things like engineer access.
 
 ### Applying Terraform manually
 
@@ -58,8 +58,8 @@ The following provides a high-level overview of the deployments and in which ord
 
 #### Development, Staging or Production Environment
 In the unlikely event of needing to recreate an entire GOV.UK Forms environment the following order should be followed.
-1. `account` deployment should be applied to ready the AWS account. This will configure engineer access, and create a new Route53 hosted zone.
-2. update the `production` vars file in the `account` deployment with the nameservers from the previous step, so that the domain is correctly delegated
+1. `forms/account` root should be applied to ready the AWS account. This will configure engineer access, and create a new Route53 hosted zone.
+2. update the `production` vars file in the `forms/account` root with the nameservers from the previous step, so that the domain is correctly delegated
 3. `forms/environment` to create the networking and common components for each GOV.UK Forms application.
 4. `forms/pipelines` to deploy the pipelines for the environment
 5. `forms/rds` to deploy the database needed for the applications
@@ -79,7 +79,7 @@ To recreate the `deploy` environment, apply the following roots:
 
 ### DNS For GOV.UK Forms
 
-The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `production` configuration of the `account` deployment manages records to delegate the `dev.`, `staging.`, and `research.` subdomains to Route53 Hosted Zones in their respective environments. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output when applying the `account` deployment in each environment.
+The `forms.service.gov.uk` domain is delegated to a Route53 Hosted Zone in our production environment. The `production` configuration of the `forms/account` root manages records to delegate the `dev.`, `staging.`, and `research.` subdomains to Route53 Hosted Zones in their respective environments. This is achieved by creating `NS` records within the production Hosted Zone which point to the name server addresses output when applying the `forms/account` root in each environment.
 
 
 ### Linting and Static Analysis
