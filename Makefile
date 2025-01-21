@@ -34,6 +34,11 @@ deploy:
 	$(eval export TARGET_ENVIRONMENT = deploy)
 	@true
 
+.PHONY: integration
+integration:
+	$(eval export TARGET_ENVIRONMENT = integration)
+	@true
+
 ##
 # Terraform root targets
 #
@@ -42,6 +47,7 @@ deploy:
 ##
 FORMS_TF_ROOTS = $(shell cd infra/deployments; find forms -mindepth 1 -maxdepth 1 -type d -not -path "*/tfvars" -not -path "*/.terraform")
 DEPLOY_TF_ROOTS = $(shell cd infra/deployments; find deploy -mindepth 1 -maxdepth 1 -type d -not -path "*/tfvars" -not -path "*/.terraform")
+INTEGRATION_TF_ROOTS = $(shell cd infra/deployments; find integration -mindepth 1 -maxdepth 1 -type d -not -path "*/tfvars" -not -path "*/.terraform")
 
 target_tf_root_set:
 	$(if ${TARGET_TF_ROOT},,$(error Target Terraform root is not set. Try adding an Terraform root target before the final target. Terraform root targets are directories relative to 'infra/deployments/', such as 'forms/dns'.))
@@ -59,6 +65,12 @@ $(DEPLOY_TF_ROOTS):
 	$(eval export TARGET_DEPLOYMENT = deploy)
 	$(eval export TARGET_TF_ROOT = $(@:deploy/%=%))
 	@true
+
+$(INTEGRATION_TF_ROOTS):
+	$(eval export TARGET_DEPLOYMENT = integration)
+	$(eval export TARGET_TF_ROOT = $(@:integration/%=%))
+	@true
+
 ##
 # Action targets
 ##
@@ -214,6 +226,9 @@ ENVIRONMENTS
 			image building pipelines.
 			n.b. deployments do not take place in this account. The
 			name is a legacy from when they did.
+
+	integration	Account for running integration pieces, such as performance
+			tests and review apps.
 
 	dev/development		The development environment
 	staging			The staging environment

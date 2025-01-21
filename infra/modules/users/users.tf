@@ -15,8 +15,8 @@ locals {
   # All GOV.UK Forms developers can have admin access to the development
   # and user research accounts.
 
-  envs  = ["deploy", "staging", "production", "development", "user_research"]
-  roles = ["admin", "support", "readonly"]
+  accounts = ["deploy", "staging", "production", "development", "user_research", "integration"]
+  roles    = ["admin", "support", "readonly"]
 
   users = {
     "alice.carr" = {
@@ -25,6 +25,7 @@ locals {
       production    = "admin" # Required whilst setting up environments
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "andy.hunt" = {
       deploy        = "admin"
@@ -32,6 +33,7 @@ locals {
       production    = "admin"
       development   = "admin"
       user_research = "admin"
+      integration   = "admin"
     },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
@@ -39,6 +41,7 @@ locals {
       production    = "admin" # Required whilst setting up environments
       development   = "admin"
       user_research = "admin"
+      integration   = "admin"
     },
     "david.biddle" = {
       deploy        = "admin"
@@ -46,6 +49,7 @@ locals {
       production    = "admin"
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "james.sheppard" = {
       deploy        = "readonly"
@@ -53,6 +57,7 @@ locals {
       production    = "readonly"
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "jamie.wilkinson1" = {
       deploy        = "support"
@@ -60,6 +65,7 @@ locals {
       production    = "support"
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "kelvin.gan" = {
       deploy        = "admin" # Feature Team Tech lead
@@ -67,6 +73,7 @@ locals {
       production    = "admin" # Feature Team Tech lead
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "laurence.debruxelles" = {
       deploy        = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
@@ -74,6 +81,7 @@ locals {
       production    = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "max.fitzhugh" = {
       deploy        = "readonly"
@@ -81,6 +89,7 @@ locals {
       production    = "readonly"
       development   = "readonly"
       user_research = "readonly"
+      integration   = "readonly"
     },
     "samuel.culley" = {
       deploy        = "admin"
@@ -88,6 +97,7 @@ locals {
       production    = "admin"
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "sarah.young1" = {
       deploy        = "admin"
@@ -95,6 +105,7 @@ locals {
       production    = "admin"
       development   = "admin"
       user_research = "admin"
+      integration   = "admin"
     },
     "stephen.daly" = {
       deploy        = "admin"
@@ -102,6 +113,7 @@ locals {
       production    = "admin"
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
     "tom.iles" = {
       deploy        = "admin"
@@ -109,6 +121,7 @@ locals {
       production    = "admin"
       development   = "admin"
       user_research = "admin"
+      integration   = "readonly"
     },
   }
 }

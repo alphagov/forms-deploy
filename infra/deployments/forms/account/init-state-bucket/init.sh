@@ -35,7 +35,7 @@ if aws s3api head-bucket --bucket "${EXPECTED_BUCKET_NAME}"; then
     fi
 fi
 
-terraform init
+terraform init -upgrade
 terraform apply \
   -var "bucket_name=${EXPECTED_BUCKET_NAME}" \
   -var "dynamodb_table=${EXPECTED_DYNAMO_DB_TABLE}" \

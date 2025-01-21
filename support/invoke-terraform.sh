@@ -86,6 +86,10 @@ init(){
         extra_args="${extra_args} -backend-config ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars"
     fi
 
+    if [ "${deployment}" == "integration" ]; then
+        extra_args="${extra_args} -backend-config ${deployments_dir}/integration/tfvars/backend/integration.tfvars";
+    fi
+
     # shellcheck disable=SC2086
     terraform \
         -chdir="${src_dir}" \
@@ -115,7 +119,11 @@ plan_apply(){
     if [ "${deployment}" == "forms" ] && [ "${tf_root}" == "account" ]; then
         extra_args="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
     elif [ "${deployment}" == "forms" ] ; then
-      extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
+        extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
+    fi
+
+    if [ "${deployment}" == "integration" ]; then
+        extra_args="${extra_args} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars -var-file ${deployments_dir}/integration/tfvars/backend/integration.tfvars";
     fi
 
     case "${deployment}+${tf_root}" in
@@ -156,7 +164,7 @@ unlock() {
 }
 
 post_apply() {
-    if [ "${deployment}+${tf_root}" = "forms+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ]; then
+    if [ "${deployment}+${tf_root}" = "forms+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ] || [ "${deployment}+${tf_root}" = "integration+account" ]; then
         echo "Performing post-apply actions"
         "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
     fi
