@@ -1,0 +1,15 @@
+module "cloudfront" {
+  source = "../../../modules/cloudfront"
+
+  providers = {
+    aws           = aws
+    aws.us-east-1 = aws.us-east-1 # Create the certificate in us-east-1 for CloudFront
+  }
+
+
+  alb_dns_name              = module.alb.alb_dns_name
+  domain_name               = "review.forms.service.gov.uk"
+  subject_alternative_names = ["*.review.forms.service.gov.uk"]
+  env_name                  = "review"
+  nat_gateway_egress_ips    = module.vpc.nat_gateway_egress_ips
+}
