@@ -154,6 +154,36 @@ resource "aws_lb_listener" "listener" {
 module "alb_waf_protection" {
   source = "../alb_waf_protection"
 
-  alb_arn = aws_lb.alb.arn
+  alb_arn          = aws_lb.alb.arn
   environment_name = var.env_name
+}
+
+moved {
+  from = aws_wafv2_ip_set.ips_to_block_alb
+  to   = module.alb_waf_protection.aws_wafv2_ip_set.ips_to_block_alb
+}
+
+moved {
+  from = aws_wafv2_web_acl.alb
+  to   = module.alb_waf_protection.aws_wafv2_web_acl.alb
+}
+
+moved {
+  from = aws_wafv2_web_acl_association.alb
+  to   = module.alb_waf_protection.aws_wafv2_web_acl_association.alb
+}
+
+moved {
+  from = aws_cloudwatch_log_group.waf_alb_log_group
+  to   = module.alb_waf_protection.aws_cloudwatch_log_group.waf_alb_log_group
+}
+
+moved {
+  from = aws_cloudwatch_log_subscription_filter.waf_alb_csls_log_subscription
+  to   = module.alb_waf_protection.aws_cloudwatch_log_subscription_filter.waf_alb_csls_log_subscription
+}
+
+moved {
+  from = aws_wafv2_web_acl_logging_configuration.this
+  to   = module.alb_waf_protection.aws_wafv2_web_acl_logging_configuration.this
 }
