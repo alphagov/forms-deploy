@@ -5,11 +5,11 @@ locals {
 }
 
 data "aws_ssm_parameter" "database_password" {
-  name = "/${var.env_name}/database/root-password"
+  name = "/${var.identifier}/database/root-password"
 }
 
 resource "aws_rds_cluster_parameter_group" "aurora_postgres_v13" {
-  name_prefix = "forms-${var.env_name}-pg13"
+  name_prefix = "forms-${var.identifier}-pg13"
   family      = "aurora-postgresql13"
   description = "RDS cluster parameter group for Aurora Serverless for PostgreSQL 13"
 }
@@ -22,7 +22,7 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
   #checkov:skip=CKV_AWS_324:Log capture is not required at this time
   #checkov:skip=CKV_AWS_327:Database is already encrypted with the default key, and we feel this is sufficient
 
-  cluster_identifier = "aurora-v2-cluster-${var.env_name}"
+  cluster_identifier = "aurora-v2-cluster-${var.identifier}"
 
   availability_zones = var.availability_zones
 
@@ -45,7 +45,7 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
   preferred_maintenance_window = var.rds_maintenance_window
 
   skip_final_snapshot       = false
-  final_snapshot_identifier = "forms-${var.env_name}-${local.timestamp_sanitized}"
+  final_snapshot_identifier = "forms-${var.identifier}-${local.timestamp_sanitized}"
   copy_tags_to_snapshot     = true
   storage_encrypted         = true
   backup_retention_period   = var.backup_retention_period

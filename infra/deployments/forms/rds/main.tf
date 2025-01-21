@@ -5,8 +5,10 @@ variable "apply_immediately" {
 }
 
 module "rds" {
-  source   = "../../../modules/rds"
-  env_name = var.environment_name
+  # this is the rds cluster for the forms-admin and forms-api databases
+  source     = "../../../modules/rds"
+  env_name   = var.environment_name
+  identifier = var.environment_name
 
   vpc_id              = data.terraform_remote_state.forms_environment.outputs.vpc_id
   subnet_ids          = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
