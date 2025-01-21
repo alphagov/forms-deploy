@@ -15,8 +15,8 @@ locals {
   # All GOV.UK Forms developers can have admin access to the development
   # and user research accounts.
 
-  envs  = ["deploy", "staging", "production", "development", "user_research", "integration"]
-  roles = ["admin", "support", "readonly"]
+  accounts = ["deploy", "staging", "production", "development", "user_research", "integration"]
+  roles    = ["admin", "support", "readonly"]
 
   users = {
     "alice.carr" = {

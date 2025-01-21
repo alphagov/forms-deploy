@@ -12,7 +12,7 @@ module "ses" {
   from_address   = "no-reply@${var.root_domain}"
   verified_email_addresses = concat(
     [
-      for user in module.users.for_env[var.environment_type] : "${user}@digital.cabinet-office.gov.uk"
+      for user in module.users.for_account[var.environment_type] : "${user}@digital.cabinet-office.gov.uk"
     ],
   )
 }
