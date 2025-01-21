@@ -1,0 +1,20 @@
+variable "environment_name" {
+  description = "The name of the environment. This is distinct from the environment type, but is likely to share the same name in cases like production or staging."
+  type        = string
+  nullable    = false
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_-]+$", var.environment_name))
+    error_message = "variable 'environment_name' must contain only alphanumeric characters, underscores, and hyphens; it must be a valid part of a DNS name"
+  }
+}
+
+variable "ips_to_block" {
+  type        = list(string)
+  description = "List of Origin IPs to block"
+  default     = []
+}
+
+variable "alb_arn" {
+  type        = string
+  description = "ARN of the Application Load Balancer to be protected by AWS WAF"
+}
