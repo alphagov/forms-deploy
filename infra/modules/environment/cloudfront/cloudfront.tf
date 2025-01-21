@@ -24,11 +24,46 @@ data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
 }
 
 module "cloudfront_waf_protection" {
-  source = "../../cloufront_waf_protection"
-  environment_name = var.env_name
-  ips_to_block = var.ips_to_block
-  ip_rate_limit = var.ip_rate_limit
+  source                 = "../../cloufront_waf_protection"
+  environment_name       = var.env_name
+  ips_to_block           = var.ips_to_block
+  ip_rate_limit          = var.ip_rate_limit
   nat_gateway_egress_ips = var.nat_gateway_egress_ips
+
+  providers = {
+    aws           = aws
+    aws.us-east-1 = aws.us-east-1 # Create the certificate in us-east-1 for CloudFront
+  }
+}
+
+moved {
+  from = aws_wafv2_ip_set.system_egress_ips
+  to   = module.cloudfront_waf_protection.aws_wafv2_ip_set.system_egress_ips
+}
+
+moved {
+  from = aws_wafv2_ip_set.ips_to_block
+  to   = module.cloudfront_waf_protection.aws_wafv2_ip_set.ips_to_block
+}
+
+moved {
+  from = aws_wafv2_web_acl.this
+  to   = module.cloudfront_waf_protection.aws_wafv2_web_acl.this
+}
+
+moved {
+  from = aws_cloudwatch_log_group.waf
+  to   = module.cloudfront_waf_protection.aws_cloudwatch_log_group.waf
+}
+
+moved {
+  from = aws_cloudwatch_log_subscription_filter.waf_csls_log_subscription
+  to   = module.cloudfront_waf_protection.aws_cloudwatch_log_subscription_filter.waf_csls_log_subscription
+}
+
+moved {
+  from = aws_wafv2_web_acl_logging_configuration.this
+  to   = module.cloudfront_waf_protection.aws_wafv2_web_acl_logging_configuration.this
 }
 
 resource "aws_cloudfront_distribution" "main" {
