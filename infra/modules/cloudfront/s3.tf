@@ -1,5 +1,5 @@
 module "error_page_bucket" {
-  source = "../../public-bucket"
+  source = "../public-bucket"
   name   = "govuk-forms-${var.env_name}-error-page"
 }
 

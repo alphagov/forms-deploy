@@ -1,6 +1,6 @@
 # The Certificate for CloudFront must be in us-east-1
 module "acm_certificate_with_validation" {
-  source = "../../acm-cert-with-dns-validation"
+  source = "../acm-cert-with-dns-validation"
 
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
@@ -24,7 +24,7 @@ data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
 }
 
 module "cloudfront_waf_protection" {
-  source                 = "../../cloufront_waf_protection"
+  source                 = "../cloufront_waf_protection"
   environment_name       = var.env_name
   ips_to_block           = var.ips_to_block
   ip_rate_limit          = var.ip_rate_limit
