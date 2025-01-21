@@ -36,36 +36,6 @@ module "cloudfront_waf_protection" {
   }
 }
 
-moved {
-  from = aws_wafv2_ip_set.system_egress_ips
-  to   = module.cloudfront_waf_protection.aws_wafv2_ip_set.system_egress_ips
-}
-
-moved {
-  from = aws_wafv2_ip_set.ips_to_block
-  to   = module.cloudfront_waf_protection.aws_wafv2_ip_set.ips_to_block
-}
-
-moved {
-  from = aws_wafv2_web_acl.this
-  to   = module.cloudfront_waf_protection.aws_wafv2_web_acl.this
-}
-
-moved {
-  from = aws_cloudwatch_log_group.waf
-  to   = module.cloudfront_waf_protection.aws_cloudwatch_log_group.waf
-}
-
-moved {
-  from = aws_cloudwatch_log_subscription_filter.waf_csls_log_subscription
-  to   = module.cloudfront_waf_protection.aws_cloudwatch_log_subscription_filter.waf_csls_log_subscription
-}
-
-moved {
-  from = aws_wafv2_web_acl_logging_configuration.this
-  to   = module.cloudfront_waf_protection.aws_wafv2_web_acl_logging_configuration.this
-}
-
 resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_34:viewer_protocol_policy is already redirect-to-https
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
