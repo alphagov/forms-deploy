@@ -231,6 +231,16 @@ resource "aws_codepipeline" "deploy_runner_container" {
   }
 }
 
+module "db_migrate_runner" {
+  source                     = "../../../modules/code-build-build"
+  project_name               = "db_migrate_runner_${var.environment_name}"
+  project_description        = "Run database migrations"
+  environment                = var.environment_name
+  artifact_store_arn         = module.artifact_bucket.arn
+  buildspec                  = file("${path.root}/buildspecs/db-migrate/db-migrate.yml")
+  log_group_name             = "codebuild/db_migrate_runner_${var.environment_name}"
+  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+}
 
 module "generate_forms_runner_container_image_defs" {
   source              = "../../../modules/code-build-build"
