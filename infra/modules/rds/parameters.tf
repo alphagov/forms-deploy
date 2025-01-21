@@ -3,7 +3,7 @@
 resource "aws_ssm_parameter" "database_password_for_root_user" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
-  name        = "/${var.env_name}/database/root-password"
+  name        = "/${var.identifier}/database/root-password"
   description = "Password for the default root user created by Terraform"
   type        = "SecureString"
   value       = "dummy-value"
@@ -66,6 +66,36 @@ resource "aws_ssm_parameter" "database_url_for_forms_api_app" {
 
   name        = "/forms-api-${var.env_name}/database/url"
   description = "URL for connecting to the forms-api database in the ${var.env_name} environment using the forms-api-app user"
+  type        = "SecureString"
+  value       = "dummy-value"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
+resource "aws_ssm_parameter" "database_password_for_forms_runner_app" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
+  name        = "/forms-runner-${var.env_name}/database/password"
+  description = "Password for the forms-runner-app user in the forms-runner database in the ${var.env_name} environment"
+  type        = "SecureString"
+  value       = "dummy-value"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
+resource "aws_ssm_parameter" "database_url_for_forms_runner_app" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
+  name        = "/forms-runner-${var.env_name}/database/url"
+  description = "URL for connecting to the forms-runner database in the ${var.env_name} environment using the forms-runner-app user"
   type        = "SecureString"
   value       = "dummy-value"
 

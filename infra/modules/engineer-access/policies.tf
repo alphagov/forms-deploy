@@ -185,7 +185,8 @@ resource "aws_iam_policy" "manage_parameter_store" {
         ]
         Effect = "Deny"
         Resource = [
-          "arn:aws:ssm:*:*:parameter/${var.env_name}/database/root-password"
+          "arn:aws:ssm:*:*:parameter/${var.env_name}/database/root-password",
+          "arn:aws:ssm:*:*:parameter/forms-runner-${var.env_name}/database/root-password",
         ]
       },
     ]
