@@ -54,9 +54,9 @@ data "archive_file" "invoker" {
 resource "aws_s3_object" "invoker" {
   bucket = module.lambda_bucket.name
 
-  key    = "invoker-lambda.zip"
-  source = data.archive_file.invoker.output_path
-  etag   = filemd5(data.archive_file.invoker.output_path)
+  key         = "invoker-lambda.zip"
+  source      = data.archive_file.invoker.output_path
+  source_hash = data.archive_file.invoker.output_md5
 }
 
 resource "aws_iam_role" "lambda_pipeline_invoker" {

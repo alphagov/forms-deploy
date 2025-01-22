@@ -62,9 +62,9 @@ data "archive_file" "paused_pipeline" {
 resource "aws_s3_object" "paused_pipeline" {
   bucket = module.paused_pipeline_lambda_bucket.name
 
-  key    = "paused-pipeline-lambda.zip"
-  source = data.archive_file.paused_pipeline.output_path
-  etag   = filemd5(data.archive_file.paused_pipeline.output_path)
+  key         = "paused-pipeline-lambda.zip"
+  source      = data.archive_file.paused_pipeline.output_path
+  source_hash = data.archive_file.paused_pipeline.output_md5
 }
 
 ## IAM
@@ -106,8 +106,9 @@ resource "aws_iam_role_policy" "paused_pipeline_allow_sns_publish" {
 
 ## Scheduling
 resource "aws_cloudwatch_event_rule" "paused_pipeline_schedule" {
+  name                = "paused-pipeline-detector-on-${var.environment_name}"
   description         = "Trigger the paused pipeline detection on a schedule"
-  schedule_expression = "rate(12 hours)"
+  schedule_expression = var.paused-pipeline-detection.trigger_schedule_expression
 }
 
 resource "aws_cloudwatch_event_target" "trigger_paused_pipeline_detector" {

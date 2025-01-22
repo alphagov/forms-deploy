@@ -158,3 +158,13 @@ variable "apply-terraform" {
   }
 
 }
+
+variable "paused-pipeline-detection" {
+  description = "Configuration options for the paused pipeline detection"
+  type = object({
+    # How often to run the paused pipeline detector
+    # This should be an Amazon EventBridge schedule expression,
+    # see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule#schedule_expression-1
+    trigger_schedule_expression = string
+  })
+}

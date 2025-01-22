@@ -23,15 +23,7 @@ init_ruby_project(){
 
         rbenv version
 
-        echo "Setting bundler to install gems locally"
-        bundle config set --local path 'vendor/bundle'
-        echo "Excluding development and test dependency groups"
-        bundle config set --local without "development" "test"
-        bundle install
-        echo "Reverting bundler to install gems globally"
-        bundle config set --local system 'true'
-        echo "Reverting bundler to install development and test dependency groups"
-        bundle config unsset --local without
+        BUNDLE_PATH="vendor/bundle" BUNDLE_WITHOUT="development:test" bundle install
     )
 }
 
