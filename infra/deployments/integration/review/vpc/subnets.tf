@@ -9,7 +9,7 @@ locals {
   # The private ranges come afterwards, so that they
   # can expand into the unallocated space if we need
   # them to.
-  availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  availability_zones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
 
   public_ranges = {
     for i, zone in local.availability_zones :
