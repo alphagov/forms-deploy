@@ -3,7 +3,7 @@ output "alb_dns_name" {
   value       = aws_lb.load_balancer.dns_name
 }
 
-output "alb_tls_listener_id" {
-  description = "The id of the ALB listener that listens with the TLS certificate"
-  value       = aws_lb_listener.tls_listener.id
+output "alb_tls_listener_arn" {
+  description = "The ARN of the ALB listener that listens with the TLS certificate"
+  value       = aws_lb_listener.tls_listener.arn
 }
