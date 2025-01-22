@@ -30,6 +30,12 @@ dns_delegation_records = {
     "ns-1524.awsdns-62.org",
     "ns-945.awsdns-54.net",
     "ns-1874.awsdns-42.co.uk",
+  ],
+  "review.forms.service.gov.uk" = [
+    "ns-1234.awsdns-26.org",
+    "ns-1730.awsdns-24.co.uk",
+    "ns-266.awsdns-33.com",
+    "ns-785.awsdns-34.net",
   ]
 }
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
