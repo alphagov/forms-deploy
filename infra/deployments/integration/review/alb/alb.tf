@@ -2,6 +2,7 @@
 # Load balancer
 ##
 resource "aws_lb" "load_balancer" {
+  #checkov:skip=CKV2_AWS_28:WAF protection is configured, but Checkov can't detect it
   name = "review"
 
   load_balancer_type         = "application"
