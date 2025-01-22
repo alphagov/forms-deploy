@@ -108,7 +108,7 @@ resource "aws_iam_role_policy" "paused_pipeline_allow_sns_publish" {
 resource "aws_cloudwatch_event_rule" "paused_pipeline_schedule" {
   name                = "paused-pipeline-detector-on-${var.environment_name}"
   description         = "Trigger the paused pipeline detection on a schedule"
-  schedule_expression = "rate(12 hours)"
+  schedule_expression = var.paused-pipeline-detection.trigger_schedule_expression
 }
 
 resource "aws_cloudwatch_event_target" "trigger_paused_pipeline_detector" {

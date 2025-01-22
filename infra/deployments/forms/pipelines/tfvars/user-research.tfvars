@@ -36,3 +36,7 @@ apply-terraform = {
   previous_stage_name      = "staging"
   disable_end_to_end_tests = true
 }
+
+paused-pipeline-detection = {
+  trigger_schedule_expression = "rate(12 hours)"
+}
