@@ -1,4 +1,4 @@
-##
+  ##
 # Load balancer
 ##
 resource "aws_lb" "load_balancer" {

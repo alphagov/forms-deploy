@@ -27,6 +27,7 @@ additional_dns_records  = []
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:972536609845:connection/de05d028-2cbd-4d06-8946-0e4aca60f4ca"
 container_registry      = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 dlq_arn                 = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+send_logs_to_cyber      = true
 forms_admin_settings = {
   cpu                        = 256
   memory                     = 512

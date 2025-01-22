@@ -12,4 +12,5 @@ module "cloudfront" {
   subject_alternative_names = ["*.review.forms.service.gov.uk"]
   env_name                  = "review"
   nat_gateway_egress_ips    = module.vpc.nat_gateway_egress_ips
+  send_logs_to_cyber        = var.send_logs_to_cyber
 }

@@ -52,3 +52,8 @@ variable "root_domain" {
   type        = string
   description = "The root domain for the service."
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+}

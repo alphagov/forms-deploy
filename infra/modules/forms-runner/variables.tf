@@ -144,3 +144,8 @@ variable "alb_listener_arn" {
   type        = string
   description = "The ARN of the load balancer listener to which forms-runner will be attached"
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+}

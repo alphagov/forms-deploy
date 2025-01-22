@@ -124,7 +124,10 @@ module "file_upload_bucket_logs" {
   source = "../secure-bucket"
   name   = "${local.file_upload_bucket_name}-logs"
 
-  extra_bucket_policies = [data.aws_iam_policy_document.file_upload_bucket_logs.json, module.s3_log_shipping.s3_policy]
+  extra_bucket_policies = flatten([
+    [data.aws_iam_policy_document.file_upload_bucket_logs.json],
+    var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []
+  ])
 }
 
 resource "aws_s3_bucket_logging" "file_upload" {
@@ -157,10 +160,17 @@ data "aws_iam_policy_document" "file_upload_bucket_logs" {
 
 # this is for csls log shipping
 module "s3_log_shipping" {
+  count = var.send_logs_to_cyber ? 1 : 0
+
   # Double slash after .git in the module source below is required
   # https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
   source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules.git//s3/s3_log_shipping?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
   s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
   s3_name                  = module.file_upload_bucket_logs.name
+}
+
+moved {
+  from = module.s3_log_shipping
+  to   = module.s3_log_shipping[0]
 }
 

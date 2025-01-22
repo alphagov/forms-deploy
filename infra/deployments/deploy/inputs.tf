@@ -9,3 +9,9 @@ variable "codestar_connection_arn" {
   type        = string
   default     = "arn:aws:codestar-connections:eu-west-2:711966560482:connection/8ad08da2-743c-4431-bee6-ad1ae9efebe7"
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+  default     = true
+}
