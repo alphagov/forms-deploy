@@ -24,3 +24,8 @@ variable "nat_gateway_egress_ips" {
   type        = list(string)
   description = "The IP addresses of all the NAT gateways used for traffic to exit the GOV.UK Forms VPC"
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+}

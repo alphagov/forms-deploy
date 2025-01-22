@@ -13,11 +13,3 @@ resource "aws_vpc" "vpc" {
 resource "aws_default_security_group" "no_access" {
   vpc_id = aws_vpc.vpc.id
 }
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.vpc.id
-
-  tags = {
-    Name = "review"
-  }
-}

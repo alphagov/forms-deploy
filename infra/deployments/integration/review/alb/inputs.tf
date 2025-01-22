@@ -17,3 +17,8 @@ variable "subnet_ids" {
     error_message = "There must be at least one subnet id"
   }
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+}

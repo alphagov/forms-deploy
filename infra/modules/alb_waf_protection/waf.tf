@@ -60,10 +60,17 @@ resource "aws_cloudwatch_log_group" "waf_alb_log_group" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "waf_alb_csls_log_subscription" {
+  count = var.send_logs_to_cyber ? 1 : 0
+
   name            = "waf_alb_csls_log_subscription"
   log_group_name  = aws_cloudwatch_log_group.waf_alb_log_group.name
   filter_pattern  = ""
   destination_arn = "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+}
+
+moved {
+  from = aws_cloudwatch_log_subscription_filter.waf_alb_csls_log_subscription
+  to   = aws_cloudwatch_log_subscription_filter.waf_alb_csls_log_subscription[0]
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "this" {

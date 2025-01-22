@@ -56,4 +56,5 @@ module "forms_runner" {
   ecs_cluster_arn                             = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_arn
   alb_arn_suffix                              = data.terraform_remote_state.forms_environment.outputs.alb_arn_suffix
   alb_listener_arn                            = data.terraform_remote_state.forms_environment.outputs.alb_main_listener_arn
+  send_logs_to_cyber                          = var.send_logs_to_cyber
 }

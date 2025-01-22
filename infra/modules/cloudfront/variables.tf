@@ -34,3 +34,8 @@ variable "ips_to_block" {
   description = "List of Origin IPs to block"
   default     = []
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+}

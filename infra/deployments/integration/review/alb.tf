@@ -1,9 +1,10 @@
 module "alb" {
   source = "./alb"
 
-  vpc_id         = module.vpc.vpc_id
-  vpc_cidr_block = module.vpc.vpc_cidr_block
-  subnet_ids     = module.vpc.public_subnet_ids
+  vpc_id             = module.vpc.vpc_id
+  vpc_cidr_block     = module.vpc.vpc_cidr_block
+  subnet_ids         = module.vpc.public_subnet_ids
+  send_logs_to_cyber = var.send_logs_to_cyber
 
   providers = {
     aws           = aws

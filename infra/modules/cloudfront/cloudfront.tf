@@ -29,6 +29,7 @@ module "cloudfront_waf_protection" {
   ips_to_block           = var.ips_to_block
   ip_rate_limit          = var.ip_rate_limit
   nat_gateway_egress_ips = var.nat_gateway_egress_ips
+  send_logs_to_cyber     = var.send_logs_to_cyber
 
   providers = {
     aws           = aws
