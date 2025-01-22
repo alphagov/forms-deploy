@@ -62,9 +62,9 @@ data "archive_file" "paused_pipeline" {
 resource "aws_s3_object" "paused_pipeline" {
   bucket = module.paused_pipeline_lambda_bucket.name
 
-  key    = "paused-pipeline-lambda.zip"
-  source = data.archive_file.paused_pipeline.output_path
-  etag   = filemd5(data.archive_file.paused_pipeline.output_path)
+  key         = "paused-pipeline-lambda.zip"
+  source      = data.archive_file.paused_pipeline.output_path
+  source_hash = data.archive_file.paused_pipeline.output_md5
 }
 
 ## IAM
