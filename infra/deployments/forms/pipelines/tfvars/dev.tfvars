@@ -50,5 +50,5 @@ apply-terraform = {
 }
 
 paused-pipeline-detection = {
-  trigger_schedule_expression = "rate(12 hours)"
+  trigger_schedule_expression = "rate(48 hours)"
 }
