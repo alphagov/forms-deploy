@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   #The AWS managed account for the ALB, see: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-access-logging.html
   aws_lb_account_id = "652711504416"
@@ -6,8 +8,11 @@ locals {
 module "access_logs_bucket" {
   source = "../../../../modules/secure-bucket"
 
-
   name = "govuk-forms-review-alb-access-logs"
+  extra_bucket_policies = flatten([
+    [data.aws_iam_policy_document.allow_logs.json],
+    var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []
+  ])
 }
 
 data "aws_iam_policy_document" "allow_logs" {
