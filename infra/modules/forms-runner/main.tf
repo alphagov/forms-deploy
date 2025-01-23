@@ -82,7 +82,8 @@ module "ecs_service" {
     scale_out_cooldown                          = 45
   }
 
-  ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
+  ecs_task_role_policy_json     = data.aws_iam_policy_document.ecs_task_role_permissions.json
+  additional_task_role_assumers = var.additional_forms_runner_role_assumers
 
   environment_variables = [
     {
