@@ -177,17 +177,18 @@ variable "forms_product_page_settings" {
 variable "forms_runner_settings" {
   description = "Forms Runner configuration values"
   type = object({
-    cpu                                                         = number
-    memory                                                      = number
-    min_capacity                                                = number
-    max_capacity                                                = number
-    enable_maintenance_mode                                     = bool
-    cloudwatch_metrics_enabled                                  = bool
-    analytics_enabled                                           = bool
-    api_v2_enabled                                              = bool
-    allow_human_readonly_roles_to_assume_submissions_to_s3_role = bool
-    ses_submission_email_from_email_address                     = string
-    ses_submission_email_reply_to_email_address                 = string
+    cpu                                                             = number
+    memory                                                          = number
+    min_capacity                                                    = number
+    max_capacity                                                    = number
+    enable_maintenance_mode                                         = bool
+    cloudwatch_metrics_enabled                                      = bool
+    analytics_enabled                                               = bool
+    api_v2_enabled                                                  = bool
+    allow_human_readonly_roles_to_assume_submissions_to_s3_role     = bool
+    allow_human_readonly_roles_to_assume_submissions_to_runner_role = bool
+    ses_submission_email_from_email_address                         = string
+    ses_submission_email_reply_to_email_address                     = string
   })
 }
 
