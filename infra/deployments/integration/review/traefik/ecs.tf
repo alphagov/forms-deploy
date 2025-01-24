@@ -1,6 +1,6 @@
 locals {
   http_port = 80
-  api_port  = 8080
+  ping_port  = 8080
 }
 
 resource "aws_ecs_task_definition" "traefik" {
@@ -10,8 +10,11 @@ resource "aws_ecs_task_definition" "traefik" {
       name = "traefik",
       command = [
         "--log.level=INFO",
+        "--log.format=json",
         "--ping",
-        "--ping.entrypoint=http",
+        "--ping.entryPoint=ping",
+        "--entryPoints.ping.address=:${local.ping_port}",
+        "--entryPoints.http.address=:${local.http_port}"
       ]
 
       environment = [],
@@ -22,7 +25,7 @@ resource "aws_ecs_task_definition" "traefik" {
           containerPort = local.http_port,
         },
         {
-          containerPort = local.api_port
+          containerPort = local.ping_port
         }
       ],
       logConfiguration = {

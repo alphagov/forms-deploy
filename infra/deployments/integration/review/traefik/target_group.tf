@@ -10,7 +10,7 @@ resource "aws_lb_target_group" "tg" {
 
   health_check {
     path     = "/ping"
-    port     = local.api_port
+    port     = local.ping_port
     matcher  = "200"
     protocol = "HTTP"
 
