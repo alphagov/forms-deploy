@@ -15,7 +15,7 @@ variable "alb_tls_listener_arn" {
 
 variable "subnet_ids" {
   description = "The subnet ids required for the ECS service network configuration"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "cidr_block" {

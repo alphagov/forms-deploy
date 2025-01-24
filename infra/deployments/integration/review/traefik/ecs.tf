@@ -1,14 +1,28 @@
+locals {
+  http_port = 80
+  api_port  = 8080
+}
+
 resource "aws_ecs_task_definition" "traefik" {
-  family                = "traefik"
+  family = "traefik"
   container_definitions = jsonencode([
     {
-      name        = "traefik",
+      name = "traefik",
+      command = [
+        "--log.level=INFO",
+        "--ping",
+        "--ping.entrypoint=http",
+      ]
+
       environment = [],
-      image       = "traefik:3.3.2"
+      image       = "public.ecr.aws/docker/library/traefik:3.3.2"
       essential   = true,
       portMappings = [
         {
-          containerPort = 80,
+          containerPort = local.http_port,
+        },
+        {
+          containerPort = local.api_port
         }
       ],
       logConfiguration = {
@@ -42,7 +56,7 @@ resource "aws_ecs_service" "traefik" {
   #checkov:skip=CKV_AWS_332:We don't want to target "LATEST" and get a surprise when a new version is released.
   name                               = "traefik"
   cluster                            = var.ecs_cluster_arn
-  task_definition                    = "${aws_ecs_task_definition.traefik.family}:${aws_ecs_task_definition.traefik.revision}"
+  task_definition                    = aws_ecs_task_definition.traefik.arn
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
 
@@ -54,12 +68,12 @@ resource "aws_ecs_service" "traefik" {
   load_balancer {
     target_group_arn = aws_lb_target_group.tg.arn
     container_name   = "traefik"
-    container_port   = 80
+    container_port   = local.http_port
   }
 
   network_configuration {
     subnets          = var.subnet_ids
-    security_groups  = [aws_security_group.traefik.id]  
+    security_groups  = [aws_security_group.traefik.id]
     assign_public_ip = false
   }
 }

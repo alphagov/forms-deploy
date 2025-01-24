@@ -36,6 +36,7 @@ resource "aws_iam_role_policy_attachment" "traefik_ecs" {
 }
 
 data "aws_iam_policy_document" "traefik_ecs_permissions" {
+  #checkov:skip=CKV_AWS_356:"*" is necessary here, and all of the actions are read-only.
   statement {
     sid = "AllowECSDiscovery"
     actions = [
@@ -50,34 +51,6 @@ data "aws_iam_policy_document" "traefik_ecs_permissions" {
     ]
     effect    = "Allow"
     resources = ["*"]
-  }
-
-  statement {
-    sid = "AllowParameterRetrieval"
-    actions = [
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:GetParametersByPath",
-    ]
-
-    resources = [
-      "arn:aws:ssm:eu-west-2:842676007477:parameter/review/docker/*"
-    ]
-
-    effect = "Allow"
-  }
-
-  statement {
-    sid = "AllowECSAccessDockerCreds"
-    actions = [
-      "kms:Decrypt"
-    ]
-
-    resources = [
-      "arn:aws:ssm:eu-west-2:842676007477:parameter/review/docker/*"
-    ]
-
-    effect = "Allow"
   }
 }
 

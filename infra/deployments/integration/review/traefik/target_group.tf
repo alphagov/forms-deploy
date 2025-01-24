@@ -1,7 +1,7 @@
 resource "aws_lb_target_group" "tg" {
   #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our VPC and we do not want the complexity cost of setting up TLS between the load balancer and Traefik
   name        = "review-traefik"
-  port        = 80
+  port        = local.http_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
@@ -10,6 +10,7 @@ resource "aws_lb_target_group" "tg" {
 
   health_check {
     path     = "/ping"
+    port     = local.api_port
     matcher  = "200"
     protocol = "HTTP"
 
