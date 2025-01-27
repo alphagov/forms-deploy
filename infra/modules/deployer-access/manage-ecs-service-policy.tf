@@ -82,7 +82,8 @@ data "aws_iam_policy_document" "ecs" {
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies"
+      "iam:ListAttachedRolePolicies",
+      "iam:UpdateAssumeRolePolicy"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-forms-admin-ecs-task",
