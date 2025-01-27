@@ -1,6 +1,6 @@
 locals {
   http_port = 80
-  ping_port  = 8080
+  ping_port = 8080
 }
 
 resource "aws_ecs_task_definition" "traefik" {
@@ -14,7 +14,10 @@ resource "aws_ecs_task_definition" "traefik" {
         "--ping",
         "--ping.entryPoint=ping",
         "--entryPoints.ping.address=:${local.ping_port}",
-        "--entryPoints.http.address=:${local.http_port}"
+        "--entryPoints.http.address=:${local.http_port}",
+
+        "--providers.ecs.clusters=${join(",", var.ecs_clusters_to_scan)}",
+        "--providers.ecs.exposedByDefault=false",
       ]
 
       environment = [],
@@ -36,6 +39,7 @@ resource "aws_ecs_task_definition" "traefik" {
           awslogs-stream-prefix = aws_cloudwatch_log_group.log.name
         }
       },
+      readonlyRootFilesystem = true
     }
 
   ])
@@ -57,6 +61,7 @@ resource "aws_ecs_task_definition" "traefik" {
 
 resource "aws_ecs_service" "traefik" {
   #checkov:skip=CKV_AWS_332:We don't want to target "LATEST" and get a surprise when a new version is released.
+  #checkov:skip=CKV2_FORMS_AWS_2:We will not be autoscaling this service
   name                               = "traefik"
   cluster                            = var.ecs_cluster_arn
   task_definition                    = aws_ecs_task_definition.traefik.arn

@@ -1,3 +1,7 @@
+variable "ecs_clusters_to_scan" {
+  description = "The names of the ECS clusters which Traefik should be scanning"
+  type        = list(string)
+}
 variable "ecs_cluster_arn" {
   description = "ARN of the ECS cluster in which to run Traefik"
   type        = string
