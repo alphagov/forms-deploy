@@ -18,3 +18,8 @@ variable "alb_arn" {
   type        = string
   description = "ARN of the Application Load Balancer to be protected by AWS WAF"
 }
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
+}

@@ -1,6 +1,7 @@
 module "cloudfront" {
-  count  = var.enable_cloudfront ? 1 : 0
-  source = "./cloudfront"
+  count              = var.enable_cloudfront ? 1 : 0
+  source             = "../cloudfront"
+  send_logs_to_cyber = var.send_logs_to_cyber
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1 # Create the certificate in us-east-1 for CloudFront

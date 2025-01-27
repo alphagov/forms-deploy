@@ -91,6 +91,11 @@ variable "additional_submissions_to_s3_role_assumers" {
   description = "A list of role ARNs which are also allowed to assume the role for submissions to s3"
 }
 
+variable "additional_forms_runner_role_assumers" {
+  type        = list(string)
+  description = "A list of role ARNs which are also allowed to assume the role used to run forms-runner in ECS"
+}
+
 variable "ses_submission_email_from_email_address" {
   type        = string
   description = "The email address SES sends submission emails from"
@@ -143,4 +148,9 @@ variable "alb_arn_suffix" {
 variable "alb_listener_arn" {
   type        = string
   description = "The ARN of the load balancer listener to which forms-runner will be attached"
+}
+
+variable "send_logs_to_cyber" {
+  description = "Whether logs should be sent to cyber"
+  type        = bool
 }

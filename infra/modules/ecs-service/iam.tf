@@ -6,12 +6,35 @@ resource "aws_iam_role" "ecs_task_role" {
 
 data "aws_iam_policy_document" "ecs_task_role_assume_role" {
   statement {
+    sid     = "AllowECS"
     actions = ["sts:AssumeRole"]
     effect  = "Allow"
 
     principals {
       type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+
+  # This is a workaround.
+  #
+  # AWS policy principals must have >0 elements, but our list might be empty.
+  # So we use a dynamic block to exclude the statement altogether if it is.
+  #
+  # The use of "for_each" substitutes for the lack of a built-in conditional
+  # for dynamic blocks.
+  dynamic "statement" {
+    for_each = length(var.additional_task_role_assumers) > 0 ? [1] : []
+
+    content {
+      sid     = "AllowOthers"
+      actions = ["sts:AssumeRole"]
+      effect  = "Allow"
+
+      principals {
+        type        = "AWS"
+        identifiers = var.additional_task_role_assumers
+      }
     }
   }
 }

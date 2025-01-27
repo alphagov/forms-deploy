@@ -25,6 +25,12 @@ locals {
     ) : (
     []
   )
+
+  allowed_forms_runner_role_assumers = var.forms_runner_settings.allow_human_readonly_roles_to_assume_submissions_to_runner_role ? (
+    [for role in data.aws_iam_role.readonly_people_roles : role.arn]
+    ) : (
+    []
+  )
 }
 
 module "forms_runner" {
@@ -47,6 +53,7 @@ module "forms_runner" {
   ses_submission_email_from_email_address     = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address = var.forms_runner_settings.ses_submission_email_reply_to_email_address
   additional_submissions_to_s3_role_assumers  = local.allowed_submissions_to_s3_role_assumers
+  additional_forms_runner_role_assumers       = local.allowed_forms_runner_role_assumers
   elasticache_port                            = data.terraform_remote_state.redis.outputs.elasticache_port
   elasticache_primary_endpoint_address        = data.terraform_remote_state.redis.outputs.elasticache_primary_endpoint_address
   container_repository                        = "${var.container_registry}/forms-runner-deploy"
@@ -56,4 +63,5 @@ module "forms_runner" {
   ecs_cluster_arn                             = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_arn
   alb_arn_suffix                              = data.terraform_remote_state.forms_environment.outputs.alb_arn_suffix
   alb_listener_arn                            = data.terraform_remote_state.forms_environment.outputs.alb_main_listener_arn
+  send_logs_to_cyber                          = var.send_logs_to_cyber
 }

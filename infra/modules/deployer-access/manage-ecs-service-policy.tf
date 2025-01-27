@@ -100,15 +100,11 @@ data "aws_iam_policy_document" "ecs" {
   statement {
     sid = "ManageEcsExecutionPolicies"
     actions = [
-      "iam:CreatePolicy",
-      "iam:CreatePolicyVersion",
-      "iam:GetRolePolicy",
-      "iam:GetPolicy",
-      "iam:TagPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyVersions",
-      "iam:DeletePolicy",
-      "iam:DeletePolicyVersion"
+      "iam:*Policy",
+      "iam:*PolicyVersion",
+      "iam:*PolicyVersions",
+      "iam:*RolePolicy",
+      "iam:*AssumeRolePolicy"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-execution-additional",
@@ -122,15 +118,11 @@ data "aws_iam_policy_document" "ecs" {
   statement {
     sid = "ManageEcsTaskPolicies"
     actions = [
-      "iam:CreatePolicy",
-      "iam:CreatePolicyVersion",
-      "iam:GetRolePolicy",
-      "iam:GetPolicy",
-      "iam:TagPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyVersions",
-      "iam:DeletePolicy",
-      "iam:DeletePolicyVersion"
+      "iam:*Policy",
+      "iam:*PolicyVersion",
+      "iam:*PolicyVersions",
+      "iam:*RolePolicy",
+      "iam:*AssumeRolePolicy"
     ]
     resources = [
       "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-forms-admin-ecs-task-policy",

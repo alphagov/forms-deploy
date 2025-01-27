@@ -92,6 +92,12 @@ variable "ecs_task_role_policy_json" {
   default     = ""
 }
 
+variable "additional_task_role_assumers" {
+  type        = list(string)
+  description = "The list of IAM role ARNs who should be trusted to assume the ECS task role"
+  default     = []
+}
+
 variable "pre_deploy_script" {
   type        = string
   description = <<EOF
