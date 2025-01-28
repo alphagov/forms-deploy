@@ -9,8 +9,9 @@ require "aws-sdk-rdsdataservice"
 
 # Executes statements on AWS RDS using the Data API.
 class DataApiConnection
-  def initialize(database_name)
+  def initialize(database_name, cluster_name)
     @database_name = database_name
+    @cluster_name = cluster_name
 
     @data_service = Aws::RDSDataService::Client.new
     @rds = Aws::RDS::Client.new
@@ -51,7 +52,12 @@ private
   end
 
   def query_database_cluster_arn
-    arn = @rds.describe_db_clusters&.db_clusters&.[](0)&.db_cluster_arn
+    params = {
+      filters: [
+        { key: "db-cluster-id", values: [@cluster_name] },
+      ],
+    }
+    arn = @rds.describe_db_clusters(params)&.db_clusters&.[](0)&.db_cluster_arn
 
     raise "Database cluster was not be found" if arn.nil?
 

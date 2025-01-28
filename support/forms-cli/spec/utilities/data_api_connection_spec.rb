@@ -49,7 +49,7 @@ describe DataApiConnection do
   end
 
   it "set correct rds cluster arn" do
-    described_class.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api", "cluster-arn").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
@@ -57,8 +57,17 @@ describe DataApiConnection do
       .at_least(:once)
   end
 
+  it "set incorrect rds cluster arn" do
+    described_class.new("forms-api", "cluster-that-does-not-exist").execute_statement("select * from testing;")
+
+    expect(data_api_mock)
+      .to have_received(:execute_statement)
+      .with(hash_including(resource_arn: "failfalijfldsfmskld"))
+      .at_least(:once)
+  end
+
   it "database_name is correctly passed to secrets manager" do
-    described_class.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api", "cluster-arn").execute_statement("select * from testing;")
 
     expect(secrets_manager_mock)
       .to have_received(:list_secrets)
@@ -67,7 +76,7 @@ describe DataApiConnection do
   end
 
   it "database_name is correctly passed to data api" do
-    described_class.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api", "cluster-arn").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
@@ -76,7 +85,7 @@ describe DataApiConnection do
   end
 
   it "statement is correctly passed" do
-    described_class.new("forms-api").execute_statement("select * from testing;")
+    described_class.new("forms-api", "cluster-arn").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
@@ -85,7 +94,7 @@ describe DataApiConnection do
   end
 
   it "parses records returned into an array of hashes" do
-    response = described_class.new("forms-api").execute_statement("select * from testing;")
+    response = described_class.new("forms-api", "cluster-arn").execute_statement("select * from testing;")
 
     expect(response.formatted_records).to eq('[{"id": 1, "name": "some-form"}]')
     expect(response.records).to eq([{ id: 1, name: "some-form" }])
