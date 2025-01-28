@@ -448,6 +448,59 @@ data "aws_iam_policy_document" "pipelines" {
   }
 
   statement {
+    sid    = "ManageMalwareProtectionRoleforS3"
+    effect = "Allow"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:GetRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:PassRole",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
+      "iam:UpdateRole",
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/malware-protection-for-s3"
+    ]
+  }
+
+  statement {
+    sid    = "ManageMalwareProtectionPoliciesforS3"
+    effect = "Allow"
+    actions = [
+      "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
+      "iam:TagPolicy",
+      "iam:UntagPolicy",
+    ]
+    resources = [
+      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/allow-malware-scanning-for-s3"
+    ]
+  }
+
+  statement {
+    sid    = "ManageMalwareProtectionPlan"
+    effect = "Allow"
+    actions = [
+      "guardduty:CreateMalwareProtectionPlan",
+      "guardduty:DeleteMalwareProtectionPlan",
+      "guardduty:GetMalwareProtectionPlan",
+      "guardduty:TagResource",
+      "guardduty:UntagResource",
+      "guardduty:UpdateMalwareProtectionPlan",
+    ]
+    resources = [
+      "arn:aws:guardduty:eu-west-2:${lookup(local.account_ids, var.env_name)}:malware-protection-plan/*"
+    ]
+  }
+
+  statement {
     sid    = "ManageLambdaFunctions"
     effect = "Allow"
     actions = [
