@@ -64,3 +64,18 @@ variable "rds_maintenance_window" {
   description = "When planned maintenance will take place such as minor and major version upgrades"
   default     = "wed:04:00-wed:04:30"
 }
+
+variable "identifier" {
+  type        = string
+  description = "The identifier or name of the cluster and its related parts"
+}
+
+variable "apps_list" {
+  type        = list(string)
+  description = "List of the apps that the cluster db is for. Used for the creation of app specific parameters"
+}
+
+variable "database_identifier" {
+  type        = string
+  description = "The name of the database in the cluster"
+}
