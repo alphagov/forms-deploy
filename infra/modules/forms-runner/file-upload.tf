@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "forms_runner_file_upload" {
       "s3:GetObjectVersion",
       "s3:ListBucket",
       "s3:PutObject",
-      "s3:*Tagging"
+      "s3:GetObjectTagging",
     ]
     resources = [
       "arn:aws:s3:::${local.file_upload_bucket_name}",
