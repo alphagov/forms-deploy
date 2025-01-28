@@ -83,7 +83,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.environment_accounts_id :
+        for _, id in module.all-accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -126,7 +126,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.environment_accounts_id :
+        for _, id in module.all-accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -169,7 +169,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.environment_accounts_id :
+        for _, id in module.all-accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -211,7 +211,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.environment_accounts_id :
+        for _, id in module.all-accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -254,7 +254,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_end_to_end_tests" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.environment_accounts_id :
+        for _, id in module.all-accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
