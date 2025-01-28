@@ -95,7 +95,8 @@ resource "aws_iam_policy" "query_rds_with_data_api" {
         Effect = "Allow"
         Resource = [
           "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-api-app/*",
-          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-admin-app/*"
+          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-admin-app/*",
+          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-runner-app/*"
         ]
       },
     ]
