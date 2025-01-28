@@ -6,7 +6,6 @@
     "footerLinkText": "Create an account",
     "invitationTitle": "You've been invited!",
     "invitationDescription": "Sign in to accept ${inviterName}'s invitation to join ${companyName} on ${clientName}.",
-    "invalid-email-format": "Enter your email address in the correct format",
     "custom-script-error-code": "Something went wrong, please try again later",
     "authentication-failure": "We are sorry, something went wrong when attempting to sign in",
     "ip-blocked": "We have detected suspicious sign in behaviour and further attempts will be blocked. Please contact the GOV\u2060.\u2060UK Forms team.",
