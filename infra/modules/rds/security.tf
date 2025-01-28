@@ -1,10 +1,10 @@
 resource "aws_security_group" "rds" {
-  name        = "forms-rds-${var.env_name}"
+  name        = "forms-rds-${var.identifier}"
   description = "forms security group for rds in ${var.env_name}"
   vpc_id      = var.vpc_id
 
   tags = {
-    Name = "forms-rds-${var.env_name}"
+    Name = "forms-rds-${var.identifier}"
   }
 }
 
