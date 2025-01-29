@@ -11,6 +11,21 @@ module "file_upload_bucket" {
   AES256_encryption_configuration = false
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  bucket = module.file_upload_bucket.name
+
+  rule {
+    id     = "expire_all_files"
+    status = "Enabled"
+    expiration {
+      days = 30
+    }
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 30
+    }
+  }
+}
+
 module "users" {
   source = "../users"
 }
