@@ -42,6 +42,7 @@ data "aws_iam_policy_document" "forms_runner_file_upload" {
       "s3:GetObjectVersion",
       "s3:ListBucket",
       "s3:PutObject",
+      "s3:DeleteObject",
       "s3:GetObjectTagging",
     ]
     resources = [
