@@ -41,7 +41,7 @@ resource "aws_nat_gateway" "nat_gw" {
   for_each = toset(local.availability_zones)
 
   allocation_id = aws_eip.nat_eip[each.value].id
-  subnet_id     = aws_subnet.private[each.value].id
+  subnet_id     = aws_subnet.public[each.value].id
 
   tags = {
     Name = "review-${each.value}"
