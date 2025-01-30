@@ -8,7 +8,18 @@ output "ecs_cluster_id" {
   value       = aws_ecs_cluster.review.id
 }
 
+output "private_subnet_ids" {
+  description = "The ids of all private subnets within the VPC. Used by applications deploying to the review environment to place ECS tasks."
+  value       = module.vpc.private_subnet_ids
+}
+
+output "review_apps_security_group_id" {
+  description = "The id of the security group to be used by review apps"
+  value       = aws_security_group.review_apps.id
+}
+
 output "forms_admin_container_repo_url" {
   description = "The URL of the forms admin container repository"
   value       = module.forms_admin_container_repo.url
 }
+
