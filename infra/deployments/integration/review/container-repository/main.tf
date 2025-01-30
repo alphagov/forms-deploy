@@ -32,3 +32,33 @@ data "aws_ecr_lifecycle_policy_document" "lifecycle" {
     }
   }
 }
+
+resource "aws_ecr_repository_policy" "policy" {
+  repository = aws_ecr_repository.repository.name
+  policy     = data.aws_iam_policy_document.repo_policy.json
+}
+
+data "aws_iam_policy_document" "repo_policy" {
+  statement {
+    sid    = "AllowAllRolesAccess"
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:CompleteLayerUpload",
+      "ecr:GetAuthorizationToken",
+      "ecr:GetAuthorizationToken",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:InitiateLayerUpload",
+      "ecr:PutImage",
+      "ecr:UploadLayerPart"
+    ]
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.caller.account_id}:root"
+      ]
+    }
+  }
+}
