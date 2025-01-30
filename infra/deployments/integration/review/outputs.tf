@@ -18,6 +18,11 @@ output "review_apps_security_group_id" {
   value       = aws_security_group.review_apps.id
 }
 
+output "review_apps_log_group_name" {
+  description = "The CloudWatch log group to which review apps should send their logs"
+  value       = aws_cloudwatch_log_group.review_apps.name
+}
+
 output "forms_admin_container_repo_url" {
   description = "The URL of the forms admin container repository"
   value       = module.forms_admin_container_repo.url
