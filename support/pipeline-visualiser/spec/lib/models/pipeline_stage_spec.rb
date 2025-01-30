@@ -14,6 +14,11 @@ describe PipelineStage do
         pipeline_execution_id: "execution-2",
         status: "Failed",
       ),
+      inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+        enabled: false,
+        disabled_reason: "Paused",
+        last_changed_at: Time.now - (1 * 60 * 60), # 1 hour ago
+      ),
       action_states: [
         Aws::CodePipeline::Types::ActionState.new(
           action_name: "action-1",
@@ -47,6 +52,15 @@ describe PipelineStage do
   it "is not outdated if the current execution id matches the latest execution id" do
     pipeline_stage = described_class.new(codepipeline_stage, "execution-2")
     expect(pipeline_stage.outdated).to be false
+  end
+
+  it "is paused when the inbound transition state is disabled" do
+    expect(pipeline_stage.paused).to be true
+  end
+
+  it "is not paused when the inbound transition state is enabled" do
+    codepipeline_stage.inbound_transition_state.enabled = true
+    expect(pipeline_stage.paused).to be false
   end
 
   describe "when stage state not Failed" do

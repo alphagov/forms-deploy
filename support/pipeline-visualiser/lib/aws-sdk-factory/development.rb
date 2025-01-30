@@ -61,12 +61,18 @@ class DevelopmentAWSSDKFactory
               pipeline_execution_id: "execution-1",
               status: "Succeeded",
             ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
+            ),
           ),
           Aws::CodePipeline::Types::StageState.new(
             stage_name: "stage_2",
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-1",
               status: "Failed",
+            ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
             ),
             action_states: [
               Aws::CodePipeline::Types::ActionState.new(
@@ -83,6 +89,11 @@ class DevelopmentAWSSDKFactory
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-1",
               status: "Failed",
+            ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: false,
+              disabled_reason: "Paused while we debug",
+              last_changed_at: Time.now - (1 * 60 * 60), # 1 hour ago,
             ),
             action_states: [
               Aws::CodePipeline::Types::ActionState.new(
@@ -103,6 +114,9 @@ class DevelopmentAWSSDKFactory
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-2",
               status: "Succeeded",
+            ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
             ),
           ),
         ],
@@ -137,6 +151,9 @@ class DevelopmentAWSSDKFactory
               pipeline_execution_id: "execution-1",
               status: "Succeeded",
             ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
+            ),
           ),
           Aws::CodePipeline::Types::StageState.new(
             stage_name: "stage_2",
@@ -144,12 +161,18 @@ class DevelopmentAWSSDKFactory
               pipeline_execution_id: "execution-1",
               status: "InProgress",
             ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
+            ),
           ),
           Aws::CodePipeline::Types::StageState.new(
             stage_name: "stage_3",
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-2",
               status: "Succeeded",
+            ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
             ),
           ),
         ],
@@ -229,12 +252,20 @@ class DevelopmentAWSSDKFactory
               pipeline_execution_id: "execution-1",
               status:,
             ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: true,
+            ),
           ),
           Aws::CodePipeline::Types::StageState.new(
             stage_name: "stage_2",
             latest_execution: Aws::CodePipeline::Types::StageExecution.new(
               pipeline_execution_id: "execution-1",
               status:,
+            ),
+            inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+              enabled: false,
+              disabled_reason: "Paused",
+              last_changed_at: Time.now - (1 * 60 * 60), # 1 hour ago
             ),
           ),
         ],
