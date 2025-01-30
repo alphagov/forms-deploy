@@ -2,7 +2,7 @@ require "active_support"
 require "active_support/duration"
 
 class PipelineSummary
-  attr_accessor :name, :execution_id, :last_started_at, :status, :gds_cli_role, :variables, :artifacts, :stages, :running_duration, :current_stage_name, :first_failing_stage_name, :first_failing_stage_error_message
+  attr_accessor :name, :execution_id, :last_started_at, :status, :gds_cli_role, :variables, :artifacts, :stages, :running_duration, :current_stage_name, :first_failing_stage_name, :first_failing_stage_error_message, :paused
 
   # @param [Aws::CodePipeline::Types::GetPipelineStateOutput] codepipeline_state
   # @param [Aws::CodePipeline::Types::PipelineExecutionSummary] codepipeline_execution
@@ -12,6 +12,7 @@ class PipelineSummary
     @execution_id = codepipeline_execution.pipeline_execution_id
     @last_started_at = last_started_at
     @status = codepipeline_execution.status
+    @paused = codepipeline_state.stage_states.any? { |stage| !stage.inbound_transition_state.enabled }
 
     vars = codepipeline_execution.variables || []
     @variables = vars.map { |var| [var.name, var.resolved_value] }.to_h

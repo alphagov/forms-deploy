@@ -20,6 +20,9 @@ describe PipelineSummary do
             pipeline_execution_id: "execution-1",
             status: "Succeeded",
           ),
+          inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+            enabled: true,
+          ),
         ),
         Aws::CodePipeline::Types::StageState.new(
           stage_name: "stage_2",
@@ -27,12 +30,18 @@ describe PipelineSummary do
             pipeline_execution_id: "execution-1",
             status: "InProgress",
           ),
+          inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+            enabled: true,
+          ),
         ),
         Aws::CodePipeline::Types::StageState.new(
           stage_name: "stage_3",
           latest_execution: Aws::CodePipeline::Types::StageExecution.new(
             pipeline_execution_id: "execution-1",
             status: "Failed",
+          ),
+          inbound_transition_state: Aws::CodePipeline::Types::TransitionState.new(
+            enabled: true,
           ),
           action_states: [
             Aws::CodePipeline::Types::ActionState.new(
@@ -82,7 +91,7 @@ describe PipelineSummary do
     expect(pipeline_summary.execution_id).to eq "execution-1"
   end
 
-  it "last start time comes from the paased-in start time" do
+  it "last start time comes from the passed-in start time" do
     expect(pipeline_summary.last_started_at).to eq last_start_at
   end
 
@@ -174,6 +183,26 @@ describe PipelineSummary do
 
     it "first_failing_stage_error_message is the error message coming from the first failing stage" do
       expect(pipeline_summary.first_failing_stage_error_message).to eq "AN ERROR MESSAGE"
+    end
+  end
+
+  context "when one or more stages have disabled inbound transitions" do
+    before do
+      codepipeline_state.stage_states[1].inbound_transition_state = Aws::CodePipeline::Types::TransitionState.new(
+        enabled: false,
+        disabled_reason: "For testing purposes",
+        last_changed_at: Time.now - (1 * 60 * 60), # 1 hour ago
+      )
+    end
+
+    it "the pipeline summary shows paused" do
+      expect(pipeline_summary.paused).to be true
+    end
+  end
+
+  context "when no staged have disabled inbound transitions" do
+    it "the pipeline summary shows as un-paused" do
+      expect(pipeline_summary.paused).to be false
     end
   end
 end
