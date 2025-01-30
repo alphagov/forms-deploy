@@ -27,4 +27,12 @@
     <strong class="govuk-tag govuk-tag--grey">
         Not Started
     </strong>
+<% when "Paused" # This is one of our own states, not one of CodePipelines %>
+    <strong class="govuk-tag govuk-tag--light-blue">
+        Paused
+    </strong>
+<% when "InboundTransitionPaused" # This is one of our own states, not one of CodePipelines %>
+    <strong class="govuk-tag govuk-tag--light-blue">
+        Paused On Inbound
+    </strong>
 <% end %>

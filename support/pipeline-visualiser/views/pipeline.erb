@@ -4,6 +4,10 @@
 <h1 class="govuk-heading-l">
     <%= pipeline.name %>
     <%= erb :'partials/label', :locals => { status: pipeline.status } %>
+
+  <% if pipeline.paused %>
+    <%= erb :'partials/label', :locals => {status: "Paused"} %>
+  <% end %>
 </h1>
 
 <p class="govuk-body">
@@ -58,11 +62,15 @@
             <tr class="govuk-table__row">
               <th scope="row" class="govuk-table__header"><%= stage.name %></th>
               <td class="govuk-table__cell govuk-!-width-one-quarter">
-                  <% if stage.outdated %>
-                      <%= erb :'partials/label', :locals => {status: "Not Started"} %>
-                  <% else %>
-                      <%= erb :'partials/label', :locals => { status: stage.status } %>
-                  <% end %>
+                <% if stage.outdated %>
+                    <%= erb :'partials/label', :locals => {status: "Not Started"} %>
+                <% else %>
+                    <%= erb :'partials/label', :locals => {status: stage.status} %>
+                <% end %>
+
+                <% if stage.paused %>
+                    <%= erb :'partials/label', :locals => {status: "InboundTransitionPaused"} %>
+                <% end %>
               </td>
               <td class="govuk-table__cell">
                 <% if stage.error_message %>
