@@ -77,7 +77,6 @@ forms_admin_settings = {
   govuk_app_domain           = "integration.publishing.service.gov.uk"
   synchronize_to_mailchimp   = false
   repeatable_page_enabled    = true
-  branch_routing_enabled     = true
 }
 forms_api_settings = {
   cpu          = 256

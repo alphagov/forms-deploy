@@ -174,10 +174,6 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__REPEATABLE_PAGE_ENABLED",
       value = var.repeatable_page_enabled
-    },
-    {
-      name  = "SETTINGS__FEATURES__BRANCH_ROUTING",
-      value = var.branch_routing_enabled
     }
   ]
 

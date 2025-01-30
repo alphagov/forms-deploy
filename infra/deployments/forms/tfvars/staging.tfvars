@@ -42,7 +42,6 @@ forms_admin_settings = {
   govuk_app_domain           = "staging.publishing.service.gov.uk"
   synchronize_to_mailchimp   = false
   repeatable_page_enabled    = true
-  branch_routing_enabled     = false
 }
 forms_api_settings = {
   cpu          = 256
