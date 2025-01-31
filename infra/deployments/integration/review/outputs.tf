@@ -8,6 +8,11 @@ output "ecs_cluster_id" {
   value       = aws_ecs_cluster.review.id
 }
 
+output "ecs_task_execution_role_arn" {
+  description = "The ARN of the role that review app tasks should use as their task execution role"
+  value       = aws_iam_role.ecs_execution.arn
+}
+
 output "private_subnet_ids" {
   description = "The ids of all private subnets within the VPC. Used by applications deploying to the review environment to place ECS tasks."
   value       = module.vpc.private_subnet_ids
