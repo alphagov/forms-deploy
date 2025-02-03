@@ -107,6 +107,15 @@ locals {
       user_research = "admin"
       integration   = "admin"
     },
+    # Sean is our Lead Dev and has also worked as a Sr SRE.
+    "sean.rankine" = {
+      deploy        = "admin"
+      staging       = "admin"
+      production    = "admin"
+      development   = "admin"
+      user_research = "admin"
+      integration   = "admin"
+    },
     "stephen.daly" = {
       deploy        = "admin"
       staging       = "admin"
