@@ -25,7 +25,7 @@ module "rds" {
 }
 
 module "forms-runner-rds" {
-  # this is the rds cluster for the forms-runner database for SolidQueue
+  # this is the rds cluster for the forms-runner database
   source     = "../../../modules/rds"
   env_name   = var.environment_name
   identifier = "forms-runner-${var.environment_name}"
@@ -41,5 +41,5 @@ module "forms-runner-rds" {
   backup_retention_period  = var.environmental_settings.database_backup_retention_period_days
 
   apps_list           = ["forms-runner"]
-  database_identifier = "solidqueue"
+  database_identifier = "forms-runner-${var.environment_name}-primary"
 }
