@@ -156,6 +156,17 @@ data "aws_iam_policy_document" "ecs" {
     ]
     effect = "Allow"
   }
+
+  statement {
+    sid = "ManageEC2Tags"
+    actions = [
+      "ec2:CreateTags"
+    ]
+    resources = [
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*/*"
+    ]
+    effect = "Allow"
+  }
 }
 
 data "aws_iam_policy_document" "alb" {
