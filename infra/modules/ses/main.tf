@@ -1,3 +1,7 @@
+resource "aws_sesv2_email_identity" "from_address" {
+  email_identity = var.from_address
+}
+
 resource "aws_ses_event_destination" "failed_email_notification" {
   name                   = "failed_email_notification"
   configuration_set_name = aws_ses_configuration_set.bounces_and_complaints_handling_rule.name
