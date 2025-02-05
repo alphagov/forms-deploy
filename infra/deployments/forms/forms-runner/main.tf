@@ -52,6 +52,7 @@ module "forms_runner" {
   api_v2_enabled                              = var.forms_runner_settings.api_v2_enabled
   ses_submission_email_from_email_address     = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address = var.forms_runner_settings.ses_submission_email_reply_to_email_address
+  ses_submission_configuration_set_name       = data.terraform_remote_state.forms_ses.outputs.form_submissions_configuration_set_name
   additional_submissions_to_s3_role_assumers  = local.allowed_submissions_to_s3_role_assumers
   additional_forms_runner_role_assumers       = local.allowed_forms_runner_role_assumers
   elasticache_port                            = data.terraform_remote_state.redis.outputs.elasticache_port

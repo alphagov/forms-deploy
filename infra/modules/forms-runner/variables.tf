@@ -106,6 +106,11 @@ variable "ses_submission_email_reply_to_email_address" {
   description = "The reply-to email address for submission emails send by SES"
 }
 
+variable "ses_submission_configuration_set_name" {
+  type        = string
+  description = "The name of the configuration set to use when sending form submissions"
+}
+
 variable "elasticache_port" {
   type        = number
   description = "The port number for the Redis ElastiCache cluster"
