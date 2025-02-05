@@ -31,22 +31,6 @@ resource "aws_ssm_parameter" "database_password" {
     ]
   }
 }
-moved {
-  from = aws_ssm_parameter.database_password_for_forms_admin_app
-  to   = aws_ssm_parameter.database_password["forms-admin"]
-}
-moved {
-  from = aws_ssm_parameter.database_password_for_forms_api_app
-  to   = aws_ssm_parameter.database_password["forms-api"]
-}
-moved {
-  from = aws_ssm_parameter.database_url_for_forms_admin_app
-  to   = aws_ssm_parameter.database_url["forms-admin"]
-}
-moved {
-  from = aws_ssm_parameter.database_url_for_forms_api_app
-  to   = aws_ssm_parameter.database_url["forms-api"]
-}
 
 resource "aws_ssm_parameter" "database_url" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
