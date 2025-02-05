@@ -34,6 +34,14 @@ resource "aws_sesv2_configuration_set_event_destination" "auth0" {
   }
 }
 
+resource "aws_sesv2_configuration_set" "form_submissions" {
+  configuration_set_name = "${var.environment_name}_form_submissions"
+
+  reputation_options {
+    reputation_metrics_enabled = true
+  }
+}
+
 
 ##
 # SES v1 configuration
