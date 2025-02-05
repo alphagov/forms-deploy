@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
 resource "aws_iam_user" "auth0" {
   #checkov:skip=CKV_AWS_273: SES SMTP interface requires long-term IAM credentials
   name = "auth0"
@@ -11,6 +17,30 @@ resource "aws_iam_user_policy_attachment" "attach" {
   #checkov:skip=CKV_AWS_40: SES SMTP interface requires long-term IAM credentials
   user       = aws_iam_user.auth0.name
   policy_arn = aws_iam_policy.ses_sender.arn
+}
+
+resource "aws_iam_policy" "ses_sender" {
+  name        = "ses_sender"
+  description = "Allows sending of emails via Simple Email Service"
+  policy      = data.aws_iam_policy_document.ses_sender.json
+}
+
+data "aws_iam_policy_document" "ses_sender" {
+  statement {
+    actions = [
+      "ses:SendRawEmail",
+      "ses:SendEmail"
+    ]
+    resources = [
+      "arn:aws:ses:eu-west-2:${local.account_id}:identity/*",
+      "arn:aws:ses:eu-west-2:${local.account_id}:configuration-set/bounces_and_complaints_handling_rule"
+    ]
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "ses:FromAddress"
+      values   = [var.from_address]
+    }
+  }
 }
 
 resource "aws_ssm_parameter" "auth0_smtp_username" {
