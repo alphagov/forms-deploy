@@ -4,11 +4,6 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
-resource "aws_ses_email_identity" "verified_email_addresses" {
-  for_each = var.verified_email_addresses
-  email    = each.value
-}
-
 data "aws_iam_policy_document" "ses_sender" {
   statement {
     actions = [

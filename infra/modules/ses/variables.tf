@@ -13,12 +13,6 @@ variable "from_address" {
   description = "Address emails are sent from"
 }
 
-variable "verified_email_addresses" {
-  type        = set(string)
-  description = "Email addresses to verify. In SES sandbox emails can only be sent to verified email addresses and domains."
-  default     = []
-}
-
 variable "hosted_zone_id" {
   description = "The ID of the AWS hosted zone in the account, to which DNS records live"
   type        = string
