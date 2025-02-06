@@ -45,6 +45,10 @@ resource "aws_sesv2_configuration_set" "form_submissions" {
 
 ##
 # SES v1 configuration
+#
+# We use v2 preferentially, but testing shows that this amount of
+# v1 configuration is needed for bounce, complaint, and rejection
+# reporting when sending via SMTP (which is done by Auth0)
 ##
 resource "aws_ses_event_destination" "failed_email_notification" {
   name                   = "failed_email_notification"
