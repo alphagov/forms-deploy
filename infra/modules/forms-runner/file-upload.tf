@@ -3,10 +3,12 @@ locals {
 }
 
 module "file_upload_bucket" {
-  source = "../secure-bucket"
-  name   = local.file_upload_bucket_name
+  source             = "../secure-bucket"
+  name               = local.file_upload_bucket_name
+  versioning_enabled = false
 
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
+
   # In order to use KMS for server side encryption we need to disable the defaul AES256 encyrption in the module
   AES256_encryption_configuration = false
 }
@@ -118,8 +120,14 @@ data "aws_iam_policy_document" "file_upload" {
     principals {
       type = "AWS"
       identifiers = toset(concat(
-        [for admin in module.users.with_role["${var.environment_type}_admin"] : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${admin}-admin"],
-        [for admin in module.users.with_role["${var.environment_type}_support"] : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${admin}-support"]
+        [
+          for admin in module.users.with_role["${var.environment_type}_admin"] :
+          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${admin}-admin"
+        ],
+        [
+          for admin in module.users.with_role["${var.environment_type}_support"] :
+          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${admin}-support"
+        ]
       ))
     }
 

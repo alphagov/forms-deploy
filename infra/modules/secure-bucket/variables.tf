@@ -14,3 +14,10 @@ variable "AES256_encryption_configuration" {
   default     = true
   nullable    = false
 }
+variable "versioning_enabled" {
+  type        = bool
+  description = "Whether S3 bucket object versioning should be enabled"
+  default     = true
+  nullable    = false
+}
+
