@@ -248,6 +248,16 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
+    sid    = "AllowManageSESTagging"
+    effect = "Allow"
+    actions = [
+      "ses:*Tag*",
+      "ses:UntagResource"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "ManageSESPolicies"
     effect = "Allow"
     actions = [
@@ -278,7 +288,6 @@ data "aws_iam_policy_document" "ses" {
     ]
   }
 
-  # We use SES v1 (I think?)... in v2 you can specify resources
   statement {
     sid    = "ManageSESConfigurationSet"
     effect = "Allow"
