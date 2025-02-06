@@ -1,6 +1,7 @@
 module "ses" {
   source = "../../../modules/ses"
 
+  environment_name = var.environment_name
   environment_type = var.environment_type
 
   hosted_zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id

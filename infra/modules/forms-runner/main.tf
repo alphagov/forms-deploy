@@ -152,7 +152,7 @@ module "ecs_service" {
     },
     {
       name  = "SETTINGS__AWS__SES_SUBMISSION_EMAIL_CONFIGURATION_SET_NAME",
-      value = "bounces_and_complaints_handling_rule"
+      value = var.ses_submission_configuration_set_name
     },
     {
       name  = "SETTINGS__SES_SUBMISSION_EMAIL__FROM_EMAIL_ADDRESS",

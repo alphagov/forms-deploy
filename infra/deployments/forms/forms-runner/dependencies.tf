@@ -20,3 +20,14 @@ data "terraform_remote_state" "forms_environment" {
   }
 }
 
+data "terraform_remote_state" "forms_ses" {
+  backend = "s3"
+
+  config = {
+    key            = "ses.tfstate"
+    bucket         = var.bucket
+    region         = "eu-west-2"
+    dynamodb_table = var.dynamodb_table
+  }
+}
+
