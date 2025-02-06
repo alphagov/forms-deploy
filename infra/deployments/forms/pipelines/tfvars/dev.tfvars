@@ -5,6 +5,7 @@ deploy-forms-product-page-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
+  apply_latest_tag         = false
   disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
@@ -16,6 +17,7 @@ deploy-forms-runner-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
+  apply_latest_tag         = false
   disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
@@ -27,6 +29,7 @@ deploy-forms-api-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
+  apply_latest_tag         = false
   disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
@@ -38,6 +41,7 @@ deploy-forms-admin-container = {
   # That is triggered by a merge to main in the relevant repository
   retag_image_on_success   = false
   retagging_sed_expression = ""
+  apply_latest_tag         = false
   disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }

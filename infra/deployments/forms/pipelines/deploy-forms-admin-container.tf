@@ -326,6 +326,7 @@ module "pull_forms_admin_image_retag_and_push" {
     AWS_ACCOUNT_ID       = var.deploy_account_id
     RETAG                = var.deploy-forms-admin-container.retag_image_on_success
     RETAG_SED_EXPRESSION = var.deploy-forms-admin-container.retagging_sed_expression
+    APPLY_LATEST_TAG     = var.deploy-forms-admin-container.apply_latest_tag
     CONTAINER_REGISTRY   = var.container_registry
   }
 }
