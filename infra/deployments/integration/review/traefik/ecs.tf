@@ -11,9 +11,12 @@ resource "aws_ecs_task_definition" "traefik" {
       command = [
         "--log.level=INFO",
         "--log.format=json",
+        "--accesslog=true",
+
         "--ping",
         "--ping.entryPoint=ping",
         "--entryPoints.ping.address=:${local.ping_port}",
+
         "--entryPoints.http.address=:${local.http_port}",
 
         "--providers.ecs.clusters=${join(",", var.ecs_clusters_to_scan)}",
