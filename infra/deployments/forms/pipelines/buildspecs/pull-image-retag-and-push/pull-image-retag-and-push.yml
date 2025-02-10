@@ -9,15 +9,17 @@ phases:
       - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${CONTAINER_REGISTRY}"
 
       - |
-         CURRENT_IMAGE_URI="$(cat image-defs.json | jq -r '.[0].imageUri')"
-         CURRENT_IMAGE_TAG="$(cat image-defs.json | jq -r '.[0].imageUri' | cut -d':' -f2)"
+         CURRENT_IMAGE_URI="$(jq -r '.[0].imageUri' image-defs.json)"
+         CURRENT_IMAGE_TAG="$(jq -r '.[0].imageUri' image-defs.json | cut -d':' -f2)"
          echo "Current image uri is ${CURRENT_IMAGE_URI}"
          echo "Current image tag is ${CURRENT_IMAGE_TAG}"
          echo "Using sed expression ${RETAG_SED_EXPRESSION}"
 
       - |
          set -x
-         export EPOCH_SECONDS="$(date '+%s')"
+         EPOCH_SECONDS="$(date '+%s')"
+         export EPOCH_SECONDS
+         # shellcheck disable=SC2016 # envsubst expects an environment variable name in shell format
          PROMOTED_IMAGE_TAG="$(echo "${CURRENT_IMAGE_TAG}" | sed "${RETAG_SED_EXPRESSION}" | envsubst '${EPOCH_SECONDS}')"
          PROMOTED_IMAGE_URI="${CONTAINER_REGISTRY}/${IMAGE_NAME}:${PROMOTED_IMAGE_TAG}"
          echo "New image tag will be ${PROMOTED_IMAGE_TAG}"

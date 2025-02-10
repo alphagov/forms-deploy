@@ -5,7 +5,7 @@ phases:
       # Check Image URI is not the default pipeline value
       - |
         if [[ "${IMAGE_URI}" = "MUST_BE_SET" ]]; then
-          echo "The IMAGE_URI has not been set by the caller. The value of IMAGE_URI is "${IMAGE_URI}""
+          echo "The IMAGE_URI has not been set by the caller. The value of IMAGE_URI is \"${IMAGE_URI}\""
           exit 1
         fi
 
