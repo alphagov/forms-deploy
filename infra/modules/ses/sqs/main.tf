@@ -98,7 +98,7 @@ data "aws_iam_policy_document" "encryption_key" {
 }
 
 resource "aws_sqs_queue" "ses_bounces_and_complaints" {
-  name                      = "ses_bounces_and_complaints_queue"
+  name                      = "${var.identifier}_bounces_and_complaints_queue"
   message_retention_seconds = 1209600
   redrive_policy            = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.ses_dead_letter.arn}\",\"maxReceiveCount\":4}"
 
@@ -106,13 +106,13 @@ resource "aws_sqs_queue" "ses_bounces_and_complaints" {
 }
 
 resource "aws_sqs_queue" "ses_dead_letter" {
-  name = "ses_dead_letter_queue"
+  name = "${var.identifier}_dead_letter_queue"
 
   kms_master_key_id = aws_kms_key.this.id
 }
 
 resource "aws_sns_topic" "ses_bounces_and_complaints" {
-  name = "ses_bounces_and_complaints"
+  name = "${var.identifier}_bounces_and_complaints"
 
   kms_master_key_id = aws_kms_key.this.id
 }
@@ -124,7 +124,7 @@ resource "aws_sns_topic_subscription" "ses_bounces_and_complaints" {
 }
 
 data "aws_iam_policy_document" "ses_bounces_and_complaints" {
-  policy_id = "SESBouncesComplaintsQueueTopic"
+  policy_id = var.policy_id
   statement {
     sid       = "SESBouncesComplaintsQueueTopic"
     effect    = "Allow"
