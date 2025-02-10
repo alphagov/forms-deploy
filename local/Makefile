@@ -2,33 +2,34 @@
 
 help:
 	@echo "Usage:"
-	@echo "make clean  - run docker-compose down (useful for chaining)"
-	@echo "make all    - run the whole docker-compose stack" 
-	@echo "make db     - run just postgres"
-	@echo "make admin  - run everything BUT the admin"
-	@echo "make api    - run everything BUT the API"
-	@echo "make runner - run everything BUT the runner"
-	@echo "make ps     - show docker-compose processses"
-	@echo "make logs   - show docker-compose logs"
-	@echo "make reset  - remove all docker-compose volumes and containers"
+	@echo "make all		- run the whole docker-compose stack"
+	@echo "make admin		- run everything BUT the admin"
+	@echo "make runner		- run everything BUT the runner"
+	@echo "make api		- run everything BUT the API"
+	@echo "make product-page	- run everything BUT the product-page"
+	@echo "make db			- run just postgres"
+	@echo "make logs		- show docker-compose logs"
+	@echo "make ps			- show docker-compose processses"
+	@echo "make down		- run docker-compose down (useful for chaining)"
+	@echo "make reset		- remove all docker-compose volumes and containers"
 
-db:
-	docker-compose up -d postgres
-down:
-	docker-compose down
 all:
 	docker-compose up -d
 admin:
 	docker-compose up -d redis postgres forms-runner forms-api forms-product-page
+runner:
+	docker-compose up -d redis postgres forms-admin forms-api forms-product-page
 api:
 	SETTINGS__FORMS_API__BASE_URL=http://host.docker.internal:9292 docker-compose up -d redis postgres forms-runner forms-admin forms-product-page
 product-page:
 	docker-compose up -d redis postgres forms-runner forms-api forms-admin
-runner:
-	docker-compose up -d redis postgres forms-admin forms-api forms-product-page
-ps:
-	docker-compose ps
+db:
+	docker-compose up -d postgres
 logs:
 	docker-compose logs -f
+ps:
+	docker-compose ps
+down:
+	docker-compose down
 reset:
 	docker-compose down --volumes
