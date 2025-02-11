@@ -1,5 +1,5 @@
 resource "aws_kms_key" "this" {
-  description = "Key used to encrypt messages on the bounces and complaints queue and topic"
+  description = "Key used to encrypt messages on the bounces and complaints queue and topic for ${var.identifier}"
   policy      = data.aws_iam_policy_document.encryption_key.json
 
   enable_key_rotation = true

@@ -29,7 +29,7 @@ resource "aws_sesv2_configuration_set_event_destination" "auth0" {
     matching_event_types = ["BOUNCE", "COMPLAINT", "REJECT"]
 
     sns_destination {
-      topic_arn = module.sqs.aws_sns_topic
+      topic_arn = module.auth0_sqs.aws_sns_topic
     }
   }
 }
@@ -57,7 +57,7 @@ resource "aws_ses_event_destination" "failed_email_notification" {
   matching_types         = ["bounce", "complaint", "reject"]
 
   sns_destination {
-    topic_arn = module.sqs.aws_sns_topic
+    topic_arn = module.auth0_sqs.aws_sns_topic
   }
 }
 
