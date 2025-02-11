@@ -134,7 +134,8 @@ jobs:
             -mindepth 1 -maxdepth 2 \
             -not -path "*/tfvars" \
             -not -path "infra/deployments/forms" \
-            -not -path "infra/deployments/deploy"
+            -not -path "infra/deployments/deploy" \
+            -not -path "infra/deployments/integration" 
           )
           
           for start in ${all_roots}; do
