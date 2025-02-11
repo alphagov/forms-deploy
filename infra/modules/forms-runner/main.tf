@@ -180,6 +180,10 @@ module "ecs_service" {
     {
       name      = "SECRET_KEY_BASE",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base"
+    },
+    {
+      name      = "DATABASE_URL",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url"
     }
   ]
 }
