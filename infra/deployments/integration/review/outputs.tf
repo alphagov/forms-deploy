@@ -33,3 +33,8 @@ output "forms_admin_container_repo_url" {
   value       = module.forms_admin_container_repo.url
 }
 
+output "github_actions_runner_role_arn" {
+  description = "The ARN of the IAM role which the GitHub Actions runner should use"
+  value       = aws_iam_role.github_actions_runner.arn
+}
+
