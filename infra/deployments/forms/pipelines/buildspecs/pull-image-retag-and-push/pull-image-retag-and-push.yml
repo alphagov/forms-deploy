@@ -36,6 +36,5 @@ phases:
                echo "Applying 'latest' tag to ${CURRENT_IMAGE_URI}"
                LATEST_IMAGE_URI="${CONTAINER_REGISTRY}/${IMAGE_NAME}:latest"
                docker tag "${CURRENT_IMAGE_URI}" "${LATEST_IMAGE_URI}"
-               docker push "${LATEST_IMAGE_URI}"
             fi
          fi
