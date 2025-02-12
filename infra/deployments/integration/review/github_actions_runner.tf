@@ -5,8 +5,8 @@ data "aws_caller_identity" "current" {}
 # a GitHub Actions runner on AWS CodeBuild via Terraform because of
 # some missing configuration options in the AWS Terraform provider.
 #
-# Instead this Terraform sets up everything except CodeBuild, and a
-# post-apply script creates that, using outputs from this.
+# Instead this Terraform sets up everything except the source configuration
+# in CodeBuild, and a post-apply script configures that, using outputs from this.
 ##
 
 ##
@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   # the things we need to allow it to do.
 
   statement {
-    sid = "UseCodeConnection"
+    sid    = "UseCodeConnection"
     effect = "Allow"
     actions = [
       "codeconnections:GetConnectionToken",
@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
-    sid = "UseECSServices"
+    sid    = "UseECSServices"
     effect = "Allow"
     actions = [
       "ecs:*Service",
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
-    sid = "UseECSTaskDefinitions"
+    sid    = "UseECSTaskDefinitions"
     effect = "Allow"
     actions = [
       "ecs:*TaskDefinition",
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
-    sid = "ReadTerraformStateFiles"
+    sid    = "ReadTerraformStateFiles"
     effect = "Allow"
     actions = [
       "s3:GetObject",
@@ -96,7 +96,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
-    sid = "WriteTerraformStateFiles"
+    sid    = "WriteTerraformStateFiles"
     effect = "Allow"
     actions = [
       "s3:PutObject",
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
-    sid = "UseLocalECR"
+    sid    = "UseLocalECR"
     effect = "Allow"
     actions = [
       "ecr:BatchCheckLayerAvailability",
@@ -127,7 +127,7 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
-    sid = "UseDeployECR"
+    sid    = "UseDeployECR"
     effect = "Allow"
     actions = [
       "ecr:BatchCheckLayerAvailability",
@@ -140,4 +140,62 @@ data "aws_iam_policy_document" "runner_permissions" {
       "arn:aws:ecr:eu-west-2:${var.deploy_account_id}:repository/*"
     ]
   }
+}
+
+##
+# CodeBuild
+##
+resource "aws_codebuild_project" "forms_admin_github_actions_runner" {
+  # checkov:skip=CKV_AWS_314:The logs for the project will be reflected in GitHub Actions
+  name         = "review-forms-admin-gha-runner"
+  service_role = aws_iam_role.github_actions_runner.arn
+
+  build_timeout = 15
+
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+  }
+
+  # This is a placeholder configuration.
+  # post-apply.sh updates the Terraform-configured
+  # resources, because the Terraform provider does
+  # not support those options
+  source {
+    type     = "GITHUB"
+    location = "https://github.com/alphagov/forms-admin"
+  }
+
+  lifecycle {
+    # ignore changes to the source block so that
+    # this and post-apply.sh aren't fighting over it.
+    ignore_changes = [source]
+  }
+}
+
+resource "aws_codebuild_webhook" "github_webhook" {
+  project_name = aws_codebuild_project.forms_admin_github_actions_runner.name
+  build_type   = "BUILD"
+
+  filter_group {
+    filter {
+      type    = "EVENT"
+      pattern = "WORKFLOW_JOB_QUEUED"
+    }
+  }
+}
+
+resource "aws_codebuild_source_credential" "github_credential" {
+  auth_type   = "CODECONNECTIONS" # this is a valid value, but is not documented at the time of writing (2025-02-12)
+  server_type = "GITHUB"
+
+  # This is the correct token value when auth_type=CODECONNECTIONS.
+  # It is supported, but not documented, at the time of writing (2025-02-12)
+  token = data.terraform_remote_state.account.outputs.codeconnection_arn
 }

@@ -33,8 +33,12 @@ output "forms_admin_container_repo_url" {
   value       = module.forms_admin_container_repo.url
 }
 
-output "github_actions_runner_role_arn" {
-  description = "The ARN of the IAM role which the GitHub Actions runner should use"
-  value       = aws_iam_role.github_actions_runner.arn
+output "forms_admin_github_actions_runner_project_name" {
+  description = "The name of the GitHub Actions runner CodeBuild project used for forms-admin. Used by post-apply.sh to modify the configuration"
+  value       = aws_codebuild_project.forms_admin_github_actions_runner.name
 }
 
+output "codeconnection_arn" {
+  description = "The ARN of the CodeConnection to use as the source for AWS CodeBuild. This is re-output from integration/account for the sake of the post-apply script"
+  value       = data.terraform_remote_state.account.outputs.codeconnection_arn
+}
