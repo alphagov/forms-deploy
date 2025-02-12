@@ -140,6 +140,18 @@ data "aws_iam_policy_document" "runner_permissions" {
       "arn:aws:ecr:eu-west-2:${var.deploy_account_id}:repository/*"
     ]
   }
+
+  statement {
+    sid    = "UseCloudWatchLogs"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup",
+    ]
+    resources = [
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*"
+    ]
+  }
 }
 
 ##
