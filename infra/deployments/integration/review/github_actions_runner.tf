@@ -115,7 +115,6 @@ data "aws_iam_policy_document" "runner_permissions" {
       "ecr:BatchCheckLayerAvailability",
       "ecr:BatchGetImage",
       "ecr:CompleteLayerUpload",
-      "ecr:GetAuthorizationToken",
       "ecr:GetDownloadUrlForLayer",
       "ecr:InitiateLayerUpload",
       "ecr:PutImage",
@@ -123,6 +122,17 @@ data "aws_iam_policy_document" "runner_permissions" {
     ]
     resources = [
       module.forms_admin_container_repo.arn
+    ]
+  }
+  
+  statement {
+    sid = "LogIntoLocalECR"
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = [
+      "*"
     ]
   }
 
