@@ -106,14 +106,17 @@ services:
     command: >
       sh -c "
         bundle install &&
+        rails db:prepare &&
         npm install &&
         bin/vite build &&
         exec rails s --restart -p 3001
       "
     depends_on:
+      - postgres
       - redis
     environment:
       - BINDING=0.0.0.0
+      - DATABASE_URL=postgres://postgres:postgres@postgres
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
