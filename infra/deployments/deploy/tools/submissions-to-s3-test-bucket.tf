@@ -15,9 +15,6 @@ data "aws_iam_policy_document" "allow_writes_from_other_accounts" {
       sid    = "AllowAcct${statement.value}"
       effect = "Allow"
       actions = [
-        "s3:GetObject",
-        "s3:GetObjectVersion",
-        "s3:ListBucket",
         "s3:PutObject"
       ]
 
