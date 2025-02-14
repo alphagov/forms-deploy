@@ -80,6 +80,16 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
+    sid    = "AllowTaskDefinitionsNeedingStar"
+    effect = "Allow"
+    actions = [
+      "ecs:DeregisterTaskDefinition",
+      "ecs:DescribeTaskDefinition"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "ReadTerraformStateFiles"
     effect = "Allow"
     actions = [
