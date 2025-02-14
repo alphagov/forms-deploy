@@ -68,6 +68,7 @@ module "ecs_service" {
   container_port               = 3000
   permit_internet_egress       = true
   permit_redis_egress          = true
+  permit_postgres_egress       = true
   vpc_id                       = var.vpc_id
   vpc_cidr_block               = var.vpc_cidr_block
   private_subnet_ids           = var.private_subnet_ids
