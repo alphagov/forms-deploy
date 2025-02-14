@@ -90,22 +90,7 @@ jobs:
           done <  <(find ".github/workflows" -type f \( -name "*.yml" -or -name "*.yaml" \) -print0)
       - name: Lint shell scripts in CodeBuild build specs
         run: |
-          # This is not the usual/best way to get the script directory.
-          # We need to do this here because GitHub Actions writes the
-          # content of script blocks like these to a temp directory,
-          # which means the source code directory and the directory
-          # in which the script reside are different
-          script_dir="$(readlink -f "$(dirname .github)")"
-
-          while IFS= read -r -d '' buildspec
-          do
-            pushd "$(mktemp -d)" >/dev/null || exit
-              file="${buildspec//\//_}"
-              touch "${file}"
-              yq '.phases|to_entries|.[]|select(.value|has("commands"))|.value.commands|.[]' "${script_dir}/${buildspec}" > "${file}"
-              shellcheck -s bash "${file}"
-            popd >/dev/null || exit
-          done <  <(find "." -type f \( -name "buildspec.yml" -or -name "buildspec.yaml" \) -print0)
+          ./support/shellcheck_codebuild.sh
       - name: Check Terraform style
         id: tf_fmt
         run: |
