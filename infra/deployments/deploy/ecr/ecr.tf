@@ -11,8 +11,9 @@ locals {
 
 resource "aws_ecr_repository" "forms_api" {
   #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV_AWS_51:Permit mutable tags on application images
   name                 = "forms-api-deploy"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }
@@ -20,8 +21,9 @@ resource "aws_ecr_repository" "forms_api" {
 
 resource "aws_ecr_repository" "forms_runner" {
   #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV_AWS_51:Permit mutable tags on application images
   name                 = "forms-runner-deploy"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }
@@ -29,8 +31,9 @@ resource "aws_ecr_repository" "forms_runner" {
 
 resource "aws_ecr_repository" "forms_admin" {
   #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV_AWS_51:Permit mutable tags on application images
   name                 = "forms-admin-deploy"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }
@@ -38,8 +41,9 @@ resource "aws_ecr_repository" "forms_admin" {
 
 resource "aws_ecr_repository" "forms_product_page" {
   #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
+  #checkov:skip=CKV_AWS_51:Permit mutable tags on application images
   name                 = "forms-product-page-deploy"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }
