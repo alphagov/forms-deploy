@@ -151,6 +151,7 @@ resource "aws_codepipeline" "deploy_runner_container" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
+      run_order       = 1
       input_artifacts = ["forms_e2e_tests"]
       # we need an input according to AWS, even if we don't... so we'll use this one for now.
       configuration = {
@@ -187,6 +188,7 @@ resource "aws_codepipeline" "deploy_runner_container" {
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
+      run_order        = 1
       input_artifacts  = ["buildspec_source"]
       output_artifacts = ["image-defs-json"]
       configuration = {
