@@ -124,9 +124,9 @@ data "aws_iam_policy_document" "runner_permissions" {
       module.forms_admin_container_repo.arn
     ]
   }
-  
+
   statement {
-    sid = "LogIntoLocalECR"
+    sid    = "LogIntoLocalECR"
     effect = "Allow"
     actions = [
       "ecr:GetAuthorizationToken",
@@ -161,6 +161,15 @@ data "aws_iam_policy_document" "runner_permissions" {
     resources = [
       "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*"
     ]
+  }
+
+  statement {
+    sid    = "AllowIAMPassRole"
+    effect = "Allow"
+    actions = [
+      "iam:PassRole"
+    ]
+    resources = [aws_iam_role.ecs_execution.arn]
   }
 }
 
