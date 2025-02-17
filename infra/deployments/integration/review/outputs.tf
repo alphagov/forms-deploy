@@ -4,7 +4,7 @@ output "vpc_id" {
 }
 
 output "ecs_cluster_id" {
-  description = "The id of the ECS cluster used for reviwe apps"
+  description = "The id of the ECS cluster used for review apps"
   value       = aws_ecs_cluster.review.id
 }
 
@@ -31,5 +31,10 @@ output "review_apps_log_group_name" {
 output "forms_admin_container_repo_url" {
   description = "The URL of the forms admin container repository"
   value       = module.forms_admin_container_repo.url
+}
+
+output "traefik_basic_auth_credentials" {
+  description = "The credentials Traefik uses for basic authentication in front of review apps"
+  value = data.aws_ssm_parameter.traefik_basic_auth_credentials.value
 }
 
