@@ -181,6 +181,19 @@ data "aws_iam_policy_document" "runner_permissions" {
     ]
     resources = [aws_iam_role.ecs_execution.arn]
   }
+
+  statement {
+    sid    = "AllowDockerCredAccess"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters"
+    ]
+    resources = [
+      aws_ssm_parameter.dockerhub_password.arn,
+      aws_ssm_parameter.dockerhub_username.arn
+    ]
+  }
 }
 
 ##
@@ -202,6 +215,18 @@ resource "aws_codebuild_project" "forms_admin_github_actions_runner" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
+
+    environment_variable {
+      name  = "DOCKER_USERNAME"
+      value = aws_ssm_parameter.dockerhub_username.name
+      type  = "PARAMETER_STORE"
+    }
+
+    environment_variable {
+      name  = "DOCKER_PASSWORD"
+      value = aws_ssm_parameter.dockerhub_password.name
+      type  = "PARAMETER_STORE"
+    }
   }
 
   # This is a placeholder configuration.
