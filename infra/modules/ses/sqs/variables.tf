@@ -17,3 +17,8 @@ variable "policy_id" {
   type        = string
   description = "The name to be used for the policy id."
 }
+
+variable "sqs_type" {
+  type        = string
+  description = "The type of queue, used for naming the resources."
+}

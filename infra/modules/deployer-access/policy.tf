@@ -337,6 +337,7 @@ data "aws_iam_policy_document" "ses" {
     resources = [
       "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:ses_bounces_and_complaints",
       "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:submission_email_ses_bounces_and_complaints",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:submission_email_ses_successful_deliveries",
     ]
     effect = "Allow"
   }
