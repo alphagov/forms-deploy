@@ -1,1 +1,3 @@
-../other_accounts.tf
+module "other_accounts" {
+  source = "../../../modules/all-accounts"
+}
