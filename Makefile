@@ -2,6 +2,11 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CODEBUILD_CI ?= false
 SHELL=/usr/bin/env bash
 
+TFLINT_INFO_ONLY ?= false
+ifeq ($(TFLINT_INFO_ONLY), true)
+	TFLINT_ARGS = --force
+endif
+
 ##
 # Environment targets
 ##
@@ -186,21 +191,21 @@ tflint_init:
 
 .PHONY: tflint_modules
 tflint_modules:
-	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl"
+	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}
 
 .PHONY: tflint_deploy
 tflint_deploy:
-	tflint --chdir=infra/deployments/deploy/ --recursive --config "$$(pwd)/.tflint.hcl"
+	tflint --chdir=infra/deployments/deploy/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}
 
 .PHONY: tflint_forms
 tflint_forms:
-	tflint --chdir=infra/deployments/forms/ --recursive --config "$$(pwd)/.tflint.hcl" \
+	tflint --chdir=infra/deployments/forms/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
 		--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
 		--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"
 
 .PHONY: tflint_integration
 tflint_integration:
-	tflint --chdir=infra/deployments/integration/ --recursive --config "$$(pwd)/.tflint.hcl" \
+	tflint --chdir=infra/deployments/integration/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
 		--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
 		--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"
 
