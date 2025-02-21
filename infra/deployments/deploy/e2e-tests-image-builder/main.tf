@@ -16,13 +16,13 @@ locals {
   environments_with_e2e = ["dev", "staging", "production"]
 }
 
-module "forms-e2e-tests" {
+module "forms_e2e_tests" {
   source                  = "../../../modules/e2e-image-pipeline"
   codestar_connection_arn = var.codestar_connection_arn
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.e2e_tests_ecr_repository_url
 }
 
-module "automated-test-parameters" {
+module "automated_test_parameters" {
   for_each = toset(local.environments_with_e2e)
 
   source           = "../../../modules/automated-test-parameters"

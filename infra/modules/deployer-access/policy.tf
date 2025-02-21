@@ -3,7 +3,7 @@
 # you should focus on create, update, delete, or otherwise mutating
 # actions. The role has full read-only access.
 ##
-data "aws_iam_policy_document" "forms-infra" {
+data "aws_iam_policy_document" "forms_infra" {
   source_policy_documents = [
     data.aws_iam_policy_document.lock_state_files.json,
     data.aws_iam_policy_document.alerts.json,
@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "forms-infra" {
   ]
 }
 
-data "aws_iam_policy_document" "forms-infra-1" {
+data "aws_iam_policy_document" "forms_infra_1" {
   source_policy_documents = [
     data.aws_iam_policy_document.rds.json,
     data.aws_iam_policy_document.redis.json,
@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "forms-infra-1" {
   ]
 }
 
-data "aws_iam_policy_document" "forms-infra-2" {
+data "aws_iam_policy_document" "forms_infra_2" {
   source_policy_documents = [
     data.aws_iam_policy_document.ses.json,
     data.aws_iam_policy_document.ecr.json,
@@ -33,45 +33,45 @@ data "aws_iam_policy_document" "forms-infra-2" {
   ]
 }
 
-data "aws_iam_policy_document" "forms-infra-3" {
+data "aws_iam_policy_document" "forms_infra_3" {
   source_policy_documents = [
     data.aws_iam_policy_document.pipelines.json,
   ]
 }
 
-resource "aws_iam_policy" "forms-infra" {
-  policy = data.aws_iam_policy_document.forms-infra.json
+resource "aws_iam_policy" "forms_infra" {
+  policy = data.aws_iam_policy_document.forms_infra.json
 }
 
-resource "aws_iam_role_policy_attachment" "forms-infra" {
-  policy_arn = aws_iam_policy.forms-infra.arn
+resource "aws_iam_role_policy_attachment" "forms_infra" {
+  policy_arn = aws_iam_policy.forms_infra.arn
   role       = aws_iam_role.deployer.id
 }
 
-resource "aws_iam_policy" "forms-infra-1" {
-  policy = data.aws_iam_policy_document.forms-infra-1.json
+resource "aws_iam_policy" "forms_infra_1" {
+  policy = data.aws_iam_policy_document.forms_infra_1.json
 }
 
-resource "aws_iam_role_policy_attachment" "forms-infra-1" {
-  policy_arn = aws_iam_policy.forms-infra-1.arn
+resource "aws_iam_role_policy_attachment" "forms_infra_1" {
+  policy_arn = aws_iam_policy.forms_infra_1.arn
   role       = aws_iam_role.deployer.id
 }
 
-resource "aws_iam_policy" "forms-infra-2" {
-  policy = data.aws_iam_policy_document.forms-infra-2.json
+resource "aws_iam_policy" "forms_infra_2" {
+  policy = data.aws_iam_policy_document.forms_infra_2.json
 }
 
-resource "aws_iam_role_policy_attachment" "forms-infra-2" {
-  policy_arn = aws_iam_policy.forms-infra-2.arn
+resource "aws_iam_role_policy_attachment" "forms_infra_2" {
+  policy_arn = aws_iam_policy.forms_infra_2.arn
   role       = aws_iam_role.deployer.id
 }
 
-resource "aws_iam_policy" "forms-infra-3" {
-  policy = data.aws_iam_policy_document.forms-infra-3.json
+resource "aws_iam_policy" "forms_infra_3" {
+  policy = data.aws_iam_policy_document.forms_infra_3.json
 }
 
-resource "aws_iam_role_policy_attachment" "forms-infra-3" {
-  policy_arn = aws_iam_policy.forms-infra-3.arn
+resource "aws_iam_role_policy_attachment" "forms_infra_3" {
+  policy_arn = aws_iam_policy.forms_infra_3.arn
   role       = aws_iam_role.deployer.id
 }
 

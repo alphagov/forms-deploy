@@ -22,7 +22,7 @@ resource "aws_route53_record" "api" {
   records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
-resource "aws_route53_record" "product-page" {
+resource "aws_route53_record" "product_page" {
   zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = "www.${var.root_domain}"
   type    = "CNAME"
@@ -30,7 +30,7 @@ resource "aws_route53_record" "product-page" {
   records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
-resource "aws_route53_record" "apex-domain" {
+resource "aws_route53_record" "apex_domain" {
   #checkov:skip=CKV2_AWS_23:Not applicable to alias records
   zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
   name    = var.root_domain

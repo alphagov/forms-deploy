@@ -24,7 +24,7 @@ module "rds" {
   database_identifier = "primary"
 }
 
-module "forms-runner-rds" {
+module "forms_runner_rds" {
   # this is the rds cluster for the forms-runner database
   source     = "../../../modules/rds"
   env_name   = var.environment_name

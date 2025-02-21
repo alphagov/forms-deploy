@@ -1,7 +1,7 @@
 ##
 # CodePipeline
 ##
-resource "aws_codepipeline" "deploy-pipeline-visualiser" {
+resource "aws_codepipeline" "deploy_pipeline_visualiser" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
 
   name           = "deploy-pipeline-visualiser"

@@ -1,4 +1,4 @@
-resource "aws_iam_role" "codepipeline-readonly" {
+resource "aws_iam_role" "codepipeline_readonly" {
   name = "codepipeline-readonly"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -14,7 +14,7 @@ resource "aws_iam_role" "codepipeline-readonly" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "codepipeline-readonly-policy" {
+resource "aws_iam_role_policy_attachment" "codepipeline_readonly_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodePipeline_ReadOnlyAccess"
-  role       = aws_iam_role.codepipeline-readonly.name
+  role       = aws_iam_role.codepipeline_readonly.name
 }
