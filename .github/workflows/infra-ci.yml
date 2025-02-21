@@ -49,11 +49,36 @@ jobs:
       - name: Run specs
         run: |
           make spec
+      - uses: actions/cache@v4
+        name: Cache tflint plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: tflint-${{ hashFiles('.tflint.hcl') }}
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.52.0
+      - name: Init tflint
+        run: tflint --init
+        env:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Run tflint
+        run: |
+          tflint_deadline=$(date -d 2025-06-01 +%s)
+          now=$(date +%s)
+          info_only=true
+          
+          if [ "${now}" -ge "${tflint_deadline}" ]; then
+            echo "The deadline for addressing tflint errors has passed. They have begun failing the tests"
+            info_only=false
+          fi
+          
+          make tflint TFLINT_INFO_ONLY=$info_only
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
-      - name: Lint Terraform
+      - name: Run Checkov against Terraform
         run: |
           pip install -r requirements.txt
           checkov -d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet
