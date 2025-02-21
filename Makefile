@@ -160,7 +160,7 @@ fmt:
 	terraform fmt -recursive infra/
 
 .PHONY: lint
-lint: checkov spec lint_ruby
+lint: checkov tflint spec lint_ruby
 
 .PHONY: lint_ruby
 lint_ruby:
@@ -176,6 +176,33 @@ spec:
 	(cd infra; bundle install; bundle exec rspec;)
 	(cd support/pipeline-visualiser; bundle install; bundle exec rspec;)
 	(cd infra/deployments/forms/pipelines/pipeline-invoker; bundle install; bundle exec rspec;)
+
+.PHONY: tflint
+tflint: tflint_init tflint_modules tflint_deploy tflint_forms tflint_integration
+
+.PHONY: tflint_init
+tflint_init:
+	tflint --init
+
+.PHONY: tflint_modules
+tflint_modules:
+	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl"
+
+.PHONY: tflint_deploy
+tflint_deploy:
+	tflint --chdir=infra/deployments/deploy/ --recursive --config "$$(pwd)/.tflint.hcl"
+
+.PHONY: tflint_forms
+tflint_forms:
+	tflint --chdir=infra/deployments/forms/ --recursive --config "$$(pwd)/.tflint.hcl" \
+		--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
+		--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"
+
+.PHONY: tflint_integration
+tflint_integration:
+	tflint --chdir=infra/deployments/integration/ --recursive --config "$$(pwd)/.tflint.hcl" \
+		--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
+		--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"
 
 ##
 # Help text
