@@ -15,7 +15,7 @@ variable "dynamodb_table" {
 }
 
 module "state_bucket" {
-  source = "../../../modules/state-bucket"
+  source = "../../../../modules/state-bucket"
 
   bucket_name = var.bucket_name
 }
