@@ -8,34 +8,3 @@ module "ses" {
   email_domain   = var.root_domain
   from_address   = "no-reply@${var.root_domain}"
 }
-
-# moved statements, will be deleted once deployed
-moved {
-  from = module.ses.aws_sns_topic.ses_bounces_and_complaints
-  to   = module.ses.module.auth0_bounces_and_complaints_sqs.aws_sns_topic.ses_topic
-}
-
-moved {
-  from = module.ses.aws_sns_topic_subscription.ses_bounces_and_complaints
-  to   = module.ses.module.auth0_bounces_and_complaints_sqs.aws_sns_topic_subscription.ses_topic_subscription
-}
-
-moved {
-  from = module.ses.aws_sqs_queue.ses_bounces_and_complaints
-  to   = module.ses.module.auth0_bounces_and_complaints_sqs.aws_sqs_queue.ses_queue
-}
-
-moved {
-  from = module.ses.aws_sqs_queue.ses_dead_letter
-  to   = module.ses.module.auth0_bounces_and_complaints_sqs.aws_sqs_queue.ses_dead_letter
-}
-
-moved {
-  from = module.ses.aws_sqs_queue_policy.ses_bounces_and_complaints
-  to   = module.ses.module.auth0_bounces_and_complaints_sqs.aws_sqs_queue_policy.ses_policy
-}
-
-moved {
-  from = module.ses.aws_kms_key.this
-  to   = module.ses.module.auth0_bounces_and_complaints_sqs.aws_kms_key.this
-}
