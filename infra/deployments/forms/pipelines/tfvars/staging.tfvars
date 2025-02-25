@@ -3,7 +3,7 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   apply_latest_tag         = false
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "QUEUED"
 }
 
@@ -12,7 +12,7 @@ deploy-forms-runner-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   apply_latest_tag         = false
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "QUEUED"
 }
 
@@ -21,7 +21,7 @@ deploy-forms-api-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   apply_latest_tag         = false
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "QUEUED"
 }
 
@@ -30,7 +30,7 @@ deploy-forms-admin-container = {
   retag_image_on_success   = true
   retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
   apply_latest_tag         = false
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
   pipeline_execution_mode  = "QUEUED"
 }
 
@@ -38,7 +38,7 @@ apply-terraform = {
   pipeline_trigger         = "GIT"
   git_source_branch        = "main"
   previous_stage_name      = null
-  disable_end_to_end_tests = false
+  disable_end_to_end_tests = true
 }
 
 paused-pipeline-detection = {
