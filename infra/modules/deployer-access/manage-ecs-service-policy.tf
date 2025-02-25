@@ -7,12 +7,12 @@ data "aws_iam_policy_document" "ecs-service" {
   ]
 }
 
-resource "aws_iam_policy" "ecs-service" {
+resource "aws_iam_policy" "ecs_service" {
   policy = data.aws_iam_policy_document.ecs-service.json
 }
 
-resource "aws_iam_role_policy_attachment" "ecs-service" {
-  policy_arn = aws_iam_policy.ecs-service.arn
+resource "aws_iam_role_policy_attachment" "ecs_service" {
+  policy_arn = aws_iam_policy.ecs_service.arn
   role       = aws_iam_role.deployer.id
 }
 

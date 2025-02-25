@@ -1,10 +1,10 @@
-module "all-accounts" {
+module "all_accounts" {
   source = "../../../modules/all-accounts"
 }
 
 locals {
   deployer_roles = [
-    for acct, id in module.all-accounts.environment_accounts_id :
+    for acct, id in module.all_accounts.environment_accounts_id :
     "arn:aws:iam::${id}:role/deployer-${acct == "development" ? "dev" : acct}"
   ]
 }
@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.all_accounts_id :
+        for _, id in module.all_accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -130,7 +130,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_admin" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.all_accounts_id :
+        for _, id in module.all_accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -173,7 +173,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_runner_document" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.all_accounts_id :
+        for _, id in module.all_accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -215,7 +215,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_product_page_document"
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.all_accounts_id :
+        for _, id in module.all_accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }
@@ -258,7 +258,7 @@ data "aws_iam_policy_document" "aws_ecr_repository_policy_end_to_end_tests" {
     principals {
       type = "AWS"
       identifiers = [
-        for _, id in module.all-accounts.all_accounts_id :
+        for _, id in module.all_accounts.all_accounts_id :
         "arn:aws:iam::${id}:root"
       ]
     }

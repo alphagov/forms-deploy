@@ -1,4 +1,4 @@
-resource "aws_iam_role" "s3-end-to-end-test_role" {
+resource "aws_iam_role" "s3_end_to_end_test_role" {
   name               = "govuk-s3-end-to-end-test-${var.env_name}"
   assume_role_policy = data.aws_iam_policy_document.s3-end-to-end-test_role_policy.json
 }
@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "s3-end-to-end-test_role_policy" {
 }
 
 resource "aws_iam_role_policy" "allow_s3_actions_for_e2e_tests" {
-  role = aws_iam_role.s3-end-to-end-test_role.id
+  role = aws_iam_role.s3_end_to_end_test_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

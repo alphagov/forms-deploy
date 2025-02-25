@@ -1,4 +1,4 @@
-module "build-product-page-container" {
+module "build_product_page_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-product-page"
   container_repository    = "forms-product-page-deploy"
@@ -8,7 +8,7 @@ module "build-product-page-container" {
 
 }
 
-module "build-forms-runner-container" {
+module "build_forms_runner_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-runner"
   container_repository    = "forms-runner-deploy"
@@ -17,7 +17,7 @@ module "build-forms-runner-container" {
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_runner_ecr_repository_url
 }
 
-module "build-forms-api-container" {
+module "build_forms_api_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-api"
   container_repository    = "forms-api-deploy"
@@ -26,7 +26,7 @@ module "build-forms-api-container" {
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_api_ecr_repository_url
 }
 
-module "build-forms-admin-container" {
+module "build_forms_admin_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-admin"
   container_repository    = "forms-admin-deploy"
