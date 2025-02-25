@@ -10,6 +10,14 @@ locals {
     account  = "$.account"
     time     = "$.time"
   }
+
+  # Excludes integration account from the list of all account ids
+  # This is because we don't want to build Slack notification resources
+  # for the integration account (yet).
+  account_except_integration = {
+    for account in setsubtract(keys(module.other_accounts.all_accounts_id), ["integration"]) :
+    account => module.other_accounts.all_accounts_id[account]
+  }
 }
 
 # The alerts and deployments SNS topics and their access policies were created by the AWS ChatBot service.
@@ -145,7 +153,7 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
 }
 
 module "slack_notifications" {
-  for_each = module.other_accounts.all_accounts_id
+  for_each = local.account_except_integration
   source   = "./slack-notifications"
 
 
