@@ -20,11 +20,6 @@ module "admin_role" {
   ip_restrictions = local.ip_restrictions
 }
 
-moved {
-  from = module.admin_roles
-  to   = module.admin_role
-}
-
 module "support_role" {
   for_each = toset(module.users.with_role["integration_support"])
 
@@ -35,11 +30,6 @@ module "support_role" {
     aws_iam_policy.lock_state_files.id
   ]
   ip_restrictions = local.ip_restrictions
-}
-
-moved {
-  from = module.support_roles
-  to   = module.support_role
 }
 
 module "readonly_role" {
@@ -54,12 +44,6 @@ module "readonly_role" {
   ]
   ip_restrictions = local.ip_restrictions
 }
-
-moved {
-  from = module.readonly_roles
-  to   = module.readonly_role
-}
-
 
 resource "aws_iam_policy" "lock_state_files" {
   name = "lock-state-files"
