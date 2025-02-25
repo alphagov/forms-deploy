@@ -15,6 +15,13 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgres_v13" {
   description = "RDS cluster parameter group for Aurora Serverless for PostgreSQL 13"
 }
 
+resource "aws_rds_cluster_parameter_group" "aurora_postgres_v16" {
+  name_prefix = "forms-${var.identifier}-pg16"
+  family      = "aurora-postgresql16"
+  description = "RDS cluster parameter group for Aurora Serverless for PostgreSQL 16"
+}
+
+
 resource "aws_rds_cluster" "cluster_aurora_v2" {
   #checkov:skip=CKV2_AWS_8:AWS RDS inbuilt backup process is sufficient
   #checkov:skip=CKV2_AWS_27:Query logging is not required at this time
@@ -33,14 +40,14 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
 
   engine         = "aurora-postgresql"
   engine_mode    = "provisioned"
-  engine_version = "13.12"
+  engine_version = "16.6"
 
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.rds.id
 
   enable_http_endpoint = true
 
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgres_v13.id
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_postgres_v16.id
 
   apply_immediately            = var.apply_immediately
   preferred_maintenance_window = var.rds_maintenance_window
@@ -73,14 +80,14 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
     # "engine_version" configuration, and replace it once the upgrade is complete.
     ignore_changes = [
       snapshot_identifier,
-      engine_version,
-      db_cluster_parameter_group_name,
+      #engine_version,
+      #db_cluster_parameter_group_name,
       restore_to_point_in_time
     ]
   }
 
   depends_on = [
-    aws_rds_cluster_parameter_group.aurora_postgres_v13
+    aws_rds_cluster_parameter_group.aurora_postgres_v16
   ]
 }
 
