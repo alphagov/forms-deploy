@@ -193,8 +193,3 @@ module "s3_log_shipping" {
   s3_name                  = module.file_upload_bucket_logs.name
 }
 
-moved {
-  from = module.s3_log_shipping
-  to   = module.s3_log_shipping[0]
-}
-
