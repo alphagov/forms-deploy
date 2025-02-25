@@ -16,11 +16,6 @@ module "admin_role" {
   ip_restrictions = local.vpn_ip_restrictions
 }
 
-moved {
-  from = module.admin_roles
-  to   = module.admin_role
-}
-
 module "support_role" {
   for_each = toset(concat(var.admins, var.support))
 
@@ -51,11 +46,6 @@ module "readonly_role" {
     aws_iam_policy.lock_state_files.arn,
   ]
   ip_restrictions = local.vpn_ip_restrictions
-}
-
-moved {
-  from = module.readonly_roles
-  to   = module.readonly_role
 }
 
 
