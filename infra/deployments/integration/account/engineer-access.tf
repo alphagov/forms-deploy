@@ -10,7 +10,7 @@ locals {
   ip_restrictions = var.require_vpn_to_access ? module.common_values.vpn_ip_addresses : []
 }
 
-module "admin_roles" {
+module "admin_role" {
   for_each = toset(module.users.with_role["integration_admin"])
 
   source          = "../../../modules/gds-user-role/"
@@ -20,7 +20,12 @@ module "admin_roles" {
   ip_restrictions = local.ip_restrictions
 }
 
-module "support_roles" {
+moved {
+  from = module.admin_roles
+  to   = module.admin_role
+}
+
+module "support_role" {
   for_each = toset(module.users.with_role["integration_support"])
 
   source      = "../../../modules/gds-user-role/"
@@ -32,8 +37,12 @@ module "support_roles" {
   ip_restrictions = local.ip_restrictions
 }
 
+moved {
+  from = module.support_roles
+  to   = module.support_role
+}
 
-module "readonly_roles" {
+module "readonly_role" {
   for_each = toset(module.users.with_role["integration_readonly"])
 
   source      = "../../../modules/gds-user-role/"
@@ -44,6 +53,11 @@ module "readonly_roles" {
     aws_iam_policy.lock_state_files.id
   ]
   ip_restrictions = local.ip_restrictions
+}
+
+moved {
+  from = module.readonly_roles
+  to   = module.readonly_role
 }
 
 
