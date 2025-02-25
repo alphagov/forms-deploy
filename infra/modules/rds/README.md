@@ -19,6 +19,6 @@ Each app is currently configured to run its database migrations when it starts. 
 
 #### Forms-runner
 
-The Forms-runner database has its own database and is setup in a separate RDS cluster to Forms-api and Forms-admin. The steps for its initial creation are the same as above, but using `forms-runner-prepare.sql`. Any subsequent restoration should be done via backups.
+Forms-runner has two databases, which are setup in a separate RDS cluster to Forms-api and Forms-admin. There is an app database and a  database used by Solid Queue. The steps for their initial creation are the same as above, but using `forms-runner-prepare.sql`. Any subsequent restoration should be done via backups.
 
-While being set up, the Forms-runner database is currently not configured to run any database migrations. This will be added at a later point.
+Forms-runner is currently configured to run its database migrations when it starts. These migrations will create the necessary tables and indexes and no further manual setup should be required.

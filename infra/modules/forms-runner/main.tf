@@ -185,6 +185,10 @@ module "ecs_service" {
     {
       name      = "DATABASE_URL",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url"
+    },
+    {
+      name      = "QUEUE_DATABASE_URL",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
     }
   ]
 }
