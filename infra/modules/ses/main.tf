@@ -42,6 +42,33 @@ resource "aws_sesv2_configuration_set" "form_submissions" {
   }
 }
 
+resource "aws_sesv2_configuration_set_event_destination" "form_submissions_bounces_and_complaints" {
+  configuration_set_name = aws_sesv2_configuration_set.form_submissions.configuration_set_name
+  event_destination_name = "form_submissions_bounces_and_complaints"
+
+  event_destination {
+    enabled              = true
+    matching_event_types = ["BOUNCE", "COMPLAINT", "REJECT"]
+
+    sns_destination {
+      topic_arn = module.submission_email_bounces_and_complaints_sqs.aws_sns_topic
+    }
+  }
+}
+
+resource "aws_sesv2_configuration_set_event_destination" "form_submissions_successful_deliveries" {
+  configuration_set_name = aws_sesv2_configuration_set.form_submissions.configuration_set_name
+  event_destination_name = "form_submissions_successful_deliveries"
+
+  event_destination {
+    enabled              = true
+    matching_event_types = ["DELIVERY"]
+
+    sns_destination {
+      topic_arn = module.submission_email_successful_deliveries_sqs.aws_sns_topic
+    }
+  }
+}
 
 ##
 # SES v1 configuration
