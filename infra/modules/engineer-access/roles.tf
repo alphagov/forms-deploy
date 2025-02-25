@@ -6,7 +6,7 @@ locals {
   vpn_ip_restrictions = var.vpn ? module.common_values.vpn_ip_addresses : []
 }
 
-module "admin_roles" {
+module "admin_role" {
   for_each = toset(var.admins)
 
   source          = "../gds-user-role/"
@@ -14,6 +14,11 @@ module "admin_roles" {
   role_suffix     = "admin"
   iam_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   ip_restrictions = local.vpn_ip_restrictions
+}
+
+moved {
+  from = module.admin_roles
+  to   = module.admin_role
 }
 
 module "support_role" {
@@ -35,7 +40,7 @@ module "support_role" {
   ip_restrictions = local.vpn_ip_restrictions
 }
 
-module "readonly_roles" {
+module "readonly_role" {
   for_each = toset(concat(var.admins, var.support, var.readonly))
 
   source      = "../gds-user-role/"
@@ -47,6 +52,12 @@ module "readonly_roles" {
   ]
   ip_restrictions = local.vpn_ip_restrictions
 }
+
+moved {
+  from = module.readonly_roles
+  to   = module.readonly_role
+}
+
 
 module "pentester_role" {
   for_each = toset(var.pentesters)
