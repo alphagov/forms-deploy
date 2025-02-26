@@ -8,10 +8,14 @@ module "common_values" {
 
 locals {
   ip_restrictions = var.require_vpn_to_access ? module.common_values.vpn_ip_addresses : []
+
+  admin_users    = module.users.with_role["integration_admin"]
+  suppport_users = module.users.with_role["integration_support"]
+  readonly_users = module.users.with_role["integration_readonly"]
 }
 
 module "admin_role" {
-  for_each = toset(module.users.with_role["integration_admin"])
+  for_each = toset(local.admin_users)
 
   source          = "../../../modules/gds-user-role/"
   email           = "${each.value}@digital.cabinet-office.gov.uk"
@@ -21,7 +25,7 @@ module "admin_role" {
 }
 
 module "support_role" {
-  for_each = toset(module.users.with_role["integration_support"])
+  for_each = toset(concat(local.admin_users, local.suppport_users))
 
   source      = "../../../modules/gds-user-role/"
   email       = "${each.value}@digital.cabinet-office.gov.uk"
@@ -33,7 +37,7 @@ module "support_role" {
 }
 
 module "readonly_role" {
-  for_each = toset(module.users.with_role["integration_readonly"])
+  for_each = toset(concat(local.admin_users, local.suppport_users, local.readonly_users))
 
   source      = "../../../modules/gds-user-role/"
   email       = "${each.value}@digital.cabinet-office.gov.uk"
