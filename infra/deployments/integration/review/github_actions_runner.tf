@@ -194,6 +194,37 @@ data "aws_iam_policy_document" "runner_permissions" {
       aws_ssm_parameter.dockerhub_username.arn
     ]
   }
+
+  statement {
+    sid    = "UseAppAutoscaling"
+    effect = "Allow"
+    actions = [
+      "application-autoscaling:*ScalableTarget",
+      "application-autoscaling:*ScalableTargets",
+      "application-autoscaling:*ScheduledAction",
+      "application-autoscaling:*ScheduledActions",
+      "application-autoscaling:*ScalingPolicy",
+      "application-autoscaling:*ScalingPolicies",
+      "application-autoscaling:TagResource",
+      "application-autoscaling:UntagResource"
+    ]
+    resources = [
+      "arn:aws:application-autoscaling:eu-west-2:${data.aws_caller_identity.current.account_id}:scalable-target/*"
+    ]
+  }
+
+  statement {
+    sid    = "UseAppAutoscalingNeedingStar"
+    effect = "Allow"
+    actions = [
+      "application-autoscaling:DescribeScalableTargets",
+      "application-autoscaling:DescribeScalingPolicies",
+      "application-autoscaling:DescribeScheduledActions",
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }
 
 ##
