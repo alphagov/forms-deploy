@@ -24,7 +24,7 @@ data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
 }
 
 module "cloudfront_waf_protection" {
-  source                 = "../cloufront_waf_protection"
+  source                 = "../cloudfront_waf_protection"
   environment_name       = var.env_name
   ips_to_block           = var.ips_to_block
   ip_rate_limit          = var.ip_rate_limit
