@@ -30,6 +30,10 @@ resource "aws_iam_role" "github_actions_runner" {
   })
 }
 
+resource "aws_iam_service_linked_role" "app_autoscaling" {
+  aws_service_name = "ecs.application-autoscaling.amazonaws.com"
+}
+
 resource "aws_iam_role_policy" "runner_permissions" {
   role   = aws_iam_role.github_actions_runner.name
   policy = data.aws_iam_policy_document.runner_permissions.json
@@ -179,7 +183,10 @@ data "aws_iam_policy_document" "runner_permissions" {
     actions = [
       "iam:PassRole"
     ]
-    resources = [aws_iam_role.ecs_execution.arn]
+    resources = [
+      aws_iam_role.ecs_execution.arn,
+      aws_iam_service_linked_role.app_autoscaling.arn
+    ]
   }
 
   statement {
@@ -205,6 +212,7 @@ data "aws_iam_policy_document" "runner_permissions" {
       "application-autoscaling:*ScheduledActions",
       "application-autoscaling:*ScalingPolicy",
       "application-autoscaling:*ScalingPolicies",
+      "application-autoscaling:ListTagsForResource",
       "application-autoscaling:TagResource",
       "application-autoscaling:UntagResource"
     ]
