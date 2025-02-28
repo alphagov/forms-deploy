@@ -338,6 +338,7 @@ set_github_actions_version_constraint(gha_workflow_path, new_tf_constraint)
 terraform_roots = [
   *Dir.glob(repo_path("infra/deployments/deploy/*")).keep_if { |f| File.directory? f },
   *Dir.glob(repo_path("infra/deployments/forms/*")).keep_if { |f| (File.directory? f) && (File.basename(f) != "tfvars") },
+  *Dir.glob(repo_path("infra/deployments/integration/*")).keep_if { |f| (File.directory? f) && (File.basename(f) != "tfvars") },
 ]
 
 tf_plugin_cache_dir = Dir.mktmpdir("tf-plugin-cache")
