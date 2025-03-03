@@ -51,14 +51,6 @@ locals {
       user_research = "admin"
       integration   = "readonly"
     },
-    "james.sheppard" = {
-      deploy        = "readonly"
-      staging       = "readonly"
-      production    = "readonly"
-      development   = "admin"
-      user_research = "admin"
-      integration   = "readonly"
-    },
     "jamie.wilkinson1" = {
       deploy        = "support"
       staging       = "support"
