@@ -1,6 +1,6 @@
 ### Description
 
-This module deploys an RDS cluster in Serverless V1 configuration using a postgres 11.x engine (the latest available on Serverless). Serverless V1 will scale to "off" if `auto_pause` is set to `true` and after the `seconds_until_auto_pause` duration without any activity. Serverless V1 was chosen because it is compatible with AWS Data API which provides Engineers access without the need for a Bastion host within our VPC. Serverless V2 is not compatible with AWS Data API and does not scale to "off" when not in use.
+This module deploys an RDS cluster in Serverless V2 configuration using a postgres 13.x engine.
 
 ### How to prepare the databases
 
