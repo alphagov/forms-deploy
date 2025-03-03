@@ -2,10 +2,10 @@ data "terraform_remote_state" "redis" {
   backend = "s3"
 
   config = {
-    key            = "redis.tfstate"
-    bucket         = var.bucket
-    region         = "eu-west-2"
-    dynamodb_table = var.dynamodb_table
+    key          = "redis.tfstate"
+    bucket       = var.bucket
+    region       = "eu-west-2"
+    use_lockfile = var.dynamodb_table
   }
 }
 
@@ -13,10 +13,10 @@ data "terraform_remote_state" "forms_environment" {
   backend = "s3"
 
   config = {
-    key            = "network.tfstate"
-    bucket         = var.bucket
-    region         = "eu-west-2"
-    dynamodb_table = var.dynamodb_table
+    key          = "network.tfstate"
+    bucket       = var.bucket
+    region       = "eu-west-2"
+    use_lockfile = var.dynamodb_table
   }
 }
 
@@ -24,10 +24,10 @@ data "terraform_remote_state" "forms_ses" {
   backend = "s3"
 
   config = {
-    key            = "ses.tfstate"
-    bucket         = var.bucket
-    region         = "eu-west-2"
-    dynamodb_table = var.dynamodb_table
+    key          = "ses.tfstate"
+    bucket       = var.bucket
+    region       = "eu-west-2"
+    use_lockfile = var.dynamodb_table
   }
 }
 
