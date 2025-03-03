@@ -243,8 +243,16 @@ provider_source_to_name_map = required_providers
 # Build a map of provider name => latest version
 # @type [Hash<String, Gem::Version>]
 provider_latest_versions = provider_constraints.keys.map { |provider_name|
-  puts "Getting #{provider_name} latest version..."
-  [provider_name, latest_provider_version(provider_name)]
+  if provider_name != "auth0/auth0"
+    puts "Getting #{provider_name} latest version..."
+    [provider_name, latest_provider_version(provider_name)]
+  else
+    puts "Maintaining auth0/auth0 at #{provider_constraints['auth0/auth0']} because there is an issue preventing us upgrading it"
+    puts "See: https://github.com/alphagov/forms-deploy/pull/1142"
+
+    auth0_version = Gem::Version.new(required_providers["auth0"]["version"].sub("= ", "")) # strip any leading "= " in the version requirement
+    [provider_name, auth0_version]
+  end
 }.to_h
 
 # Is latest TF version an upgrade?
@@ -302,6 +310,9 @@ new_tf_constraint = Gem::Requirement.new("~> #{target_terraform_version}")
 new_provider_constraints = provider_latest_versions.transform_values do |version|
   Gem::Requirement.new("~> #{version}")
 end
+
+# Set auth0 constraint to be exactly the current version
+new_provider_constraints["auth0/auth0"] = Gem::Requirement.new(provider_latest_versions["auth0/auth0"])
 
 puts "NEW VERSION CONSTRAINTS"
 puts "Terraform: #{new_tf_constraint}"
