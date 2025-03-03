@@ -1,0 +1,48 @@
+name: "Guardrail: Terraform version upgrade"
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".terraform-version"
+
+jobs:
+  leave_a_comment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    name: Leave a comment
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Leave a comment
+        env:
+          COMMENT_MARKER: "<!-- guardrail: tf version change -->"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # shellcheck disable=SC2296
+          # shellcheck disable=SC2016
+          cat <<EOF > "${{runner.temp}}/pr-comment.md"
+          > [!WARNING]
+          > You are changing the Terraform version.
+          >
+          > Before you merge this PR, you must apply the \`forms/pipelines\` 
+          > Terraform root from this branch in each of the \`forms\` environments.
+          >
+          > \`\`\`
+          > make ENV forms/pipelines apply
+          > \`\`\`
+          
+          ${COMMENT_MARKER}
+          EOF
+
+          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
+          for comment_id in $old_comment_ids; do
+            gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
+          done
+
+          gh pr comment "${{github.event.pull_request.html_url}}" --body-file "${{runner.temp}}/pr-comment.md"
