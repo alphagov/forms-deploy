@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "optparse"
+require_relative "commands/bastion_exec"
 require_relative "commands/ecs_summary"
 require_relative "commands/get_parameters"
 require_relative "commands/pipeline_summary"
@@ -12,6 +13,7 @@ require "colorize"
 
 # Add new commands here
 COMMANDS = {
+  bastion_exec: -> { BastionExec.new.run },
   ecs_summary: -> { EcsSummary.new.run },
   get_parameters: -> { GetParameters.new.run },
   pipeline_summary: -> { PipelineSummary.new.run },

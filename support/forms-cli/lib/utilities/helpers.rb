@@ -50,6 +50,18 @@ module Helpers
     "#{subdomain}#{domain}"
   end
 
+  def repo_dir
+    forms_cli_dir.join("../..")
+  end
+
+  def forms_cli_dir
+    Pathname.new(__dir__).join("../..")
+  end
+
+  def infra_dir
+    repo_dir.join("infra")
+  end
+
 private
 
   def expected_aws_environment_variable
