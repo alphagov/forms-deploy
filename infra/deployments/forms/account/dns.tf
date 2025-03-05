@@ -3,9 +3,9 @@ resource "aws_route53_zone" "public" {
   #checkov:skip=CKV2_AWS_39:DNS query logging not necessary
   name = "${var.apex_domain}."
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_route53_record" "domain_delegations" {

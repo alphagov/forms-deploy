@@ -15,7 +15,7 @@ locals {
   # All GOV.UK Forms developers can have admin access to the development
   # and user research accounts.
 
-  accounts = ["deploy", "staging", "production", "development", "user_research", "integration"]
+  accounts = ["deploy", "staging", "production", "development", "dev-two", "user_research", "integration"]
   roles    = ["admin", "support", "readonly"]
 
   users = {
@@ -26,6 +26,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "andy.hunt" = {
       deploy        = "admin"
@@ -34,6 +35,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "admin"
+      "dev-two"     = "admin"
     },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
@@ -42,6 +44,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "admin"
+      "dev-two"     = "admin"
     },
     "david.biddle" = {
       deploy        = "admin"
@@ -50,6 +53,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "jamie.wilkinson1" = {
       deploy        = "support"
@@ -58,6 +62,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "kelvin.gan" = {
       deploy        = "admin" # Feature Team Tech lead
@@ -66,6 +71,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "laurence.debruxelles" = {
       deploy        = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
@@ -74,6 +80,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "max.fitzhugh" = {
       deploy        = "readonly"
@@ -82,6 +89,7 @@ locals {
       development   = "readonly"
       user_research = "readonly"
       integration   = "readonly"
+      "dev-two"     = "readonly"
     },
     "samuel.culley" = {
       deploy        = "admin"
@@ -90,6 +98,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "sarah.young1" = {
       deploy        = "admin"
@@ -98,6 +107,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "admin"
+      "dev-two"     = "admin"
     },
     "sean.rankine" = {
       deploy        = "admin" # Sean is our Lead Dev and has also worked as a Sr SRE.
@@ -106,6 +116,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "admin"
+      "dev-two"     = "admin"
     },
     "stephen.daly" = {
       deploy        = "admin"
@@ -114,6 +125,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
     "tom.iles" = {
       deploy        = "admin"
@@ -122,6 +134,7 @@ locals {
       development   = "admin"
       user_research = "admin"
       integration   = "readonly"
+      "dev-two"     = "admin"
     },
   }
 }

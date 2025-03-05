@@ -19,6 +19,11 @@ dev development:
 	$(eval export TARGET_ENVIRONMENT = dev)
 	@true
 
+.PHONY: dev-two development-two
+dev-two development-two:
+	$(eval export TARGET_ENVIRONMENT = dev-two)
+	@true
+
 .PHONY: staging
 staging:
 	$(eval export TARGET_ENVIRONMENT = staging)
