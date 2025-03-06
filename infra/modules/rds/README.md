@@ -1,12 +1,12 @@
 ### Description
 
-This module deploys an RDS cluster in Serverless V1 configuration using a postgres 11.x engine (the latest available on Serverless). Serverless V1 will scale to "off" if `auto_pause` is set to `true` and after the `seconds_until_auto_pause` duration without any activity. Serverless V1 was chosen because it is compatible with AWS Data API which provides Engineers access without the need for a Bastion host within our VPC. Serverless V2 is not compatible with AWS Data API and does not scale to "off" when not in use.
+This module deploys an RDS cluster in Serverless v2 configuration using a PostgreSQL 13.x engine.
 
 ### How to prepare the databases
 
 #### Forms-api and Forms-admin
 
-Forms-api and Forms-admin each have their own database and both are setup in a single RDS cluster. The following is a one-off operation to be done after the initial creation of the cluster. Any subsequent restoration should be done via backups.
+forms-api and forms-admin each have their own database and both are setup in a single RDS cluster. The following is a one-off operation to be done after the initial creation of the cluster. Any subsequent restoration should be done via backups.
 - Create a password for the `root` user and store it in SSM Parameter Store as a secure string in the `${app-identifier}/database/root-password` parameter that was created as part of the rds module.
 - Using the console in AWS, add the same password created in the previous step as the `master password` of the aurora cluster you have just created.
 - Create passwords for the `forms-api` and `forms-admin` users and store in SSM Parameter Store as secure strings in the `/${app-name}-${environment}/database/password` paramaters that were created as part of the rds module.
@@ -19,6 +19,6 @@ Each app is currently configured to run its database migrations when it starts. 
 
 #### Forms-runner
 
-Forms-runner has two databases, which are setup in a separate RDS cluster to Forms-api and Forms-admin. There is an app database and a  database used by Solid Queue. The steps for their initial creation are the same as above, but using `forms-runner-prepare.sql`. Any subsequent restoration should be done via backups.
+forms-runner has two databases, which are setup in a separate RDS cluster to forms-api and forms-admin. There is an app database and a database used by Solid Queue. The steps for their initial creation are the same as above, but using `forms-runner-prepare.sql`. Any subsequent restoration should be done via backups.
 
-Forms-runner is currently configured to run its database migrations when it starts. These migrations will create the necessary tables and indexes and no further manual setup should be required.
+forms-runner is currently configured to run its database migrations when it starts. These migrations will create the necessary tables and indexes and no further manual setup should be required.
