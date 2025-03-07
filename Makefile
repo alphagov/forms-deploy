@@ -133,25 +133,7 @@ unlock: target_environment_set target_tf_root_set aws_credentials_available show
 
 .PHONY: forms_apply_all
 forms_apply_all: target_environment_set not_ci aws_credentials_available
-	@ORDER=$$(yq '.running-order.layers[] | .phases[].roots[]' "./infra/deployments/running-order.yml"); \
-	TIMESTAMP=$$(date "+%Y%m%d%H%M%S"); \
-	LOG_PATH="./logs/$${TIMESTAMP}"; \
-	mkdir -p "$${LOG_PATH}"; \
-	echo "========[Applying Forms Terraform]"; \
-	echo "=> Target environment:     $${TARGET_ENVIRONMENT}"; \
-	echo "=> Log file path:          $${LOG_PATH}"; \
-	echo "=> Running order:"; \
-	echo "$${ORDER}" | xargs printf "\t%s\n"; \
-	echo "========"; \
-	set -euo pipefail ;\
-	echo ""; \
-	I=1; \
-	for root in $${ORDER}; do \
-	  	LOG_FILE="$${LOG_PATH}/$$(printf "%02d" "$${I}")-$$(echo "$${root}" | tr "/" "_")"; \
-	  	touch "$${LOG_FILE}"; \
-		$(MAKE) "$${TARGET_ENVIRONMENT}" "$${root}" apply 2>&1 | tee >(sed -e 's/\x1b\[[0-9;]*[mGKHF]//g' > "$${LOG_FILE}"); \
-		I=$$((I + 1)); \
-	done;
+	@./infra/scripts/apply-forms-roots-in-order.sh
 
 ##
 # Utility targets
@@ -279,7 +261,10 @@ ACTIONS
 	unlock		Forcibly release the lock with the given lock id
 
 	forms_apply_all		Apply all of the Terraform for a GOV.UK Forms
-				environment in the correct order
+				environment in the correct order.
+
+				Set RESUME_FROM_CHECKPOINT=true to start the run
+				from where the last run ended. Useful when iterating.
 
 endef
 export help_actions
