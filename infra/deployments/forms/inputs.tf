@@ -206,6 +206,7 @@ variable "environmental_settings" {
     rds_maintenance_window                   = string
     ips_to_block                             = list(string)
     enable_shield_advanced_healthchecks      = bool
+    allow_pagerduty_alerts                   = bool
   })
 }
 
