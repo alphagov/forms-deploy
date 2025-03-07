@@ -1,10 +1,3 @@
-locals {
-  # We have configured AWS ChatBot for sending messages to Slack.
-  # AWS ChatBot does not have an API we can use in Terraform, so we
-  # configured it by hand in the one place and hardcoded the SNS topic here.
-  chatbot_alerts_channel_sns_topic = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
-}
-
 resource "aws_cloudwatch_metric_alarm" "pipeline_invoker_failure" {
   alarm_name          = "pipeline-invoker-failed-invocation"
   comparison_operator = "GreaterThanOrEqualToThreshold"
