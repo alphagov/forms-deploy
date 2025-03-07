@@ -109,7 +109,7 @@ private
         exit
       end
 
-      opts.on("-aAPP", "--app=APP", %w[admin api], "app to run command with")
+      opts.on("-aAPP", "--app=APP", %w[admin api runner], "app to run command with")
 
       opts.on("-cCOMMAND", "--command=command", "Rails command to run, must be defined in app")
 

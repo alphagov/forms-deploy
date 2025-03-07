@@ -120,8 +120,10 @@ resource "aws_iam_policy" "run_task" {
         Resource = [
           "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-admin",
           "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-api",
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-runner",
           "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-admin:*",
           "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-api:*",
+          "arn:aws:ecs:eu-west-2:${local.account_id}:task-definition/*_forms-runner:*",
         ]
       },
       {
@@ -134,6 +136,8 @@ resource "aws_iam_policy" "run_task" {
           "arn:aws:iam::${local.account_id}:role/*-forms-admin-ecs-task-execution",
           "arn:aws:iam::${local.account_id}:role/*-forms-api-ecs-task",
           "arn:aws:iam::${local.account_id}:role/*-forms-api-ecs-task-execution",
+          "arn:aws:iam::${local.account_id}:role/*-forms-runner-ecs-task",
+          "arn:aws:iam::${local.account_id}:role/*-forms-runner-ecs-task-execution",
         ]
       },
     ]
