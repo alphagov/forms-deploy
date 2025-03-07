@@ -38,6 +38,7 @@ environmental_settings = {
   rds_maintenance_window              = "wed:04:00-wed:04:30"
   ips_to_block                        = []
   enable_shield_advanced_healthchecks = true
+  allow_pagerduty_alerts              = true
 }
 root_domain = "forms.service.gov.uk"
 additional_dns_records = [

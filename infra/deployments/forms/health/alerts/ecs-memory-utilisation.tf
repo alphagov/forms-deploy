@@ -16,7 +16,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_utilization" {
     ServiceName = each.value
   }
 
-  alarm_actions      = [local.chatbot_alerts_channel_sns_topic]
-  ok_actions         = [local.chatbot_alerts_channel_sns_topic]
+  alarm_actions      = [local.alert_severity.eu_west_2.info]
+  ok_actions         = [local.alert_severity.eu_west_2.info]
   treat_missing_data = "missing"
 }

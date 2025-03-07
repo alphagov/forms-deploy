@@ -46,3 +46,8 @@ variable "pagerduty_alert_topics" {
     error_message = "All values must be valid ARNs"
   }
 }
+
+variable "allow_pagerduty_alerts" {
+  type        = bool
+  description = "Whether alerts should be allowed to go to PagerDuty at all"
+}

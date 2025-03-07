@@ -10,6 +10,7 @@ module "alerts" {
   minimum_healthy_host_count = 3
   enable_alert_actions       = var.environmental_settings.enable_alert_actions
   deploy_account_id          = var.deploy_account_id
+  allow_pagerduty_alerts     = var.environmental_settings.allow_pagerduty_alerts
 
 
   zendesk_alert_topics = {
