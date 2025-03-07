@@ -18,6 +18,6 @@ resource "aws_cloudwatch_metric_alarm" "lb_target_group_response_time" {
   }
 
   actions_enabled = var.enable_alert_actions
-  alarm_actions   = [var.pagerduty_alert_topics.eu_west_2]
-  ok_actions      = [var.pagerduty_alert_topics.eu_west_2]
+  alarm_actions   = [local.alert_severity.eu_west_2.high]
+  ok_actions      = [local.alert_severity.eu_west_2.high]
 }
