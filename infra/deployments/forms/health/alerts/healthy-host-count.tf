@@ -9,7 +9,7 @@ resource "aws_cloudwatch_metric_alarm" "healthy_host_alarms" {
   EOF
 
   comparison_operator = "LessThanThreshold"
-  evaluation_periods  = 1
+  evaluation_periods  = 10
   namespace           = "AWS/ApplicationELB"
   metric_name         = "HealthyHostCount"
   statistic           = "Minimum"
