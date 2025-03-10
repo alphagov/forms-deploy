@@ -45,7 +45,7 @@ EOF
   }
   treat_missing_data = "notBreaching"
 
-  alarm_actions = [local.alert_severity.eu_west_2.warn]
+  alarm_actions = [local.alert_severity.eu_west_2.info]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_contains_message" {
@@ -82,5 +82,5 @@ EOF
   }
   treat_missing_data = "notBreaching"
 
-  alarm_actions = [local.alert_severity.eu_west_2.warn]
+  alarm_actions = [local.alert_severity.eu_west_2.info]
 }

@@ -28,7 +28,7 @@ EOF
     FunctionName = "${var.environment}-pipeline-invoker"
   }
 
-  alarm_actions = [local.alert_severity.eu_west_2.info]
+  alarm_actions = [local.alert_severity.eu_west_2.warn]
 }
 
 resource "aws_cloudwatch_metric_alarm" "paused_pipeline_detector_failure" {
@@ -61,6 +61,6 @@ EOF
     FunctionName = "${var.environment}-paused-pipeline-detection"
   }
 
-  alarm_actions = [local.alert_severity.eu_west_2.info]
+  alarm_actions = [local.alert_severity.eu_west_2.warn]
 }
 
