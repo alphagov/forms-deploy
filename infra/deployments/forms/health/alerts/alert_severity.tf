@@ -8,15 +8,15 @@ locals {
   // should be used for that severity
   alert_severity = {
     eu_west_2 = {
-      info = local.chatbot_alerts_channel_sns_topic
-      warn = var.zendesk_alert_topics.eu_west_2
-      high = var.allow_pagerduty_alerts ? var.pagerduty_alert_topics.eu_west_2 : var.zendesk_alert_topics.eu_west_2
+      info = var.zendesk_alert_topics.eu_west_2
+      warn = local.chatbot_alerts_channel_sns_topic
+      high = var.allow_pagerduty_alerts ? var.pagerduty_alert_topics.eu_west_2 : local.chatbot_alerts_channel_sns_topic
     }
 
     us_east_1 = {
-      info = local.chatbot_alerts_channel_sns_topic
-      warn = var.zendesk_alert_topics.us_east_1
-      high = var.allow_pagerduty_alerts ? var.pagerduty_alert_topics.eu_west_2 : var.zendesk_alert_topics.us_east_1
+      info = var.zendesk_alert_topics.us_east_1
+      warn = local.chatbot_alerts_channel_sns_topic
+      high = var.allow_pagerduty_alerts ? var.pagerduty_alert_topics.eu_west_2 : local.chatbot_alerts_channel_sns_topic
     }
   }
 }
