@@ -20,7 +20,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_utilization_alarm" {
     ServiceName = each.value
   }
 
-  alarm_actions      = [local.alert_severity.eu_west_2.info]
-  ok_actions         = [local.alert_severity.eu_west_2.info]
+  alarm_actions      = [local.alert_severity.eu_west_2.warn]
+  ok_actions         = [local.alert_severity.eu_west_2.warn]
   treat_missing_data = "missing"
 }
