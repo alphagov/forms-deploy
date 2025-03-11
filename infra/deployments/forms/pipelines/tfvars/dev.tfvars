@@ -6,7 +6,7 @@ deploy-forms-product-page-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   apply_latest_tag         = false
-  disable_end_to_end_tests = true
+  disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -18,7 +18,7 @@ deploy-forms-runner-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   apply_latest_tag         = false
-  disable_end_to_end_tests = true
+  disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -30,7 +30,7 @@ deploy-forms-api-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   apply_latest_tag         = false
-  disable_end_to_end_tests = true
+  disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -42,7 +42,7 @@ deploy-forms-admin-container = {
   retag_image_on_success   = false
   retagging_sed_expression = ""
   apply_latest_tag         = false
-  disable_end_to_end_tests = true
+  disable_end_to_end_tests = false
   pipeline_execution_mode  = "SUPERSEDED"
 }
 
@@ -50,7 +50,7 @@ apply-terraform = {
   pipeline_trigger         = "MANUAL"
   git_source_branch        = "poc-pipelines-in-environments"
   previous_stage_name      = ""
-  disable_end_to_end_tests = true
+  disable_end_to_end_tests = false
 }
 
 paused-pipeline-detection = {
