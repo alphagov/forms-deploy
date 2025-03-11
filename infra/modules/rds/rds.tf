@@ -80,8 +80,8 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
     # "engine_version" configuration, and replace it once the upgrade is complete.
     ignore_changes = [
       snapshot_identifier,
-      #engine_version,
-      #db_cluster_parameter_group_name,
+      engine_version,
+      db_cluster_parameter_group_name,
       restore_to_point_in_time
     ]
   }
