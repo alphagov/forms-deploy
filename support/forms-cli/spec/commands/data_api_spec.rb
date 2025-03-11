@@ -23,7 +23,7 @@ describe DataApi do
     end
 
     before do
-      stub_const("ARGV", ["-d", "forms-api", "-s", "select * from testing;"])
+      stub_const("ARGV", ["-d", "forms-api", "-c", "cluster-name", "-s", "select * from testing;"])
 
       allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
         .to receive(:aws_authenticated?)
@@ -34,12 +34,12 @@ describe DataApi do
         .and_return(data_api_connection_mock)
     end
 
-    it "-d, --database is correctly passed to DataApiConnection" do
+    it "-d, --database and -c, --cluster are correctly passed to DataApiConnection" do
       described_class.new.run
 
       expect(DataApiConnection)
         .to have_received(:new)
-        .with("forms-api")
+        .with("forms-api", "cluster-name")
         .at_least(:once)
     end
 
