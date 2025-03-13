@@ -9,20 +9,39 @@ on:
   merge_group:
     types: [checks_requested]
 jobs:
-  lint:
-    name: "Lint"
+  ruby-ci:
+    name: "Ruby"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install hcl2json
+        run: |
+          wget "https://github.com/tmccombs/hcl2json/releases/download/v0.6.1/hcl2json_linux_amd64"
+          chmod +x hcl2json_linux_amd64
+          sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json        
+
       - name: Determine Ruby version
         id: determine-ruby-version
         run: |
-          echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
-      - name: Install Ruby and gems
+          echo "RUBY_VERSION=$(cat .ruby-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Install Ruby and gems at root
         uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f # v1.227.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
+
+      - name: "Install Ruby and gems in infra/"
+        uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f # v1.227.0
+        with:
+          bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
+          working-directory: "infra/"
+
       - name: Run rubocop
         run: make lint_ruby
+
+      - name: Run specs
+        run: make spec

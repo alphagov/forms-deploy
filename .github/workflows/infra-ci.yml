@@ -19,16 +19,6 @@ jobs:
           # Grab the last 75 commits. Later on we need to a git diff, and it's
           # very likely that two commits involved will be inside the last 75
           fetch-depth: 75
-      - name: Determine Ruby version
-        id: determine-ruby-version
-        run: |
-          echo "RUBY_VERSION=$(cat .ruby-version)" >> "$GITHUB_OUTPUT"
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f # v1.227.0
-        with:
-          bundler-cache: true
-          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
-          working-directory: infra/
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{env.TF_VERSION}}
@@ -46,9 +36,6 @@ jobs:
           wget "https://github.com/tmccombs/hcl2json/releases/download/${HCL2JSON_VERSION}/hcl2json_linux_amd64"
           chmod +x hcl2json_linux_amd64
           sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json
-      - name: Run specs
-        run: |
-          make spec
       - uses: actions/cache@v4
         name: Cache tflint plugin dir
         with:
