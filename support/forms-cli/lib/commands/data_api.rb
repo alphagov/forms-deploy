@@ -13,7 +13,7 @@ class DataApi
     parse_options
     return unless aws_authenticated? && valid_options?
 
-    @connection = DataApiConnection.new(@options[:database])
+    @connection = DataApiConnection.new(@options[:database], @options[:cluster])
 
     begin
       print execute_statement
@@ -39,8 +39,8 @@ private
       end
     end
 
-    unless %w[forms-api forms-admin].include? @options[:database]
-      puts "database must be either 'forms-api' or 'forms-admin'".red
+    unless %w[forms-api forms-admin forms-runner].include? @options[:database]
+      puts "database must be either 'forms-api', 'forms-admin' or 'forms-runner'".red
       return false
     end
 
@@ -56,7 +56,7 @@ private
       Run in a authorized shell using gds-cli or aws-vault.
 
       Example:
-      gds aws forms-dev-support -- forms data_api --database forms-api --statement 'select * from forms;'\n\n"
+      gds aws forms-dev-support -- forms data_api --database forms-api --cluster aurora-v2-cluster-dev --statement 'select * from forms;'\n\n"
 
       opts.on("-h", "--help", "Prints help") do
         puts opts
@@ -65,6 +65,10 @@ private
 
       opts.on("-dDATABASE", "--database=DATABASE", "[Mandatory] database to query, forms-api forms-admin") do |database|
         @options[:database] = database
+      end
+
+      opts.on("-cCLUSTER", "--cluster=CLUSTER", "[Mandatory] The cluster the database is in") do |cluster|
+        @options[:cluster] = cluster
       end
 
       opts.on("-sSTATEMENT", "--statement=STATEMENT", "[Mandatory] The statement to execute") do |statement|
