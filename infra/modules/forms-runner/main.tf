@@ -52,6 +52,21 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
       "arn:aws:ses:eu-west-2:${data.aws_caller_identity.current.account_id}:configuration-set/*"
     ]
   }
+
+
+  statement {
+    sid = "SQSPermissions"
+
+    effect = "Allow"
+    actions = [
+      "sqs:DeleteMessage",
+      "sqs:ReceiveMessage"
+    ]
+    resources = [
+      "arn:aws:ses:eu-west-2:${data.aws_caller_identity.current.account_id}:submission_email_ses_bounces_and_complaints_queue",
+      "arn:aws:ses:eu-west-2:${data.aws_caller_identity.current.account_id}:submission_email_ses_successful_deliveries_queue"
+    ]
+  }
 }
 
 module "ecs_service" {
