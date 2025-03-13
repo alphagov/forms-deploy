@@ -82,4 +82,12 @@ resource "aws_s3_bucket_ownership_controls" "owner" {
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
+
+  # For logs ingested by Cyber, the object_ownership automatically changes to `BucketOwnerPreferred`
+  # as per Cyber's configuration (see Cyber's module.s3_log_shipping.s3_policy JSON policy).
+  # This creates a distracting change in the Terraform output.
+  # We intentionally ignore changes to the rule to avoid the distraction.
+  lifecycle {
+    ignore_changes = [rule]
+  }
 }
