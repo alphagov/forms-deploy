@@ -1,3 +1,11 @@
 # This is here exclusively to inform the version of Checkov we use.
 # We do not write anything in Python.
 checkov==3.2.392
+
+# last updated 14th March 2025
+# This is here because of this note in the docs for actions/setup-python
+# > Note: Restored cache will not be used if the requirements.txt 
+# > file is not updated for a long time and a newer version of the 
+# > dependency is available which can lead to an increase in total build time.
+#
+# If the Python CI installs start being slow, update this file.
