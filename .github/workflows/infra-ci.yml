@@ -5,7 +5,6 @@ on:
   merge_group:
     types: [checks_requested]
 env:
-  HCL2JSON_VERSION: "v0.6.1"
   GO_VERSION: "1.21"
 jobs:
   run_tests:
@@ -37,11 +36,7 @@ jobs:
       - name: "Install terraform-config-inspect"
         run: |
           go install "github.com/hashicorp/terraform-config-inspect@latest"
-      - name: Install hcl2json
-        run: |
-          wget "https://github.com/tmccombs/hcl2json/releases/download/${HCL2JSON_VERSION}/hcl2json_linux_amd64"
-          chmod +x hcl2json_linux_amd64
-          sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json
+
       - uses: actions/cache@v4
         name: Cache tflint plugin dir
         with:
