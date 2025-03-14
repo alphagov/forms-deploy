@@ -21,7 +21,8 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
       variable = "cloudwatch:namespace"
 
       values = [
-        "forms/${var.env_name}*"
+        "forms/${var.env_name}*",
+        "Forms*"
       ]
     }
   }
