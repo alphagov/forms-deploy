@@ -62,14 +62,13 @@ jobs:
           fi
           
           make tflint TFLINT_INFO_ONLY=$info_only
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
+
       - name: Run Checkov against Terraform
-        run: |
-          pip install -r requirements.txt
-          checkov -d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet
+        uses: "docker://ghcr.io/bridgecrewio/checkov:3.2.386"
+        with:
+          entrypoint: checkov
+          args: "-d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download"
+
       - name: Lint shell scripts
         run: |
           # we don't have non-alpha-numeric file names
