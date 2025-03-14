@@ -27,6 +27,12 @@ jobs:
         run: |
           echo "RUBY_VERSION=$(cat .ruby-version)" >> "$GITHUB_OUTPUT"
 
+      ##
+      # We have multiple distinct Ruby code bases
+      # and GitHub Actions does not have a good way to
+      # repeat one step with a different parameter each
+      # time. So instead we enumerate them all.
+      ##
       - name: Install Ruby and gems at root
         uses: ruby/setup-ruby@1a615958ad9d422dd932dc1d5823942ee002799f # v1.227.0
         with:
@@ -39,6 +45,20 @@ jobs:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
           working-directory: "infra/"
+
+      - name: Install Ruby and gems in pipeline visualiser
+        uses: ruby/setup-ruby@bbda85882f33075a3727c01e3c8d0de0be6146ce # v1.224.0
+        with:
+          bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
+          working-directory: "support/pipeline-visualiser"
+
+      - name: Install Ruby and gems in pipeline invoker
+        uses: ruby/setup-ruby@bbda85882f33075a3727c01e3c8d0de0be6146ce # v1.224.0
+        with:
+          bundler-cache: true
+          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
+          working-directory: "infra/deployments/forms/pipelines/pipeline-invoker"
 
       - name: Run rubocop
         run: make lint_ruby
