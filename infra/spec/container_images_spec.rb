@@ -2,17 +2,8 @@ require "English"
 require "shellwords"
 
 describe "container images" do
-  all_terraform_functions = `terraform metadata functions -json | jq -r '.function_signatures|keys|.[]'`
+  discovered_images = `git grep -Eoh "image\s+=.*" | awk '{print $3}' | tr -d '"' | grep -I ":"`
       .split("\n")
-      .map! { |s| "#{s}(" }
-
-  discovered_images = `git grep -Eoh "image\s+=.*" | awk '{print $3}' | tr -d '"'`
-      .split("\n")
-      .reject! { |s| s.start_with? "var." }
-      .reject! { |s| s.start_with? "local." }
-      .reject! { |s| s.start_with? "null" }
-      .reject! { |s| s.start_with? "$INPUT_IMAGE_URI" }
-      .reject! { |s| all_terraform_functions.any? { |func| s.start_with? func } }
       .map!(&:strip)
       .map! { |s| s.split(":")[0] }
       .uniq
