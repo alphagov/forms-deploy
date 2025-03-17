@@ -27,70 +27,6 @@ jobs:
         with:
           terraform_version: ${{steps.determine-terraform-version.outputs.TERRAFORM_VERSION}}
 
-      - uses: actions/cache/restore@v4
-        id: restore-terraform-config-inspect
-        with:
-          key: terraform-config-inspect
-          path: /usr/local/bin/terraform-config-inspect
-
-      ## We do NOT use Golang for development
-      ## It is purely needed to install a tool in this pipeline
-      - name: "Install Go ${{env.GO_VERSION}}"
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
-        with:
-          go-version: "${{env.GO_VERSION}}"
-
-      - name: "Install terraform-config-inspect"
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        run: |
-          go install "github.com/hashicorp/terraform-config-inspect@latest"
-          
-          # Copy the binary to a known place in the path so that we have
-          # a consistent path for it, for caching purposes
-          cp "$(which terraform-config-inspect)" /usr/local/bin/terraform-config-inspect
-
-      - uses: actions/cache/save@v4
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        with:
-          key: ${{ steps.restore-terraform-config-inspect.outputs.cache-primary-key }}
-          path: /usr/local/bin/terraform-config-inspect
-
-      - uses: actions/cache@v4
-        name: Cache tflint plugin dir
-        with:
-          path: ~/.tflint.d/plugins
-          key: tflint-${{ hashFiles('.tflint.hcl') }}
-
-      - uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: v0.52.0
-
-      - name: Init tflint
-        run: tflint --init
-        env:
-          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Run tflint
-        run: |
-          tflint_deadline=$(date -d 2025-06-01 +%s)
-          now=$(date +%s)
-          info_only=true
-          
-          if [ "${now}" -ge "${tflint_deadline}" ]; then
-            echo "The deadline for addressing tflint errors has passed. They have begun failing the tests"
-            info_only=false
-          fi
-          
-          make tflint TFLINT_INFO_ONLY=$info_only
-
-      - name: Run Checkov against Terraform
-        uses: "docker://ghcr.io/bridgecrewio/checkov:3.2.386"
-        with:
-          entrypoint: checkov
-          args: "-d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download"
-
       - name: Check Terraform style
         id: tf_fmt
         run: |
@@ -168,3 +104,67 @@ jobs:
               echo "Does not require validation"
             fi
           done;    
+
+      - uses: actions/cache/restore@v4
+        id: restore-terraform-config-inspect
+        with:
+          key: terraform-config-inspect
+          path: /usr/local/bin/terraform-config-inspect
+
+      ## We do NOT use Golang for development
+      ## It is purely needed to install a tool in this pipeline
+      - name: "Install Go ${{env.GO_VERSION}}"
+        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "${{env.GO_VERSION}}"
+
+      - name: "Install terraform-config-inspect"
+        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+        run: |
+          go install "github.com/hashicorp/terraform-config-inspect@latest"
+          
+          # Copy the binary to a known place in the path so that we have
+          # a consistent path for it, for caching purposes
+          cp "$(which terraform-config-inspect)" /usr/local/bin/terraform-config-inspect
+
+      - uses: actions/cache/save@v4
+        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+        with:
+          key: ${{ steps.restore-terraform-config-inspect.outputs.cache-primary-key }}
+          path: /usr/local/bin/terraform-config-inspect
+
+      - uses: actions/cache@v4
+        name: Cache tflint plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: tflint-${{ hashFiles('.tflint.hcl') }}
+
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.52.0
+
+      - name: Init tflint
+        run: tflint --init
+        env:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Run tflint
+        run: |
+          tflint_deadline=$(date -d 2025-06-01 +%s)
+          now=$(date +%s)
+          info_only=true
+          
+          if [ "${now}" -ge "${tflint_deadline}" ]; then
+            echo "The deadline for addressing tflint errors has passed. They have begun failing the tests"
+            info_only=false
+          fi
+          
+          make tflint TFLINT_INFO_ONLY=$info_only
+
+      - name: Run Checkov against Terraform
+        uses: "docker://ghcr.io/bridgecrewio/checkov:3.2.386"
+        with:
+          entrypoint: checkov
+          args: "-d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download"
