@@ -1,4 +1,4 @@
-name: "Infra-as-code-checks"
+name: "Terraform CI"
 on:
   pull_request:
     branches: [main]
@@ -7,7 +7,7 @@ on:
 env:
   GO_VERSION: "1.21"
 jobs:
-  run_tests:
+  terraform-ci:
     runs-on: ubuntu-latest
     name: Run tests
     steps:
