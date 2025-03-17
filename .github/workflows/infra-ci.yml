@@ -27,16 +27,34 @@ jobs:
         with:
           terraform_version: ${{steps.determine-terraform-version.outputs.TERRAFORM_VERSION}}
 
+      - uses: actions/cache/restore@v4
+        id: restore-terraform-config-inspect
+        with:
+          key: terraform-config-inspect
+          path: /usr/local/bin/terraform-config-inspect
+
       ## We do NOT use Golang for development
       ## It is purely needed to install a tool in this pipeline
       - name: "Install Go ${{env.GO_VERSION}}"
-        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b
+        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5
         with:
           go-version: "${{env.GO_VERSION}}"
 
       - name: "Install terraform-config-inspect"
+        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
         run: |
           go install "github.com/hashicorp/terraform-config-inspect@latest"
+          
+          # Copy the binary to a known place in the path so that we have
+          # a consistent path for it, for caching purposes
+          cp "$(which terraform-config-inspect)" /usr/local/bin/terraform-config-inspect
+
+      - uses: actions/cache/save@v4
+        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+        with:
+          key: ${{ steps.restore-terraform-config-inspect.outputs.cache-primary-key }}
+          path: /usr/local/bin/terraform-config-inspect
 
       - uses: actions/cache@v4
         name: Cache tflint plugin dir
