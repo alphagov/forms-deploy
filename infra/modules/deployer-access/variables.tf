@@ -8,6 +8,16 @@ variable "environment_type" {
   description = "The type of environment the deployer-access role is being used in"
 }
 
+variable "account_id" {
+  type        = string
+  description = "The id of the account into which this environment is deployed"
+}
+
+variable "deploy_account_id" {
+  type        = string
+  description = "The id of the deploy account to make reference to"
+}
+
 variable "hosted_zone_id" {
   description = "The ID of the AWS hosted zone in the account, to which DNS records will be added"
   type        = string
