@@ -86,14 +86,14 @@ additional_dns_records = [
     name    = "_dmarc"
     type    = "TXT"
     ttl     = 86400
-    records = ["v=DMARC1; p=none; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
+    records = ["v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
   },
   {
     # DMARC reporting record for submit.
     name    = "_dmarc.submit"
     type    = "TXT"
     ttl     = 86400
-    records = ["v=DMARC1; p=none; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
+    records = ["v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
   }
 ]
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
