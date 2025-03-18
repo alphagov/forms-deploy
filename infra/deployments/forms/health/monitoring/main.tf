@@ -7,6 +7,13 @@ resource "aws_cloudwatch_dashboard" "overview" {
   })
 }
 
+resource "aws_cloudwatch_dashboard" "form_submissions" {
+  dashboard_name = "FormSubmissions"
+  dashboard_body = templatefile("${path.module}/form_submissions_dashboard_body.json.tpl", {
+    environment_name = var.environment_name,
+  })
+}
+
 module "runner_scheduled_smoke_tests" {
   count = var.scheduled_smoke_tests_settings.enable_scheduled_smoke_tests ? 1 : 0
 
