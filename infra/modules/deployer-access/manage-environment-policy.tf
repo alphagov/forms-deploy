@@ -26,8 +26,8 @@ data "aws_iam_policy_document" "acm-cert-with-dns-validation" {
     ]
     resources = [
       # TODO: Why does it need both regions?
-      "arn:aws:acm:eu-west-2:${lookup(local.account_ids, var.env_name)}:certificate/*",
-      "arn:aws:acm:us-east-1:${lookup(local.account_ids, var.env_name)}:certificate/*"
+      "arn:aws:acm:eu-west-2:${lookup(local.account_ids, var.environment_name)}:certificate/*",
+      "arn:aws:acm:us-east-1:${lookup(local.account_ids, var.environment_name)}:certificate/*"
     ]
   }
 
@@ -70,7 +70,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "cloudfront:*Distribution*",
     ]
     resources = [
-      "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:distribution/*"
+      "arn:aws:cloudfront::${lookup(local.account_ids, var.environment_name)}:distribution/*"
     ]
   }
 
@@ -86,7 +86,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "cloudfront:ListOriginRequestPolicies",
     ]
     resources = [
-      "arn:aws:cloudfront::${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:cloudfront::${lookup(local.account_ids, var.environment_name)}:*"
     ]
   }
 
@@ -102,10 +102,10 @@ data "aws_iam_policy_document" "cloudfront" {
     ]
     # TODO: The scope of this should be cloudfront but for some reason it needs global
     resources = [
-      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/webacl/cloudfront_waf_${var.env_name}/*",
-      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/webacl/alb_${var.env_name}/*",
-      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/ipset/${var.env_name}-*",
-      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/ipset/${var.env_name}-*",
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.environment_name)}:global/webacl/cloudfront_waf_${var.environment_name}/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:regional/webacl/alb_${var.environment_name}/*",
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.environment_name)}:global/ipset/${var.environment_name}-*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:regional/ipset/${var.environment_name}-*",
 
       # This ARN pattern is owned by AWS, but we make a change to it when we override part of the rule
       "arn:aws:wafv2:us-east-1:153427709519:global/rulegroup/ShieldMitigationRuleGroup_*"
@@ -121,7 +121,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "wafv2:UpdateWebACL",
     ]
     resources = [
-      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/managedruleset/*"
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.environment_name)}:global/managedruleset/*"
     ]
   }
 
@@ -136,10 +136,10 @@ data "aws_iam_policy_document" "cloudfront" {
       "wafv2:UntagResource",
     ]
     resources = [
-      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:global/ipset/*",
-      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:regional/ipset/*",
-      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:global/ipset/*",
-      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/ipset/*",
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.environment_name)}:global/ipset/*",
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.environment_name)}:regional/ipset/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:global/ipset/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:regional/ipset/*",
     ]
   }
 
@@ -153,8 +153,8 @@ data "aws_iam_policy_document" "cloudfront" {
       "wafv2:UpdateWebACL",
     ]
     resources = [
-      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.env_name)}:regional/webacl/*",
-      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.env_name)}:regional/webacl/*"
+      "arn:aws:wafv2:us-east-1:${lookup(local.account_ids, var.environment_name)}:regional/webacl/*",
+      "arn:aws:wafv2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:regional/webacl/*"
     ]
   }
 
@@ -170,8 +170,8 @@ data "aws_iam_policy_document" "cloudfront" {
       "logs:PutRetentionPolicy",
     ]
     resources = [
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-${var.env_name}*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:aws-waf-logs-alb-${var.env_name}*"
+      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.environment_name)}:log-group:aws-waf-logs-${var.environment_name}*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:aws-waf-logs-alb-${var.environment_name}*"
     ]
   }
 
@@ -197,7 +197,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "iam:CreateServiceLinkedRole"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/*"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/*"
     ]
     condition {
       test     = "StringLike"
@@ -217,7 +217,7 @@ data "aws_iam_policy_document" "public-bucket" {
       "s3:*Object*",
     ]
     resources = [
-      "arn:aws:s3:::govuk-forms-${var.env_name}-error-page*"
+      "arn:aws:s3:::govuk-forms-${var.environment_name}-error-page*"
     ]
   }
 }
@@ -232,7 +232,7 @@ data "aws_iam_policy_document" "secure-bucket" {
       "s3:*Object*",
     ]
     resources = [
-      "arn:aws:s3:::govuk-forms-alb-logs-${var.env_name}*",
+      "arn:aws:s3:::govuk-forms-alb-logs-${var.environment_name}*",
     ]
   }
 }
@@ -253,7 +253,7 @@ data "aws_iam_policy_document" "network" {
       "ec2:*InternetGateway*",
     ]
     resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
     ]
   }
 
@@ -265,7 +265,7 @@ data "aws_iam_policy_document" "network" {
       "ec2:*TransitGatewayRouteTable",
     ]
     resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
     ]
   }
 }

@@ -105,8 +105,8 @@ data "aws_iam_policy_document" "alerts" {
       "kms:ScheduleKeyDeletion"
     ]
     resources = [
-      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
-      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.env_name)}:key/*",
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.environment_name)}:key/*",
+      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.environment_name)}:key/*",
     ]
     effect = "Allow"
   }
@@ -125,10 +125,10 @@ data "aws_iam_policy_document" "alerts" {
       "kms:DeleteAlias"
     ]
     resources = [
-      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
-      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:alias/*",
-      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.env_name)}:key/*",
-      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.env_name)}:alias/*",
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.environment_name)}:key/*",
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.environment_name)}:alias/*",
+      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.environment_name)}:key/*",
+      "arn:aws:kms:us-east-1:${lookup(local.account_ids, var.environment_name)}:alias/*",
     ]
     effect = "Allow"
   }
@@ -143,9 +143,9 @@ data "aws_iam_policy_document" "alerts" {
       "sns:UntagResource",
     ]
     resources = [
-      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:pagerduty_integration_${var.env_name}",
-      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:alert_zendesk_${var.env_name}",
-      "arn:aws:sns:us-east-1:${lookup(local.account_ids, var.env_name)}:cloudwatch-alarms",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.environment_name)}:pagerduty_integration_${var.environment_name}",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.environment_name)}:alert_zendesk_${var.environment_name}",
+      "arn:aws:sns:us-east-1:${lookup(local.account_ids, var.environment_name)}:cloudwatch-alarms",
     ]
     effect = "Allow"
   }
@@ -159,7 +159,7 @@ data "aws_iam_policy_document" "alerts" {
       "cloudwatch:UntagResource",
     ]
     resources = [
-      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:alarm:alb_healthy_host_count_*",
+      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.environment_name)}:alarm:alb_healthy_host_count_*",
 
     ]
     effect = "Allow"
@@ -189,7 +189,7 @@ data "aws_iam_policy_document" "monitoring" {
       "cloudwatch:UntagResource",
     ]
     resources = [
-      "arn:aws:cloudwatch:*:${lookup(local.account_ids, var.env_name)}:dashboard/*"
+      "arn:aws:cloudwatch:*:${lookup(local.account_ids, var.environment_name)}:dashboard/*"
     ]
     effect = "Allow"
   }
@@ -206,7 +206,7 @@ data "aws_iam_policy_document" "rds" {
       "rds:*Tag*",
     ]
     resources = [
-      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:rds:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
     ]
     effect = "Allow"
   }
@@ -224,7 +224,7 @@ data "aws_iam_policy_document" "redis" {
       "elasticache:*Tags*",
     ]
     resources = [
-      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.env_name)}:*",
+      "arn:aws:elasticache:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*",
     ]
   }
 }
@@ -243,7 +243,7 @@ data "aws_iam_policy_document" "ses" {
       "iam:UntagUser",
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:user/auth0"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:user/auth0"
     ]
   }
 
@@ -269,7 +269,7 @@ data "aws_iam_policy_document" "ses" {
       "iam:UntagPolicy",
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/ses_sender"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/ses_sender"
     ]
   }
 
@@ -310,7 +310,7 @@ data "aws_iam_policy_document" "ses" {
       "kms:UntagResource",
     ]
     resources = [
-      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.env_name)}:key/*",
+      "arn:aws:kms:eu-west-2:${lookup(local.account_ids, var.environment_name)}:key/*",
     ]
   }
 
@@ -321,7 +321,7 @@ data "aws_iam_policy_document" "ses" {
       "sqs:*queue*"
     ]
     resources = [
-      "arn:aws:sqs:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:sqs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
     ]
   }
 
@@ -335,9 +335,9 @@ data "aws_iam_policy_document" "ses" {
       "sns:UntagResource",
     ]
     resources = [
-      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:ses_bounces_and_complaints",
-      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:submission_email_ses_bounces_and_complaints",
-      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.env_name)}:submission_email_ses_successful_deliveries",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.environment_name)}:ses_bounces_and_complaints",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.environment_name)}:submission_email_ses_bounces_and_complaints",
+      "arn:aws:sns:eu-west-2:${lookup(local.account_ids, var.environment_name)}:submission_email_ses_successful_deliveries",
     ]
     effect = "Allow"
   }
@@ -359,8 +359,8 @@ data "aws_iam_policy_document" "code-build-modules" {
       "logs:*LogGroup",
     ]
     resources = [
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:/aws/codebuild/*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:codebuild/*"
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:/aws/codebuild/*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:codebuild/*"
     ]
   }
   statement {
@@ -371,7 +371,7 @@ data "aws_iam_policy_document" "code-build-modules" {
       "codebuild:*Build*",
     ]
     resources = [
-      "arn:aws:codebuild:eu-west-2:${lookup(local.account_ids, var.env_name)}:project/*"
+      "arn:aws:codebuild:eu-west-2:${lookup(local.account_ids, var.environment_name)}:project/*"
     ]
   }
   statement {
@@ -390,11 +390,11 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:TagRole"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/codebuild-*",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-event-bridge-*",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/event-bridge-actor",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/deployer-${var.env_name}"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/codebuild-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/codebuild-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-event-bridge-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/event-bridge-actor",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/deployer-${var.environment_name}"
     ]
   }
   statement {
@@ -407,8 +407,8 @@ data "aws_iam_policy_document" "code-build-modules" {
       "iam:TagPolicy"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/codebuild-*",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/${var.env_name}-event-bridge-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/codebuild-*",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-event-bridge-*",
     ]
   }
 }
@@ -454,7 +454,7 @@ data "aws_iam_policy_document" "pipelines" {
     effect  = "Allow"
     actions = ["s3:*"]
     resources = [
-      "arn:aws:s3:::govuk-forms-${var.env_name}-file-upload*",
+      "arn:aws:s3:::govuk-forms-${var.environment_name}-file-upload*",
     ]
   }
 
@@ -475,7 +475,7 @@ data "aws_iam_policy_document" "pipelines" {
       "iam:UpdateRole",
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/malware-protection-for-s3"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/malware-protection-for-s3"
     ]
   }
 
@@ -491,7 +491,7 @@ data "aws_iam_policy_document" "pipelines" {
       "iam:UntagPolicy",
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:policy/allow-malware-scanning-for-s3"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/allow-malware-scanning-for-s3"
     ]
   }
 
@@ -507,7 +507,7 @@ data "aws_iam_policy_document" "pipelines" {
       "guardduty:UpdateMalwareProtectionPlan",
     ]
     resources = [
-      "arn:aws:guardduty:eu-west-2:${lookup(local.account_ids, var.env_name)}:malware-protection-plan/*"
+      "arn:aws:guardduty:eu-west-2:${lookup(local.account_ids, var.environment_name)}:malware-protection-plan/*"
     ]
   }
 
@@ -525,7 +525,7 @@ data "aws_iam_policy_document" "pipelines" {
     ]
 
     resources = [
-      "arn:aws:lambda:*:${lookup(local.account_ids, var.env_name)}:function:*",
+      "arn:aws:lambda:*:${lookup(local.account_ids, var.environment_name)}:function:*",
     ]
   }
 
@@ -541,7 +541,7 @@ data "aws_iam_policy_document" "pipelines" {
     ]
 
     resources = [
-      "arn:aws:codepipeline:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:codepipeline:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
     ]
   }
 
@@ -554,8 +554,8 @@ data "aws_iam_policy_document" "pipelines" {
     ]
 
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-lambda-pipeline-invoker",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/${var.env_name}-lambda-paused-pipeline-invoker"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-lambda-pipeline-invoker",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-lambda-paused-pipeline-invoker"
     ]
   }
 
@@ -570,7 +570,7 @@ data "aws_iam_policy_document" "pipelines" {
       "logs:*LogGroup",
     ]
     resources = [
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:/aws/lambda/*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:/aws/lambda/*",
     ]
   }
 }
@@ -635,8 +635,8 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
       "logs:DeleteSubscriptionFilter",
     ]
     resources = [
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.env_name)}:log-group:*",
-      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.env_name)}:log-group:*",
+      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:*",
+      "arn:aws:logs:us-east-1:${lookup(local.account_ids, var.environment_name)}:log-group:*",
     ]
     effect = "Allow"
   }
@@ -652,7 +652,7 @@ data "aws_iam_policy_document" "shield" {
       "shield:UntagResource",
     ]
     resources = [
-      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection/*",
+      "arn:aws:shield::${lookup(local.account_ids, var.environment_name)}:protection/*",
     ]
     effect = "Allow"
   }
@@ -668,7 +668,7 @@ data "aws_iam_policy_document" "shield" {
 
     ]
     resources = [
-      "arn:aws:shield::${lookup(local.account_ids, var.env_name)}:protection-group/*",
+      "arn:aws:shield::${lookup(local.account_ids, var.environment_name)}:protection-group/*",
     ]
     effect = "Allow"
   }
@@ -709,8 +709,8 @@ data "aws_iam_policy_document" "shield" {
       "iam:UpdateRole",
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/shield-response-team",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/aws-service-role/shield.amazonaws.com/AWSServiceRoleForAWSShield"
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/shield-response-team",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/aws-service-role/shield.amazonaws.com/AWSServiceRoleForAWSShield"
     ]
     effect = "Allow"
   }
@@ -734,8 +734,8 @@ data "aws_iam_policy_document" "route53" {
       "route53:UpdateHealthCheck"
     ]
     resources = [
-      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.env_name)}:${var.env_name}_cloudfront_total_error_rate",
-      "arn:aws:cloudwatch:us-east-1:${lookup(local.account_ids, var.env_name)}:ddos_detected_in_${var.env_name}",
+      "arn:aws:cloudwatch:eu-west-2:${lookup(local.account_ids, var.environment_name)}:${var.environment_name}_cloudfront_total_error_rate",
+      "arn:aws:cloudwatch:us-east-1:${lookup(local.account_ids, var.environment_name)}:ddos_detected_in_${var.environment_name}",
       "arn:aws:route53:::healthcheck/*"
     ]
     effect = "Allow"
@@ -749,7 +749,7 @@ data "aws_iam_policy_document" "ssm" {
       "ssm:DescribeParameters",
     ]
     resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:*"
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
     ]
     effect = "Allow"
   }
@@ -761,7 +761,7 @@ data "aws_iam_policy_document" "ssm" {
       "ssm:*Parameter*",
     ]
     resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/*",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.environment_name)}:parameter/*",
     ]
     effect = "Allow"
   }
@@ -773,7 +773,7 @@ data "aws_iam_policy_document" "ssm" {
       "ssm:DeleteParameter",
     ]
     resources = [
-      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.env_name)}:parameter/*",
+      "arn:aws:ssm:eu-west-2:${lookup(local.account_ids, var.environment_name)}:parameter/*",
     ]
     effect = "Deny"
   }
@@ -798,8 +798,8 @@ data "aws_iam_policy_document" "forms_runner" {
     ]
 
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/govuk-forms-submissions-to-s3-${var.env_name}",
-      "arn:aws:iam::${lookup(local.account_ids, var.env_name)}:role/govuk-s3-end-to-end-test-${var.env_name}",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/govuk-forms-submissions-to-s3-${var.environment_name}",
+      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/govuk-s3-end-to-end-test-${var.environment_name}",
     ]
   }
 }

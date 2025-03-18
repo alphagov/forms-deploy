@@ -1,4 +1,4 @@
-variable "env_name" {
+variable "environment_name" {
   type        = string
   description = "The name of the environment to be used in resource names."
 }
