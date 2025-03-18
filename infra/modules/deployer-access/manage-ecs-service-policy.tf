@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "ecs" {
       "ecs:UntagResource",
       "ecs:ListTagsForResource",
     ]
-    resources = ["arn:aws:ecs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"]
+    resources = ["arn:aws:ecs:eu-west-2:${var.account_id}:*"]
     effect    = "Allow"
   }
 
@@ -86,14 +86,14 @@ data "aws_iam_policy_document" "ecs" {
       "iam:UpdateAssumeRolePolicy"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-admin-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-api-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-runner-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-product-page-ecs-task",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-admin-ecs-task-execution",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-api-ecs-task-execution",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-runner-ecs-task-execution",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:role/${var.environment_name}-forms-product-page-ecs-task-execution"
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-api-ecs-task",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task-execution",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-api-ecs-task-execution",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task-execution",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution"
     ]
     effect = "Allow"
   }
@@ -108,10 +108,10 @@ data "aws_iam_policy_document" "ecs" {
       "iam:*AssumeRolePolicy"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-admin-ecs-task-execution-additional",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-api-ecs-task-execution-additional",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-runner-ecs-task-execution-additional",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-product-page-ecs-task-execution-additional"
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-execution-additional",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-api-ecs-task-execution-additional",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-execution-additional",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-execution-additional"
     ]
     effect = "Allow"
   }
@@ -126,10 +126,10 @@ data "aws_iam_policy_document" "ecs" {
       "iam:*AssumeRolePolicy"
     ]
     resources = [
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-admin-ecs-task-policy",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-api-ecs-task-policy",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
-      "arn:aws:iam::${lookup(local.account_ids, var.environment_name)}:policy/${var.environment_name}-forms-product-page-ecs-task-policy"
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-api-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy"
     ]
     effect = "Allow"
   }
@@ -141,7 +141,7 @@ data "aws_iam_policy_document" "ecs" {
       "ec2:*SecurityGroup*",
     ]
     resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*/*"
+      "arn:aws:ec2:eu-west-2:${var.account_id}:*/*"
     ]
     effect = "Allow"
   }
@@ -163,7 +163,7 @@ data "aws_iam_policy_document" "ecs" {
       "ec2:CreateTags"
     ]
     resources = [
-      "arn:aws:ec2:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*/*"
+      "arn:aws:ec2:eu-west-2:${var.account_id}:*/*"
     ]
     effect = "Allow"
   }
@@ -185,7 +185,7 @@ data "aws_iam_policy_document" "alb" {
       "elasticloadbalancing:SetWebACL",
     ]
     resources = [
-      "arn:aws:elasticloadbalancing:eu-west-2:${lookup(local.account_ids, var.environment_name)}:*"
+      "arn:aws:elasticloadbalancing:eu-west-2:${var.account_id}:*"
     ]
     effect = "Allow"
   }
@@ -250,8 +250,8 @@ data "aws_iam_policy_document" "autoscaling" {
       "cloudwatch:TagResource"
     ]
     resources = [
-      "arn:aws:cloudwatch:eu-west-2:${local.account_ids[var.environment_name]}:*",
-      "arn:aws:cloudwatch:us-east-1:${local.account_ids[var.environment_name]}:*",
+      "arn:aws:cloudwatch:eu-west-2:${var.account_id}:*",
+      "arn:aws:cloudwatch:us-east-1:${var.account_id}:*",
     ]
     effect = "Allow"
   }
@@ -270,10 +270,10 @@ data "aws_iam_policy_document" "logs" {
       "logs:*LogGroup"
     ]
     resources = [
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:forms-admin-${var.environment_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:forms-api-${var.environment_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:forms-runner-${var.environment_name}:*",
-      "arn:aws:logs:eu-west-2:${lookup(local.account_ids, var.environment_name)}:log-group:forms-product-page-${var.environment_name}:*"
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-admin-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-api-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-runner-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-product-page-${var.environment_name}:*"
     ]
     effect = "Allow"
   }
