@@ -14,6 +14,26 @@ locals {
   readonly_users = module.users.with_role["integration_readonly"]
 }
 
+resource "aws_iam_policy" "deny_parameter_store" {
+  name        = "deny-parameter-store-read-access"
+  path        = "/"
+  description = "Deny viewing secrets in parameter store"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ssm:GetParameter*",
+        ]
+        Effect   = "Deny"
+        Resource = ["*"]
+      }
+    ]
+  })
+}
+
+
 module "admin_role" {
   for_each = toset(local.admin_users)
 
@@ -48,6 +68,21 @@ module "readonly_role" {
   ]
   ip_restrictions = local.ip_restrictions
 }
+
+module "pentester_role" {
+  for_each = toset(var.pentester_email_addresses)
+
+  source      = "../../../modules/gds-user-role/"
+  email       = each.value
+  role_suffix = "pentester"
+  iam_policy_arns = [
+    "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/SecurityAudit",
+    aws_iam_policy.deny_parameter_store.arn
+  ]
+  ip_restrictions = var.pentester_cidr_ranges
+}
+
 
 resource "aws_iam_policy" "lock_state_files" {
   name = "lock-state-files"

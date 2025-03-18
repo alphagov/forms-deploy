@@ -53,3 +53,19 @@ variable "send_logs_to_cyber" {
   description = "Whether logs should be sent to cyber"
   type        = bool
 }
+
+variable "pentester_email_addresses" {
+  description = "The email addresses for penetration testers carrying out IT Health Checks for us"
+  type        = list(string)
+}
+
+variable "pentester_cidr_ranges" {
+  description = "The CIDR blocks from which penetration tester traffic can come"
+  type        = list(string)
+
+  validation {
+    condition     = can([for cidr in var.pentester_cidr_ranges : cidrhost(cidr, 32)])
+    error_message = "Each entry in the last must be a valid IPv4 CIDR range"
+  }
+}
+

@@ -91,3 +91,28 @@ variable "deploy_account_id" {
   type        = string
   nullable    = false
 }
+
+variable "pentester_email_addresses" {
+  description = "The email addresses for penetration testers carrying out IT Health Checks for us"
+  type        = list(string)
+
+  validation {
+    condition     = var.environment_type != "production" && (length(var.pentester_email_addresses) >= 0)
+    error_message = "Penetration testing should not be taking place in a production environment"
+  }
+}
+
+variable "pentester_cidr_ranges" {
+  description = "The CIDR blocks from which penetration tester traffic can come"
+  type        = list(string)
+
+  validation {
+    condition     = can([for cidr in var.pentester_cidr_ranges : cidrhost(cidr, 32)])
+    error_message = "Each entry in the last must be a valid IPv4 CIDR range"
+  }
+
+  validation {
+    condition     = var.environment_type != "production" && (length(var.pentester_cidr_ranges) >= 0)
+    error_message = "Penetration testing should not be taking place in a production environment"
+  }
+}
