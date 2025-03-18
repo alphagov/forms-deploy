@@ -80,7 +80,7 @@ additional_dns_records = [
   },
 
 
-  # Records in support of MyNCSC MailCheck
+  # DMARC records from MyNCSC
   {
     # DMARC reporting record for apex domain
     name    = "_dmarc"
@@ -94,6 +94,14 @@ additional_dns_records = [
     type    = "TXT"
     ttl     = 86400
     records = ["v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
+  },
+
+  # TLS-RPT records from MyNCSc
+  {
+    name    = "_stmp._tls"
+    type    = "TXT"
+    ttl     = 86400
+    records = ["v=TLSRPTv1;rua=mailto:tls-rua@mailcheck.service.ncsc.gov.uk"]
   }
 ]
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
