@@ -9,6 +9,8 @@ resource "aws_cloudwatch_metric_alarm" "submission_time_to_send" {
     NEXT STEPS:
     1. Search in Splunk for "event=form_submission_email_sent" to see the rate of submission emails being sent and the
     times taken.
+    2. Look at the CloudWatch FormSubmissions dashboard to view metrics for the submissions queue:
+    https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#dashboards/dashboard/FormSubmissions
 EOF
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
