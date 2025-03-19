@@ -2,4 +2,4 @@
 
 source "https://rubygems.org"
 
-gem "rubocop-govuk", "~> 5.0"
+gem "rubocop-govuk", "~> 5.1"
