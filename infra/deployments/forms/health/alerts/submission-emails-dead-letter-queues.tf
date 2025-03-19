@@ -1,18 +1,14 @@
-data "aws_sqs_queue" "submission_email_ses_bounces_and_complaints_dead_letter_queue" {
-  name = "submission_email_ses_bounces_and_complaints_dead_letter_queue"
-}
-
 resource "aws_cloudwatch_metric_alarm" "submission_email_ses_bounces_and_complaints_dead_letter_queue_contains_message" {
   alarm_name          = "${var.environment}-submission-email-ses-bounces-and-complaints-dead-letter-queue-contains-message"
   alarm_description   = <<EOF
-    There is a message in ${data.aws_sqs_queue.submission_email_ses_bounces_and_complaints_dead_letter_queue.name} in the ${var.environment} account.
+    There is a message in ${var.submission_email_bounces_and_complaints_dlq_name} in the ${var.environment} account.
     
     When SQS receives messages that are not processed successfully, it will add them to that queue's dead letter queue.
 
     NEXT STEPS:
     1. Look at the message in SQS console by visiting the URL below and clicking "Poll for messages"
 
-    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/${local.account_id}/${data.aws_sqs_queue.submission_email_ses_bounces_and_complaints_dead_letter_queue.name}")}/send-receive
+    https://eu-west-2.console.aws.amazon.com/sqs/v3/home?region=eu-west-2#/queues/${urlencode("https://sqs.eu-west-2.amazonaws.com/${local.account_id}/${var.submission_email_bounces_and_complaints_dlq_name}")}/send-receive
 
     2. Look in Sentry and search Splunk for the SQS message ID to see if there are any relevant errors/logs.
 
@@ -30,7 +26,7 @@ EOF
   threshold           = 1
 
   dimensions = {
-    QueueName = data.aws_sqs_queue.submission_email_ses_bounces_and_complaints_dead_letter_queue.name
+    QueueName = var.submission_email_bounces_and_complaints_dlq_name
   }
   treat_missing_data = "notBreaching"
 

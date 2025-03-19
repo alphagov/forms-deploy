@@ -51,3 +51,12 @@ variable "allow_pagerduty_alerts" {
   type        = bool
   description = "Whether alerts should be allowed to go to PagerDuty at all"
 }
+
+variable "auth0_email_bounces_and_complaints_queue_name" {
+  type        = string
+  description = "The name of the SQS queue for Auth0 email bounces and complaints"
+}
+variable "submission_email_bounces_and_complaints_dlq_name" {
+  type        = string
+  description = "The name of the SQS queue for dead letters on the submission emails bounces and complaints queue"
+}

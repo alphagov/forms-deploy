@@ -21,4 +21,8 @@ module "alerts" {
   pagerduty_alert_topics = {
     eu_west_2 : data.terraform_remote_state.forms_environment.outputs.pagerduty_eu_west_2_topic_arn
   }
+
+
+  auth0_email_bounces_and_complaints_queue_name    = data.terraform_remote_state.forms_ses.outputs.auth0_email_bounces_and_complaints_queue_name
+  submission_email_bounces_and_complaints_dlq_name = data.terraform_remote_state.forms_ses.outputs.submission_email_bounces_and_complaints_dlq_name
 }
