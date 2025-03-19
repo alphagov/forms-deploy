@@ -1,9 +1,12 @@
-account_name            = "dev"
-aws_account_id          = "498160065950"
-environment_name        = "dev"
-environment_type        = "development"
-require_vpn_to_access   = false
-apex_domain             = "dev.forms.service.gov.uk"
-dns_delegation_records  = {}
-codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
-deploy_account_id       = "711966560482"
+account_name              = "dev"
+aws_account_id            = "498160065950"
+environment_name          = "dev"
+environment_type          = "development"
+require_vpn_to_access     = false
+apex_domain               = "dev.forms.service.gov.uk"
+dns_delegation_records    = {}
+codestar_connection_arn   = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
+deploy_account_id         = "711966560482"
+pentester_email_addresses = []
+pentester_cidr_ranges     = []
+
