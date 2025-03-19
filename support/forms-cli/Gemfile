@@ -7,7 +7,7 @@ gem "colorize"
 gem "notifications-ruby-client"
 gem "rexml", "~> 3.4" # aws-sdk-secretsmanager an xml library
 gem "rspec"
-gem "rubocop-govuk", "~> 5.0"
+gem "rubocop-govuk", "~> 5.1"
 
 group :development do
   gem "debug"
