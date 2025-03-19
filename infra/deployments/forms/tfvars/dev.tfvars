@@ -92,8 +92,8 @@ forms_product_page_settings = {
   max_capacity = 3
 }
 forms_runner_settings = {
-  cpu                                                             = 256
-  memory                                                          = 512
+  cpu                                                             = 512
+  memory                                                          = 1024
   min_capacity                                                    = 3
   max_capacity                                                    = 3
   enable_maintenance_mode                                         = false
