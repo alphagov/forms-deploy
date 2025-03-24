@@ -17,11 +17,18 @@ environmental_settings = {
     ".gov.uk",
     "@pentestpartners.com"
   ]
-  enable_alert_actions                = true
-  forms_product_page_support_url      = "https://www.staging.forms.service.gov.uk/support"
-  rds_maintenance_window              = "wed:04:00-wed:04:30"
-  ips_to_block                        = []
-  rate_limit_bypass_cidrs             = []
+  enable_alert_actions           = true
+  forms_product_page_support_url = "https://www.staging.forms.service.gov.uk/support"
+  rds_maintenance_window         = "wed:04:00-wed:04:30"
+  ips_to_block                   = []
+  rate_limit_bypass_cidrs = [
+    "212.38.169.64/27",
+    "78.129.217.224/27",
+    "91.238.238.0/25",
+    "91.238.238.128/27",
+    "91.238.238.160/27",
+    "91.238.238.192/27"
+  ]
   enable_shield_advanced_healthchecks = false
   allow_pagerduty_alerts              = false
 }
