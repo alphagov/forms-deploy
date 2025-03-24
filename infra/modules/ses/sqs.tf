@@ -1,5 +1,6 @@
 module "auth0_bounces_and_complaints_sqs" {
   source           = "./sqs"
+  environment_name = var.environment_name
   environment_type = var.environment_type
   account_id       = local.account_id
   identifier       = "ses"
@@ -9,6 +10,7 @@ module "auth0_bounces_and_complaints_sqs" {
 
 module "submission_email_bounces_and_complaints_sqs" {
   source           = "./sqs"
+  environment_name = var.environment_name
   environment_type = var.environment_type
   account_id       = local.account_id
   identifier       = "submission_email_ses"
@@ -18,6 +20,7 @@ module "submission_email_bounces_and_complaints_sqs" {
 
 module "submission_email_successful_deliveries_sqs" {
   source           = "./sqs"
+  environment_name = var.environment_name
   environment_type = var.environment_type
   account_id       = local.account_id
   identifier       = "submission_email_ses"
