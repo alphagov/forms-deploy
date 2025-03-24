@@ -40,7 +40,6 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
     resources = [
       "arn:aws:kms:eu-west-2:${data.aws_caller_identity.current.account_id}:alias/file-upload-${var.env_name}",
     ]
-
   }
 
   statement {
@@ -66,6 +65,19 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
     resources = [
       "arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:submission_email_ses_bounces_and_complaints_queue",
       "arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:submission_email_ses_successful_deliveries_queue"
+    ]
+  }
+
+  statement {
+    sid = "AllowSQSMessageDecryption"
+
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+    ]
+    resources = [
+      var.bounces_and_complaints_kms_key_arn,
+      var.deliveries_kms_key_arn,
     ]
   }
 }

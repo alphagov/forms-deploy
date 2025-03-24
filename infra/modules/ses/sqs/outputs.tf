@@ -9,3 +9,7 @@ output "queue_name" {
 output "dlq_name" {
   value = aws_sqs_queue.ses_dead_letter.name
 }
+
+output "kms_key_arn" {
+  value = aws_kms_key.this.arn
+}
