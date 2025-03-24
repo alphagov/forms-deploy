@@ -10,3 +10,11 @@ output "submission_email_bounces_and_complaints_dlq_name" {
 output "auth0_email_bounces_and_complaints_queue_name" {
   value = module.auth0_bounces_and_complaints_sqs.queue_name
 }
+
+output "submission_email_bounces_and_complaints_kms_key_arn" {
+  value = module.submission_email_bounces_and_complaints_sqs.kms_key_arn
+}
+
+output "submission_email_successful_deliveries_kms_key_arn" {
+  value = module.submission_email_successful_deliveries_sqs.kms_key_arn
+}

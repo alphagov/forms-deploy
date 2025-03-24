@@ -5,6 +5,11 @@ resource "aws_kms_key" "this" {
   enable_key_rotation = true
 }
 
+resource "aws_kms_alias" "this" {
+  name          = "alias/${var.identifier}-${var.sqs_type}-${var.environment_name}"
+  target_key_id = aws_kms_key.this.key_id
+}
+
 module "users" {
   source = "../../users"
 }
@@ -149,4 +154,3 @@ resource "aws_sqs_queue_policy" "ses_policy" {
   queue_url = aws_sqs_queue.ses_queue.id
   policy    = data.aws_iam_policy_document.ses_policy_document.json
 }
-

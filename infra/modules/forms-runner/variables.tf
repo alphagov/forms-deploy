@@ -54,13 +54,13 @@ variable "rails_max_threads" {
 }
 
 variable "min_capacity" {
-  description = "Sets the minimum number of instances"
   type        = number
+  description = "Sets the minimum number of instances"
 }
 
 variable "max_capacity" {
-  description = "Sets the maximum number of instances"
   type        = number
+  description = "Sets the maximum number of instances"
 }
 
 variable "cloudwatch_metrics_enabled" {
@@ -156,6 +156,16 @@ variable "alb_listener_arn" {
 }
 
 variable "send_logs_to_cyber" {
-  description = "Whether logs should be sent to cyber"
   type        = bool
+  description = "Whether logs should be sent to cyber"
+}
+
+variable "bounces_and_complaints_kms_key_arn" {
+  type        = string
+  description = "The ARN of the KMS key to decrypt messages on the submission bounces and complaints SQS queue"
+}
+
+variable "deliveries_kms_key_arn" {
+  type        = string
+  description = "The ARN of the KMS key to decrypt messages on the submission deliveries SQS queue"
 }
