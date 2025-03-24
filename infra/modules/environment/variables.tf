@@ -20,6 +20,12 @@ variable "ips_to_block" {
   default     = []
 }
 
+variable "rate_limit_bypass_cidrs" {
+  description = "CIDR blocks that should be able to bypass rate limiting. This is used to allow penetration testers to carry out the type of tests that would otherwise get them rate limited."
+  type        = list(string)
+  default     = []
+}
+
 variable "enable_cloudfront" {
   type        = bool
   description = "If true then a cloudfront distribution is created."

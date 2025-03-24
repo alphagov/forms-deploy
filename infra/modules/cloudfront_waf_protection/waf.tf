@@ -9,6 +9,17 @@ resource "aws_wafv2_ip_set" "system_egress_ips" {
   addresses = [for ip in var.nat_gateway_egress_ips : "${ip}/32"]
 }
 
+resource "aws_wafv2_ip_set" "rate_limit_bypass_cidrs" {
+  provider = aws.us-east-1
+
+  name               = "${var.environment_name}-rate-limit-bypass-cidrs"
+  description        = "List of CIDR blocks we allow to bypass rate limiting rules. This is used to allow the penetration testers to carry out tests that would otherwise get them rate limited."
+  scope              = "CLOUDFRONT"
+  ip_address_version = "IPV4"
+
+  addresses = var.rate_limit_bypass_cidrs
+}
+
 resource "aws_wafv2_ip_set" "ips_to_block" {
   provider = aws.us-east-1
 
@@ -127,6 +138,16 @@ resource "aws_wafv2_web_acl" "this" {
       rate_based_statement {
         limit              = var.ip_rate_limit
         aggregate_key_type = "IP"
+
+        scope_down_statement {
+          not_statement {
+            statement {
+              ip_set_reference_statement {
+                arn = aws_wafv2_ip_set.rate_limit_bypass_cidrs.arn
+              }
+            }
+          }
+        }
       }
     }
 
