@@ -103,9 +103,10 @@ data "aws_iam_policy_document" "encryption_key" {
 }
 
 resource "aws_sqs_queue" "ses_queue" {
-  name                      = "${var.identifier}_${var.sqs_type}_queue"
-  message_retention_seconds = 1209600 # 14 days
-  redrive_policy            = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.ses_dead_letter.arn}\",\"maxReceiveCount\":4}"
+  name                       = "${var.identifier}_${var.sqs_type}_queue"
+  message_retention_seconds  = 1209600 # 14 days
+  visibility_timeout_seconds = 300
+  redrive_policy             = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.ses_dead_letter.arn}\",\"maxReceiveCount\":4}"
 
   kms_master_key_id = aws_kms_key.this.id
 }
