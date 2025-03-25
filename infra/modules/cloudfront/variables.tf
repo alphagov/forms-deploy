@@ -39,3 +39,9 @@ variable "send_logs_to_cyber" {
   description = "Whether logs should be sent to cyber"
   type        = bool
 }
+
+variable "rate_limit_bypass_cidrs" {
+  description = "CIDR blocks that should be able to bypass rate limiting. This is used to allow penetration testers to carry out the type of tests that would otherwise get them rate limited."
+  type        = list(string)
+  default     = []
+}

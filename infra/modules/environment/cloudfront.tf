@@ -7,11 +7,12 @@ module "cloudfront" {
     aws.us-east-1 = aws.us-east-1 # Create the certificate in us-east-1 for CloudFront
   }
 
-  env_name      = var.env_name
-  domain_name   = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
-  alb_dns_name  = aws_lb.alb.dns_name
-  ip_rate_limit = var.ip_rate_limit
-  ips_to_block  = var.ips_to_block
+  env_name                = var.env_name
+  domain_name             = "${lookup(local.domain_names, var.env_name)}forms.service.gov.uk"
+  alb_dns_name            = aws_lb.alb.dns_name
+  ip_rate_limit           = var.ip_rate_limit
+  ips_to_block            = var.ips_to_block
+  rate_limit_bypass_cidrs = var.rate_limit_bypass_cidrs
   nat_gateway_egress_ips = [
     aws_nat_gateway.nat_a.public_ip,
     aws_nat_gateway.nat_b.public_ip,

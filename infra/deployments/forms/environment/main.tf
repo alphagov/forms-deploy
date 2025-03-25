@@ -11,8 +11,9 @@ module "environment" {
 
   send_logs_to_cyber = var.send_logs_to_cyber
 
-  ips_to_block         = var.environmental_settings.ips_to_block
-  enable_alert_actions = var.environmental_settings.enable_alert_actions
+  ips_to_block            = var.environmental_settings.ips_to_block
+  rate_limit_bypass_cidrs = var.environmental_settings.rate_limit_bypass_cidrs
+  enable_alert_actions    = var.environmental_settings.enable_alert_actions
 
   enable_shield_advanced_healthchecks = var.environmental_settings.enable_shield_advanced_healthchecks
   scheduled_smoke_tests_settings      = var.scheduled_smoke_tests_settings

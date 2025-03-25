@@ -205,6 +205,7 @@ variable "environmental_settings" {
     forms_product_page_support_url           = string
     rds_maintenance_window                   = string
     ips_to_block                             = list(string)
+    rate_limit_bypass_cidrs                  = list(string)
     enable_shield_advanced_healthchecks      = bool
     allow_pagerduty_alerts                   = bool
   })
