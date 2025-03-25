@@ -4,6 +4,8 @@ terraform {
     # bucket set in backend config file
     key    = "forms_api.tfstate"
     region = "eu-west-2"
+
+    use_lockfile = true
   }
 }
 

@@ -4,6 +4,8 @@ terraform {
     bucket = "gds-forms-deploy-tfstate"
     key    = "engineers_access.tfstate"
     region = "eu-west-2"
+
+    use_lockfile = true
   }
 }
 

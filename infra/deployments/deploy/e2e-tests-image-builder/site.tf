@@ -4,6 +4,8 @@ terraform {
     bucket = "gds-forms-deploy-tfstate"
     key    = "e2e-tests-image-builder.tfstate"
     region = "eu-west-2"
+
+    use_lockfile = true
   }
 }
 

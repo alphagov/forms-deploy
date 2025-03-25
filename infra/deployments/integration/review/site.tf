@@ -4,6 +4,8 @@ terraform {
     bucket = "gds-forms-integration-tfstate"
     key    = "review.tfstate"
     region = "eu-west-2"
+
+    use_lockfile = true
   }
 }
 
