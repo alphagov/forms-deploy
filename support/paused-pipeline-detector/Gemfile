@@ -7,5 +7,5 @@ gem "aws-sdk-sns", "~> 1.97"
 
 group :development, :test do
   gem "rspec", "~> 3.13"
-  gem "rubocop-govuk", "~> 5.0"
+  gem "rubocop-govuk", "~> 5.1"
 end
