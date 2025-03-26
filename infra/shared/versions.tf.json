@@ -13,6 +13,10 @@
       "auth0": {
         "source": "auth0/auth0",
         "version": "= 1.7.1"
+      },
+      "random": {
+        "source": "hashicorp/random",
+        "version": "~> 3.7.0"
       }
     }
   }
