@@ -87,14 +87,14 @@ additional_dns_records = [
     name    = "_dmarc"
     type    = "TXT"
     ttl     = 86400
-    records = ["v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
+    records = ["v=DMARC1; p=quarantine; pct=100; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
   },
   {
     # DMARC reporting record for submit.
     name    = "_dmarc.submit"
     type    = "TXT"
     ttl     = 86400
-    records = ["v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
+    records = ["v=DMARC1; p=quarantine; pct=100; rua=mailto:dmarc-rua@dmarc.service.gov.uk;"]
   },
 
   # TLS-RPT records from MyNCSc
