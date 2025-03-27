@@ -92,21 +92,6 @@ def set_codebuild_terraform_version(path, latest_tf_version)
   File.write path, JSON.pretty_generate(json_hash)
 end
 
-def set_github_actions_version_constraint(gha_workflow_path, new_tf_constraint)
-  # Ruby is perfectly capable of parsing and generating YAML
-  # however it will convert the word "on" to "true".
-  # "on" is a key used in GitHub Actions workflow files and
-  # changing it to true breaks the workflow.
-  #
-  # We could call out to YQ to manipulate YAML for us, but there is a bug with
-  # the YAML parser it uses that causes it to mangle multi-line strings
-  # https://github.com/mikefarah/yq/discussions/1584
-  #
-  # Instead we use sed to find and replace a specific string. It's not perfect.
-  system("sed", "-E", "-i", ".bak", "s#^[[:space:]]{2}TF_VERSION\: \"(.*)\"$#  TF_VERSION: \"#{new_tf_constraint}\"#g;", gha_workflow_path)
-  raise "sed invocation failed" unless $CHILD_STATUS.exitstatus.zero?
-end
-
 def terraform(env_vars, *args)
   system(env_vars, "terraform", *args)
   raise "Terraform invocation failed: terraform #{args}" unless $CHILD_STATUS.exitstatus.zero?
@@ -343,7 +328,6 @@ end
 # Update Terraform version in GitHub Actions
 gha_workflow_path = repo_path(".github/workflows/infra-ci.yml")
 puts "Writing Terraform version constraint to #{gha_workflow_path}"
-set_github_actions_version_constraint(gha_workflow_path, new_tf_constraint)
 
 # Update every Terraform root
 terraform_roots = [
