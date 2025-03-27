@@ -17,6 +17,7 @@ EOF
   metric_name         = "TimeToSendSubmission"
   namespace           = "Forms/Jobs"
   period              = 60
+  unit                = "Milliseconds"
   statistic           = "Average"
   threshold           = 60 * 1000
 
