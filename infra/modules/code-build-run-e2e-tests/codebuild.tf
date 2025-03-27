@@ -86,6 +86,12 @@ resource "aws_codebuild_project" "e2e" {
       name  = "TRACE"
       value = "1"
     }
+
+    environment_variable {
+      name  = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
+      type  = "PARAMETER_STORE"
+      value = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.environment_name}/submission_status_api_shared_secret"
+    }
   }
 
   source {
