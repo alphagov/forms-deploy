@@ -42,7 +42,7 @@ forms_admin_settings = {
   govuk_app_domain           = ""
   synchronize_to_mailchimp   = false
   repeatable_page_enabled    = true
-  file_upload                = false
+  file_upload                = true
 }
 forms_api_settings = {
   cpu          = 256
