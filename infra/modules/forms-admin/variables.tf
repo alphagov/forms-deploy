@@ -106,6 +106,12 @@ variable "file_upload" {
   default     = false
 }
 
+variable "organisation_to_exclude_from_reports" {
+  type        = string
+  description = "An organisation id to exclude from live reports"
+  default     = ""
+}
+
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"

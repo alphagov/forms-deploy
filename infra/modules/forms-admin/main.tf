@@ -178,6 +178,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__FILE_UPLOAD",
       value = var.file_upload
+    },
+    {
+      name  = "SETTINGS__REPORTS__ORGANISATION_TO_EXCLUDE_FROM_LIVE_REPORT",
+      value = var.organisation_to_exclude_from_reports
     }
   ]
 
