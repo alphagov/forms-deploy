@@ -217,6 +217,10 @@ module "ecs_service" {
     {
       name      = "QUEUE_DATABASE_URL",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
+    },
+    {
+      name      = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/submission_status_api_shared_secret"
     }
   ]
 }
