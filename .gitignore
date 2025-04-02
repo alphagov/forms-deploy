@@ -51,3 +51,6 @@ logs/
 
 # Ignore backup files
 *.bak
+
+# Ignore Structurizr directory
+support/diagrams/.structurizr
