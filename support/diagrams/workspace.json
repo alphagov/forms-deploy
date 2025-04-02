@@ -1,163 +1,438 @@
 {
-  "configuration" : {
-    "scope" : "SoftwareSystem"
-  },
-  "description" : "Description",
+  "configuration" : { },
+  "description" : "An MVP architecture.",
   "documentation" : { },
   "id" : 1,
   "lastModifiedAgent" : "structurizr-ui",
-  "lastModifiedDate" : "2025-04-02T10:10:47Z",
+  "lastModifiedDate" : "2025-04-02T13:28:04Z",
   "model" : {
-    "people" : [ {
-      "id" : "1",
-      "location" : "Unspecified",
-      "name" : "User",
-      "properties" : {
-        "structurizr.dsl.identifier" : "u"
-      },
-      "relationships" : [ {
-        "description" : "Uses",
-        "destinationId" : "3",
-        "id" : "5",
-        "sourceId" : "1",
-        "tags" : "Relationship"
-      }, {
-        "description" : "Uses",
-        "destinationId" : "2",
-        "id" : "6",
-        "linkedRelationshipId" : "5",
-        "sourceId" : "1"
+    "deploymentNodes" : [ {
+      "children" : [ {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "2",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Live",
+            "id" : "18",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.bd485d15-5187-44b8-bf99-2c179c1a9a43.forms_admin"
+            },
+            "relationships" : [ {
+              "description" : "Reads from and writes to",
+              "destinationId" : "28",
+              "id" : "29",
+              "linkedRelationshipId" : "8",
+              "sourceId" : "18",
+              "technology" : "PostgreSQL Protocol/SSL"
+            } ],
+            "tags" : "Container Instance"
+          }, {
+            "containerId" : "3",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Live",
+            "id" : "19",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.bd485d15-5187-44b8-bf99-2c179c1a9a43.forms_api"
+            },
+            "relationships" : [ {
+              "description" : "Reads from and writes to",
+              "destinationId" : "31",
+              "id" : "32",
+              "linkedRelationshipId" : "9",
+              "sourceId" : "19",
+              "technology" : "PostgreSQL Protocol/SSL"
+            } ],
+            "tags" : "Container Instance"
+          }, {
+            "containerId" : "4",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Live",
+            "id" : "20",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.bd485d15-5187-44b8-bf99-2c179c1a9a43.forms_product_page"
+            },
+            "tags" : "Container Instance"
+          }, {
+            "containerId" : "5",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Live",
+            "id" : "21",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.bd485d15-5187-44b8-bf99-2c179c1a9a43.forms_runner"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Live",
+          "id" : "17",
+          "instances" : "1",
+          "name" : "ECS Fargate - GOV.UK Forms cluster",
+          "properties" : {
+            "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.bd485d15-5187-44b8-bf99-2c179c1a9a43"
+          },
+          "tags" : "Element,Deployment Node,Amazon Web Services - Fargate"
+        }, {
+          "children" : [ {
+            "containerInstances" : [ {
+              "containerId" : "6",
+              "deploymentGroups" : [ "Default" ],
+              "environment" : "Live",
+              "id" : "28",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.e7b26c6f-cecf-4bd4-b0e3-a614703b29af.14203db1-32f6-437d-bc5d-b6345dcb1c6d.databaseinstance1"
+              },
+              "tags" : "Container Instance"
+            } ],
+            "environment" : "Live",
+            "id" : "27",
+            "instances" : "1",
+            "name" : "Users DB",
+            "properties" : {
+              "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.e7b26c6f-cecf-4bd4-b0e3-a614703b29af.14203db1-32f6-437d-bc5d-b6345dcb1c6d"
+            },
+            "tags" : "Element,Deployment Node,Amazon Web Services - RDS Postgres instance"
+          }, {
+            "containerInstances" : [ {
+              "containerId" : "7",
+              "deploymentGroups" : [ "Default" ],
+              "environment" : "Live",
+              "id" : "31",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.e7b26c6f-cecf-4bd4-b0e3-a614703b29af.e8dc8e51-1529-495b-98cd-45e02f12524c.databaseinstance2"
+              },
+              "tags" : "Container Instance"
+            } ],
+            "environment" : "Live",
+            "id" : "30",
+            "instances" : "1",
+            "name" : "Forms Definitions DB",
+            "properties" : {
+              "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.e7b26c6f-cecf-4bd4-b0e3-a614703b29af.e8dc8e51-1529-495b-98cd-45e02f12524c"
+            },
+            "tags" : "Element,Deployment Node,Amazon Web Services - RDS Postgres instance"
+          } ],
+          "environment" : "Live",
+          "id" : "26",
+          "instances" : "1",
+          "name" : "Amazon RDS",
+          "properties" : {
+            "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.e7b26c6f-cecf-4bd4-b0e3-a614703b29af"
+          },
+          "tags" : "Element,Deployment Node,Amazon Web Services - RDS"
+        } ],
+        "environment" : "Live",
+        "id" : "11",
+        "infrastructureNodes" : [ {
+          "description" : "Routes incoming requests based upon domain name.",
+          "environment" : "Live",
+          "id" : "12",
+          "name" : "DNS router",
+          "properties" : {
+            "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.dns"
+          },
+          "relationships" : [ {
+            "description" : "Forwards requests to",
+            "destinationId" : "13",
+            "id" : "14",
+            "sourceId" : "12",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node,Amazon Web Services - Route 53",
+          "technology" : "Route 53"
+        }, {
+          "description" : "Routes incoming requests to Application Load Balancer.",
+          "environment" : "Live",
+          "id" : "13",
+          "name" : "Cloudfront distribution",
+          "properties" : {
+            "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.cloudfront"
+          },
+          "relationships" : [ {
+            "description" : "Forwards requests to",
+            "destinationId" : "15",
+            "id" : "16",
+            "sourceId" : "13",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node,Amazon Web Services - CloudFront",
+          "technology" : "CloudFront"
+        }, {
+          "description" : "Automatically distributes incoming application traffic.",
+          "environment" : "Live",
+          "id" : "15",
+          "name" : "Load Balancer",
+          "properties" : {
+            "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region.alb"
+          },
+          "relationships" : [ {
+            "description" : "Forwards requests to",
+            "destinationId" : "18",
+            "id" : "22",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards requests to",
+            "destinationId" : "19",
+            "id" : "23",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards requests to",
+            "destinationId" : "20",
+            "id" : "24",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards requests to",
+            "destinationId" : "21",
+            "id" : "25",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node,Amazon Web Services - Elastic Load Balancing ELB Application load balancer",
+          "technology" : "ALB"
+        } ],
+        "instances" : "1",
+        "name" : "eu-west-2",
+        "properties" : {
+          "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259.region"
+        },
+        "tags" : "Element,Deployment Node,Amazon Web Services - Region"
       } ],
-      "tags" : "Element,Person"
+      "environment" : "Live",
+      "id" : "10",
+      "instances" : "1",
+      "name" : "Amazon Web Services",
+      "properties" : {
+        "structurizr.dsl.identifier" : "live.d5e1a86b-b1a5-4ba0-a477-9cf34ee69259"
+      },
+      "tags" : "Element,Deployment Node,Amazon Web Services - Cloud"
     } ],
     "softwareSystems" : [ {
       "containers" : [ {
         "documentation" : { },
-        "id" : "3",
-        "name" : "Web Application",
+        "id" : "2",
+        "name" : "forms-admin",
         "properties" : {
-          "structurizr.dsl.identifier" : "ss.wa"
+          "structurizr.dsl.identifier" : "forms.forms_admin"
         },
         "relationships" : [ {
           "description" : "Reads from and writes to",
-          "destinationId" : "4",
-          "id" : "7",
-          "sourceId" : "3",
-          "tags" : "Relationship"
+          "destinationId" : "6",
+          "id" : "8",
+          "sourceId" : "2",
+          "tags" : "Relationship",
+          "technology" : "PostgreSQL Protocol/SSL"
         } ],
-        "tags" : "Element,Container"
+        "tags" : "Element,Container,Application",
+        "technology" : "Ruby on Rails"
+      }, {
+        "documentation" : { },
+        "id" : "3",
+        "name" : "forms-api",
+        "properties" : {
+          "structurizr.dsl.identifier" : "forms.forms_api"
+        },
+        "relationships" : [ {
+          "description" : "Reads from and writes to",
+          "destinationId" : "7",
+          "id" : "9",
+          "sourceId" : "3",
+          "tags" : "Relationship",
+          "technology" : "PostgreSQL Protocol/SSL"
+        } ],
+        "tags" : "Element,Container,Application",
+        "technology" : "Ruby on Rails"
       }, {
         "documentation" : { },
         "id" : "4",
-        "name" : "Database Schema",
+        "name" : "forms-product-page",
         "properties" : {
-          "structurizr.dsl.identifier" : "ss.db"
+          "structurizr.dsl.identifier" : "forms.forms_product_page"
         },
-        "tags" : "Element,Container,Database"
+        "tags" : "Element,Container,Application",
+        "technology" : "Ruby on Rails"
+      }, {
+        "documentation" : { },
+        "id" : "5",
+        "name" : "forms-runner",
+        "properties" : {
+          "structurizr.dsl.identifier" : "forms.forms_runner"
+        },
+        "tags" : "Element,Container,Application",
+        "technology" : "Ruby on Rails"
+      }, {
+        "documentation" : { },
+        "id" : "6",
+        "name" : "Users Database",
+        "properties" : {
+          "structurizr.dsl.identifier" : "forms.users_db"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "Postgres"
+      }, {
+        "documentation" : { },
+        "id" : "7",
+        "name" : "Forms Definition Database",
+        "properties" : {
+          "structurizr.dsl.identifier" : "forms.forms_definitions_db"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "Postgres"
       } ],
       "documentation" : { },
-      "id" : "2",
+      "id" : "1",
       "location" : "Unspecified",
-      "name" : "Software System",
+      "name" : "GOV.UK Forms",
       "properties" : {
-        "structurizr.dsl.identifier" : "ss"
+        "structurizr.dsl.identifier" : "forms"
       },
       "tags" : "Element,Software System"
     } ]
   },
-  "name" : "Name",
+  "name" : "GOV.UK Forms",
   "properties" : {
-    "structurizr.dsl" : "d29ya3NwYWNlICJOYW1lIiAiRGVzY3JpcHRpb24iIHsKCiAgICAhaWRlbnRpZmllcnMgaGllcmFyY2hpY2FsCgogICAgbW9kZWwgewogICAgICAgIHUgPSBwZXJzb24gIlVzZXIiCiAgICAgICAgc3MgPSBzb2Z0d2FyZVN5c3RlbSAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgIHdhID0gY29udGFpbmVyICJXZWIgQXBwbGljYXRpb24iCiAgICAgICAgICAgIGRiID0gY29udGFpbmVyICJEYXRhYmFzZSBTY2hlbWEiIHsKICAgICAgICAgICAgICAgIHRhZ3MgIkRhdGFiYXNlIgogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICB1IC0+IHNzLndhICJVc2VzIgogICAgICAgIHNzLndhIC0+IHNzLmRiICJSZWFkcyBmcm9tIGFuZCB3cml0ZXMgdG8iCiAgICB9CgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUNvbnRleHQgc3MgIkZvbyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b2xheW91dCBscgogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHNzICJCYXIiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkVsZW1lbnQiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzE5OWI2NQogICAgICAgICAgICAgICAgc2hhcGUgcGVyc29uCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxZWJhNzkKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzIzZDk4ZAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBjeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQoKICAgIGNvbmZpZ3VyYXRpb24gewogICAgICAgIHNjb3BlIHNvZnR3YXJlc3lzdGVtCiAgICB9Cgp9"
+    "structurizr.dsl" : "d29ya3NwYWNlICJHT1YuVUsgRm9ybXMiICJBbiBNVlAgYXJjaGl0ZWN0dXJlLiIgewoKICAgICFpZGVudGlmaWVycyBoaWVyYXJjaGljYWwKCiAgICBtb2RlbCB7CiAgICAgICAgZm9ybXMgPSBzb2Z0d2FyZXN5c3RlbSAiR09WLlVLIEZvcm1zIiB7CiAgICAgICAgICAgIGZvcm1zX2FkbWluID0gY29udGFpbmVyICJmb3Jtcy1hZG1pbiIgewogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiUnVieSBvbiBSYWlscyIKICAgICAgICAgICAgICAgIHRhZ3MgIkFwcGxpY2F0aW9uIgogICAgICAgICAgICB9CgogICAgICAgICAgICBmb3Jtc19hcGkgPSBjb250YWluZXIgImZvcm1zLWFwaSIgewogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiUnVieSBvbiBSYWlscyIKICAgICAgICAgICAgICAgIHRhZ3MgIkFwcGxpY2F0aW9uIgogICAgICAgICAgICB9CgogICAgICAgICAgICBmb3Jtc19wcm9kdWN0X3BhZ2UgPSBjb250YWluZXIgImZvcm1zLXByb2R1Y3QtcGFnZSIgewogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiUnVieSBvbiBSYWlscyIKICAgICAgICAgICAgICAgIHRhZ3MgIkFwcGxpY2F0aW9uIgogICAgICAgICAgICB9CgogICAgICAgICAgICBmb3Jtc19ydW5uZXIgPSBjb250YWluZXIgImZvcm1zLXJ1bm5lciIgewogICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiUnVieSBvbiBSYWlscyIKICAgICAgICAgICAgICAgIHRhZ3MgIkFwcGxpY2F0aW9uIgogICAgICAgICAgICB9CgogICAgICAgICAgICB1c2Vyc19kYiA9IGNvbnRhaW5lciAiVXNlcnMgRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIlBvc3RncmVzIgogICAgICAgICAgICAgICAgdGFncyAiRGF0YWJhc2UiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGZvcm1zX2RlZmluaXRpb25zX2RiID0gY29udGFpbmVyICJGb3JtcyBEZWZpbml0aW9uIERhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJQb3N0Z3JlcyIKICAgICAgICAgICAgICAgIHRhZ3MgIkRhdGFiYXNlIgogICAgICAgICAgICB9CgogICAgICAgICAgICBmb3Jtc19hZG1pbiAtPiB1c2Vyc19kYiAiUmVhZHMgZnJvbSBhbmQgd3JpdGVzIHRvIiAiUG9zdGdyZVNRTCBQcm90b2NvbC9TU0wiCiAgICAgICAgICAgIGZvcm1zX2FwaSAtPiBmb3Jtc19kZWZpbml0aW9uc19kYiAiUmVhZHMgZnJvbSBhbmQgd3JpdGVzIHRvIiAiUG9zdGdyZVNRTCBQcm90b2NvbC9TU0wiCiAgICAgICAgfQoKICAgICAgICBsaXZlID0gZGVwbG95bWVudEVudmlyb25tZW50ICJMaXZlIiB7CiAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJBbWF6b24gV2ViIFNlcnZpY2VzIiB7CiAgICAgICAgICAgICAgICB0YWdzICJBbWF6b24gV2ViIFNlcnZpY2VzIC0gQ2xvdWQiCgogICAgICAgICAgICAgICAgcmVnaW9uID0gZGVwbG95bWVudE5vZGUgImV1LXdlc3QtMiIgewogICAgICAgICAgICAgICAgICAgIHRhZ3MgIkFtYXpvbiBXZWIgU2VydmljZXMgLSBSZWdpb24iCgogICAgICAgICAgICAgICAgICAgIGRucyA9IGluZnJhc3RydWN0dXJlTm9kZSAiRE5TIHJvdXRlciIgewogICAgICAgICAgICAgICAgICAgICAgICB0ZWNobm9sb2d5ICJSb3V0ZSA1MyIKICAgICAgICAgICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIlJvdXRlcyBpbmNvbWluZyByZXF1ZXN0cyBiYXNlZCB1cG9uIGRvbWFpbiBuYW1lLiIKICAgICAgICAgICAgICAgICAgICAgICAgdGFncyAiQW1hem9uIFdlYiBTZXJ2aWNlcyAtIFJvdXRlIDUzIgogICAgICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICAgICAgY2xvdWRmcm9udCA9IGluZnJhc3RydWN0dXJlTm9kZSAiQ2xvdWRmcm9udCBkaXN0cmlidXRpb24iIHsKICAgICAgICAgICAgICAgICAgICAgICAgdGVjaG5vbG9neSAiQ2xvdWRGcm9udCIKICAgICAgICAgICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIlJvdXRlcyBpbmNvbWluZyByZXF1ZXN0cyB0byBBcHBsaWNhdGlvbiBMb2FkIEJhbGFuY2VyLiIKICAgICAgICAgICAgICAgICAgICAgICAgdGFncyAiQW1hem9uIFdlYiBTZXJ2aWNlcyAtIENsb3VkRnJvbnQiCiAgICAgICAgICAgICAgICAgICAgICAgIGRucyAtPiB0aGlzICJGb3J3YXJkcyByZXF1ZXN0cyB0byIgIkhUVFBTIgogICAgICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICAgICAgYWxiID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJMb2FkIEJhbGFuY2VyIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIkFMQiIKICAgICAgICAgICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gIkF1dG9tYXRpY2FsbHkgZGlzdHJpYnV0ZXMgaW5jb21pbmcgYXBwbGljYXRpb24gdHJhZmZpYy4iCiAgICAgICAgICAgICAgICAgICAgICAgIHRhZ3MgIkFtYXpvbiBXZWIgU2VydmljZXMgLSBFbGFzdGljIExvYWQgQmFsYW5jaW5nIEVMQiBBcHBsaWNhdGlvbiBsb2FkIGJhbGFuY2VyIgogICAgICAgICAgICAgICAgICAgICAgICBjbG91ZGZyb250IC0+IHRoaXMgIkZvcndhcmRzIHJlcXVlc3RzIHRvIiAiSFRUUFMiCiAgICAgICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiRUNTIEZhcmdhdGUgLSBHT1YuVUsgRm9ybXMgY2x1c3RlciIgewogICAgICAgICAgICAgICAgICAgICAgICB0YWdzICJBbWF6b24gV2ViIFNlcnZpY2VzIC0gRmFyZ2F0ZSIKICAgICAgICAgICAgICAgICAgICAgICAgLy8gRGVmaW5lIGNvbnRhaW5lciBpbnN0YW5jZXMKICAgICAgICAgICAgICAgICAgICAgICAgZm9ybXNfYWRtaW4gPSBjb250YWluZXJJbnN0YW5jZSBmb3Jtcy5mb3Jtc19hZG1pbgogICAgICAgICAgICAgICAgICAgICAgICBmb3Jtc19hcGkgPSBjb250YWluZXJJbnN0YW5jZSBmb3Jtcy5mb3Jtc19hcGkKICAgICAgICAgICAgICAgICAgICAgICAgZm9ybXNfcHJvZHVjdF9wYWdlID0gY29udGFpbmVySW5zdGFuY2UgZm9ybXMuZm9ybXNfcHJvZHVjdF9wYWdlCiAgICAgICAgICAgICAgICAgICAgICAgIGZvcm1zX3J1bm5lciA9IGNvbnRhaW5lckluc3RhbmNlIGZvcm1zLmZvcm1zX3J1bm5lcgoKICAgICAgICAgICAgICAgICAgICAgICAgLy8gQ3JlYXRlIGEgc2luZ2xlIGNvbm5lY3Rpb24gZnJvbSB0aGUgQUxCIHRvIGFsbCBjb250YWluZXIgaW5zdGFuY2VzCiAgICAgICAgICAgICAgICAgICAgICAgIGFsYiAtPiBmb3Jtc19hZG1pbiAiRm9yd2FyZHMgcmVxdWVzdHMgdG8iICJIVFRQUyIKICAgICAgICAgICAgICAgICAgICAgICAgYWxiIC0+IGZvcm1zX2FwaSAiRm9yd2FyZHMgcmVxdWVzdHMgdG8iICJIVFRQUyIKICAgICAgICAgICAgICAgICAgICAgICAgYWxiIC0+IGZvcm1zX3Byb2R1Y3RfcGFnZSAiRm9yd2FyZHMgcmVxdWVzdHMgdG8iICJIVFRQUyIKICAgICAgICAgICAgICAgICAgICAgICAgYWxiIC0+IGZvcm1zX3J1bm5lciAiRm9yd2FyZHMgcmVxdWVzdHMgdG8iICJIVFRQUyIKICAgICAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJBbWF6b24gUkRTIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHRhZ3MgIkFtYXpvbiBXZWIgU2VydmljZXMgLSBSRFMiCgogICAgICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiVXNlcnMgREIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRhZ3MgIkFtYXpvbiBXZWIgU2VydmljZXMgLSBSRFMgUG9zdGdyZXMgaW5zdGFuY2UiCgogICAgICAgICAgICAgICAgICAgICAgICAgICAgZGF0YWJhc2VJbnN0YW5jZTEgPSBjb250YWluZXJJbnN0YW5jZSBmb3Jtcy51c2Vyc19kYgogICAgICAgICAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiRm9ybXMgRGVmaW5pdGlvbnMgREIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRhZ3MgIkFtYXpvbiBXZWIgU2VydmljZXMgLSBSRFMgUG9zdGdyZXMgaW5zdGFuY2UiCgogICAgICAgICAgICAgICAgICAgICAgICAgICAgZGF0YWJhc2VJbnN0YW5jZTIgPSBjb250YWluZXJJbnN0YW5jZSBmb3Jtcy5mb3Jtc19kZWZpbml0aW9uc19kYgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KCiAgICB2aWV3cyB7CiAgICAgICAgZGVwbG95bWVudCBmb3JtcyBsaXZlICJBbWF6b25XZWJTZXJ2aWNlc0RlcGxveW1lbnQiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkVsZW1lbnQiIHsKICAgICAgICAgICAgICAgIHNoYXBlIHJvdW5kZWRib3gKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbnRhaW5lciIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQXBwbGljYXRpb24iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBjeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICB0aGVtZXMgaHR0cHM6Ly9zdGF0aWMuc3RydWN0dXJpenIuY29tL3RoZW1lcy9hbWF6b24td2ViLXNlcnZpY2VzLTIwMjAuMDQuMzAvdGhlbWUuanNvbgogICAgfQoKfQ=="
   },
   "views" : {
     "configuration" : {
       "branding" : { },
-      "lastSavedView" : "Foo",
+      "lastSavedView" : "AmazonWebServicesDeployment",
       "metadataSymbols" : "SquareBrackets",
       "styles" : {
         "elements" : [ {
-          "color" : "#ffffff",
+          "background" : "#ffffff",
+          "shape" : "RoundedBox",
           "tag" : "Element"
         }, {
-          "background" : "#199b65",
-          "shape" : "Person",
-          "tag" : "Person"
-        }, {
-          "background" : "#1eba79",
-          "tag" : "Software System"
-        }, {
-          "background" : "#23d98d",
+          "background" : "#ffffff",
           "tag" : "Container"
+        }, {
+          "background" : "#ffffff",
+          "tag" : "Application"
         }, {
           "shape" : "Cylinder",
           "tag" : "Database"
         } ]
       },
-      "terminology" : { }
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json" ]
     },
-    "containerViews" : [ {
-      "automaticLayout" : {
-        "applied" : false,
-        "edgeSeparation" : 0,
-        "implementation" : "Graphviz",
-        "nodeSeparation" : 300,
-        "rankDirection" : "LeftRight",
-        "rankSeparation" : 300,
-        "vertices" : false
-      },
-      "elements" : [ {
-        "id" : "1",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "3",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "4",
-        "x" : 0,
-        "y" : 0
-      } ],
-      "externalSoftwareSystemBoundariesVisible" : false,
-      "key" : "Bar",
-      "order" : 2,
-      "relationships" : [ {
-        "id" : "5"
-      }, {
-        "id" : "7"
-      } ],
-      "softwareSystemId" : "2"
-    } ],
-    "systemContextViews" : [ {
+    "deploymentViews" : [ {
       "automaticLayout" : {
         "applied" : true,
         "edgeSeparation" : 0,
         "implementation" : "Graphviz",
         "nodeSeparation" : 300,
-        "rankDirection" : "LeftRight",
+        "rankDirection" : "TopBottom",
         "rankSeparation" : 300,
         "vertices" : false
       },
       "dimensions" : {
-        "height" : 800,
-        "width" : 1550
+        "height" : 3550,
+        "width" : 3220
       },
       "elements" : [ {
-        "id" : "1",
-        "x" : 199,
-        "y" : 165
+        "id" : "10",
+        "x" : 175,
+        "y" : 175
       }, {
-        "id" : "2",
-        "x" : 899,
-        "y" : 215
+        "id" : "11",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "12",
+        "x" : 1384,
+        "y" : 205
+      }, {
+        "id" : "13",
+        "x" : 1384,
+        "y" : 805
+      }, {
+        "id" : "15",
+        "x" : 1384,
+        "y" : 1405
+      }, {
+        "id" : "17",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "18",
+        "x" : 2509,
+        "y" : 2005
+      }, {
+        "id" : "19",
+        "x" : 1759,
+        "y" : 2005
+      }, {
+        "id" : "20",
+        "x" : 1009,
+        "y" : 2005
+      }, {
+        "id" : "21",
+        "x" : 259,
+        "y" : 2005
+      }, {
+        "id" : "26",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "27",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "28",
+        "x" : 2405,
+        "y" : 2651
+      }, {
+        "id" : "30",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "31",
+        "x" : 1642,
+        "y" : 2651
       } ],
-      "enterpriseBoundaryVisible" : true,
-      "key" : "Foo",
+      "environment" : "Live",
+      "key" : "AmazonWebServicesDeployment",
       "order" : 1,
       "relationships" : [ {
-        "id" : "6"
+        "id" : "14"
+      }, {
+        "id" : "16"
+      }, {
+        "id" : "22",
+        "vertices" : [ {
+          "x" : 2359,
+          "y" : 1901
+        } ]
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "24"
+      }, {
+        "id" : "25",
+        "vertices" : [ {
+          "x" : 859,
+          "y" : 1901
+        } ]
+      }, {
+        "id" : "29"
+      }, {
+        "id" : "32"
       } ],
-      "softwareSystemId" : "2"
+      "softwareSystemId" : "1"
     } ]
   }
 }
