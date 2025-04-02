@@ -4,6 +4,8 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
     model {
         forms = softwareSystem "GOV.UK Forms" {
+
+            # Containers: represent a deployable unit that contributes to the functionality of the system (e.g., web app, db)
             formsAdmin = container "forms-admin" {
                 technology "Ruby on Rails"
                 tags "Application"
@@ -34,17 +36,21 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Database"
             }
 
+            # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
         }
 
-        live = deploymentEnvironment "Live" {
+        # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
+        environment = deploymentEnvironment "Live" {
             deploymentNode "Amazon Web Services" {
                 tags "Amazon Web Services - Cloud"
 
+                # Deployment Nodes represents infrastructure components where containers and/or services are deployed.
                 region = deploymentNode "eu-west-2" {
                     tags "Amazon Web Services - Region"
 
+                    # Infrastructure Nodes represent individual or isolated infrastructure components
                     dns = infrastructureNode "DNS router" {
                         technology "Route 53"
                         description "Routes incoming requests based upon domain name."
@@ -67,42 +73,39 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
                         tags "Amazon Web Services - Fargate"
-                        // Define container instances
+                        # Define container instances
                         formsAdmin = containerInstance forms.formsAdmin
                         formsAPI = containerInstance forms.formsAPI
                         formsProductPage = containerInstance forms.formsProductPage
                         formsRunner = containerInstance forms.formsRunner
 
-                        // Create a single connection from the ALB to all container instances
+                        # Create connections from the ALB to all container instances
                         alb -> formsAdmin "Forwards requests to" "HTTPS"
                         alb -> formsAPI "Forwards requests to" "HTTPS"
                         alb -> formsProductPage "Forwards requests to" "HTTPS"
                         alb -> formsRunner "Forwards requests to" "HTTPS"
                     }
 
-                    deploymentNode "Amazon RDS" {
+                    deploymentNode "RDS" {
                         tags "Amazon Web Services - RDS"
 
                         deploymentNode "Users DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
-
-                            databaseInstance1 = containerInstance forms.usersDB
+                            usersDB = containerInstance forms.usersDB
                         }
 
                         deploymentNode "Forms Definitions DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
-
-                            databaseInstance2 = containerInstance forms.formsDefinitionsDB
+                            formsDefinitionsDB = containerInstance forms.formsDefinitionsDB
                         }
                     }
-
                 }
             }
         }
     }
 
     views {
-        deployment forms live "AmazonWebServicesDeployment" {
+        deployment forms environment "AmazonWebServicesDeployment" {
             include *
             autolayout lr
         }
