@@ -3,39 +3,39 @@ workspace "GOV.UK Forms" "An MVP architecture." {
     !identifiers hierarchical
 
     model {
-        forms = softwaresystem "GOV.UK Forms" {
-            forms_admin = container "forms-admin" {
+        forms = softwareSystem "GOV.UK Forms" {
+            formsAdmin = container "forms-admin" {
                 technology "Ruby on Rails"
                 tags "Application"
             }
 
-            forms_api = container "forms-api" {
+            formsAPI = container "forms-api" {
                 technology "Ruby on Rails"
                 tags "Application"
             }
 
-            forms_product_page = container "forms-product-page" {
+            formsProductPage = container "forms-product-page" {
                 technology "Ruby on Rails"
                 tags "Application"
             }
 
-            forms_runner = container "forms-runner" {
+            formsRunner = container "forms-runner" {
                 technology "Ruby on Rails"
                 tags "Application"
             }
 
-            users_db = container "Users Database" {
+            usersDB = container "Users Database" {
                 technology "Postgres"
                 tags "Database"
             }
 
-            forms_definitions_db = container "Forms Definition Database" {
+            formsDefinitionsDB = container "Forms Definition Database" {
                 technology "Postgres"
                 tags "Database"
             }
 
-            forms_admin -> users_db "Reads from and writes to" "PostgreSQL Protocol/SSL"
-            forms_api -> forms_definitions_db "Reads from and writes to" "PostgreSQL Protocol/SSL"
+            formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
+            formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
         }
 
         live = deploymentEnvironment "Live" {
@@ -68,16 +68,16 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
                         tags "Amazon Web Services - Fargate"
                         // Define container instances
-                        forms_admin = containerInstance forms.forms_admin
-                        forms_api = containerInstance forms.forms_api
-                        forms_product_page = containerInstance forms.forms_product_page
-                        forms_runner = containerInstance forms.forms_runner
+                        formsAdmin = containerInstance forms.formsAdmin
+                        formsAPI = containerInstance forms.formsAPI
+                        formsProductPage = containerInstance forms.formsProductPage
+                        formsRunner = containerInstance forms.formsRunner
 
                         // Create a single connection from the ALB to all container instances
-                        alb -> forms_admin "Forwards requests to" "HTTPS"
-                        alb -> forms_api "Forwards requests to" "HTTPS"
-                        alb -> forms_product_page "Forwards requests to" "HTTPS"
-                        alb -> forms_runner "Forwards requests to" "HTTPS"
+                        alb -> formsAdmin "Forwards requests to" "HTTPS"
+                        alb -> formsAPI "Forwards requests to" "HTTPS"
+                        alb -> formsProductPage "Forwards requests to" "HTTPS"
+                        alb -> formsRunner "Forwards requests to" "HTTPS"
                     }
 
                     deploymentNode "Amazon RDS" {
@@ -86,13 +86,13 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         deploymentNode "Users DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
 
-                            databaseInstance1 = containerInstance forms.users_db
+                            databaseInstance1 = containerInstance forms.usersDB
                         }
 
                         deploymentNode "Forms Definitions DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
 
-                            databaseInstance2 = containerInstance forms.forms_definitions_db
+                            databaseInstance2 = containerInstance forms.formsDefinitionsDB
                         }
                     }
 
@@ -104,7 +104,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
     views {
         deployment forms live "AmazonWebServicesDeployment" {
             include *
-            autolayout tb
+            autolayout lr
         }
 
         styles {
