@@ -36,17 +36,25 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Database"
             }
 
+            sessionsDB = container "Forms Sessions Database" {
+                technology "Redis"
+                description "20 hours expiry"
+                tags "Database"
+
+            }
+
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
+            formsRunner -> sessionsDB "Reads from and writes to" "Redis"
         }
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
-        environment = deploymentEnvironment "Live" {
+        environment = deploymentEnvironment "Environment" {
             deploymentNode "Amazon Web Services" {
                 tags "Amazon Web Services - Cloud"
 
-                # Deployment Nodes represents infrastructure components where containers and/or services are deployed.
+                # Deployment Nodes represents infrastructure components where containers and/or services are deployed
                 region = deploymentNode "eu-west-2" {
                     tags "Amazon Web Services - Region"
 
@@ -98,6 +106,11 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                             tags "Amazon Web Services - RDS Postgres instance"
                             formsDefinitionsDB = containerInstance forms.formsDefinitionsDB
                         }
+                    }
+
+                    deploymentNode "Elasticache" {
+                        tags "Amazon Web Services - ElastiCache"
+                        sessionsDB = containerInstance forms.sessionsDB
                     }
                 }
             }
