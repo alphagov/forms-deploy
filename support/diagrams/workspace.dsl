@@ -65,18 +65,27 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - Route 53"
                     }
 
-                    cloudfront = infrastructureNode "Cloudfront distribution" {
+                    shieldAdvanced = infrastructureNode "Shield Advanced" {
+                        technology "Shield Advanced"
+                        description "DDoS Protection service"
+                        tags "Amazon Web Services - Shield Shield Advanced"
+                    }
+
+                    wafRules = infrastructureNode "WAF Rules" {
+                        technology "WAF"
+                        tags "Amazon Web Services - WAF"
+                    }
+
+                    cloudfront = infrastructureNode "Cloudfront Distribution" {
                         technology "CloudFront"
                         description "Routes incoming requests to Application Load Balancer."
                         tags "Amazon Web Services - CloudFront"
-                        dns -> this "Forwards requests to" "HTTPS"
                     }
 
                     alb = infrastructureNode "Load Balancer" {
                         technology "ALB"
                         description "Automatically distributes incoming application traffic."
                         tags "Amazon Web Services - Elastic Load Balancing ELB Application load balancer"
-                        cloudfront -> this "Forwards requests to" "HTTPS"
                     }
 
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
@@ -112,6 +121,12 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - ElastiCache"
                         sessionsDB = containerInstance forms.sessionsDB
                     }
+
+                    # Relationships between InfrastructureNodes
+                    dns -> cloudfront "Forwards requests to" "HTTPS"
+                    shieldAdvanced -> cloudfront "Monitors DDoS threats to"
+                    wafRules -> cloudfront "Enforces WAF rules on traffic to"
+                    cloudfront -> alb "Forwards requests to" "HTTPS"
                 }
             }
         }
