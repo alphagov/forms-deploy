@@ -43,30 +43,10 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Database"
             }
 
-            shieldAdvanced = container "Shield Advanced" {
-                technology "Shield Advanced"
-                description "DDoS Protection service"
-                tags "Amazon Web Services - Shield Shield Advanced"
-            }
-
-            wafRules = container "WAF Rules" {
-                technology "WAF"
-                tags "Amazon Web Services - WAF"
-            }
-
-            cloudfront = container "Cloudfront" {
-                technology "CloudFront"
-                description "Routes incoming requests to Application Load Balancer."
-                tags "Amazon Web Services - CloudFront"
-            }
-
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsRunner -> sessionsDB "Reads from and writes to" "Redis"
-
-            shieldAdvanced -> cloudfront "Monitors traffic for DDoS"
-            wafRules -> cloudfront "Enforces WAF rules on traffic to"
         }
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
@@ -90,6 +70,23 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         technology "ALB"
                         description "Automatically distributes incoming application traffic."
                         tags "Amazon Web Services - Elastic Load Balancing ELB Application load balancer"
+                    }
+
+                    shieldAdvanced = infrastructureNode "Shield Advanced" {
+                        technology "Shield Advanced"
+                        description "DDoS Protection service"
+                        tags "Amazon Web Services - Shield Shield Advanced"
+                    }
+
+                    wafRules = infrastructureNode "WAF Rules" {
+                        technology "WAF"
+                        tags "Amazon Web Services - WAF"
+                    }
+
+                    cloudfront = infrastructureNode "Cloudfront" {
+                        technology "CloudFront"
+                        description "Routes incoming requests to Application Load Balancer."
+                        tags "Amazon Web Services - CloudFront"
                     }
 
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
@@ -126,18 +123,11 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         sessionsDB = containerInstance forms.sessionsDB
                     }
 
-                    deploymentNode "Distribution" {
-                        technology "CloudFront"
-                        description "Routes incoming requests to Application Load Balancer."
-                        tags "Amazon Web Services - CloudFront"
-
-                        shield = containerInstance forms.shieldAdvanced
-                        waf = containerInstance forms.wafRules
-                        cloudfront = containerInstance forms.cloudfront
-
-                        dns -> cloudfront "Forwards requests to" "HTTPS"
-                        cloudfront -> alb "Forwards requests to" "HTTPS"
-                    }
+                    # Relationships
+                    cloudfront -> alb "Forwards requests to" "HTTPS"
+                    dns -> cloudfront "Forwards requests to" "HTTPS"
+                    shieldAdvanced -> cloudfront "Monitors traffic for DDoS"
+                    wafRules -> cloudfront "Enforces WAF rules on traffic to"
                 }
             }
         }
