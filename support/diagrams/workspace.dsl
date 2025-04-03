@@ -6,6 +6,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
         forms = softwareSystem "GOV.UK Forms" {
 
             # Containers: represent a deployable unit that contributes to the functionality of the system (e.g., web app, db)
+            # Can also represent nested or related infrastructure components
             formsAdmin = container "forms-admin" {
                 technology "Ruby on Rails"
                 tags "Application"
@@ -40,13 +41,32 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 technology "Redis"
                 description "20 hours expiry"
                 tags "Database"
+            }
 
+            shieldAdvanced = container "Shield Advanced" {
+                technology "Shield Advanced"
+                description "DDoS Protection service"
+                tags "Amazon Web Services - Shield Shield Advanced"
+            }
+
+            wafRules = container "WAF Rules" {
+                technology "WAF"
+                tags "Amazon Web Services - WAF"
+            }
+
+            cloudfront = container "Cloudfront" {
+                technology "CloudFront"
+                description "Routes incoming requests to Application Load Balancer."
+                tags "Amazon Web Services - CloudFront"
             }
 
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsRunner -> sessionsDB "Reads from and writes to" "Redis"
+
+            shieldAdvanced -> cloudfront "Monitors traffic for DDoS"
+            wafRules -> cloudfront "Enforces WAF rules on traffic to"
         }
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
@@ -55,6 +75,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Amazon Web Services - Cloud"
 
                 # Deployment Nodes represents infrastructure components where containers and/or services are deployed
+                # or a collection of interrelated infrastructure components
                 region = deploymentNode "eu-west-2" {
                     tags "Amazon Web Services - Region"
 
@@ -63,23 +84,6 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         technology "Route 53"
                         description "Routes incoming requests based upon domain name."
                         tags "Amazon Web Services - Route 53"
-                    }
-
-                    shieldAdvanced = infrastructureNode "Shield Advanced" {
-                        technology "Shield Advanced"
-                        description "DDoS Protection service"
-                        tags "Amazon Web Services - Shield Shield Advanced"
-                    }
-
-                    wafRules = infrastructureNode "WAF Rules" {
-                        technology "WAF"
-                        tags "Amazon Web Services - WAF"
-                    }
-
-                    cloudfront = infrastructureNode "Cloudfront Distribution" {
-                        technology "CloudFront"
-                        description "Routes incoming requests to Application Load Balancer."
-                        tags "Amazon Web Services - CloudFront"
                     }
 
                     alb = infrastructureNode "Load Balancer" {
@@ -122,11 +126,18 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         sessionsDB = containerInstance forms.sessionsDB
                     }
 
-                    # Relationships between InfrastructureNodes
-                    dns -> cloudfront "Forwards requests to" "HTTPS"
-                    shieldAdvanced -> cloudfront "Monitors DDoS threats to"
-                    wafRules -> cloudfront "Enforces WAF rules on traffic to"
-                    cloudfront -> alb "Forwards requests to" "HTTPS"
+                    deploymentNode "Distribution" {
+                        technology "CloudFront"
+                        description "Routes incoming requests to Application Load Balancer."
+                        tags "Amazon Web Services - CloudFront"
+
+                        shield = containerInstance forms.shieldAdvanced
+                        waf = containerInstance forms.wafRules
+                        cloudfront = containerInstance forms.cloudfront
+
+                        dns -> cloudfront "Forwards requests to" "HTTPS"
+                        cloudfront -> alb "Forwards requests to" "HTTPS"
+                    }
                 }
             }
         }
