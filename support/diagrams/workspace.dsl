@@ -124,6 +124,12 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - Systems Manager Parameter Store"
                     }
 
+                    sesForOTP = infrastructureNode "SES" {
+                        technology "SES"
+                        description "Sends OTP emails for admin onboarding"
+                        tags "Amazon Web Services - Simple Email Service SES"
+                    }
+
                     # Deployment Nodes represents infrastructure components where containers and/or services are deployed
                     # or a collection of interrelated infrastructure components
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
