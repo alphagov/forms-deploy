@@ -59,6 +59,17 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Amazon Web Services - CloudWatch"
             }
 
+            hostedZone = container "Hosted Zone" {
+                technology "Route53"
+                tags "Amazon Web Services - Route 53 Hosted Zone"
+            }
+
+            dns = container "DNS" {
+                technology "Route 53"
+                description "Routes incoming requests based upon domain name"
+                tags "Amazon Web Services - Route 53"
+            }
+
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
@@ -78,12 +89,6 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     tags "Amazon Web Services - Region"
 
                     # Infrastructure Nodes represent individual or isolated infrastructure components
-                    dns = infrastructureNode "DNS router" {
-                        technology "Route 53"
-                        description "Routes incoming requests based upon domain name"
-                        tags "Amazon Web Services - Route 53"
-                    }
-
                     alb = infrastructureNode "Load Balancer" {
                         technology "ALB"
                         description "Automatically distributes incoming application traffic"
@@ -164,9 +169,17 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         metrics = containerInstance forms.cloudWatchMetrics
                     }
 
-                    # Relationships
+                    deploymentNode "Route53" {
+                        tags "Amazon Web Services - Route 53"
+
+                        hostedZone = containerInstance forms.hostedZone
+                        dns = containerInstance forms.dns
+
+                        dns -> cloudFront "Forwards requests to" "HTTPS"
+                    }
+
+                    # Relationships between isolated components
                     cloudFront -> alb "Forwards requests to" "HTTPS"
-                    dns -> cloudFront "Forwards requests to" "HTTPS"
                     shieldAdvanced -> cloudFront "Monitors traffic for DDoS"
                     wafRules -> cloudFront "Enforces WAF rules on traffic to"
                 }
