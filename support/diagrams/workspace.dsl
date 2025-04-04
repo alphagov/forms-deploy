@@ -153,6 +153,21 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - Simple Storage Service S3"
                     }
 
+                    codeBuild = infrastructureNode "CodeBuild" {
+                        technology "CodeBuild"
+                        tags "Amazon Web Services - CodeBuild"
+                    }
+
+                    codePipeline = infrastructureNode "CodePipeline" {
+                        technology "CodePipeline"
+                        tags "Amazon Web Services - CodePipeline"
+                    }
+
+                    eventBridge = infrastructureNode "EventBridge" {
+                        technology "EventBridge"
+                        tags "Amazon Web Services - EventBridge"
+                    }
+
                     # Deployment Nodes represents infrastructure components where containers and/or services are deployed
                     # or a collection of interrelated infrastructure components
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
@@ -221,6 +236,8 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
                         pausedPipelineDetector = containerInstance forms.pausedPipelineDetector
                         pipelineInvoker = containerInstance forms.pipelineInvoker
+
+                        eventBridge -> pipelineInvoker "invokes"
                     }
 
                     # Relationships between isolated components
