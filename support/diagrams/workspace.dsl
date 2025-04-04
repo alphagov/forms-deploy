@@ -72,7 +72,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
             terraformStateLock = container "Terraform State Lock" {
                 technology "DynamoDB"
-                tags "Database"
+                tags "Amazon Web Services - DynamoDB Table""
             }
 
             pausedPipelineDetector = container "Paused Pipeline Detector" {
