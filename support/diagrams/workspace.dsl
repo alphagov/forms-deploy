@@ -70,6 +70,11 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Amazon Web Services - Route 53"
             }
 
+            terraformStateLock = container "Terraform State Lock" {
+                technology "DynamoDB"
+                tags "Database"
+            }
+
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
@@ -155,6 +160,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
                     deploymentNode "RDS" {
                         tags "Amazon Web Services - RDS"
+                        description "Encrypted backups retained for 7 days"
 
                         deploymentNode "Users DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
@@ -188,6 +194,13 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         dns = containerInstance forms.dns
 
                         dns -> cloudFront "Forwards requests to" "HTTPS"
+                    }
+
+                    deploymentNode "DynamoDB" {
+                        description "Stores Terraform state locking information"
+                        tags "Amazon Web Services - DynamoDB"
+
+                        terraformStateLock = containerInstance forms.terraformStateLock
                     }
 
                     # Relationships between isolated components
