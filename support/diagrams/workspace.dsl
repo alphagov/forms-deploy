@@ -43,10 +43,28 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Database"
             }
 
+            cloudWatchLogs = container "CloudWatch Logs" {
+                technology "CloudWatch"
+                description "Application and system logs"
+                tags "Amazon Web Services - CloudWatch"
+            }
+
+            cloudWatchAlarms = container "CloudWatch Alarm" {
+                technology "CloudWatch"
+                tags "Amazon Web Services - CloudWatch Alarm"
+            }
+
+            cloudWatchMetrics = container "CloudWatch Metrics" {
+                technology "CloudWatch"
+                tags "Amazon Web Services - CloudWatch"
+            }
+
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsRunner -> sessionsDB "Reads from and writes to" "Redis"
+            formsRunner -> cloudWatchMetrics "Writes metrics to"
+            formsAdmin -> cloudWatchMetrics "Reads metrics from"
         }
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
@@ -62,13 +80,13 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     # Infrastructure Nodes represent individual or isolated infrastructure components
                     dns = infrastructureNode "DNS router" {
                         technology "Route 53"
-                        description "Routes incoming requests based upon domain name."
+                        description "Routes incoming requests based upon domain name"
                         tags "Amazon Web Services - Route 53"
                     }
 
                     alb = infrastructureNode "Load Balancer" {
                         technology "ALB"
-                        description "Automatically distributes incoming application traffic."
+                        description "Automatically distributes incoming application traffic"
                         tags "Amazon Web Services - Elastic Load Balancing ELB Application load balancer"
                     }
 
@@ -83,12 +101,26 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - WAF"
                     }
 
-                    cloudfront = infrastructureNode "Cloudfront" {
+                    cloudFront = infrastructureNode "CloudFront" {
                         technology "CloudFront"
-                        description "Routes incoming requests to Application Load Balancer."
+                        description "Routes incoming requests to Application Load Balancer"
                         tags "Amazon Web Services - CloudFront"
                     }
 
+                    cloudTrail = infrastructureNode "CloudTrail" {
+                        technology "CloudTrail"
+                        description "Logs AWS activity - forwards logs to Cyber"
+                        tags "Amazon Web Services - CloudTrail"
+                    }
+
+                    parameterStore = infrastructureNode "SSM ParameterStore" {
+                        technology "ParameterStore"
+                        description "Stores secrets and credentials"
+                        tags "Amazon Web Services - Systems Manager Parameter Store"
+                    }
+
+                    # Deployment Nodes represents infrastructure components where containers and/or services are deployed
+                    # or a collection of interrelated infrastructure components
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
                         tags "Amazon Web Services - Fargate"
                         # Define container instances
@@ -123,11 +155,20 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         sessionsDB = containerInstance forms.sessionsDB
                     }
 
+                    deploymentNode "CloudWatch" {
+                        tags "Amazon Web Services - CloudWatch"
+                        description "CloudWatch Services: logging, metrics, and alerts"
+
+                        logs = containerInstance forms.cloudWatchLogs
+                        alarms = containerInstance forms.cloudWatchAlarms
+                        metrics = containerInstance forms.cloudWatchMetrics
+                    }
+
                     # Relationships
-                    cloudfront -> alb "Forwards requests to" "HTTPS"
-                    dns -> cloudfront "Forwards requests to" "HTTPS"
-                    shieldAdvanced -> cloudfront "Monitors traffic for DDoS"
-                    wafRules -> cloudfront "Enforces WAF rules on traffic to"
+                    cloudFront -> alb "Forwards requests to" "HTTPS"
+                    dns -> cloudFront "Forwards requests to" "HTTPS"
+                    shieldAdvanced -> cloudFront "Monitors traffic for DDoS"
+                    wafRules -> cloudFront "Enforces WAF rules on traffic to"
                 }
             }
         }
@@ -136,7 +177,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
     views {
         deployment forms environment "AmazonWebServicesDeployment" {
             include *
-            autolayout lr
+            autolayout tb
         }
 
         styles {
