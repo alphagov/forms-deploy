@@ -91,7 +91,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     # Infrastructure Nodes represent individual or isolated infrastructure components
                     alb = infrastructureNode "Load Balancer" {
                         technology "ALB"
-                        description "Automatically distributes incoming application traffic"
+                        description "Distributes incoming application traffic (logs sent to S3)"
                         tags "Amazon Web Services - Elastic Load Balancing ELB Application load balancer"
                     }
 
@@ -128,6 +128,12 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         technology "SES"
                         description "Sends OTP emails for admin onboarding"
                         tags "Amazon Web Services - Simple Email Service SES"
+                    }
+
+                    albS3Logs = infrastructureNode "S3" {
+                        technology "S3"
+                        description "Stores ALB logs ingested by Cyber"
+                        tags "Amazon Web Services - Simple Storage Service S3"
                     }
 
                     # Deployment Nodes represents infrastructure components where containers and/or services are deployed
@@ -188,6 +194,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     cloudFront -> alb "Forwards requests to" "HTTPS"
                     shieldAdvanced -> cloudFront "Monitors traffic for DDoS"
                     wafRules -> cloudFront "Enforces WAF rules on traffic to"
+                    alb -> albS3Logs "Sends logs to"
                 }
             }
         }
