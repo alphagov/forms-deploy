@@ -75,6 +75,18 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Database"
             }
 
+            pausedPipelineDetector = container "Paused Pipeline Detector" {
+                technology "AWS Lambda"
+                description "Detects paused pipelines"
+                tags "Amazon Web Services - Lambda Lambda Function"
+            }
+
+            pipelineInvoker = container "Pipeline Invoker" {
+                technology "AWS Lambda"
+                description "Invokes a pipeline"
+                tags "Amazon Web Services - Lambda Lambda Function"
+            }
+
             # Relationships
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
@@ -201,6 +213,14 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - DynamoDB"
 
                         terraformStateLock = containerInstance forms.terraformStateLock
+                    }
+
+                    deploymentNode "AWS Lambda (pipelines)" {
+                        description "Lambda functions related to pipeline maintenance"
+                        tags "Amazon Web Services - Lambda"
+
+                        pausedPipelineDetector = containerInstance forms.pausedPipelineDetector
+                        pipelineInvoker = containerInstance forms.pipelineInvoker
                     }
 
                     # Relationships between isolated components
