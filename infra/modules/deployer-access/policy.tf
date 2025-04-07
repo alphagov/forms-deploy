@@ -36,6 +36,7 @@ data "aws_iam_policy_document" "forms_infra_2" {
 data "aws_iam_policy_document" "forms_infra_3" {
   source_policy_documents = [
     data.aws_iam_policy_document.pipelines.json,
+    data.aws_iam_policy_document.application_signals.json,
   ]
 }
 
@@ -801,5 +802,21 @@ data "aws_iam_policy_document" "forms_runner" {
       "arn:aws:iam::${var.account_id}:role/govuk-forms-submissions-to-s3-${var.environment_name}",
       "arn:aws:iam::${var.account_id}:role/govuk-s3-end-to-end-test-${var.environment_name}",
     ]
+  }
+}
+
+data "aws_iam_policy_document" "application_signals" {
+  statement {
+    sid    = "ManageApplicationSignalsSLOs"
+    effect = "Allow"
+    actions = [
+      "application-signals:BatchUpdateExclusionWindows",
+      "application-signals:CreateServiceLevelObjective",
+      "application-signals:UpdateServiceLevelObjective",
+      "application-signals:DeleteServiceLevelObjective",
+      "application-signals:TagResource",
+      "application-signals:UntagResource"
+    ]
+    resources = ["arn:aws:application-signals:eu-west-2:${var.account_id}:slo/*"]
   }
 }
