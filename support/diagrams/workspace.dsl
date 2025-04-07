@@ -87,11 +87,23 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Amazon Web Services - Lambda Lambda Function"
             }
 
+            solidQueue = container "Solid Queue" {
+                technology "Postgres"
+                tags "Database"
+            }
+
+            auditTrail = container "Forms Runner Audit Trail" {
+                technology "Postgres"
+                tags "Database"
+            }
+
             # Relationships
+            # <source> -> <destination> "Description" "Protocol/technology (optional)"
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsRunner -> sessionsDB "Reads from and writes to" "Redis"
             formsRunner -> cloudWatchMetrics "Writes metrics to"
+            formsRunner -> solidQueue "Writes to"
             formsAdmin -> cloudWatchMetrics "Reads metrics from"
         }
 
@@ -168,8 +180,11 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - EventBridge"
                     }
 
-                    # Deployment Nodes represents infrastructure components where containers and/or services are deployed
-                    # or a collection of interrelated infrastructure components
+                    # Deployment Nodes represents infrastructure components where
+                    # containers and/or services are deployed or a collection of
+                    # interrelated infrastructure components.
+                    # Named Deployment Nodes allow for relationships to exist between
+                    # components.
                     deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
                         tags "Amazon Web Services - Fargate"
                         # Define container instances
@@ -239,6 +254,23 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
                         eventBridge -> pipelineInvoker "invokes"
                     }
+
+                    auroraRDSCluster = deploymentNode "Aurora RDS Cluster" {
+                        tags "Amazon Web Services - RDS Amazon Aurora instance"
+
+                        # Nested deployment nodes allow for more precise tagging on components
+                        # and better visual metadata
+                        deploymentNode "Solid Queue RDS" {
+                            tags "Amazon Web Services - RDS"
+                            solidQueue = containerInstance forms.solidQueue
+                        }
+
+                        deploymentNode "Audit Trail RDS" {
+                            tags "Amazon Web Services - RDS"
+                            auditTrail = containerInstance forms.auditTrail
+                        }
+                    }
+
 
                     # Relationships between isolated components
                     cloudFront -> alb "Forwards requests to" "HTTPS"
