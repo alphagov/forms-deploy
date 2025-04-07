@@ -6,7 +6,6 @@ workspace "GOV.UK Forms" "An MVP architecture." {
         forms = softwareSystem "GOV.UK Forms" {
 
             # Containers: represent a deployable unit that contributes to the functionality of the system (e.g., web app, db)
-            # Can also represent nested or related infrastructure components
             formsAdmin = container "forms-admin" {
                 technology "Ruby on Rails"
                 tags "Application"
@@ -27,89 +26,43 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Application"
             }
 
-            usersDB = container "Users Database" {
+            usersDB = container "users-db" {
                 technology "Postgres"
                 tags "Database"
             }
 
-            formsDefinitionsDB = container "Forms Definition Database" {
+            formsDefinitionsDB = container "forms-definitions-db" {
                 technology "Postgres"
                 tags "Database"
             }
 
-            sessionsDB = container "Forms Sessions Database" {
+            sessionsDB = container "forms-sessions-db" {
                 technology "Redis"
                 description "20 hours expiry"
                 tags "Database"
             }
 
-            cloudWatchLogs = container "CloudWatch Logs" {
-                technology "CloudWatch"
-                description "Application and system logs"
-                tags "Amazon Web Services - CloudWatch"
-            }
-
-            cloudWatchAlarms = container "CloudWatch Alarm" {
-                technology "CloudWatch"
-                tags "Amazon Web Services - CloudWatch Alarm"
-            }
-
-            cloudWatchMetrics = container "CloudWatch Metrics" {
-                technology "CloudWatch"
-                tags "Amazon Web Services - CloudWatch"
-            }
-
-            hostedZone = container "Hosted Zone" {
-                technology "Route53"
-                tags "Amazon Web Services - Route 53 Hosted Zone"
-            }
-
-            dns = container "DNS" {
-                technology "Route 53"
-                description "Routes incoming requests based upon domain name"
-                tags "Amazon Web Services - Route 53"
-            }
-
-            terraformStateLock = container "Terraform State Lock" {
-                technology "DynamoDB"
-                tags "Amazon Web Services - DynamoDB Table""
-            }
-
-            pausedPipelineDetector = container "Paused Pipeline Detector" {
-                technology "AWS Lambda"
-                description "Detects paused pipelines"
-                tags "Amazon Web Services - Lambda Lambda Function"
-            }
-
-            pipelineInvoker = container "Pipeline Invoker" {
-                technology "AWS Lambda"
-                description "Invokes a pipeline"
-                tags "Amazon Web Services - Lambda Lambda Function"
-            }
-
-            solidQueue = container "Solid Queue" {
+            solidQueue = container "file-upload-solidqueue" {
                 technology "Postgres"
                 tags "Database"
             }
 
-            auditTrail = container "Forms Runner Audit Trail" {
+            auditTrail = container "forms-runner-audit-trail" {
                 technology "Postgres"
                 tags "Database"
             }
 
-            pipelineVisualiser = container "Pipeline Visualiser" {
+            pipelineVisualiser = container "pipeline-visualiser" {
                 technology "Sinatra"
                 tags "Application"
             }
 
             # Relationships
-            # <source> -> <destination> "Description" "Protocol/technology (optional)"
+            # <source> -> <destination> "Description" "Protocol/technology"
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
             formsRunner -> sessionsDB "Reads from and writes to" "Redis"
-            formsRunner -> cloudWatchMetrics "Writes metrics to"
             formsRunner -> solidQueue "Writes to"
-            formsAdmin -> cloudWatchMetrics "Reads metrics from"
         }
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
@@ -123,56 +76,33 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     tags "Amazon Web Services - Region"
 
                     # Infrastructure Nodes represent individual or isolated infrastructure components
-                    alb = infrastructureNode "Load Balancer" {
-                        technology "ALB"
-                        description "Distributes incoming application traffic (logs sent to S3)"
-                        tags "Amazon Web Services - Elastic Load Balancing ELB Application load balancer"
-                    }
-
-                    shieldAdvanced = infrastructureNode "Shield Advanced" {
-                        technology "Shield Advanced"
-                        description "DDoS Protection service"
-                        tags "Amazon Web Services - Shield Shield Advanced"
-                    }
-
-                    wafRules = infrastructureNode "WAF Rules" {
-                        technology "WAF"
-                        tags "Amazon Web Services - WAF"
-                    }
-
-                    cloudFront = infrastructureNode "CloudFront" {
-                        technology "CloudFront"
-                        description "Routes incoming requests to Application Load Balancer"
-                        tags "Amazon Web Services - CloudFront"
-                    }
-
-                    cloudTrail = infrastructureNode "CloudTrail" {
+                    # These can be consolidated into a Deployment Node or as standalone components
+                    infrastructureNode "CloudTrail" {
                         technology "CloudTrail"
                         description "Logs AWS activity - forwards logs to Cyber"
                         tags "Amazon Web Services - CloudTrail"
                     }
 
-                    parameterStore = infrastructureNode "SSM ParameterStore" {
+                    infrastructureNode "CodeBuild" {
+                        technology "CodeBuild"
+                        tags "Amazon Web Services - CodeBuild"
+                    }
+
+                    infrastructureNode "SSM ParameterStore" {
                         technology "ParameterStore"
                         description "Stores secrets and credentials"
                         tags "Amazon Web Services - Systems Manager Parameter Store"
                     }
 
-                    sesForOTP = infrastructureNode "SES" {
+                    InfrastructureNode "SES One Time Password" {
                         technology "SES"
                         description "Sends OTP emails for admin onboarding"
                         tags "Amazon Web Services - Simple Email Service SES"
                     }
 
-                    albS3Logs = infrastructureNode "S3" {
-                        technology "S3"
-                        description "Stores ALB logs ingested by Cyber"
-                        tags "Amazon Web Services - Simple Storage Service S3"
-                    }
-
-                    codeBuild = infrastructureNode "CodeBuild" {
-                        technology "CodeBuild"
-                        tags "Amazon Web Services - CodeBuild"
+                    simpleNotificationService = infrastructureNode "Forms Runner SNS" {
+                        technology "SNS"
+                        tags "Amazon Web Services - Simple Notification Service SNS"
                     }
 
                     codePipeline = infrastructureNode "CodePipeline" {
@@ -207,31 +137,91 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                        tags "Amazon Web Services - Simple Queue Service SQS"
                     }
 
-                    simpleNotificationService = infrastructureNode "Forms Runner SNS" {
-                       technology "SNS"
-                       tags "Amazon Web Services - Simple Notification Service SNS"
+                    albS3Logs = infrastructureNode "S3" {
+                        technology "S3"
+                        description "Stores ALB logs ingested by Cyber"
+                        tags "Amazon Web Services - Simple Storage Service S3"
+                    }
+
+                    alb = infrastructureNode "Load Balancer" {
+                        technology "ALB"
+                        description "Distributes incoming application traffic (logs sent to S3)"
+                        tags "Amazon Web Services - Elastic Load Balancing ELB Application load balancer"
+                    }
+
+                    shieldAdvanced = infrastructureNode "Shield Advanced" {
+                        technology "Shield Advanced"
+                        description "DDoS Protection service"
+                        tags "Amazon Web Services - Shield Shield Advanced"
+                    }
+
+                    wafRules = infrastructureNode "WAF Rules" {
+                        technology "WAF"
+                        tags "Amazon Web Services - WAF"
+                    }
+
+                    cloudFront = infrastructureNode "CloudFront" {
+                        technology "CloudFront"
+                        description "Routes incoming requests to Application Load Balancer"
+                        tags "Amazon Web Services - CloudFront"
                     }
 
                     # Deployment Nodes represents infrastructure components where
                     # containers and/or services are deployed or a collection of
-                    # interrelated infrastructure components.
+                    # interrelated infrastructure nodes.
                     # Named Deployment Nodes allow for relationships to exist between
                     # components.
-                    deploymentNode "ECS Fargate - GOV.UK Forms cluster" {
-                        tags "Amazon Web Services - Fargate"
-                        # Define container instances
-                        formsAdmin = containerInstance forms.formsAdmin
-                        formsAPI = containerInstance forms.formsAPI
-                        formsProductPage = containerInstance forms.formsProductPage
-                        formsRunner = containerInstance forms.formsRunner
+                    cloudWatch = deploymentNode "CloudWatch" {
+                        tags "Amazon Web Services - CloudWatch"
+                        description "CloudWatch Services: logging, metrics, and alerts"
 
-                        # Create connections from the ALB to all container instances
+                        logs = infrastructureNode "CloudWatch Logs" {
+                            technology "CloudWatch"
+                            tags "Amazon Web Services - CloudWatch"
+                        }
+
+                        alarms = infrastructureNode "CloudWatch Alarms" {
+                            technology "CloudWatch"
+                            tags "Amazon Web Services - CloudWatch Alarm"
+                        }
+
+                        metrics = infrastructureNode "CloudWatch Metrics" {
+                            technology "CloudWatch"
+                            tags "Amazon Web Services - CloudWatch"
+                        }
+                    }
+
+                    deploymentNode "ECS Fargate Forms cluster" {
+                        tags "Amazon Web Services - Fargate"
+
+                        formsAdmin = deploymentNode "Forms Admin" {
+                            formsAdminContainer = containerInstance forms.formsAdmin
+                            tags "Amazon Web Services - Elastic Container Service Container1"
+                        }
+
+                        formsAPI = deploymentNode "Forms API" {
+                            formsAPIContainer = containerInstance forms.formsAPI
+                            tags "Amazon Web Services - Elastic Container Service Container1"
+                        }
+
+                        formsProductPage = deploymentNode "Forms Product Page" {
+                            formsProductPageContainer = containerInstance forms.formsProductPage
+                            tags "Amazon Web Services - Elastic Container Service Container1"
+                        }
+
+                        formsRunner = deploymentNode "Forms Runner" {
+                            formsRunnerContainer = containerInstance forms.formsRunner
+                            tags "Amazon Web Services - Elastic Container Service Container1"
+                        }
+
                         alb -> formsAdmin "Forwards requests to" "HTTPS"
                         alb -> formsAPI "Forwards requests to" "HTTPS"
                         alb -> formsProductPage "Forwards requests to" "HTTPS"
                         alb -> formsRunner "Forwards requests to" "HTTPS"
+                        formsAdmin -> cloudWatch.metrics "Reads metrics from"
                         formsRunner -> fileUploadS3 "Writes to"
                         formsRunner -> simpleEmailService "Sends" "Completed Form"
+                        formsRunner -> cloudWatch.metrics "Writes metrics to"
                     }
 
                     deploymentNode "RDS" {
@@ -254,20 +244,19 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         sessionsDB = containerInstance forms.sessionsDB
                     }
 
-                    deploymentNode "CloudWatch" {
-                        tags "Amazon Web Services - CloudWatch"
-                        description "CloudWatch Services: logging, metrics, and alerts"
-
-                        logs = containerInstance forms.cloudWatchLogs
-                        alarms = containerInstance forms.cloudWatchAlarms
-                        metrics = containerInstance forms.cloudWatchMetrics
-                    }
-
                     deploymentNode "Route53" {
                         tags "Amazon Web Services - Route 53"
 
-                        hostedZone = containerInstance forms.hostedZone
-                        dns = containerInstance forms.dns
+                        dns = infrastructureNode "DNS" {
+                            technology "Route 53"
+                            description "Routes incoming requests based on domain name"
+                            tags "Amazon Web Services - Route 53"
+                        }
+
+                        infrastructureNode "Hosted Zone" {
+                            technology "Route53"
+                            tags "Amazon Web Services - Route 53 Hosted Zone"
+                        }
 
                         dns -> cloudFront "Forwards requests to" "HTTPS"
                     }
@@ -276,15 +265,27 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         description "Stores Terraform state locking information"
                         tags "Amazon Web Services - DynamoDB"
 
-                        terraformStateLock = containerInstance forms.terraformStateLock
+                        infrastructureNode "Terraform State Lock" {
+                            technology "DynamoDB"
+                            tags "Amazon Web Services - DynamoDB Table""
+                        }
                     }
 
-                    deploymentNode "AWS Lambda (pipelines)" {
+                    deploymentNode "AWS Lambda" {
                         description "Lambda functions related to pipeline maintenance"
                         tags "Amazon Web Services - Lambda"
 
-                        pausedPipelineDetector = containerInstance forms.pausedPipelineDetector
-                        pipelineInvoker = containerInstance forms.pipelineInvoker
+                        pausedPipelineDetector = infrastructureNode "Paused Pipeline Detector" {
+                            technology "AWS Lambda"
+                            description "Detects paused pipelines"
+                            tags "Amazon Web Services - Lambda Lambda Function"
+                        }
+
+                        pipelineInvoker = infrastructureNode "Pipeline Invoker" {
+                            technology "AWS Lambda"
+                            description "Invokes a pipeline"
+                            tags "Amazon Web Services - Lambda Lambda Function"
+                        }
 
                         eventBridge -> pipelineInvoker "invokes"
                     }
@@ -372,7 +373,6 @@ workspace "GOV.UK Forms" "An MVP architecture." {
     views {
         deployment forms formsEnvironments "FormsArchitecture" {
             include *
-            autolayout tb
         }
 
         styles {
