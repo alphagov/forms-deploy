@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2001
 
 set -euo pipefail
 
@@ -24,6 +25,30 @@ get_target_group_arn() {
         --names "${app}-${environment}" \
         --query 'TargetGroups[0].TargetGroupArn' \
         --output text
+}
+
+# Function to get metric configuration from template
+get_metric_config() {
+    local template_file="$1"
+    local target_group_name="$2"
+    local load_balancer_name="$3"
+    local threshold="${4:-}"
+    
+    # Read the template file
+    local config
+    config=$(cat "$(dirname "$0")/${template_file}")
+    
+    # Replace placeholders with actual values
+    # Use different delimiter for sed to avoid issues with slashes in the values
+    config=$(echo "$config" | sed "s|\${target_group_name}|${target_group_name}|g")
+    config=$(echo "$config" | sed "s|\${load_balancer_name}|${load_balancer_name}|g")
+    
+    # Replace threshold if provided
+    if [ -n "$threshold" ]; then
+        config=$(echo "$config" | sed "s|\${threshold}|${threshold}|g")
+    fi
+    
+    echo "$config"
 }
 
 # Function to create or update an SLO
@@ -98,366 +123,51 @@ forms_runner_target_group_name=$(get_target_group_arn "forms-runner" "${environm
 # Admin HTTP Server
 
 # Availability SLO (99% success rate)
+admin_availability_config=$(get_metric_config "slos/availability-slo-metric-config.json" "${forms_admin_target_group_name}" "${load_balancer_name}")
 create_or_update_slo \
     "admin-http-availability" \
     "99% of requests as measured from the load balancer metrics are successful. Any HTTP status other than 500–599 is considered successful." \
-    '{
-            "RequestBasedSliMetricConfig": {
-                "TotalRequestCountMetric": [
-                    {
-                        "Id": "cwMetricDenominator",
-                        "MetricStat": {
-                            "Metric": {
-                                "Namespace": "AWS/ApplicationELB",
-                                "MetricName": "RequestCount",
-                                "Dimensions": [
-                                    {
-                                        "Name": "TargetGroup",
-                                        "Value": "'"${forms_admin_target_group_name}"'"
-                                    },
-                                    {
-                                        "Name": "LoadBalancer",
-                                        "Value": "'"${load_balancer_name}"'"
-                                    }
-                                ]
-                            },
-                            "Period": 60,
-                            "Stat": "Sum"
-                        },
-                        "ReturnData": true
-                    }
-                ],
-                "MonitoredRequestCountMetric": {
-                    "BadCountMetric": [
-                        {
-                            "Id": "cwMetricNumerator",
-                            "MetricStat": {
-                                "Metric": {
-                                    "Namespace": "AWS/ApplicationELB",
-                                    "MetricName": "HTTPCode_Target_5XX_Count",
-                                    "Dimensions": [
-                                        {
-                                            "Name": "TargetGroup",
-                                            "Value": "'"${forms_admin_target_group_name}"'"
-                                        },
-                                        {
-                                            "Name": "LoadBalancer",
-                                            "Value": "'"${load_balancer_name}"'"
-                                        }
-                                    ]
-                                },
-                                "Period": 60,
-                                "Stat": "Sum"
-                            },
-                            "ReturnData": true
-                        }
-                    ]
-                }
-            }
-            
-    }' \
+    "${admin_availability_config}" \
     "99"
 
 # Latency SLO (90% < 400ms)
+admin_latency_400ms_config=$(get_metric_config "slos/latency-slo-metric-config.json" "${forms_admin_target_group_name}" "${load_balancer_name}" "0.4")
 create_or_update_slo \
     "admin-http-latency-400ms" \
     "90% of requests as measured from the load balancer metrics are under 400ms." \
-    '{
-            "RequestBasedSliMetricConfig": {
-                "TotalRequestCountMetric": [
-                    {
-                        "Id": "cwMetricDenominator",
-                        "MetricStat": {
-                            "Metric": {
-                                "Namespace": "AWS/ApplicationELB",
-                                "MetricName": "TargetResponseTime",
-                                "Dimensions": [
-                                    {
-                                        "Name": "TargetGroup",
-                                        "Value": "'"${forms_admin_target_group_name}"'"
-                                    },
-                                    {
-                                        "Name": "LoadBalancer",
-                                        "Value": "'"${load_balancer_name}"'"
-                                    }
-                                ]
-                            },
-                            "Period": 60,
-                            "Stat": "SampleCount"
-                        },
-                        "ReturnData": true
-                    }
-                ],
-                "MonitoredRequestCountMetric": {
-                    "GoodCountMetric": [
-                        {
-                            "Id": "cwMetricNumerator",
-                            "MetricStat": {
-                                "Metric": {
-                                    "Namespace": "AWS/ApplicationELB",
-                                    "MetricName": "TargetResponseTime",
-                                    "Dimensions": [
-                                        {
-                                            "Name": "TargetGroup",
-                                            "Value": "'"${forms_admin_target_group_name}"'"
-                                        },
-                                        {
-                                            "Name": "LoadBalancer",
-                                            "Value": "'"${load_balancer_name}"'"
-                                        }
-                                    ]
-                                },
-                                "Period": 60,
-                                "Stat": "TC(:0.4)"
-                            },
-                            "ReturnData": true
-                        }
-                    ]
-                }
-            }
-    }' \
+    "${admin_latency_400ms_config}" \
     "90"
 
 # Latency SLO (99% < 1000ms)
+admin_latency_1000ms_config=$(get_metric_config "slos/latency-slo-metric-config.json" "${forms_admin_target_group_name}" "${load_balancer_name}" "1")
 create_or_update_slo \
     "admin-http-latency-1000ms" \
     "99% of requests as measured from the load balancer metrics are under 1000ms." \
-    '{
-            "RequestBasedSliMetricConfig": {
-                "TotalRequestCountMetric": [
-                    {
-                        "Id": "cwMetricDenominator",
-                        "MetricStat": {
-                            "Metric": {
-                                "Namespace": "AWS/ApplicationELB",
-                                "MetricName": "TargetResponseTime",
-                                "Dimensions": [
-                                    {
-                                        "Name": "TargetGroup",
-                                        "Value": "'"${forms_admin_target_group_name}"'"
-                                    },
-                                    {
-                                        "Name": "LoadBalancer",
-                                        "Value": "'"${load_balancer_name}"'"
-                                    }
-                                ]
-                            },
-                            "Period": 60,
-                            "Stat": "SampleCount"
-                        },
-                        "ReturnData": true
-                    }
-                ],
-                "MonitoredRequestCountMetric": {
-                    "GoodCountMetric": [
-                        {
-                            "Id": "cwMetricNumerator",
-                            "MetricStat": {
-                                "Metric": {
-                                    "Namespace": "AWS/ApplicationELB",
-                                    "MetricName": "TargetResponseTime",
-                                    "Dimensions": [
-                                        {
-                                            "Name": "TargetGroup",
-                                            "Value": "'"${forms_admin_target_group_name}"'"
-                                        },
-                                        {
-                                            "Name": "LoadBalancer",
-                                            "Value": "'"${load_balancer_name}"'"
-                                        }
-                                    ]
-                                },
-                                "Period": 60,
-                                "Stat": "TC(:1)"
-                            },
-                            "ReturnData": true
-                        }
-                    ]
-                }
-            }
-    }' \
+    "${admin_latency_1000ms_config}" \
     "99"
 
 # Runner HTTP Server
 
 # Availability SLO (99% success rate)
+runner_availability_config=$(get_metric_config "slos/availability-slo-metric-config.json" "${forms_runner_target_group_name}" "${load_balancer_name}")
 create_or_update_slo \
     "runner-http-availability" \
     "99% of requests as measured from the load balancer metrics are successful. Any HTTP status other than 500–599 is considered successful." \
-    '{
-        "RequestBasedSliMetricConfig": {
-                "TotalRequestCountMetric": [
-                    {
-                        "Id": "cwMetricDenominator",
-                        "MetricStat": {
-                            "Metric": {
-                                "Namespace": "AWS/ApplicationELB",
-                                "MetricName": "RequestCount",
-                                "Dimensions": [
-                                    {
-                                        "Name": "TargetGroup",
-                                        "Value": "'"${forms_runner_target_group_name}"'"
-                                    },
-                                    {
-                                        "Name": "LoadBalancer",
-                                        "Value": "'"${load_balancer_name}"'"
-                                    }
-                                ]
-                            },
-                            "Period": 60,
-                            "Stat": "Sum"
-                        },
-                        "ReturnData": true
-                    }
-                ],
-                "MonitoredRequestCountMetric": {
-                    "BadCountMetric": [
-                        {
-                            "Id": "cwMetricNumerator",
-                            "MetricStat": {
-                                "Metric": {
-                                    "Namespace": "AWS/ApplicationELB",
-                                    "MetricName": "HTTPCode_Target_5XX_Count",
-                                    "Dimensions": [
-                                        {
-                                            "Name": "TargetGroup",
-                                            "Value": "'"${forms_runner_target_group_name}"'"
-                                        },
-                                        {
-                                            "Name": "LoadBalancer",
-                                            "Value": "'"${load_balancer_name}"'"
-                                        }
-                                    ]
-                                },
-                                "Period": 60,
-                                "Stat": "Sum"
-                            },
-                            "ReturnData": true
-                        }
-                    ]
-                }
-            }
-            
-    }' \
+    "${runner_availability_config}" \
     "99"
 
 # Latency SLO (90% < 200ms)
+runner_latency_200ms_config=$(get_metric_config "slos/latency-slo-metric-config.json" "${forms_runner_target_group_name}" "${load_balancer_name}" "0.2")
 create_or_update_slo \
     "runner-http-latency-200ms" \
     "90% of requests as measured from the load balancer metrics are under 200ms." \
-    '{
-        "RequestBasedSliMetricConfig": {
-                "TotalRequestCountMetric": [
-                    {
-                        "Id": "cwMetricDenominator",
-                        "MetricStat": {
-                            "Metric": {
-                                "Namespace": "AWS/ApplicationELB",
-                                "MetricName": "TargetResponseTime",
-                                "Dimensions": [
-                                    {
-                                        "Name": "TargetGroup",
-                                        "Value": "'"${forms_runner_target_group_name}"'"
-                                    },
-                                    {
-                                        "Name": "LoadBalancer",
-                                        "Value": "'"${load_balancer_name}"'"
-                                    }
-                                ]
-                            },
-                            "Period": 60,
-                            "Stat": "SampleCount"
-                        },
-                        "ReturnData": true
-                    }
-                ],
-                "MonitoredRequestCountMetric": {
-                    "GoodCountMetric": [
-                        {
-                            "Id": "cwMetricNumerator",
-                            "MetricStat": {
-                                "Metric": {
-                                    "Namespace": "AWS/ApplicationELB",
-                                    "MetricName": "TargetResponseTime",
-                                    "Dimensions": [
-                                        {
-                                            "Name": "TargetGroup",
-                                            "Value": "'"${forms_runner_target_group_name}"'"
-                                        },
-                                        {
-                                            "Name": "LoadBalancer",
-                                            "Value": "'"${load_balancer_name}"'"
-                                        }
-                                    ]
-                                },
-                                "Period": 60,
-                                "Stat": "TC(:0.4)"
-                            },
-                            "ReturnData": true
-                        }
-                    ]
-                }
-            }
-    }' \
+    "${runner_latency_200ms_config}" \
     "90"
 
 # Latency SLO (99% < 1000ms)
+runner_latency_1000ms_config=$(get_metric_config "slos/latency-slo-metric-config.json" "${forms_runner_target_group_name}" "${load_balancer_name}" "1")
 create_or_update_slo \
     "runner-http-latency-1000ms" \
     "99% of requests as measured from the load balancer metrics are under 1000ms." \
-    '{
-            "RequestBasedSliMetricConfig": {
-                "TotalRequestCountMetric": [
-                    {
-                        "Id": "cwMetricDenominator",
-                        "MetricStat": {
-                            "Metric": {
-                                "Namespace": "AWS/ApplicationELB",
-                                "MetricName": "TargetResponseTime",
-                                "Dimensions": [
-                                    {
-                                        "Name": "TargetGroup",
-                                        "Value": "'"${forms_runner_target_group_name}"'"
-                                    },
-                                    {
-                                        "Name": "LoadBalancer",
-                                        "Value": "'"${load_balancer_name}"'"
-                                    }
-                                ]
-                            },
-                            "Period": 60,
-                            "Stat": "SampleCount"
-                        },
-                        "ReturnData": true
-                    }
-                ],
-                "MonitoredRequestCountMetric": {
-                    "GoodCountMetric": [
-                        {
-                            "Id": "cwMetricNumerator",
-                            "MetricStat": {
-                                "Metric": {
-                                    "Namespace": "AWS/ApplicationELB",
-                                    "MetricName": "TargetResponseTime",
-                                    "Dimensions": [
-                                        {
-                                            "Name": "TargetGroup",
-                                            "Value": "'"${forms_runner_target_group_name}"'"
-                                        },
-                                        {
-                                            "Name": "LoadBalancer",
-                                            "Value": "'"${load_balancer_name}"'"
-                                        }
-                                    ]
-                                },
-                                "Period": 60,
-                                "Stat": "TC(:1)"
-                            },
-                            "ReturnData": true
-                        }
-                    ]
-                }
-            }
-
-    }' \
+    "${runner_latency_1000ms_config}" \
     "99"
