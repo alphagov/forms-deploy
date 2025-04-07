@@ -180,6 +180,33 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         tags "Amazon Web Services - EventBridge"
                     }
 
+                    fileUploadS3 = infrastructureNode "File Upload S3" {
+                        technology "S3"
+                        description "Stores Forms Runner file uploads"
+                        tags "Amazon Web Services - Simple Storage Service S3"
+                    }
+
+                    guardDuty = infrastructureNode "GuarDuty" {
+                        technology "S3"
+                        description "Scans file upload"
+                        tags "Amazon Web Services - GuardDuty"
+                    }
+
+                    simpleEmailService = infrastructureNode "Forms Runner SES" {
+                       technology "SES"
+                       tags "Amazon Web Services - Simple Email Service SES"
+                    }
+
+                    simpleQueueService = infrastructureNode "Forms Runner SQS" {
+                       technology "SQS"
+                       tags "Amazon Web Services - Simple Queue Service SQS"
+                    }
+
+                    simpleNotificationService = infrastructureNode "Forms Runner SNS" {
+                       technology "SNS"
+                       tags "Amazon Web Services - Simple Notification Service SNS"
+                    }
+
                     # Deployment Nodes represents infrastructure components where
                     # containers and/or services are deployed or a collection of
                     # interrelated infrastructure components.
@@ -198,6 +225,8 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         alb -> formsAPI "Forwards requests to" "HTTPS"
                         alb -> formsProductPage "Forwards requests to" "HTTPS"
                         alb -> formsRunner "Forwards requests to" "HTTPS"
+                        formsRunner -> fileUploadS3 "Writes to"
+                        formsRunner -> simpleEmailService "Sends" "Completed Form"
                     }
 
                     deploymentNode "RDS" {
@@ -271,12 +300,14 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         }
                     }
 
-
                     # Relationships between isolated components
                     cloudFront -> alb "Forwards requests to" "HTTPS"
                     shieldAdvanced -> cloudFront "Monitors traffic for DDoS"
                     wafRules -> cloudFront "Enforces WAF rules on traffic to"
                     alb -> albS3Logs "Sends logs to"
+                    simpleEmailService -> simpleNotificationService "Talks to"
+                    simpleNotificationService -> simpleQueueService "Talks to"
+                    guardDuty -> fileUploadS3 "Scans"
                 }
             }
         }
