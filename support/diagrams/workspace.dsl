@@ -97,6 +97,11 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 tags "Database"
             }
 
+            pipelineVisualiser = container "Pipeline Visualiser" {
+                technology "Sinatra"
+                tags "Application"
+            }
+
             # Relationships
             # <source> -> <destination> "Description" "Protocol/technology (optional)"
             formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
@@ -108,8 +113,8 @@ workspace "GOV.UK Forms" "An MVP architecture." {
         }
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
-        environment = deploymentEnvironment "Environment" {
-            deploymentNode "Amazon Web Services" {
+        formsEnvironments = deploymentEnvironment "Forms Environments" {
+            allEnvironments = deploymentNode "All Environments" {
                 tags "Amazon Web Services - Cloud"
 
                 # Deployment Nodes represents infrastructure components where containers and/or services are deployed
@@ -284,7 +289,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         eventBridge -> pipelineInvoker "invokes"
                     }
 
-                    auroraRDSCluster = deploymentNode "Aurora RDS Cluster" {
+                    deploymentNode "Aurora RDS Cluster" {
                         tags "Amazon Web Services - RDS Amazon Aurora instance"
 
                         # Nested deployment nodes allow for more precise tagging on components
@@ -310,11 +315,62 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     guardDuty -> fileUploadS3 "Scans"
                 }
             }
+
+            deployAccount = deploymentNode "Deploy Account" {
+                tags "Amazon Web Services - Cloud"
+
+                infrastructureNode "SSM ParameterStore" {
+                    technology "ParameterStore"
+                    description "Stores secrets and credentials"
+                    tags "Amazon Web Services - Systems Manager Parameter Store"
+                }
+
+                infrastructureNode "Elastic Container Registry" {
+                    technology "ECR"
+                    description "Private image repository"
+                    tags "Amazon Web Services - EC2 Container Registry"
+                }
+
+                infrastructureNode "Terraform State Lock" {
+                    technology "DynamoDB"
+                    tags "Amazon Web Services - DynamoDB Table""
+                }
+
+                infrastructureNode "CodeBuild" {
+                    technology "CodeBuild"
+                    tags "Amazon Web Services - CodeBuild"
+                }
+
+                infrastructureNode "CodePipeline" {
+                    technology "CodePipeline"
+                    tags "Amazon Web Services - CodePipeline"
+                }
+
+                awsDeveloperQ = infrastructureNode "AWS Developer Q" {
+                    technology "AWS Developer Q"
+                    description "Formally AWS ChatBot"
+                    tags "CustomAWSDeveloperQIcon"
+                }
+
+                eventBridge = infrastructureNode "EventBridge" {
+                    technology "EventBridge"
+                    tags "Amazon Web Services - EventBridge"
+                }
+
+                deploymentNode "ECS Fargate" {
+                    technology "ECS Fargate"
+                    tags "Amazon Web Services - Fargate"
+                    pipelineVisualiser = containerInstance forms.pipelineVisualiser
+                }
+
+            }
+
+            allEnvironments.region.codePipeline -> deployAccount.awsDeveloperQ "Sends notification to"
         }
     }
 
     views {
-        deployment forms environment "AmazonWebServicesDeployment" {
+        deployment forms formsEnvironments "FormsArchitecture" {
             include *
             autolayout tb
         }
@@ -324,14 +380,22 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                 shape roundedbox
                 background #ffffff
             }
+
             element "Container" {
                 background #ffffff
             }
+
             element "Application" {
                 background #ffffff
             }
+
             element "Database" {
                 shape cylinder
+            }
+
+            element "CustomAWSDeveloperQIcon" {
+                background #ffffff
+                icon "https://d1.awsstatic.com/getting-started-guides/learning/amazon-q/icon_amazon-q.a5c38564734b6e9f611e9599eb271142389313a4.png"
             }
         }
 
