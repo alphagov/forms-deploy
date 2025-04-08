@@ -279,9 +279,14 @@ TASKS
 	help		This help text
 	fmt		Automatically format all Terraform code
 	lint		Run all linting tasks
-	checkov		Run Checkov (a Terraform linter) against all Terraform code
 	lint_ruby	Run Rubocop against all Ruby code
 	spec		Run Rspec tests against Ruby and Terraform code
+
+	checkov		Run Checkov (a Terraform linter) against all Terraform code
+			Checkov is evaluating how we configure things in AWS.
+
+	tflint		Run TFLint (a Terraform linter) against all Terraform code.
+			TFLint is evaluating the quality of our Terraform code.	
 endef
 export help_tasks
 
