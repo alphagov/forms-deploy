@@ -44,7 +44,7 @@
                 "region": "eu-west-2",
                 "title": "Number of submissions sent",
                 "stat": "SampleCount",
-                "period": 300
+                "period": 3600
             }
         },
         {
