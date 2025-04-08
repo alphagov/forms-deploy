@@ -819,4 +819,31 @@ data "aws_iam_policy_document" "application_signals" {
     ]
     resources = ["arn:aws:application-signals:eu-west-2:${var.account_id}:slo/*"]
   }
+
+  statement {
+    sid    = "CloudWatchApplicationSignalsCreateServiceLinkedRolePermissions"
+    effect = "Allow"
+    actions = [
+      "iam:CreateServiceLinkedRole"
+    ]
+    resources = ["arn:aws:iam::${var.account_id}:role/aws-service-role/application-signals.cloudwatch.amazonaws.com/AWSServiceRoleForCloudWatchApplicationSignals"]
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["application-signals.cloudwatch.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid    = "CloudWatchApplicationSignalsPutMetricAlarmPermissions"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:PutMetricAlarm"
+    ]
+    resources = [
+      "arn:aws:cloudwatch:eu-west-2:${var.account_id}:alarm:SLO-AttainmentGoalAlarm-*",
+      "arn:aws:cloudwatch:eu-west-2:${var.account_id}:alarm:SLO-WarningAlarm-*",
+      "arn:aws:cloudwatch:eu-west-2:${var.account_id}:alarm:SLI-HealthAlarm-*"
+    ]
+  }
 }
