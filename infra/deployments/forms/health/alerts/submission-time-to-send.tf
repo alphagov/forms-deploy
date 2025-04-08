@@ -18,7 +18,7 @@ EOF
   namespace           = "Forms/Jobs"
   period              = 30 * 60 # 30 minutes
   unit                = "Milliseconds"
-  statistic           = "Average"
+  extended_statistic  = "p95"
   threshold           = 60 * 1000 # 1 minute
 
   dimensions = {
