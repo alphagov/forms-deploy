@@ -173,7 +173,12 @@ tflint_init:
 
 .PHONY: tflint_modules
 tflint_modules:
-	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}
+	@# some rules are disabled because modules don't
+	@# need to define the things those rules check for
+	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl" \
+		--disable-rule "terraform_required_version" \
+		--disable-rule "terraform_required_providers" \
+		${TFLINT_ARGS}
 
 .PHONY: tflint_deploy
 tflint_deploy:
