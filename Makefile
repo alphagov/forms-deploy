@@ -2,11 +2,6 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CODEBUILD_CI ?= false
 SHELL=/usr/bin/env bash
 
-TFLINT_INFO_ONLY ?= false
-ifeq ($(TFLINT_INFO_ONLY), true)
-	TFLINT_ARGS = --force
-endif
-
 ##
 # Environment targets
 ##
