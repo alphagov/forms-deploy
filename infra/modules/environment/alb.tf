@@ -147,7 +147,7 @@ module "acm_certicate_with_validation" {
   }
 
   domain_name               = var.root_domain
-  subject_alternative_names = lookup(local.subject_alternative_names, var.env_name)
+  subject_alternative_names = local.subject_alternative_names[var.env_name]
 }
 
 resource "aws_lb_listener" "listener" {
