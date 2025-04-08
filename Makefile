@@ -182,19 +182,25 @@ tflint_modules:
 
 .PHONY: tflint_deploy
 tflint_deploy:
-	tflint --chdir=infra/deployments/deploy/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}
+	for root in $(DEPLOY_TF_ROOTS); do \
+		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}; \
+	done;
 
 .PHONY: tflint_forms
 tflint_forms:
-	tflint --chdir=infra/deployments/forms/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
-		--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
-		--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"
+	for root in $(FORMS_TF_ROOTS); do \
+		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
+			--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
+			--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"; \
+	done;
 
 .PHONY: tflint_integration
 tflint_integration:
-	tflint --chdir=infra/deployments/integration/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
-		--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
-		--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"
+	for root in $(INTEGRATION_TF_ROOTS); do \
+		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
+			--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
+			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"; \
+	done;
 
 ##
 # Help text
