@@ -7,7 +7,8 @@ FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION}@${DOCKER_IMAGE_DIGEST}
 # Install system-level dependnecies early on so they can be cached effectively for subsequent builds
 # build-base: needed to install be able to install BigDecimal extension requried by 'activesupport-duration-human_string' gem
 # libxml2-dev: needed to be able to install libxml-ruby gem required by 'activesupport-duration-human_string' gem
-RUN apk add build-base libxml2-dev
+# tzdata: needed for setting the correct timezone in the container
+RUN apk add build-base libxml2-dev tzdata
 
 WORKDIR /app
 ADD Gemfile /app/Gemfile
@@ -17,6 +18,8 @@ ADD . /app
 RUN bundle config set --local system true && \
     bundle config set --local without development && \
     bundle install
+
+RUN ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
 
 EXPOSE 4567
 
