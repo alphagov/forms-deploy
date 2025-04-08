@@ -16,10 +16,10 @@ EOF
   evaluation_periods  = 1
   metric_name         = "TimeToSendSubmission"
   namespace           = "Forms/Jobs"
-  period              = 60
+  period              = 30 * 60 # 30 minutes
   unit                = "Milliseconds"
   statistic           = "Average"
-  threshold           = 60 * 1000
+  threshold           = 60 * 1000 # 1 minute
 
   dimensions = {
     Environment = "${var.environment}"
