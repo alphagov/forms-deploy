@@ -1,6 +1,12 @@
-variable "role_suffix" {}
+variable "role_suffix" {
+  type        = string
+  description = "The value to be used as a suffix on each role. This value will be prefixed with a dash, so it does not need to be included"
+}
 
-variable "email" {}
+variable "email" {
+  type        = string
+  description = "The email address of the human who will use this role"
+}
 
 variable "iam_policy_arns" {
   type = list(any)

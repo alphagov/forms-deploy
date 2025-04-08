@@ -24,6 +24,7 @@ variable "memory" {
 variable "zendesk_subdomain" {
   description = "The Zendesk tenant the support form should create tickets on"
   default     = "govuk"
+  type        = string
 }
 
 variable "admin_base_url" {
