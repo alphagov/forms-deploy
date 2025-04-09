@@ -13,6 +13,8 @@ require_relative "lib/views/all_pipelines"
 require_relative "lib/views/group"
 
 set :public_folder, "public"
+set :bind, "0.0.0.0"
+
 helpers do
   def slugify(str)
     str.downcase
