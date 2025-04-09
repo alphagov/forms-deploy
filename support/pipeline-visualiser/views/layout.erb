@@ -18,12 +18,6 @@
         background-color: #F2F3F3;
         padding: 2px 5px;
     }
-
-    time {
-        text-decoration: underline;
-        text-decoration-style: dashed;
-        text-underline-offset: 8px;
-    }
   </style>
 </head>
 
@@ -120,6 +114,16 @@
       initAll
     } from '/javascript/govuk-frontend-5.8.0.min.js'
     initAll()
+  </script>
+
+  <script type="module">
+      document.querySelectorAll("time:not([data-relative-time])").forEach((time) => {
+        if(time.dateTime != null ) {
+            let globalTime = new Date(time.dateTime);
+            let localTime = globalTime.toLocaleString();
+            time.innerText = localTime;
+        }
+    });
   </script>
 </body>
 
