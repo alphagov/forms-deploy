@@ -86,6 +86,12 @@ variable "api_v2_enabled" {
   default     = false
 }
 
+variable "ses_submissions_enabled" {
+  type        = bool
+  description = "Use AWS SES for all submission emails when enabled."
+  default     = false
+}
+
 variable "additional_submissions_to_s3_role_assumers" {
   type        = list(string)
   description = "A list of role ARNs which are also allowed to assume the role for submissions to s3"
