@@ -190,7 +190,11 @@ module "ecs_service" {
     {
       name  = "SETTINGS__SES_SUBMISSION_EMAIL__REPLY_TO_EMAIL_ADDRESS",
       value = var.ses_submission_email_reply_to_email_address
-    }
+    },
+    {
+      name  = "SETTINGS__FEATURES__SES_SUBMISSIONS",
+      value = var.ses_submissions_enabled
+    },
   ]
 
   secrets = [
