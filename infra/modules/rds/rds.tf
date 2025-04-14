@@ -1,7 +1,7 @@
 locals {
   rds_port            = 5432
   timestamp           = timestamp()
-  timestamp_sanitized = replace("${local.timestamp}", "/[- TZ:]/", "")
+  timestamp_sanitized = replace(local.timestamp, "/[- TZ:]/", "")
 }
 
 data "aws_ssm_parameter" "database_password" {

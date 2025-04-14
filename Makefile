@@ -2,11 +2,6 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CODEBUILD_CI ?= false
 SHELL=/usr/bin/env bash
 
-TFLINT_INFO_ONLY ?= false
-ifeq ($(TFLINT_INFO_ONLY), true)
-	TFLINT_ARGS = --force
-endif
-
 ##
 # Environment targets
 ##
@@ -173,23 +168,34 @@ tflint_init:
 
 .PHONY: tflint_modules
 tflint_modules:
-	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}
+	@# some rules are disabled because modules don't
+	@# need to define the things those rules check for
+	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl" \
+		--disable-rule "terraform_required_version" \
+		--disable-rule "terraform_required_providers" \
+		${TFLINT_ARGS}
 
 .PHONY: tflint_deploy
 tflint_deploy:
-	tflint --chdir=infra/deployments/deploy/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}
+	for root in $(DEPLOY_TF_ROOTS); do \
+		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}; \
+	done;
 
 .PHONY: tflint_forms
 tflint_forms:
-	tflint --chdir=infra/deployments/forms/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
-		--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
-		--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"
+	for root in $(FORMS_TF_ROOTS); do \
+		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
+			--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
+			--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"; \
+	done;
 
 .PHONY: tflint_integration
 tflint_integration:
-	tflint --chdir=infra/deployments/integration/ --recursive --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
-		--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
-		--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"
+	for root in $(INTEGRATION_TF_ROOTS); do \
+		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
+			--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
+			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"; \
+	done;
 
 ##
 # Help text
@@ -274,9 +280,14 @@ TASKS
 	help		This help text
 	fmt		Automatically format all Terraform code
 	lint		Run all linting tasks
-	checkov		Run Checkov (a Terraform linter) against all Terraform code
 	lint_ruby	Run Rubocop against all Ruby code
 	spec		Run Rspec tests against Ruby and Terraform code
+
+	checkov		Run Checkov (a Terraform linter) against all Terraform code
+			Checkov is evaluating how we configure things in AWS.
+
+	tflint		Run TFLint (a Terraform linter) against all Terraform code.
+			TFLint is evaluating the quality of our Terraform code.	
 endef
 export help_tasks
 

@@ -22,6 +22,7 @@ variable "availability_zones" {
 variable "engine_version" {
   description = "The version of Redis to use"
   default     = "7.0"
+  type        = string
 }
 
 variable "number_cache_clusters" {
@@ -33,6 +34,7 @@ variable "number_cache_clusters" {
 variable "automatic_failover_enabled" {
   description = "If the primary node fails it will failover to a replica"
   default     = true
+  type        = bool
 }
 
 variable "parameter_group_families" {

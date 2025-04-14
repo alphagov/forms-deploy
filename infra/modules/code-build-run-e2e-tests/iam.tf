@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "codebuild" {
     ]
     resources = [
       "${var.artifact_store_arn}/*",
-      "${var.artifact_store_arn}"
+      var.artifact_store_arn
     ]
     effect = "Allow"
   }

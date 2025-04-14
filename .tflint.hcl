@@ -8,3 +8,13 @@ plugin "aws" {
   version = "0.37.0"
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
+
+rule "terraform_unused_declarations" {
+  # disabled because we use a shared "inputs.tf" file and a set of ".tfvars" filesin a lot of places
+  # and tflint is unable to tell the difference between a variable being unused in a particular root
+  # and a variable being completely unused.
+  #
+  # If asked to fix the problem, tflint will simply delete all the variables it thinks aren't used,
+  # which results in half the variables being deleted erronously.
+  enabled = false
+}
