@@ -8,6 +8,20 @@ run:
     AWS_SESSION_TOKEN="$$(echo "$${CREDS_JSON}" | jq -r '.Credentials.SessionToken')" \
 	ruby index.rb
 
+run_in_docker:
+	@docker build . -t forms-pipeline-visualiser:latest
+
+	CREDS_JSON="$$(aws sts assume-role --role-arn "arn:aws:iam::711966560482:role/deploy-pipeline-visualiser-ecs-task" --role-session-name "run-pipeline-visualiser")"; \
+	AWS_ACCESS_KEY_ID="$$(echo "$${CREDS_JSON}" | jq -r '.Credentials.AccessKeyId')" \
+	AWS_SECRET_ACCESS_KEY="$$(echo "$${CREDS_JSON}" | jq -r '.Credentials.SecretAccessKey')" \
+	AWS_SESSION_TOKEN="$$(echo "$${CREDS_JSON}" | jq -r '.Credentials.SessionToken')" \
+	\
+	docker run \
+		-p "4567:4567" \
+		-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e AWS_REGION \
+		-v "$$(pwd):/app" \
+		forms-pipeline-visualiser:latest
+
 .PHONY: dev
 dev:
 	PIPELINE_VISUALISER_DEV_MODE=true ruby index.rb
