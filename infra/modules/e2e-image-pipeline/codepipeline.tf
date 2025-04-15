@@ -113,6 +113,11 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
+      name  = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
+      value = "/dev/automated-tests/e2e/runner/submission_status_api_shared_secret"
+      type  = "PARAMETER_STORE"
+    },
+    {
       name  = "AWS_S3_BUCKET"
       value = "govuk-forms-submissions-to-s3-test"
       type  = "PLAINTEXT"
