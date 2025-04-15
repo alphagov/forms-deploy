@@ -114,6 +114,20 @@ data "aws_iam_policy_document" "file_upload" {
   }
 
   statement {
+    sid    = "Allow the role assumed for sending submissions to an S3 bucket to decrypt files"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.submissions_to_s3_role.arn]
+    }
+    actions = [
+      "kms:DescribeKey",
+      "kms:Decrypt"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "Deny decryption for support and admin users"
     effect = "Deny"
 
