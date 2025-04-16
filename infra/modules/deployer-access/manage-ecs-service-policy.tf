@@ -35,6 +35,17 @@ data "aws_iam_policy_document" "ecs" {
   }
 
   statement {
+    sid = "ReleaseTerraformStateLock"
+    actions = [
+      "s3:DeleteObject",
+    ]
+    resources = [
+      "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate/*.tflock"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid = "DescribeECSClustersAndServices"
     actions = [
       "ecs:Describe*",

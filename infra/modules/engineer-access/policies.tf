@@ -311,3 +311,25 @@ resource "aws_iam_policy" "lock_state_files" {
     ]
   })
 }
+
+resource "aws_iam_policy" "release_lock_on_state_files" {
+  name = "release-lock-on-state-files"
+  path = "/"
+
+  description = "Allow releasing the lock on state files"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:DeleteOject"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate/*.tflock"
+        ]
+      }
+    ]
+  })
+}

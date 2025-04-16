@@ -12,6 +12,7 @@ variable "bucket_name" {
 variable "dynamodb_table" {
   type        = string
   description = "The name to give to the DynamoDB table that will be used for state file locking."
+  default     = "tmp"
 }
 
 module "state_bucket" {

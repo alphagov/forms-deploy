@@ -16,13 +16,11 @@ EOF
 fi
 
 EXPECTED_BUCKET_NAME=$(awk -F "=" '/bucket/ {print $2}' "${VAR_FILE}" | tr -d ' "')
-EXPECTED_DYNAMO_DB_TABLE=$(awk -F "=" '/dynamodb_table/ {print $2}' "${VAR_FILE}" | tr -d ' "')
 LOCAL_STATE_FILE_NAME="${EXPECTED_BUCKET_NAME}__state-bucket.tfstate"
 REMOTE_STATE_FILE_NAME="state-bucket.tfstate"
 
 echo "Reading from vars file ${VAR_FILE}"
 echo "Bucket name: ${EXPECTED_BUCKET_NAME}"
-echo "DynamoDB table name: ${EXPECTED_DYNAMO_DB_TABLE}"
 
 if aws s3api head-bucket --bucket "${EXPECTED_BUCKET_NAME}"; then
     echo "Bucket already exists"
@@ -38,7 +36,6 @@ fi
 terraform init -upgrade
 terraform apply \
   -var "bucket_name=${EXPECTED_BUCKET_NAME}" \
-  -var "dynamodb_table=${EXPECTED_DYNAMO_DB_TABLE}" \
   -state "${LOCAL_STATE_FILE_NAME}"
 
 BUCKET_NAME="$(terraform output -state "${LOCAL_STATE_FILE_NAME}" -raw "bucket_name")"

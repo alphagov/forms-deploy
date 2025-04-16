@@ -122,6 +122,17 @@ data "aws_iam_policy_document" "runner_permissions" {
   }
 
   statement {
+    sid = "ReleaseTerraformStateLock"
+    actions = [
+      "s3:DeleteObject",
+    ]
+    resources = [
+      "arn:aws:s3:::gds-forms-integration-tfstate/review-apps/forms-admin/pr-*.tflock"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
     sid    = "UseLocalECR"
     effect = "Allow"
     actions = [

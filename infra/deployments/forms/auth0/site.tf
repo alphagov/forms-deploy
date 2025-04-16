@@ -3,6 +3,8 @@ terraform {
     # bucket set in backend config file
     key    = "auth0.tfstate"
     region = "eu-west-2"
+
+    use_lockfile = true
   }
 }
 
