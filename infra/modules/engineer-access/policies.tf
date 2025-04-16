@@ -323,7 +323,7 @@ resource "aws_iam_policy" "release_lock_on_state_files" {
     Statement = [
       {
         Action = [
-          "s3:DeleteOject"
+          "s3:DeleteObject"
         ]
         Effect = "Allow"
         Resource = [
