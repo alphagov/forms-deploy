@@ -98,7 +98,7 @@ variable "pentester_email_addresses" {
   type        = list(string)
 
   validation {
-    condition     = var.environment_type != "production" && (length(var.pentester_email_addresses) >= 0)
+    condition     = var.environment_type != "production" && (length(var.pentester_email_addresses) >= 0) || var.environment_type == "production" && (length(var.pentester_email_addresses) < 1)
     error_message = "Penetration testing should not be taking place in a production environment"
   }
 }
@@ -113,7 +113,7 @@ variable "pentester_cidr_ranges" {
   }
 
   validation {
-    condition     = var.environment_type != "production" && (length(var.pentester_cidr_ranges) >= 0)
+    condition     = var.environment_type != "production" && (length(var.pentester_cidr_ranges) >= 0) || var.environment_type == "production" && (length(var.pentester_cidr_ranges) < 1)
     error_message = "Penetration testing should not be taking place in a production environment"
   }
 }
