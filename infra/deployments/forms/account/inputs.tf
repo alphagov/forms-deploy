@@ -24,13 +24,6 @@ variable "bucket" {
   nullable    = false
 }
 
-variable "dynamodb_table" {
-  description = "Name of the DynamoDB table used for state file locking. This is named to match the key in the S3 type backend"
-  type        = string
-  nullable    = false
-  default     = "tmp"
-}
-
 variable "environment_name" {
   description = "The name of the environment. This is distinct from the environment type, but is likely to share the same name in cases like production or staging."
   type        = string
