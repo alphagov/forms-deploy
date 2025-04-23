@@ -59,7 +59,7 @@ resource "aws_cloudwatch_event_target" "trigger_apply_terraform_pipeline" {
 resource "aws_codepipeline" "apply_terroform" {
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
   name           = "apply-forms-terraform-${var.environment_name}"
-  role_arn       = data.aws_iam_role.deployer-role.arn
+  role_arn       = data.aws_iam_role.deployer_role.arn
   pipeline_type  = "V2"
   execution_mode = "QUEUED"
 
@@ -271,7 +271,7 @@ module "terraform_apply" {
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/apply-terraform/apply-terraform.yml")
   log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
-  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+  codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }
 
 module "await_ecs_deployments" {
@@ -282,7 +282,7 @@ module "await_ecs_deployments" {
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/apply-terraform/await-ecs-deployments.yml")
   log_group_name             = "codebuild/deploy-terraform-${var.environment_name}-await-ecs-deployments-finished"
-  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+  codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }
 
 module "run_end_to_end_tests" {
@@ -297,7 +297,7 @@ module "run_end_to_end_tests" {
   product_pages_url       = "https://${var.root_domain}"
   forms_runner_url        = "https://submit.${var.root_domain}"
   artifact_store_arn      = module.artifact_bucket.arn
-  service_role_arn        = data.aws_iam_role.deployer-role.arn
+  service_role_arn        = data.aws_iam_role.deployer_role.arn
   deploy_account_id       = var.deploy_account_id
   codestar_connection_arn = var.codestar_connection_arn
   aws_s3_role_arn         = var.end_to_end_test_settings.aws_s3_role_arn
@@ -317,5 +317,5 @@ module "publish_complete_event" {
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/apply-terraform/terraform-application-successful-event.yml")
   log_group_name             = "codebuild/deploy-terraform-${var.environment_name}-completed"
-  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+  codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }
