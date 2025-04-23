@@ -90,7 +90,7 @@ resource "aws_codebuild_project" "e2e" {
     environment_variable {
       name  = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
       type  = "PARAMETER_STORE"
-      value = "forms-runner-${var.environment_name}/submission_status_api_shared_secret"
+      value = "/forms-runner-${var.environment_name}/submission_status_api_shared_secret"
     }
   }
 
