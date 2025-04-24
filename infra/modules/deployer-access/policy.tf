@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "forms_infra_1" {
   source_policy_documents = [
     data.aws_iam_policy_document.rds.json,
     data.aws_iam_policy_document.redis.json,
-    data.aws_iam_policy_document.code-build-modules.json,
+    data.aws_iam_policy_document.code_build_modules.json,
     data.aws_iam_policy_document.ssm.json,
   ]
 }
@@ -330,7 +330,7 @@ data "aws_iam_policy_document" "ses" {
   }
 }
 
-data "aws_iam_policy_document" "code-build-modules" {
+data "aws_iam_policy_document" "code_build_modules" {
   # These are needed for: 
   # code-build-build
   # code-build-run-docker-build

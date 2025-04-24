@@ -72,7 +72,7 @@ resource "aws_codepipeline" "deploy_product_pages_container" {
 
   #checkov:skip=CKV_AWS_219:Amazon Managed SSE is sufficient.
   name           = "deploy-forms-product-page-container-${var.environment_name}"
-  role_arn       = data.aws_iam_role.deployer-role.arn
+  role_arn       = data.aws_iam_role.deployer_role.arn
   pipeline_type  = "V2"
   execution_mode = var.deploy-forms-product-page-container.pipeline_execution_mode
 
@@ -243,7 +243,7 @@ module "generate_forms_product_pages_container_image_defs" {
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/generate-container-image-defs/generate-container-image-defs.yml")
   log_group_name             = "codebuild/generate_forms_product_pages_container_image_defs_${var.environment_name}"
-  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+  codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }
 
 module "deploy_product_pages_end_to_end_tests" {
@@ -257,7 +257,7 @@ module "deploy_product_pages_end_to_end_tests" {
   forms_runner_url        = "https://submit.${var.root_domain}"
   product_pages_url       = "https://${var.root_domain}"
   artifact_store_arn      = module.artifact_bucket.arn
-  service_role_arn        = data.aws_iam_role.deployer-role.arn
+  service_role_arn        = data.aws_iam_role.deployer_role.arn
   deploy_account_id       = var.deploy_account_id
   codestar_connection_arn = var.codestar_connection_arn
   aws_s3_role_arn         = var.end_to_end_test_settings.aws_s3_role_arn
@@ -276,7 +276,7 @@ module "pull_forms_product_page_image_retag_and_push" {
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/pull-image-retag-and-push/pull-image-retag-and-push.yml")
-  codebuild_service_role_arn = data.aws_iam_role.deployer-role.arn
+  codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
   log_group_name             = "codebuild/pull_forms_product_page_image_retag_and_push_${var.environment_name}"
   environment_variables = {
     IMAGE_NAME           = "forms-product-page-deploy"

@@ -1,10 +1,10 @@
 resource "aws_iam_role" "s3_end_to_end_test_role" {
   name               = "govuk-s3-end-to-end-test-${var.env_name}"
-  assume_role_policy = data.aws_iam_policy_document.s3-end-to-end-test_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.s3_end_to_end_test_role_policy.json
 }
 
 
-data "aws_iam_policy_document" "s3-end-to-end-test_role_policy" {
+data "aws_iam_policy_document" "s3_end_to_end_test_role_policy" {
   source_policy_documents = compact([
     data.aws_iam_policy_document.allow_deployer_role_to_assumerole.json,
     length(var.additional_submissions_to_s3_role_assumers) > 0 ? data.aws_iam_policy_document.allow_additional_submissions_to_s3_role_assumers.json : null
