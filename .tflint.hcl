@@ -18,3 +18,12 @@ rule "terraform_unused_declarations" {
   # which results in half the variables being deleted erronously.
   enabled = false
 }
+
+rule "terraform_naming_convention" {
+  enabled = true
+  format  = "mixed_snake_case" # we allow upper and lower case letters in our snakes
+
+  variable {
+    custom = "[a-zA-Z0-9-]+" # for now we're ok with our variables being kebab case
+  }
+}

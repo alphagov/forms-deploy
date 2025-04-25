@@ -1,6 +1,6 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_role" "deployer-role" {
+data "aws_iam_role" "deployer_role" {
   name = "deployer-${var.environment_name}"
 }
 

@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "ecs-service" {
+data "aws_iam_policy_document" "ecs_service" {
   source_policy_documents = [
     data.aws_iam_policy_document.ecs.json,
     data.aws_iam_policy_document.alb.json,
@@ -8,7 +8,7 @@ data "aws_iam_policy_document" "ecs-service" {
 }
 
 resource "aws_iam_policy" "ecs_service" {
-  policy = data.aws_iam_policy_document.ecs-service.json
+  policy = data.aws_iam_policy_document.ecs_service.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_service" {
