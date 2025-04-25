@@ -1,9 +1,9 @@
 data "aws_iam_policy_document" "environment" {
   source_policy_documents = [
-    data.aws_iam_policy_document.acm-cert-with-dns-validation.json,
+    data.aws_iam_policy_document.acm_cert_with_dns_validation.json,
     data.aws_iam_policy_document.cloudfront.json,
-    data.aws_iam_policy_document.public-bucket.json,
-    data.aws_iam_policy_document.secure-bucket.json,
+    data.aws_iam_policy_document.public_bucket.json,
+    data.aws_iam_policy_document.secure_bucket.json,
     data.aws_iam_policy_document.network.json,
   ]
 }
@@ -17,7 +17,7 @@ resource "aws_iam_role_policy_attachment" "environment" {
   role       = aws_iam_role.deployer.id
 }
 
-data "aws_iam_policy_document" "acm-cert-with-dns-validation" {
+data "aws_iam_policy_document" "acm_cert_with_dns_validation" {
   statement {
     sid    = "ManageCertificates"
     effect = "Allow"
@@ -207,7 +207,7 @@ data "aws_iam_policy_document" "cloudfront" {
   }
 }
 
-data "aws_iam_policy_document" "public-bucket" {
+data "aws_iam_policy_document" "public_bucket" {
   statement {
     sid    = "ManageErrorPageBucket"
     effect = "Allow"
@@ -222,7 +222,7 @@ data "aws_iam_policy_document" "public-bucket" {
   }
 }
 
-data "aws_iam_policy_document" "secure-bucket" {
+data "aws_iam_policy_document" "secure_bucket" {
   statement {
     sid    = "ManageALBandWAFLogsBucket"
     effect = "Allow"
