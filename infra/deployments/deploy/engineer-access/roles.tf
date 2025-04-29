@@ -12,6 +12,7 @@ module "engineer_access" {
   codestar_connection_arn   = var.codestar_connection_arn
   allow_ecs_task_usage      = false
   allow_rds_data_api_access = false
+  state_file_bucket_name    = "gds-forms-deploy-tfstate"
 
   # Pentesters may not have GDS domains so our pattern using the 'users' module
   # doesn't necessarily work.

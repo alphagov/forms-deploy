@@ -15,4 +15,5 @@ module "engineer_access" {
   codestar_connection_arn   = var.codestar_connection_arn
   allow_rds_data_api_access = true
   allow_ecs_task_usage      = true
+  state_file_bucket_name    = var.bucket
 }
