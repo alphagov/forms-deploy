@@ -290,7 +290,7 @@ resource "aws_iam_policy" "deny_parameter_store" {
 }
 
 resource "aws_iam_policy" "lock_state_files" {
-  name = "release-lock-on-state-files"
+  name = "allow-locking-state-files"
   path = "/"
 
   description = "Allow locking state files"
