@@ -58,3 +58,8 @@ variable "allow_ecs_task_usage" {
   type        = bool
   description = "Whether appropriate engineer roles should be able to run tasks in AWS ECS"
 }
+
+variable "state_file_bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket in which Terraform state files are stored"
+}

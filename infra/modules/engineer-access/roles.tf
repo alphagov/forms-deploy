@@ -28,7 +28,7 @@ module "support_role" {
     aws_iam_policy.manage_dashboards.arn,
     aws_iam_policy.manage_deployments.arn,
     aws_iam_policy.manage_maintenance_page.arn,
-    aws_iam_policy.release_lock_on_state_files.arn,
+    aws_iam_policy.lock_state_files.arn,
     var.allow_rds_data_api_access ? [aws_iam_policy.query_rds_with_data_api[0].arn] : [],
     var.allow_ecs_task_usage ? [aws_iam_policy.run_task[0].arn, aws_iam_policy.stop_task[0].arn] : []
   ])
@@ -43,6 +43,7 @@ module "readonly_role" {
   role_suffix = "readonly"
   iam_policy_arns = [
     "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    aws_iam_policy.lock_state_files.arn,
   ]
   ip_restrictions = local.vpn_ip_restrictions
 }

@@ -33,6 +33,31 @@ resource "aws_iam_policy" "deny_parameter_store" {
   })
 }
 
+resource "aws_iam_policy" "lock_state_files" {
+  name = "release-lock-on-state-files"
+  path = "/"
+
+  description = "Allow locking state files"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::${var.bucket}/*.tflock"
+        ]
+      }
+    ]
+  })
+}
+
+
 
 module "admin_role" {
   for_each = toset(local.admin_users)
@@ -51,6 +76,7 @@ module "support_role" {
   email       = "${each.value}@digital.cabinet-office.gov.uk"
   role_suffix = "support"
   iam_policy_arns = [
+    aws_iam_policy.lock_state_files.arn
   ]
   ip_restrictions = local.ip_restrictions
 }
@@ -63,6 +89,7 @@ module "readonly_role" {
   role_suffix = "readonly"
   iam_policy_arns = [
     "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    aws_iam_policy.lock_state_files.arn
   ]
   ip_restrictions = local.ip_restrictions
 }
