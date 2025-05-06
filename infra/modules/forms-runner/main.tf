@@ -9,6 +9,10 @@ module "common_values" {
   source = "../common-values"
 }
 
+module "users" {
+  source = "../users"
+}
+
 data "aws_iam_policy_document" "ecs_task_role_permissions" {
   statement {
     actions = [
