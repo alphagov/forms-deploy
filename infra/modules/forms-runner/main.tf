@@ -228,6 +228,18 @@ module "ecs_service" {
     {
       name      = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/submission_status_api_shared_secret"
+    },
+    {
+      name      = "SETTINGS__ACTIVE_RECORD_ENCRYPTION__PRIMARY_KEY",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/active_record_encryption_primary_key",
+    },
+    {
+      name      = "SETTINGS__ACTIVE_RECORD_ENCRYPTION__DETERMINISTIC_KEY",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/active_record_encryption_deterministic_key",
+    },
+    {
+      name      = "SETTINGS__ACTIVE_RECORD_ENCRYPTION__KEY_DERIVATION_SALT",
+      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/active_record_encryption_derivation_salt",
     }
   ]
 }
