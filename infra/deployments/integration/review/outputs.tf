@@ -33,16 +33,6 @@ output "forms_admin_container_repo_url" {
   value       = module.forms_admin_container_repo.url
 }
 
-output "forms_admin_github_actions_runner_project_name" {
-  description = "The name of the GitHub Actions runner CodeBuild project used for forms-admin. Used by post-apply.sh to modify the configuration"
-  value       = aws_codebuild_project.forms_admin_github_actions_runner.name
-}
-
-output "codeconnection_arn" {
-  description = "The ARN of the CodeConnection to use as the source for AWS CodeBuild. This is re-output from integration/account for the sake of the post-apply script"
-  value       = data.terraform_remote_state.account.outputs.codeconnection_arn
-}
-
 output "traefik_basic_auth_credentials" {
   description = "The credentials Traefik uses for basic authentication in front of review apps"
   value       = data.aws_ssm_parameter.traefik_basic_auth_credentials.value

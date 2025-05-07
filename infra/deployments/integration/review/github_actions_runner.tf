@@ -1,15 +1,6 @@
 data "aws_caller_identity" "current" {}
 
 ##
-# At the time this code was written it wasn't possible to configure
-# a GitHub Actions runner on AWS CodeBuild via Terraform because of
-# some missing configuration options in the AWS Terraform provider.
-#
-# Instead this Terraform sets up everything except the source configuration
-# in CodeBuild, and a post-apply script configures that, using outputs from this.
-##
-
-##
 # IAM
 ##
 resource "aws_iam_role" "github_actions_runner" {
@@ -279,19 +270,14 @@ resource "aws_codebuild_project" "forms_admin_github_actions_runner" {
     }
   }
 
-  # This is a placeholder configuration.
-  # post-apply.sh updates the Terraform-configured
-  # resources, because the Terraform provider does
-  # not support those options
   source {
     type     = "GITHUB"
     location = "https://github.com/alphagov/forms-admin"
-  }
 
-  lifecycle {
-    # ignore changes to the source block so that
-    # this and post-apply.sh aren't fighting over it.
-    ignore_changes = [source]
+    auth {
+      type = "CODECONNECTIONS"
+      resource = var.codestar_connection_arn
+    }
   }
 }
 
