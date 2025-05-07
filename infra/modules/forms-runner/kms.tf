@@ -29,27 +29,6 @@ data "aws_iam_policy_document" "encryption_key" {
   }
 
   statement {
-    sid    = "Allow SQS, SNS and SES to use the key"
-    effect = "Allow"
-
-    principals {
-      type = "Service"
-      identifiers = [
-        "sqs.amazonaws.com",
-        "sns.amazonaws.com",
-        "ses.amazonaws.com"
-      ]
-    }
-
-    actions = [
-      "kms:GenerateDataKey",
-      "kms:Decrypt"
-    ]
-    resources = ["*"]
-  }
-
-
-  statement {
     sid    = "Allow encryption and decryption of messages"
     effect = "Allow"
 
