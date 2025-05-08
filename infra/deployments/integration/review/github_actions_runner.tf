@@ -28,22 +28,19 @@ module "forms_admin" {
   task_execution_role_arn          = aws_iam_role.ecs_execution.arn
 }
 
-moved {
-  from = aws_iam_role.github_actions_runner
-  to   = module.forms_admin.aws_iam_role.github_actions_runner
-}
+module "forms_runner" {
+  source = "./gha-runner"
 
-moved {
-  from = aws_iam_role_policy.runner_permissions
-  to   = module.forms_admin.aws_iam_role_policy.runner_permissions
-}
+  application_name              = "forms-runner"
+  application_source_repository = "https://github.com/alphagov/forms-runner"
 
-moved {
-  from = aws_codebuild_project.forms_admin_github_actions_runner
-  to   = module.forms_admin.aws_codebuild_project.github_actions_runner
-}
-
-moved {
-  from = aws_codebuild_webhook.github_webhook
-  to   = module.forms_admin.aws_codebuild_webhook.github_webhook
+  autoscaling_role_arn             = aws_iam_service_linked_role.app_autoscaling.arn
+  aws_ecr_repository_arn           = module.forms_runner_container_repo.arn
+  aws_ecs_cluster_arn              = aws_ecs_cluster.review.arn
+  aws_ecs_cluster_name             = aws_ecs_cluster.review.name
+  codestar_connection_arn          = var.codestar_connection_arn
+  deploy_account_id                = var.deploy_account_id
+  dockerhub_password_parameter_arn = aws_ssm_parameter.dockerhub_password.arn
+  dockerhub_username_parameter_arn = aws_ssm_parameter.dockerhub_username.arn
+  task_execution_role_arn          = aws_iam_role.ecs_execution.arn
 }
