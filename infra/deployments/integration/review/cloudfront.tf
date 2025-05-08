@@ -7,10 +7,14 @@ module "cloudfront" {
   }
 
 
-  alb_dns_name              = module.alb.alb_dns_name
-  domain_name               = "review.forms.service.gov.uk"
-  subject_alternative_names = ["*.review.forms.service.gov.uk"]
-  env_name                  = "review"
-  nat_gateway_egress_ips    = module.vpc.nat_gateway_egress_ips
-  send_logs_to_cyber        = var.send_logs_to_cyber
+  alb_dns_name = module.alb.alb_dns_name
+  domain_name  = "review.forms.service.gov.uk"
+  subject_alternative_names = [
+    "*.admin.review.forms.service.gov.uk",
+    "*.submit.review.forms.service.gov.uk",
+    "*.www.review.forms.service.gov.uk",
+  ]
+  env_name               = "review"
+  nat_gateway_egress_ips = module.vpc.nat_gateway_egress_ips
+  send_logs_to_cyber     = var.send_logs_to_cyber
 }
