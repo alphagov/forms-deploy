@@ -27,23 +27,3 @@ module "forms_admin" {
   dockerhub_username_parameter_arn = aws_ssm_parameter.dockerhub_username.arn
   task_execution_role_arn          = aws_iam_role.ecs_execution.arn
 }
-
-moved {
-  from = aws_iam_role.github_actions_runner
-  to   = module.forms_admin.aws_iam_role.github_actions_runner
-}
-
-moved {
-  from = aws_iam_role_policy.runner_permissions
-  to   = module.forms_admin.aws_iam_role_policy.runner_permissions
-}
-
-moved {
-  from = aws_codebuild_project.forms_admin_github_actions_runner
-  to   = module.forms_admin.aws_codebuild_project.github_actions_runner
-}
-
-moved {
-  from = aws_codebuild_webhook.github_webhook
-  to   = module.forms_admin.aws_codebuild_webhook.github_webhook
-}
