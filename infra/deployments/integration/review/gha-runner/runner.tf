@@ -255,13 +255,13 @@ resource "aws_codebuild_project" "github_actions_runner" {
 
     environment_variable {
       name  = "DOCKER_USERNAME"
-      value = var.dockerhub_username_parameter_arn
+      value = var.dockerhub_username_parameter_name
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
       name  = "DOCKER_PASSWORD"
-      value = var.dockerhub_password_parameter_arn
+      value = var.dockerhub_password_parameter_name
       type  = "PARAMETER_STORE"
     }
   }
