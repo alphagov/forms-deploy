@@ -27,3 +27,20 @@ module "forms_admin" {
   dockerhub_username_parameter_arn = aws_ssm_parameter.dockerhub_username.arn
   task_execution_role_arn          = aws_iam_role.ecs_execution.arn
 }
+
+module "forms_runner" {
+  source = "./gha-runner"
+
+  application_name              = "forms-runner"
+  application_source_repository = "https://github.com/alphagov/forms-runner"
+
+  autoscaling_role_arn             = aws_iam_service_linked_role.app_autoscaling.arn
+  aws_ecr_repository_arn           = module.forms_runner_container_repo.arn
+  aws_ecs_cluster_arn              = aws_ecs_cluster.review.arn
+  aws_ecs_cluster_name             = aws_ecs_cluster.review.name
+  codestar_connection_arn          = var.codestar_connection_arn
+  deploy_account_id                = var.deploy_account_id
+  dockerhub_password_parameter_arn = aws_ssm_parameter.dockerhub_password.arn
+  dockerhub_username_parameter_arn = aws_ssm_parameter.dockerhub_username.arn
+  task_execution_role_arn          = aws_iam_role.ecs_execution.arn
+}

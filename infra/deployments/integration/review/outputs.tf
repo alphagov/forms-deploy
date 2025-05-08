@@ -29,8 +29,13 @@ output "review_apps_log_group_name" {
 }
 
 output "forms_admin_container_repo_url" {
-  description = "The URL of the forms admin container repository"
+  description = "The URL of the forms-admin container repository"
   value       = module.forms_admin_container_repo.url
+}
+
+output "forms_runner_container_repo_url" {
+  description = "The URL of the forms-runner container repository"
+  value       = module.forms_runner_container_repo.url
 }
 
 output "traefik_basic_auth_credentials" {
