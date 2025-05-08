@@ -43,8 +43,18 @@ variable "dockerhub_username_parameter_arn" {
   type        = string
 }
 
+variable "dockerhub_username_parameter_name" {
+  description = "The name of the AWS SSM Parameter Storm parameter containing the dockerhub username"
+  type        = string
+}
+
 variable "dockerhub_password_parameter_arn" {
   description = "The ARN of the AWS SSM Parameter Storm parameter containing the dockerhub password"
+  type        = string
+}
+
+variable "dockerhub_password_parameter_name" {
+  description = "The name of the AWS SSM Parameter Storm parameter containing the dockerhub password"
   type        = string
 }
 
