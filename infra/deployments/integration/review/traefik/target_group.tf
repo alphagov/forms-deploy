@@ -32,7 +32,11 @@ resource "aws_lb_listener_rule" "to_traefik" {
 
   condition {
     host_header {
-      values = ["*.review.forms.service.gov.uk"]
+      values = [
+        "*.admin.review.forms.service.gov.uk",
+        "*.submit.review.forms.service.gov.uk",
+        "*.www.review.forms.service.gov.uk"
+      ]
     }
   }
 }

@@ -11,8 +11,12 @@ resource "aws_route53_record" "apex_domain" {
 }
 
 resource "aws_route53_record" "wildcard" {
+  # Wildcard DNS records can't span more than one level
+  # so we need to create one wildcard per application
+  for_each = toset(["admin", "submit", "www"])
+
   zone_id = data.terraform_remote_state.account.outputs.review_dns_zone_id
-  name    = "*.review.forms.service.gov.uk"
+  name    = "*.${each.value}.review.forms.service.gov.uk"
 
   type    = "CNAME"
   ttl     = "60"
