@@ -28,10 +28,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
   }
 }
 
-module "users" {
-  source = "../users"
-}
-
 data "aws_iam_policy_document" "forms_runner_file_upload" {
   statement {
     sid = "Allow runner to manage s3 objects"

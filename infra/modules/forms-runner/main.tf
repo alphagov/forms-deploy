@@ -9,6 +9,10 @@ module "common_values" {
   source = "../common-values"
 }
 
+module "users" {
+  source = "../users"
+}
+
 data "aws_iam_policy_document" "ecs_task_role_permissions" {
   statement {
     actions = [
@@ -194,6 +198,10 @@ module "ecs_service" {
       name  = "SETTINGS__FEATURES__SES_SUBMISSIONS",
       value = var.ses_submissions_enabled
     },
+    {
+      name  = "KMS_KEY_ID",
+      value = aws_kms_alias.active_record_alias.name
+    }
   ]
 
   secrets = [
