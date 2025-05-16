@@ -9,14 +9,16 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     open-pull-requests-limit: 10
 
   # Maintain Python dependencies (for Checkov)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     open-pull-requests-limit: 10
 
   # Maintain Ruby dependencies
@@ -29,5 +31,6 @@ updates:
       - "/support/paused-pipeline-detector"
       - "/infra/deployments/forms/pipelines/pipeline-invoker"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
     open-pull-requests-limit: 10
