@@ -15,5 +15,5 @@ gem "rubocop-govuk", "~> 5.1"
 gem "sinatra", "~> 4.1"
 
 group :development, :test do
-  gem "libxml-ruby", "~>5.0.3"
+  gem "libxml-ruby", "~>5.0.4"
 end
