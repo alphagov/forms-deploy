@@ -25,7 +25,7 @@ locals {
       production    = "admin" # Required whilst setting up environments
       development   = "admin"
       user_research = "admin"
-      integration   = "readonly"
+      integration   = "admin"
     },
     "andy.hunt" = {
       deploy        = "admin"
