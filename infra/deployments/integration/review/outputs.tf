@@ -38,6 +38,11 @@ output "forms_runner_container_repo_url" {
   value       = module.forms_runner_container_repo.url
 }
 
+output "forms_product_page_container_repo_url" {
+  description = "The URL of the forms-product-page container repository"
+  value       = module.forms_product_page_container_repo.url
+}
+
 output "traefik_basic_auth_credentials" {
   description = "The credentials Traefik uses for basic authentication in front of review apps"
   value       = data.aws_ssm_parameter.traefik_basic_auth_credentials.value
