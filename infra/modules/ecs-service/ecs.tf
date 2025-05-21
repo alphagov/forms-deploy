@@ -15,11 +15,12 @@ locals {
   image = var.image == null ? data.aws_ecs_container_definition.active_container[0].image : var.image
 
   task_container_definition = {
-    name        = var.application,
-    environment = var.environment_variables,
-    secrets     = var.secrets,
-    image       = local.image
-    essential   = true,
+    name                   = var.application,
+    environment            = var.environment_variables,
+    secrets                = var.secrets,
+    image                  = local.image
+    essential              = true,
+    readonlyRootFilesystem = var.readonly_root_filesystem
     portMappings = [
       {
         containerPort = var.container_port,

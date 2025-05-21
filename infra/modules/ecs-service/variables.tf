@@ -51,6 +51,11 @@ variable "memory" {
   description = "The amount of memory to provision in the ECS task."
 }
 
+variable "readonly_root_filesystem" {
+  type        = bool
+  description = "Whether the task's root filesystem should be made readonly"
+}
+
 variable "environment_variables" {
   type        = list(any)
   description = "Environment variables to set in the task environment"
