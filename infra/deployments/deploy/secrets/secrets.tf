@@ -1,3 +1,7 @@
+locals {
+  environment_type = toset(["development", "staging", "production", "user_research", "deploy", "integration", "ithc"])
+}
+
 module "users" {
   source = "../../../modules/users"
 }
@@ -5,17 +9,23 @@ module "users" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_secretsmanager_secret" "mailchimp_api_key" {
-  name       = "external/dev/mailchimp/api-key"
-  kms_key_id = aws_kms_key.this.id
+  for_each = local.environment_type
+
+  name       = "external/${each.key}/mailchimp/api-key"
+  kms_key_id = aws_kms_key.this[each.key].id
 }
 
 resource "aws_kms_key" "this" {
-  description         = "Symmetric encryption KMS key for external secrets in dev environments"
+  for_each = local.environment_type
+
+  description         = "Symmetric encryption KMS key for external secrets in ${each.key} environments"
   enable_key_rotation = true
 }
 
 resource "aws_kms_key_policy" "secretsmanager" {
-  key_id = aws_kms_key.this.id
+  for_each = local.environment_type
+
+  key_id = aws_kms_key.this[each.key].id
   policy = jsonencode({
     Version = "2012-10-17"
     Id      = "key-default-1"
