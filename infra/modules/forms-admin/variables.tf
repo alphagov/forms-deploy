@@ -100,12 +100,6 @@ variable "repeatable_page_enabled" {
   default     = false
 }
 
-variable "file_upload" {
-  type        = bool
-  description = "Enables the file upload answer type"
-  default     = false
-}
-
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
