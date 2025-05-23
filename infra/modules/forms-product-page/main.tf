@@ -15,7 +15,7 @@ module "ecs_service" {
   image                        = local.image
   cpu                          = var.cpu
   memory                       = var.memory
-  readonly_root_filesystem     = false
+  readonly_root_filesystem     = true
   container_port               = 3000
   permit_internet_egress       = true # Required for Sentry.io and AWS SSM
   permit_postgres_egress       = true
