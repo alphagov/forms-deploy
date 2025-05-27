@@ -32,6 +32,7 @@ environmental_settings = {
     "@dounreay.com",
     "@marinemanagement.org.uk",
     "@gov.scot",
+    "@gov.wales",
     "@dhsc.egresscloud.com"
   ]
   forms_product_page_support_url      = "https://www.forms.service.gov.uk/support"
