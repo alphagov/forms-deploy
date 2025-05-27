@@ -1,7 +1,3 @@
-locals {
-  environment_type = toset(["development", "staging", "production", "user_research", "deploy", "integration", "ithc"])
-}
-
 module "users" {
   source = "../../../modules/users"
 }
@@ -9,14 +5,14 @@ module "users" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_kms_key" "external_env_type" {
-  for_each = local.environment_type
+  for_each = toset(local.environment_types)
 
   description         = "Symmetric encryption KMS key for external secrets in ${each.key} environments"
   enable_key_rotation = true
 }
 
-resource "aws_kms_key_policy" "secretsmanager" {
-  for_each = local.environment_type
+resource "aws_kms_key_policy" "secretsmanager_external_env_type" {
+  for_each = toset(local.environment_types)
 
   key_id = aws_kms_key.external_env_type[each.key].id
   policy = jsonencode({
