@@ -21,7 +21,30 @@ locals {
           awslogs-region        = "eu-west-2",
           awslogs-stream-prefix = "forms-runner-${var.env_name}-queue-worker"
         }
-      },
+      }
+
+      secrets = [
+        {
+          name      = "SETTINGS__FORMS_API__AUTH_KEY",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
+        },
+        {
+          name      = "SETTINGS__SENTRY__DSN",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn"
+        },
+        {
+          name      = "SECRET_KEY_BASE",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base"
+        },
+        {
+          name      = "DATABASE_URL",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url"
+        },
+        {
+          name      = "QUEUE_DATABASE_URL",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
+        }
+      ]
     }
   )
 }
@@ -94,5 +117,19 @@ resource "aws_security_group" "queue_worker" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_ssm_parameter" "queue_worker_sentry_dsn" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+  name  = "/forms-runner-queue-worker-${var.env_name}/sentry/dsn"
+  type  = "SecureString"
+  value = "dummy_value"
+
+  description = "Sentry DSN value for forms-runner-queue-worker in the ${var.env_name} environment"
+
+  lifecycle {
+    ignore_changes = [value]
+    prevent_destroy = true
   }
 }
