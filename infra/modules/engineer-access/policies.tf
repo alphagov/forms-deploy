@@ -85,7 +85,7 @@ resource "aws_iam_policy" "query_rds_with_data_api" {
           "rds-data:ExecuteStatement",
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:rds:eu-west-2:${local.account_id}:cluster:aurora-cluster-*"
+        Resource = "arn:aws:rds:eu-west-2:${local.account_id}:cluster:aurora-v2-cluster-*"
       },
       {
         Sid = "SecretsManager"
