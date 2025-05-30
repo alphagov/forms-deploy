@@ -52,8 +52,8 @@ locals {
 resource "aws_ecs_task_definition" "queue_worker" {
   family                   = "${var.env_name}-forms-runner-queue-worker"
   container_definitions    = jsonencode([local.queue_worker_container_definitions])
-  execution_role_arn       = module.ecs_service.task_definition.execution_role_arn
-  task_role_arn            = module.ecs_service.task_definition.task_role_arn
+  execution_role_arn       = aws_iam_role.ecs_task_exec_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
   requires_compatibilities = module.ecs_service.task_definition.requires_compatibilities
   cpu                      = module.ecs_service.task_definition.cpu
   memory                   = module.ecs_service.task_definition.memory
@@ -129,7 +129,110 @@ resource "aws_ssm_parameter" "queue_worker_sentry_dsn" {
   description = "Sentry DSN value for forms-runner-queue-worker in the ${var.env_name} environment"
 
   lifecycle {
-    ignore_changes = [value]
+    ignore_changes  = [value]
     prevent_destroy = true
+  }
+}
+
+resource "aws_iam_role" "ecs_task_role" {
+  name               = "${var.env_name}-forms-runner-queue-worker-ecs-task"
+  description        = "Used by forms-runner-queue-worker tasks when running"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_role.json
+}
+
+data "aws_iam_policy_document" "ecs_task_role_assume_role" {
+  statement {
+    sid     = "AllowECS"
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_policy" {
+  name   = "${var.env_name}-forms-runner-queue-worker-ecs-task-policy"
+  policy = data.aws_iam_policy_document.ecs_task_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_role_policy_attachment" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.ecs_task_policy.arn
+}
+
+data "aws_iam_policy_document" "ecs_task_policy" {
+  statement {
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+    condition {
+      test     = "StringLike"
+      variable = "cloudwatch:namespace"
+
+      values = [
+        "Forms*"
+      ]
+    }
+  }
+}
+
+resource "aws_iam_role" "ecs_task_exec_role" {
+  name               = "${var.env_name}-forms-runner-queue-worker-ecs-task-exec"
+  description        = "Used by ECS to create forms-runner-queue-worker task"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_exec_role_assume_role.json
+}
+
+data "aws_iam_policy_document" "ecs_task_exec_role_assume_role" {
+  statement {
+    sid     = "AllowECS"
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_exec_standard_policy" {
+  role       = aws_iam_role.ecs_task_exec_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_policy" "ecs_task_exec_additional_policy" {
+  name   = "${var.env_name}-forms-runner-queue-worker-ecs-task-additional-policies"
+  policy = data.aws_iam_policy_document.queue_worker_ecs_task_exec_additional_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_exec_additional_policy" {
+  role       = aws_iam_role.ecs_task_exec_role.name
+  policy_arn = aws_iam_policy.ecs_task_exec_additional_policy.arn
+}
+
+data "aws_iam_policy_document" "queue_worker_ecs_task_exec_additional_policy" {
+  statement {
+    actions = [
+      "ssm:DescribeParameters"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
+      "ssm:GetParameters"
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
+    ]
+    effect = "Allow"
   }
 }
