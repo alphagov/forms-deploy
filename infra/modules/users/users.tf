@@ -27,14 +27,6 @@ locals {
       user_research = "admin"
       integration   = "admin"
     },
-    "andy.hunt" = {
-      deploy        = "admin"
-      staging       = "admin"
-      production    = "admin"
-      development   = "admin"
-      user_research = "admin"
-      integration   = "admin"
-    },
     "catalina.garcia" = {
       deploy        = "admin" # Admin to apply changes to pipelines until we have pipelines for our pipelines
       staging       = "admin" # Required whilst setting up environments
