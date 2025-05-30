@@ -1,9 +1,10 @@
 locals {
+  queue_worker_name = "forms-runner-queue-worker"
   # Take the exported task container definition and override some parts of it
   queue_worker_container_definitions = merge(
     module.ecs_service.task_container_definition,
     {
-      name    = "forms-runner-queue-worker",
+      name    = local.queue_worker_name,
       command = ["bin/jobs"]
 
       healthCheck = {
@@ -50,10 +51,10 @@ locals {
 }
 
 resource "aws_ecs_task_definition" "queue_worker" {
-  family                   = "${var.env_name}-forms-runner-queue-worker"
+  family                   = "${var.env_name}-${local.queue_worker_name}"
   container_definitions    = jsonencode([local.queue_worker_container_definitions])
   execution_role_arn       = aws_iam_role.ecs_task_exec_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  task_role_arn            = module.ecs_service.task_role_arn
   requires_compatibilities = module.ecs_service.task_definition.requires_compatibilities
   cpu                      = module.ecs_service.task_definition.cpu
   memory                   = module.ecs_service.task_definition.memory
@@ -68,7 +69,7 @@ resource "aws_ecs_task_definition" "queue_worker" {
 resource "aws_ecs_service" "queue_worker" {
   #checkov:skip=CKV_AWS_332:We don't want to target "LATEST" and get a surprise when a new version is released.
   #checkov:skip=CKV2_FORMS_AWS_2:The queue worker currently doesn't autoscale, revisit this decision by 23/06/2025
-  name          = "forms-runner-queue-worker"
+  name          = local.queue_worker_name
   cluster       = var.ecs_cluster_arn
   desired_count = 3
 
@@ -91,7 +92,7 @@ resource "aws_ecs_service" "queue_worker" {
 }
 
 resource "aws_security_group" "queue_worker" {
-  name        = "forms-runner-queue-worker"
+  name        = local.queue_worker_name
   description = "Restrict all ingress, allow egress to VPC, RDS, and internet"
   vpc_id      = var.vpc_id
 
@@ -122,11 +123,11 @@ resource "aws_security_group" "queue_worker" {
 
 resource "aws_ssm_parameter" "queue_worker_sentry_dsn" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
-  name  = "/forms-runner-queue-worker-${var.env_name}/sentry/dsn"
+  name  = "/${local.queue_worker_name}-${var.env_name}/sentry/dsn"
   type  = "SecureString"
   value = "dummy_value"
 
-  description = "Sentry DSN value for forms-runner-queue-worker in the ${var.env_name} environment"
+  description = "Sentry DSN value for ${local.queue_worker_name} in the ${var.env_name} environment"
 
   lifecycle {
     ignore_changes  = [value]
@@ -135,8 +136,8 @@ resource "aws_ssm_parameter" "queue_worker_sentry_dsn" {
 }
 
 resource "aws_iam_role" "ecs_task_role" {
-  name               = "${var.env_name}-forms-runner-queue-worker-ecs-task"
-  description        = "Used by forms-runner-queue-worker tasks when running"
+  name               = "${var.env_name}-${local.queue_worker_name}-ecs-task"
+  description        = "Used by ${local.queue_worker_name} tasks when running"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_role.json
 }
 
@@ -154,7 +155,7 @@ data "aws_iam_policy_document" "ecs_task_role_assume_role" {
 }
 
 resource "aws_iam_policy" "ecs_task_policy" {
-  name   = "${var.env_name}-forms-runner-queue-worker-ecs-task-policy"
+  name   = "${var.env_name}-${local.queue_worker_name}-ecs-task-policy"
   policy = data.aws_iam_policy_document.ecs_task_policy.json
 }
 
@@ -182,8 +183,8 @@ data "aws_iam_policy_document" "ecs_task_policy" {
 }
 
 resource "aws_iam_role" "ecs_task_exec_role" {
-  name               = "${var.env_name}-forms-runner-queue-worker-ecs-task-exec"
-  description        = "Used by ECS to create forms-runner-queue-worker task"
+  name               = "${var.env_name}-${local.queue_worker_name}-ecs-task-exec"
+  description        = "Used by ECS to create ${local.queue_worker_name} task"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_exec_role_assume_role.json
 }
 
@@ -206,7 +207,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_exec_standard_policy" {
 }
 
 resource "aws_iam_policy" "ecs_task_exec_additional_policy" {
-  name   = "${var.env_name}-forms-runner-queue-worker-ecs-task-additional-policies"
+  name   = "${var.env_name}-${local.queue_worker_name}-ecs-task-additional-policies"
   policy = data.aws_iam_policy_document.queue_worker_ecs_task_exec_additional_policy.json
 }
 
@@ -228,7 +229,7 @@ data "aws_iam_policy_document" "queue_worker_ecs_task_exec_additional_policy" {
       "ssm:GetParameters"
     ]
     resources = [
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/${local.queue_worker_name}-${var.env_name}/sentry/dsn",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url",
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
