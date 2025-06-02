@@ -54,7 +54,7 @@ locals {
 resource "aws_ecs_task_definition" "queue_worker" {
   family                   = "${var.env_name}-${local.queue_worker_name}"
   container_definitions    = jsonencode([local.queue_worker_container_definitions])
-  execution_role_arn       = module.ecs_service.task_definition.execution_role_arn
+  execution_role_arn       = aws_iam_role.ecs_task_exec_role.arn
   task_role_arn            = module.ecs_service.task_definition.task_role_arn
   requires_compatibilities = module.ecs_service.task_definition.requires_compatibilities
   cpu                      = module.ecs_service.task_definition.cpu
@@ -118,5 +118,61 @@ resource "aws_security_group" "queue_worker" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_iam_role" "ecs_task_exec_role" {
+  name               = "${var.env_name}-${local.queue_worker_name}-ecs-task-exec"
+  description        = "Used by ECS to create forms-runner-queue-worker task"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_exec_role_assume_role.json
+}
+
+data "aws_iam_policy_document" "ecs_task_exec_role_assume_role" {
+  statement {
+    sid     = "AllowECS"
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_exec_standard_policy" {
+  role       = aws_iam_role.ecs_task_exec_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_policy" "ecs_task_exec_additional_policy" {
+  name   = "${var.env_name}-${local.queue_worker_name}-ecs-task-additional-policies"
+  policy = data.aws_iam_policy_document.queue_worker_ecs_task_exec_additional_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_exec_additional_policy" {
+  role       = aws_iam_role.ecs_task_exec_role.name
+  policy_arn = aws_iam_policy.ecs_task_exec_additional_policy.arn
+}
+
+data "aws_iam_policy_document" "queue_worker_ecs_task_exec_additional_policy" {
+  statement {
+    actions = [
+      "ssm:DescribeParameters"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    actions = [
+      "ssm:GetParameters"
+    ]
+    resources = [
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url",
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
+    ]
+    effect = "Allow"
   }
 }
