@@ -23,7 +23,30 @@ locals {
           awslogs-region        = "eu-west-2",
           awslogs-stream-prefix = "forms-runner-${var.env_name}-queue-worker"
         }
-      },
+      }
+
+      secrets = [
+        {
+          name      = "SETTINGS__FORMS_API__AUTH_KEY",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
+        },
+        {
+          name      = "SETTINGS__SENTRY__DSN",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn"
+        },
+        {
+          name      = "SECRET_KEY_BASE",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base"
+        },
+        {
+          name      = "DATABASE_URL",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url"
+        },
+        {
+          name      = "QUEUE_DATABASE_URL",
+          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
+        }
+      ]
     }
   )
 }
