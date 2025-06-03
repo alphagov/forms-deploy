@@ -1,5 +1,8 @@
 services:
   forms-admin:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       args:
         - NODE_ENV=development
@@ -42,6 +45,9 @@ services:
       - forms-admin-tmp:/app/tmp
 
   forms-api:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       context: ../../forms-api
       target: build
@@ -67,6 +73,9 @@ services:
       - forms-api-tmp:/app/tmp
 
   forms-product-page:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       args:
         - NODE_ENV=development
@@ -95,6 +104,9 @@ services:
       - forms-product-page-tmp:/app/tmp
 
   forms-runner:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       args:
         - NODE_ENV=development
