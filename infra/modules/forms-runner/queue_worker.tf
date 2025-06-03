@@ -72,7 +72,7 @@ resource "aws_ecs_service" "queue_worker" {
   #checkov:skip=CKV2_FORMS_AWS_2:The queue worker currently doesn't autoscale, revisit this decision by 23/06/2025
   name          = local.queue_worker_name
   cluster       = var.ecs_cluster_arn
-  desired_count = 3
+  desired_count = var.queue_worker_capacity
 
   task_definition                    = aws_ecs_task_definition.queue_worker.arn
   deployment_maximum_percent         = "200"
