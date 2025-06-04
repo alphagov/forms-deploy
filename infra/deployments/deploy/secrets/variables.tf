@@ -6,3 +6,12 @@ variable "external_env_type_secrets" {
     description = string
   }))
 }
+
+variable "external_global_secrets" {
+  description = "Secrets we use to communicate with external systems, and whose values are the same across environments"
+
+  type = map(object({
+    name        = string
+    description = string
+  }))
+}
