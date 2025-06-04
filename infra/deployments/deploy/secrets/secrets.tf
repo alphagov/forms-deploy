@@ -29,4 +29,5 @@ resource "aws_secretsmanager_secret" "external_global" {
 
   name        = "external/global/${each.value.name}"
   description = each.value.description
+  kms_key_id  = aws_kms_key.external_global.id
 }

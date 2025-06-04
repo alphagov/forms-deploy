@@ -12,6 +12,12 @@ resource "aws_kms_key" "external_env_type" {
   policy              = data.aws_iam_policy_document.kms_management.json
 }
 
+resource "aws_kms_key" "external_global" {
+  description         = "Symmetric encryption KMS key for external global secrets"
+  enable_key_rotation = true
+  policy              = data.aws_iam_policy_document.kms_management.json
+}
+
 data "aws_iam_policy_document" "kms_management" {
   statement {
     sid    = "Enable IAM Access"
