@@ -47,6 +47,14 @@ external_env_type_secrets = {
     name        = "google/oauth/client-id"
     description = ""
   }
+  notify_api_key_forms_admin = {
+    name = "notify/api-key/forms-admin"
+    description = "API key for forms-admin to connect to GOV.UK Notify"
+  }
+  notify_api_key_forms_runner = {
+    name = "notify/api-key/forms-runner"
+    description = "API key for forms-runner to connect to GOV.UK Notify"
+  }
   mailchimp_api_key = {
     name        = "mailchimp/api-key"
     description = ""
