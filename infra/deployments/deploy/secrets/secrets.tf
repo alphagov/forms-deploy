@@ -15,6 +15,7 @@ resource "aws_secretsmanager_secret" "external_environment_type" {
 
   name        = each.value.name
   description = each.value.description
+  kms_key_id  = aws_kms_key.external_environment_type[each.value.environment_type].id
 }
 
 resource "aws_secretsmanager_secret" "external_global" {
@@ -22,4 +23,5 @@ resource "aws_secretsmanager_secret" "external_global" {
 
   name        = "/external/global/${each.value.name}"
   description = each.value.description
+  kms_key_id  = aws_kms_key.external_global.id
 }
