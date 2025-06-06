@@ -11,6 +11,7 @@ locals {
 }
 
 resource "aws_secretsmanager_secret" "external_environment_type" {
+  #checkov:skip=CKV2_AWS_57: we're not ready to enable automatic rotation
   for_each = { for secret in local.secrets_in_environment_type : "${secret.name}-${secret.environment_type}" => secret }
 
   name        = each.value.name
@@ -19,6 +20,7 @@ resource "aws_secretsmanager_secret" "external_environment_type" {
 }
 
 resource "aws_secretsmanager_secret" "external_global" {
+  #checkov:skip=CKV2_AWS_57: we're not ready to enable automatic rotation
   for_each = var.external_global_secrets
 
   name        = "/external/global/${each.value.name}"
