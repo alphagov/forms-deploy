@@ -94,7 +94,8 @@ data "aws_iam_policy_document" "ecs" {
       "iam:GetRolePolicy",
       "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
-      "iam:UpdateAssumeRolePolicy"
+      "iam:UpdateAssumeRolePolicy",
+      "iam:TagRole"
     ]
     resources = [
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task",
@@ -104,7 +105,8 @@ data "aws_iam_policy_document" "ecs" {
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-api-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task-execution",
-      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution"
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-exec"
     ]
     effect = "Allow"
   }
@@ -140,7 +142,8 @@ data "aws_iam_policy_document" "ecs" {
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-api-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy"
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-queue-worker-ecs-task-additional-policies",
     ]
     effect = "Allow"
   }
