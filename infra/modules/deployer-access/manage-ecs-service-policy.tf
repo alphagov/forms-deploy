@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "ecs" {
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution",
-      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-exec"
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-execution"
     ]
     effect = "Allow"
   }
@@ -121,7 +121,8 @@ data "aws_iam_policy_document" "ecs" {
     resources = [
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-execution-additional",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-execution-additional",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-execution-additional"
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-execution-additional",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-queue-worker-ecs-task-execution-additional"
     ]
     effect = "Allow"
   }
@@ -138,8 +139,7 @@ data "aws_iam_policy_document" "ecs" {
     resources = [
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-queue-worker-ecs-task-additional-policies",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy"
     ]
     effect = "Allow"
   }
