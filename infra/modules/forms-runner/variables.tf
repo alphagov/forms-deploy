@@ -169,3 +169,8 @@ variable "deliveries_kms_key_arn" {
   type        = string
   description = "The ARN of the KMS key to decrypt messages on the submission deliveries SQS queue"
 }
+
+variable "queue_worker_capacity" {
+  type        = number
+  description = "Sets the desired number of tasks for the SolidQueue worker"
+}

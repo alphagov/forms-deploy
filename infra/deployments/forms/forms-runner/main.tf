@@ -67,4 +67,5 @@ module "forms_runner" {
   send_logs_to_cyber                          = var.send_logs_to_cyber
   bounces_and_complaints_kms_key_arn          = data.terraform_remote_state.forms_ses.outputs.submission_email_bounces_and_complaints_kms_key_arn
   deliveries_kms_key_arn                      = data.terraform_remote_state.forms_ses.outputs.submission_email_successful_deliveries_kms_key_arn
+  queue_worker_capacity                       = var.forms_runner_settings.queue_worker_capacity
 }
