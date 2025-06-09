@@ -1,5 +1,5 @@
 variable "internal_secrets" {
-  description = "Secrets for use with/by internal components in the ${var.environment_name} environment"
+  description = "Secrets for use with/by internal components in a given environment"
 
   type = map(object({
     name        = string
