@@ -1,4 +1,4 @@
-internal_secrets = {
+all_internal_secrets = {
   # Secrets for use with/by internal components
   databases_forms_admin_app_password = {
     name        = "databases/forms-admin/app-password"

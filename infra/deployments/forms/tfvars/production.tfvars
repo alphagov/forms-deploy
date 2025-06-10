@@ -163,3 +163,26 @@ end_to_end_test_settings = {
   aws_s3_bucket   = "govuk-forms-submissions-to-s3-test"
   s3_form_id      = "5086"
 }
+internal_secrets = [
+  "databases_forms_admin_app_password",
+  "databases_forms_admin_app_url",
+  "databases_forms_admin_root_password",
+  "databases_forms_api_app_password",
+  "databases_forms_api_app_url",
+  "databases_forms_runner_app_password",
+  "databases_forms_runner_app_url",
+  "databases_forms_runner_queue_password",
+  "databases_forms_runner_queue_url",
+  "databases_forms_runner_root_password",
+  "forms_admin_forms_api_key",
+  "forms_admin_secret_key_base",
+  "forms_api_forms_api_key",
+  "forms_api_secret_key_base",
+  "forms_product_page_secret_key_base",
+  "forms_runner_e2e_tests_submissions_status_api_shared_secret",
+  "forms_runner_forms_api_key",
+  "forms_runner_secret_key_base",
+  "forms_runner_submission_status_api_shared_secret",
+  "ses_auth0_smtp_password",
+  "ses_auth0_smtp_username",
+]
