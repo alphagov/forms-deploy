@@ -224,3 +224,8 @@ variable "end_to_end_test_settings" {
     s3_form_id      = string
   })
 }
+
+variable "internal_secrets" {
+  description = "Internal secrets this environment needs. The complete list of internal secrets is in the all_internal_secrets variable in the 'secrets' root"
+  type        = list(string)
+}
