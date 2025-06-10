@@ -1,5 +1,8 @@
 services:
   forms-admin:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       args:
         - NODE_ENV=development
@@ -40,8 +43,12 @@ services:
       - forms-admin-bundle:/usr/local/bundle
       - forms-admin-node-modules:/app/node_modules
       - forms-admin-tmp:/app/tmp
+      - forms-admin-npm:/home/ruby/.npm
 
   forms-api:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       context: ../../forms-api
       target: build
@@ -67,6 +74,9 @@ services:
       - forms-api-tmp:/app/tmp
 
   forms-product-page:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       args:
         - NODE_ENV=development
@@ -93,8 +103,12 @@ services:
       - forms-product-page-bundle:/usr/local/bundle
       - forms-product-page-node-modules:/app/node_modules
       - forms-product-page-tmp:/app/tmp
+      - forms-product-page-npm:/home/ruby/.npm
 
   forms-runner:
+    read_only: true
+    tmpfs:
+      - /tmp
     build:
       args:
         - NODE_ENV=development
@@ -129,6 +143,7 @@ services:
       - forms-runner-bundle:/usr/local/bundle
       - forms-runner-node-modules:/app/node_modules
       - forms-runner-tmp:/app/tmp
+      - forms-runner-npm:/home/ruby/.npm
 
   postgres:
     environment:
@@ -152,13 +167,16 @@ volumes:
   forms-admin-bundle:
   forms-admin-node-modules:
   forms-admin-tmp:
+  forms-admin-npm:
   forms-api-bundle:
   forms-api-tmp:
   forms-product-page-bundle:
   forms-product-page-node-modules:
   forms-product-page-tmp:
+  forms-product-page-npm:
   forms-runner-bundle:
   forms-runner-node-modules:
   forms-runner-tmp:
+  forms-runner-npm:
   postgres:
   redis-data:
