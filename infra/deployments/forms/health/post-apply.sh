@@ -42,6 +42,7 @@ get_metric_config() {
     # Use different delimiter for sed to avoid issues with slashes in the values
     config=$(echo "$config" | sed "s|\${target_group_name}|${target_group_name}|g")
     config=$(echo "$config" | sed "s|\${load_balancer_name}|${load_balancer_name}|g")
+    config=$(echo "$config" | sed "s|\${environment}|${environment}|g")
     
     # Replace threshold if provided
     if [ -n "$threshold" ]; then
@@ -170,4 +171,14 @@ create_or_update_slo \
     "runner-http-latency-1000ms" \
     "99% of requests as measured from the load balancer metrics are under 1000ms." \
     "${runner_latency_1000ms_config}" \
+    "99"
+
+# Submission Delivery Pipeline
+
+# Submission Delivery Latency SLO (99% < 5mins)
+submission_delivery_latency_config=$(get_metric_config "slos/submission-delivery-latency-slo-metric-config.json" "${forms_runner_target_group_name}" "${load_balancer_name}" "300000")
+create_or_update_slo \
+    "submission-delivery-latency" \
+    "99% of submitted submissions are delivered under 5 minutes." \
+    "${submission_delivery_latency_config}" \
     "99"
