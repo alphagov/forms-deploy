@@ -6,3 +6,17 @@ resource "aws_secretsmanager_secret" "internal" {
   description = var.all_internal_secrets[each.value].description
   kms_key_id  = aws_kms_key.internal.id
 }
+
+resource "aws_secretsmanager_secret_version" "internal" {
+  for_each = toset(var.internal_secrets)
+
+  secret_id                = aws_secretsmanager_secret.internal[each.value].id
+  secret_string_wo         = "dummy-value"
+  secret_string_wo_version = 1
+}
+
+output "internal_secrets_ids" {
+  value = {
+    for k, secret in var.internal_secrets : secret => aws_secretsmanager_secret_version.internal[secret].secret_id
+  }
+}
