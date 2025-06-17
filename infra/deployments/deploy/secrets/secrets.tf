@@ -2,12 +2,18 @@ locals {
   secrets_in_environment_type = flatten([
     for environment_type, secrets_set in var.secrets_in_environment_type : [
       for secret in secrets_set : {
-        environment_type = environment_type
-        name             = "/external/${environment_type}/${var.external_environment_type_secrets[secret].name}"
-        description      = var.external_environment_type_secrets[secret].description
+        environment_type      = environment_type
+        name                  = "/external/${environment_type}/${var.external_environment_type_secrets[secret].name}"
+        description           = var.external_environment_type_secrets[secret].description
+        generate_random_value = var.external_environment_type_secrets[secret].generate_random_value
       }
     ]
   ])
+}
+
+ephemeral "random_password" "generated_by_us" {
+  length           = 16
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 resource "aws_secretsmanager_secret" "external_environment_type" {
@@ -19,6 +25,14 @@ resource "aws_secretsmanager_secret" "external_environment_type" {
   kms_key_id  = aws_kms_key.external_environment_type[each.value.environment_type].id
 }
 
+resource "aws_secretsmanager_secret_version" "external_environment_type" {
+  for_each = { for secret in local.secrets_in_environment_type : secret.name => secret }
+
+  secret_id                = aws_secretsmanager_secret.external_environment_type[each.value.name].id
+  secret_string_wo         = each.value.generate_random_value ? ephemeral.random_password.generated_by_us.result : "dummy-value"
+  secret_string_wo_version = 1
+}
+
 resource "aws_secretsmanager_secret" "external_global" {
   #checkov:skip=CKV2_AWS_57: we're not ready to enable automatic rotation
   for_each = var.external_global_secrets
@@ -26,4 +40,12 @@ resource "aws_secretsmanager_secret" "external_global" {
   name        = "/external/global/${each.value.name}"
   description = each.value.description
   kms_key_id  = aws_kms_key.external_global.id
+}
+
+resource "aws_secretsmanager_secret_version" "external_global" {
+  for_each = var.external_global_secrets
+
+  secret_id                = aws_secretsmanager_secret.external_global[each.key].id
+  secret_string_wo         = each.value.generate_random_value ? ephemeral.random_password.generated_by_us.result : "dummy-value"
+  secret_string_wo_version = 1
 }
