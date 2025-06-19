@@ -25,3 +25,10 @@ output "internal_secrets_ids" {
     for k, secret in var.internal_secrets : secret => aws_secretsmanager_secret_version.internal[secret].secret_id
   }
 }
+
+output "internal_secrets_arns" {
+  value = {
+    for k, secret in var.internal_secrets : secret =>
+    aws_secretsmanager_secret_version.internal[secret].arn
+  }
+}
