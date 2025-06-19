@@ -5,6 +5,7 @@ data "aws_iam_policy_document" "environment" {
     data.aws_iam_policy_document.public_bucket.json,
     data.aws_iam_policy_document.secure_bucket.json,
     data.aws_iam_policy_document.network.json,
+    data.aws_iam_policy_document.secrets_manager.json
   ]
 }
 
@@ -268,6 +269,29 @@ data "aws_iam_policy_document" "network" {
     ]
     resources = [
       "arn:aws:ec2:eu-west-2:${var.account_id}:*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "secrets_manager" {
+  statement {
+    sid    = "ManageSecrets"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:CreateSecret",
+      "secretsmanager:DeleteSecret",
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetResourcePolicy",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds",
+      "secretsmanager:PutResourcePolicy",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:TagResource",
+      "secretsmanager:UntagResource",
+      "secretsmanager:ValidateResourcePolicy",
+    ]
+    resources = [
+      "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:*"
     ]
   }
 }

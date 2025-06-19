@@ -39,6 +39,7 @@ running-order:
       manual: false
       phases:
         - roots:
+            - forms/secrets
             - forms/environment
             - forms/ses
             - forms/auth0
