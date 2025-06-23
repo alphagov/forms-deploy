@@ -10,6 +10,11 @@ resource "aws_kms_key" "internal" {
   policy              = data.aws_iam_policy_document.kms_management.json
 }
 
+resource "aws_kms_alias" "internal" {
+  name          = "alias/internal"
+  target_key_id = aws_kms_key.internal.key_id
+}
+
 
 data "aws_iam_policy_document" "kms_management" {
   # See https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-root-enable-iam
@@ -32,13 +37,17 @@ data "aws_iam_policy_document" "kms_management" {
     sid    = "Allow administration of the key by admins of this account"
     effect = "Allow"
     principals {
-      type        = "AWS"
-      identifiers = [for admin in module.users.with_role["deploy_admin"] : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${admin}-admin"]
+      type = "AWS"
+      identifiers = toset(concat(
+        [for admin in module.users.with_role["${var.environment_type}_admin"] : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${admin}-admin"],
+        ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/deployer-${var.environment_name}"]
+      ))
     }
     actions = [
       "kms:Create*",
       "kms:Describe*",
       "kms:Enable*",
+      "kms:Encrypt",
       "kms:List*",
       "kms:Put*",
       "kms:Update*",

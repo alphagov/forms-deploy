@@ -5,6 +5,7 @@ resource "aws_secretsmanager_secret" "internal" {
   name        = "/internal/${var.environment_name}/${var.all_internal_secrets[each.value].name}"
   description = var.all_internal_secrets[each.value].description
   kms_key_id  = aws_kms_key.internal.id
+  depends_on  = [aws_kms_key.internal]
 }
 
 ephemeral "random_password" "generated_by_us" {

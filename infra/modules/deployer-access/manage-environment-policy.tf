@@ -292,4 +292,28 @@ data "aws_iam_policy_document" "secrets_manager" {
       "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:*"
     ]
   }
+
+  statement {
+    sid = "SecretsManagerKMS"
+
+    effect = "Allow"
+    actions = [
+      "kms:Create*",
+      "kms:Describe*",
+      "kms:Enable*",
+      "kms:Encrypt",
+      "kms:List*",
+      "kms:Put*",
+      "kms:Update*",
+      "kms:Revoke*",
+      "kms:Disable*",
+      "kms:Get*",
+      "kms:Delete*",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion"
+    ]
+    resources = [
+      "arn:aws:kms:eu-west-2:${var.account_id}:alias/internal",
+    ]
+  }
 }
