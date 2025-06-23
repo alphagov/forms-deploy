@@ -60,12 +60,12 @@ locals {
       integration   = "readonly"
     },
     "laurence.debruxelles" = {
-      deploy        = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
-      staging       = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
-      production    = "admin" # Knows Terraform well, we are short of SREs. This is for at least a week.
+      deploy        = "admin" # We are short of SREs
+      staging       = "admin"
+      production    = "admin"
       development   = "admin"
       user_research = "admin"
-      integration   = "readonly"
+      integration   = "admin"
     },
     "max.fitzhugh" = {
       deploy        = "readonly"
