@@ -438,33 +438,23 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
         deployment forms formsEnvironments "FormsArchitecture" {
             include *
+            autolayout
         }
 
         styles {
-            element "Element" {
-                shape roundedbox
-                background #ffffff
-            }
-
-            element "Container" {
-                background #ffffff
-            }
-
-            element "Application" {
-                background #ffffff
+            element "External" {
+                background #999999
             }
 
             element "Database" {
-                shape cylinder
-            }
-
-            element "CustomAWSDeveloperQIcon" {
-                background #ffffff
-                icon "https://d1.awsstatic.com/getting-started-guides/learning/amazon-q/icon_amazon-q.a5c38564734b6e9f611e9599eb271142389313a4.png"
+                shape Cylinder
             }
         }
 
         themes https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json
+
+        theme default
+
     }
 
     configuration {
