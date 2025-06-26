@@ -371,6 +371,17 @@ workspace "GOV.UK Forms" "An MVP architecture." {
     }
 
     views {
+        systemContext forms {
+            include *
+            autoLayout
+        }
+
+        container forms {
+            include *
+            exclude forms.pipelineVisualiser
+            autoLayout
+        }
+
         deployment forms formsEnvironments "FormsArchitecture" {
             include *
         }
