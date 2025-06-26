@@ -15,11 +15,11 @@ data "aws_cloudfront_response_headers_policy" "cors" {
   name = "Managed-SimpleCORS"
 }
 
-data "aws_cloudfront_cache_policy" "caching_policy" {
+data "aws_cloudfront_cache_policy" "caching_optimized" {
   name = "Managed-CachingOptimized"
 }
 
-data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
+data "aws_cloudfront_origin_request_policy" "cors_s3_origin" {
   name = "Managed-CORS-S3Origin"
 }
 
@@ -119,8 +119,8 @@ resource "aws_cloudfront_distribution" "main" {
     cached_methods           = ["GET", "HEAD"]
     target_origin_id         = "error_page"
     viewer_protocol_policy   = "allow-all"
-    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_policy.id
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.origin_request_policy.id
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
   }
 }
 
