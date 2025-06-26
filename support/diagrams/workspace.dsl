@@ -467,4 +467,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
         themes https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json
     }
 
+    configuration {
+        scope softwaresystem
+    }
 }
