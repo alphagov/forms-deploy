@@ -1565,7 +1565,7 @@ GEM
       date
       stringio
     racc (1.8.1)
-    rack (3.1.14)
+    rack (3.1.16)
     rainbow (3.1.1)
     rdoc (6.10.0)
       psych (>= 4.0.0)
@@ -1638,6 +1638,7 @@ PLATFORMS
   arm64-darwin-23
   x86_64-darwin-22
   x86_64-darwin-23
+  x86_64-darwin-24
   x86_64-linux
 
 DEPENDENCIES
