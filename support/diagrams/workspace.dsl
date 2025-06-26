@@ -3,48 +3,66 @@ workspace "GOV.UK Forms" "An MVP architecture." {
     !identifiers hierarchical
 
     model {
+        form_creator = person "Form Creator" "A civil servant managing forms"
+        form_submitter = person "Form Submitter" "A member of the public submitting a form"
+        form_processor = person "Form Processor" "A civil servant processing form submissions"
+        // form_super_admin = person "GOV.UK Forms Super Admin" "A member of the GOV.UK Forms team with the super admin role"
+        // form_developer = person "GOV.UK Forms Developer" "A developer on the GOV.UK Forms team"
+
         forms = softwareSystem "GOV.UK Forms" {
-
             # Containers: represent a deployable unit that contributes to the functionality of the system (e.g., web app, db)
-            formsAdmin = container "forms-admin" {
+            forms_admin = container "forms-admin" {
                 technology "Ruby on Rails"
                 tags "Application"
+                description "Manages form creation on the platform, including user, group, and MOU management"
             }
 
-            formsAPI = container "forms-api" {
+            forms_api = container "forms-api" {
                 technology "Ruby on Rails"
                 tags "Application"
+                description "Serves form snapshots for preview, live, and archived forms"
             }
 
-            formsProductPage = container "forms-product-page" {
+            forms_product_page = container "forms-product-page" {
                 technology "Ruby on Rails"
                 tags "Application"
+                description "Hosts content for onboarding new users of GOV.UK Forms, and supporting pages"
             }
 
-            formsRunner = container "forms-runner" {
+            forms_runner = container "forms-runner" {
                 technology "Ruby on Rails"
                 tags "Application"
+                description "Serves forms and handles form submissions"
             }
 
-            usersDB = container "users-db" {
+            forms_admin_db = container "forms-admin-database" {
                 technology "Postgres"
                 tags "Database"
+                description "Stores organisations, users, groups, and MOU signatures"
             }
 
-            formsDefinitionsDB = container "forms-definitions-db" {
+            forms_runner_db = container "forms-runner-database" {
                 technology "Postgres"
                 tags "Database"
+                description "Stores form submissions"
             }
 
-            sessionsDB = container "forms-sessions-db" {
+            forms_api_db = container "forms-api-database" {
+                technology "Postgres"
+                tags "Database"
+                description "Stores forms and made live form snapshots"
+            }
+
+            sessions_db = container "forms-sessions-db" {
                 technology "Redis"
-                description "20 hours expiry"
+                description "Stores session including form answers, with 20 hours expiry"
                 tags "Database"
             }
 
-            solidQueue = container "file-upload-solidqueue" {
+            solidqueue = container "submissions-solidqueue" {
                 technology "Postgres"
                 tags "Database"
+                description "Queues submissions for asynchronous processing"
             }
 
             auditTrail = container "forms-runner-audit-trail" {
@@ -59,11 +77,47 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
             # Relationships
             # <source> -> <destination> "Description" "Protocol/technology"
-            formsAdmin -> usersDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
-            formsAPI -> formsDefinitionsDB "Reads from and writes to" "PostgreSQL Protocol/SSL"
-            formsRunner -> sessionsDB "Reads from and writes to" "Redis"
-            formsRunner -> solidQueue "Writes to"
+            // form_super_admin -> forms_admin "Manages the forms platform"
+
+            form_creator -> forms_admin "Creates, edits, and manages forms"
+            form_creator -> forms_product_page "Learns from"
+            form_creator -> forms_runner "Previews forms"
+
+            form_submitter -> forms_runner "Fills out and submits forms"
+
+            solidqueue -> form_processor "Receives and processes form submissions"
+
+            forms_admin -> forms_admin_db "Reads from and writes to" "PostgreSQL Protocol/SSL"
+            forms_admin -> forms_api "Reads from and writes to" "ActiveResource"
+            forms_runner -> forms_api "Reads from and writes to" "ActiveResource"
+            forms_runner -> sessions_db "Reads from and writes to" "Redis"
+            forms_runner -> solidqueue "Reads from and writes to" "Solidqueue"
+            forms_runner -> forms_runner_db "Reads from and writes to"
+            forms_runner -> auditTrail "Writes to"
+            solidqueue -> forms_runner_db "Reads from and writes to"
+            forms_api -> forms_api_db "Reads from and writes to" "PostgreSQL Protocol/SSL"
+
         }
+
+        pay = softwareSystem "GOV.UK Pay" {
+            tags "External"
+        }
+        notify = softwareSystem "GOV.UK Notify" {
+            tags "External"
+        }
+        auth0 = softwareSystem "Auth0" {
+            tags "External"
+        }
+
+        // form_developer -> forms "Maintains"
+
+
+        forms -> pay "Manages payments"
+        form_submitter -> pay "Makes payments"
+        forms -> notify "Sends confirmation emails"
+        notify -> form_submitter "Receives confirmation email"
+        form_creator -> auth0 "Authenticates"
+
 
         # Deployment Environment represents the context in which containers, deployment nodes, and infrastructure nodes are deployed
         formsEnvironments = deploymentEnvironment "Forms Environments" {
@@ -194,34 +248,34 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                     deploymentNode "ECS Fargate Forms cluster" {
                         tags "Amazon Web Services - Fargate"
 
-                        formsAdmin = deploymentNode "Forms Admin" {
-                            formsAdminContainer = containerInstance forms.formsAdmin
+                        forms_admin = deploymentNode "Forms Admin" {
+                            forms_adminContainer = containerInstance forms.forms_admin
                             tags "Amazon Web Services - Elastic Container Service Container1"
                         }
 
-                        formsAPI = deploymentNode "Forms API" {
-                            formsAPIContainer = containerInstance forms.formsAPI
+                        forms_api = deploymentNode "Forms API" {
+                            forms_apiContainer = containerInstance forms.forms_api
                             tags "Amazon Web Services - Elastic Container Service Container1"
                         }
 
-                        formsProductPage = deploymentNode "Forms Product Page" {
-                            formsProductPageContainer = containerInstance forms.formsProductPage
+                        forms_product_page = deploymentNode "Forms Product Page" {
+                            forms_product_pageContainer = containerInstance forms.forms_product_page
                             tags "Amazon Web Services - Elastic Container Service Container1"
                         }
 
-                        formsRunner = deploymentNode "Forms Runner" {
-                            formsRunnerContainer = containerInstance forms.formsRunner
+                        forms_runner = deploymentNode "Forms Runner" {
+                            forms_runnerContainer = containerInstance forms.forms_runner
                             tags "Amazon Web Services - Elastic Container Service Container1"
                         }
 
-                        alb -> formsAdmin "Forwards requests to" "HTTPS"
-                        alb -> formsAPI "Forwards requests to" "HTTPS"
-                        alb -> formsProductPage "Forwards requests to" "HTTPS"
-                        alb -> formsRunner "Forwards requests to" "HTTPS"
-                        formsAdmin -> cloudWatch.metrics "Reads metrics from"
-                        formsRunner -> fileUploadS3 "Writes to"
-                        formsRunner -> simpleEmailService "Sends" "Completed Form"
-                        formsRunner -> cloudWatch.metrics "Writes metrics to"
+                        alb -> forms_admin "Forwards requests to" "HTTPS"
+                        alb -> forms_api "Forwards requests to" "HTTPS"
+                        alb -> forms_product_page "Forwards requests to" "HTTPS"
+                        alb -> forms_runner "Forwards requests to" "HTTPS"
+                        forms_admin -> cloudWatch.metrics "Reads metrics from"
+                        forms_runner -> fileUploadS3 "Writes to"
+                        forms_runner -> simpleEmailService "Sends" "Completed Form"
+                        forms_runner -> cloudWatch.metrics "Writes metrics to"
                     }
 
                     deploymentNode "RDS" {
@@ -230,18 +284,18 @@ workspace "GOV.UK Forms" "An MVP architecture." {
 
                         deploymentNode "Users DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
-                            usersDB = containerInstance forms.usersDB
+                            forms_admin_db = containerInstance forms.forms_admin_db
                         }
 
                         deploymentNode "Forms Definitions DB" {
                             tags "Amazon Web Services - RDS Postgres instance"
-                            formsDefinitionsDB = containerInstance forms.formsDefinitionsDB
+                            forms_api_db = containerInstance forms.forms_api_db
                         }
                     }
 
                     deploymentNode "Elasticache" {
                         tags "Amazon Web Services - ElastiCache"
-                        sessionsDB = containerInstance forms.sessionsDB
+                        sessions_db = containerInstance forms.sessions_db
                     }
 
                     deploymentNode "Route53" {
@@ -297,7 +351,7 @@ workspace "GOV.UK Forms" "An MVP architecture." {
                         # and better visual metadata
                         deploymentNode "Solid Queue RDS" {
                             tags "Amazon Web Services - RDS"
-                            solidQueue = containerInstance forms.solidQueue
+                            solidqueue = containerInstance forms.solidqueue
                         }
 
                         deploymentNode "Audit Trail RDS" {
