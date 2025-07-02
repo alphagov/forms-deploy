@@ -1,11 +1,11 @@
+# This resource requires a kms key created manually in the "account" root. The "account" root is applied manually (by a human) and it can give the deployer role the correct permissions in the kms key. If we created the kms key here instead, the pipelines would fail until we manually give the correct permissions because the deployer role can't give itself access to the kms key.
 resource "aws_secretsmanager_secret" "internal" {
   #checkov:skip=CKV2_AWS_57: we're not ready to enable automatic rotation
   for_each = toset(var.internal_secrets)
 
   name        = "/internal/${var.environment_name}/${var.all_internal_secrets[each.value].name}"
   description = var.all_internal_secrets[each.value].description
-  kms_key_id  = aws_kms_key.internal.id
-  depends_on  = [aws_kms_key.internal]
+  kms_key_id  = data.terraform_remote_state.account.outputs.internal_kms_key_id
 }
 
 ephemeral "random_password" "generated_by_us" {
