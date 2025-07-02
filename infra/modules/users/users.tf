@@ -43,14 +43,6 @@ locals {
       user_research = "admin"
       integration   = "readonly"
     },
-    "jamie.wilkinson1" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
-      development   = "admin"
-      user_research = "admin"
-      integration   = "readonly"
-    },
     "kelvin.gan" = {
       deploy        = "admin" # Feature Team Tech lead
       staging       = "admin" # Feature Team Tech lead
