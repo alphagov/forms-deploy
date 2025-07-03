@@ -1,7 +1,3 @@
-module "users" {
-  source = "../../../modules/users"
-}
-
 data "aws_caller_identity" "current" {}
 
 resource "aws_kms_key" "internal" {
@@ -44,19 +40,10 @@ data "aws_iam_policy_document" "kms_management" {
       ))
     }
     actions = [
-      "kms:Create*",
-      "kms:Describe*",
-      "kms:Enable*",
+      "kms:DescribeKey",
+      "kms:Decrypt",
       "kms:Encrypt",
-      "kms:List*",
-      "kms:Put*",
-      "kms:Update*",
-      "kms:Revoke*",
-      "kms:Disable*",
-      "kms:Get*",
-      "kms:Delete*",
-      "kms:ScheduleKeyDeletion",
-      "kms:CancelKeyDeletion"
+      "kms:GenerateDataKey"
     ]
     resources = ["*"]
   }
