@@ -113,12 +113,12 @@ resource "aws_cloudfront_distribution" "main" {
 
   custom_error_response {
     error_code         = 504
-    response_page_path = "/cloudfront/error_page.html"
+    response_page_path = "/cloudfront/error.html"
     response_code      = 200
   }
 
   ordered_cache_behavior {
-    path_pattern             = "/cloudfront/error_page.html"
+    path_pattern             = "/cloudfront/*"
     allowed_methods          = ["GET", "HEAD", "OPTIONS"]
     cached_methods           = ["GET", "HEAD"]
     target_origin_id         = "error_page"
