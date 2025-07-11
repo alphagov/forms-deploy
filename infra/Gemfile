@@ -5,4 +5,4 @@ source "https://rubygems.org"
 gem "rspec", "~> 3.13"
 gem "rubocop-govuk", "~> 5.1"
 
-gem "json-schema", "~> 5.1"
+gem "json-schema", "~> 5.2"
