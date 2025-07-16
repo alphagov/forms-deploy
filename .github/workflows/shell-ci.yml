@@ -24,11 +24,6 @@ jobs:
 
       - name: Lint shell scripts in GitHub actions
         run: |
-          if yq --version | grep "4.45.4" ; then
-            echo "Skipping because version 4.45.4 is buggy and makes these tests fails erroneously";
-            exit 0;
-          fi
-          
           # This is not the usual/best way to get the script directory.
           # We need to do this here because GitHub Actions writes the
           # content of script blocks like these to a temp directory,
@@ -52,11 +47,4 @@ jobs:
 
       - name: Lint shell scripts in CodeBuild build specs
         run: |
-          ./support/shellcheck_codebuild.sh          
-
-      - name: Alert us when it's time to remove the YQ version check
-        run: |
-          if ! yq --version | grep "4.45.4" ; then
-            echo "Version 4.45.4 is no longer the default yq version. We should remove our check"
-            exit 1
-          fi
+          ./support/shellcheck_codebuild.sh
