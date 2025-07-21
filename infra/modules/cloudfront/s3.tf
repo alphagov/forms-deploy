@@ -3,9 +3,26 @@ module "error_page_bucket" {
   name   = "govuk-forms-${var.env_name}-error-page"
 }
 
+locals {
+  content_type_map = {
+    "js"    = "application/json"
+    "html"  = "text/html"
+    "css"   = "text/css"
+    "png"   = "image/png"
+    "jpg"   = "image/jpeg"
+    "svg"   = "image/svg+xml"
+    "woff"  = "font/woff"
+    "woff2" = "font/woff2"
+    "ico"   = "image/x-icon"
+  }
+}
+
 resource "aws_s3_object" "error_page_html" {
+  for_each = fileset("${path.module}/html/", "**")
+
   bucket       = module.error_page_bucket.name
-  key          = "/cloudfront/error_page.html"
-  source       = "${path.module}/html/error_page.html"
-  content_type = "text/html"
+  key          = "/cloudfront/${each.value}"
+  source       = "${path.module}/html/${each.value}"
+  content_type = lookup(local.content_type_map, reverse(split(".", each.value))[0], "binary/octet-stream")
+  etag         = filemd5("${path.module}/html/${each.value}")
 }
