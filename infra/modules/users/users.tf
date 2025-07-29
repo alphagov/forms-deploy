@@ -107,5 +107,13 @@ locals {
       user_research = "admin"
       integration   = "readonly"
     },
+    "tom.whitwell" = {
+      deploy        = "support"
+      staging       = "support"
+      production    = "support"
+      development   = "admin"
+      user_research = "support"
+      integration   = "readonly"
+    },
   }
 }
