@@ -126,4 +126,4 @@ DEPENDENCIES
   rubocop-govuk (~> 5.1)
 
 BUNDLED WITH
-   2.5.3
+   2.7.1
