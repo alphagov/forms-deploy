@@ -31,6 +31,131 @@ resource "aws_wafv2_ip_set" "ips_to_block" {
   addresses = var.ips_to_block
 }
 
+resource "aws_wafv2_rule_group" "file_size_limits" {
+  provider = aws.us-east-1
+
+  name        = "${var.environment_name}-file-size-limits"
+  description = "Rule group for file size restrictions"
+  scope       = "CLOUDFRONT"
+  capacity    = 100 # back of napkin estimate (I think it's actually 52, but 100 allows for my inabililty to add properly)
+
+  rule {
+    # Allow file uploads when filling out a form
+    name     = "allow_file_uploads"
+    priority = 1
+
+    action {
+      allow {}
+      # Stop processing
+    }
+
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            field_to_match {
+              single_header {
+                name = "content-type"
+              }
+            }
+            positional_constraint = "STARTS_WITH"
+            search_string         = "multipart/form-data"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          regex_match_statement {
+            field_to_match {
+              uri_path {}
+            }
+            regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+/\\d+$"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          size_constraint_statement {
+            field_to_match {
+              body {}
+            }
+            comparison_operator = "LE"
+            size                = var.file_upload_max_size
+            text_transformation {
+              priority = 1
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "FileUploads"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    # Allow large POSTs when uploading multiple options in bulk (form creation)
+    name     = "allow_bulk_options_uploads"
+    priority = 2
+
+    action {
+      allow {}
+      # Stop processing
+    }
+
+    statement {
+      and_statement {
+        statement {
+          regex_match_statement {
+            field_to_match {
+              uri_path {}
+            }
+            regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/selection/bulk-options$"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          size_constraint_statement {
+            field_to_match {
+              body {}
+            }
+            comparison_operator = "LE"
+            size                = var.bulk_options_max_size
+            text_transformation {
+              priority = 1
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BulkOptionsUploads"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "FileSizeLimitsRuleGroup"
+    sampled_requests_enabled   = false
+  }
+}
+
 resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -76,8 +201,29 @@ resource "aws_wafv2_web_acl" "this" {
   }
 
   rule {
-    name     = "AWSManagedRulesCommonRuleSet"
+    name     = "FileSizeLimitsRuleGroup"
     priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.file_size_limits.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "FileSizeLimitsRuleGroup"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 3
 
     override_action {
       none {}
@@ -91,7 +237,7 @@ resource "aws_wafv2_web_acl" "this" {
         rule_action_override {
           name = "SizeRestrictions_BODY"
           action_to_use {
-            allow {}
+            count {} # Switch to count action, to check for false positives after applying new bypass rules
           }
         }
       }
@@ -106,7 +252,7 @@ resource "aws_wafv2_web_acl" "this" {
 
   rule {
     name     = "AWS-AWSManagedRulesAmazonIpReputationList"
-    priority = 3
+    priority = 4
 
     override_action {
       none {}
