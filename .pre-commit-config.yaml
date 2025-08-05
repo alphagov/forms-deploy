@@ -1,14 +1,34 @@
 repos:
-- repo: local
-  hooks:
-    - id: terraform-fmt
-      name: ===> Making sure new terraform code is in a canonical format
-      entry: pre-commit-tf-fmt.sh
-      language: script
-      files: \.tf$ 
-- repo: https://github.com/bridgecrewio/checkov.git
-  rev: '2.2.230'
-  hooks:
-  - id: checkov
-    verbose: true
-    args: [--quiet, --compact, --framework, terraform]
+  - repo: local
+    hooks:
+      - id: terraform-fmt
+        name: ===> Making sure new terraform code is in a canonical format
+        entry: pre-commit-tf-fmt.sh
+        language: script
+        files: \.tf$
+      - id: tflint
+        name: Run tflint (terraform linter)
+        require_serial: true
+        types_or:
+          - hcl
+          - terraform
+        language: golang
+        additional_dependencies:
+          - github.com/terraform-linters/tflint@v0.52.0
+        entry: ./pre-commit-tflint.sh
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: "3.2.386"
+    hooks:
+      - id: checkov
+        verbose: true
+        args:
+          [
+            -d,
+            infra/,
+            --external-checks-dir,
+            infra/checkov/,
+            --framework,
+            terraform,
+            --quiet,
+            --skip-download,
+          ]
