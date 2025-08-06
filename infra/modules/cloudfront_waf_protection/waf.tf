@@ -31,18 +31,66 @@ resource "aws_wafv2_ip_set" "ips_to_block" {
   addresses = var.ips_to_block
 }
 
-resource "aws_wafv2_rule_group" "file_size_limits" {
+resource "aws_wafv2_rule_group" "request_body_size_limits" {
   provider = aws.us-east-1
 
-  name        = "${var.environment_name}-file-size-limits"
-  description = "Rule group for file size restrictions"
+  name        = "${var.environment_name}-request-body-size-limits"
+  description = "Rule group for request body size restrictions"
   scope       = "CLOUDFRONT"
-  capacity    = 100 # back of napkin estimate (I think it's actually 52, but 100 allows for my inabililty to add properly)
+  capacity    = 100
+
+  rule {
+    # Allow large POSTs when uploading multiple options in bulk (form creation)
+    name     = "allow_bulk_options_uploads"
+    priority = 1
+
+    action {
+      allow {}
+      # Stop processing
+    }
+
+    statement {
+      and_statement {
+        statement {
+          regex_match_statement {
+            field_to_match {
+              uri_path {}
+            }
+            regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/selection/bulk-options$"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          size_constraint_statement {
+            field_to_match {
+              body {}
+            }
+            comparison_operator = "LE"
+            size                = var.bulk_options_max_size
+            text_transformation {
+              priority = 1
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BulkOptionsUploads"
+      sampled_requests_enabled   = false
+    }
+  }
 
   rule {
     # Allow file uploads when filling out a form
     name     = "allow_file_uploads"
-    priority = 1
+    priority = 2
 
     action {
       allow {}
@@ -102,9 +150,9 @@ resource "aws_wafv2_rule_group" "file_size_limits" {
   }
 
   rule {
-    # Allow large POSTs when uploading multiple options in bulk (form creation)
-    name     = "allow_bulk_options_uploads"
-    priority = 2
+    # Enforce maximum size for base form post bodies
+    name     = "base_form_post_body_size_limit"
+    priority = 3
 
     action {
       allow {}
@@ -118,21 +166,20 @@ resource "aws_wafv2_rule_group" "file_size_limits" {
             field_to_match {
               uri_path {}
             }
-            regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/selection/bulk-options$"
+            regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+/\\d+$"
             text_transformation {
               priority = 1
               type     = "LOWERCASE"
             }
           }
         }
-
         statement {
           size_constraint_statement {
             field_to_match {
               body {}
             }
             comparison_operator = "LE"
-            size                = var.bulk_options_max_size
+            size                = var.base_form_post_body_max_size
             text_transformation {
               priority = 1
               type     = "NONE"
@@ -144,10 +191,12 @@ resource "aws_wafv2_rule_group" "file_size_limits" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "BulkOptionsUploads"
+      metric_name                = "FormFieldResponse"
       sampled_requests_enabled   = false
     }
   }
+
+
 
   visibility_config {
     cloudwatch_metrics_enabled = true
@@ -201,7 +250,7 @@ resource "aws_wafv2_web_acl" "this" {
   }
 
   rule {
-    name     = "FileSizeLimitsRuleGroup"
+    name     = "RequestBodySizeLimitsRuleGroup"
     priority = 2
 
     override_action {
@@ -210,13 +259,13 @@ resource "aws_wafv2_web_acl" "this" {
 
     statement {
       rule_group_reference_statement {
-        arn = aws_wafv2_rule_group.file_size_limits.arn
+        arn = aws_wafv2_rule_group.request_body_size_limits.arn
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "FileSizeLimitsRuleGroup"
+      metric_name                = "RequestBodySizeLimitsRuleGroup"
       sampled_requests_enabled   = false
     }
   }
