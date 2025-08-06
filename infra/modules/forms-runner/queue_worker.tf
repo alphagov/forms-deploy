@@ -168,10 +168,8 @@ data "aws_iam_policy_document" "queue_worker_ecs_task_exec_additional_policy" {
       "ssm:GetParameters"
     ]
     resources = [
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/secret-key-base",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/database/url",
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-${var.env_name}/database/url"
+      for parameter in local.queue_worker_container_definitions.secrets : parameter.valueFrom
+      if startswith(parameter.valueFrom, "arn:aws:ssm:")
     ]
     effect = "Allow"
   }
