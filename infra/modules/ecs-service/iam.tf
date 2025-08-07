@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "ecs_task_role" {
   name               = "${var.env_name}-${var.application}-ecs-task"
   description        = "Used by ${var.application} tasks when running"
@@ -101,5 +103,65 @@ data "aws_iam_policy_document" "ecs_task_exec_additional_policies" {
       if startswith(secret.valueFrom, "arn:aws:ssm")
     ]
     effect = "Allow"
+  }
+
+  # Permissions for Secrets Manager secrets in the same account (internal secrets)
+  statement {
+    actions = [
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:DescribeSecret"
+    ]
+    resources = [
+      for secret in flatten(var.secrets) : secret.valueFrom
+      if startswith(secret.valueFrom, "arn:aws:secretsmanager") && contains(split(":", secret.valueFrom), data.aws_caller_identity.current.account_id)
+    ]
+    effect = "Allow"
+  }
+
+  # Permissions for KMS keys used by internal Secrets Manager secrets
+  dynamic "statement" {
+    for_each = length([
+      for secret in flatten(var.secrets) : secret.valueFrom
+      if startswith(secret.valueFrom, "arn:aws:secretsmanager") && contains(split(":", secret.valueFrom), data.aws_caller_identity.current.account_id)
+    ]) > 0 ? [1] : []
+
+    content {
+      actions = [
+        "kms:DescribeKey",
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:GenerateDataKey"
+      ]
+      resources = [
+        "arn:aws:kms:eu-west-2:${data.aws_caller_identity.current.account_id}:alias/internal"
+      ]
+      effect = "Allow"
+    }
+  }
+
+  # Permissions for KMS keys used by external Secrets Manager secrets in the deploy account
+  dynamic "statement" {
+    for_each = length([
+      for secret in flatten(var.secrets) : secret.valueFrom
+      if startswith(secret.valueFrom, "arn:aws:secretsmanager") && !contains(split(":", secret.valueFrom), data.aws_caller_identity.current.account_id)
+    ]) > 0 ? [1] : []
+
+    content {
+      actions = [
+        "kms:DescribeKey",
+        "kms:Decrypt"
+      ]
+      resources = [
+        # KMS keys for external secrets are in the deploy account
+        # We need to allow access to both environment-type and global KMS keys
+        "arn:aws:kms:eu-west-2:*:key/*"
+      ]
+      effect = "Allow"
+      condition {
+        test     = "StringLike"
+        variable = "kms:ViaService"
+        values   = ["secretsmanager.eu-west-2.amazonaws.com"]
+      }
+    }
   }
 }

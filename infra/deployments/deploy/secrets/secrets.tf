@@ -49,3 +49,62 @@ resource "aws_secretsmanager_secret_version" "external_global" {
   secret_string_wo         = each.value.generate_random_value ? ephemeral.random_password.generated_by_us.result : "dummy-value"
   secret_string_wo_version = 1
 }
+
+# Cross-account resource policies for external secrets in environment types
+# Allow ECS task execution roles from environment accounts to read secrets for their environment type
+resource "aws_secretsmanager_secret_policy" "external_environment_type_cross_account" {
+  for_each = {
+    for secret in local.secrets_in_environment_type : secret.name => secret
+    if contains(keys(local.environment_type_to_account_id), secret.environment_type)
+  }
+
+  secret_arn = aws_secretsmanager_secret.external_environment_type[each.value.name].arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowECSTaskExecutionRoleAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            # Allow all ECS task execution roles in the environment account for this environment type
+            "arn:aws:iam::${local.environment_type_to_account_id[each.value.environment_type]}:role/*-ecs-task-execution"
+          ]
+        }
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Cross-account resource policies for external global secrets
+# Allow ECS task execution roles from all environment accounts to read global secrets
+resource "aws_secretsmanager_secret_policy" "external_global_cross_account" {
+  for_each = var.external_global_secrets
+
+  secret_arn = aws_secretsmanager_secret.external_global[each.key].arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowECSTaskExecutionRoleAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            for account_id in values(local.environment_type_to_account_id) :
+            "arn:aws:iam::${account_id}:role/*-ecs-task-execution"
+          ]
+        }
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
