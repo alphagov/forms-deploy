@@ -5,104 +5,104 @@ secrets_in_environment_type = {
   development = [
     "account_contact_email",
     "account_contact_phone_number",
-    "account_emergency_email",
-    "account_emergency_phone_number",
-    "auth0_e2e_tests_machine_user_client_id",
-    "auth0_e2e_tests_machine_user_client_secret",
-    "auth0_e2e_tests_machine_user_password",
-    "auth0_e2e_tests_machine_user_username",
-    "auth0_forms_admin_client_id",
-    "auth0_forms_admin_client_secret",
-    "auth0_forms_admin_domain",
-    "auth0_splunk_hec_token",
-    "auth0_terraform_client_id",
-    "auth0_terraform_client_secret",
-    "gds_sso_oauth_client_id",
-    "gds_sso_oauth_client_secret",
-    "google_oauth_client_id",
-    "google_oauth_client_secret",
-    "mailchimp_api_key",
-    "notify_e2e_tests_api_key",
-    "notify_forms_admin_api_key",
-    "notify_forms_runner_api_key",
-    "zendesk_api_user",
-    "zendesk_api_key",
+    # "account_emergency_email",
+    # "account_emergency_phone_number",
+    # "auth0_e2e_tests_machine_user_client_id",
+    # "auth0_e2e_tests_machine_user_client_secret",
+    # "auth0_e2e_tests_machine_user_password",
+    # "auth0_e2e_tests_machine_user_username",
+    # "auth0_forms_admin_client_id",
+    # "auth0_forms_admin_client_secret",
+    # "auth0_forms_admin_domain",
+    # "auth0_splunk_hec_token",
+    # "auth0_terraform_client_id",
+    # "auth0_terraform_client_secret",
+    # "gds_sso_oauth_client_id",
+    # "gds_sso_oauth_client_secret",
+    # "google_oauth_client_id",
+    # "google_oauth_client_secret",
+    # "mailchimp_api_key",
+    # "notify_e2e_tests_api_key",
+    # "notify_forms_admin_api_key",
+    # "notify_forms_runner_api_key",
+    # "zendesk_api_user",
+    # "zendesk_api_key",
   ]
 
   staging = [
-    "account_contact_email",
-    "account_contact_phone_number",
-    "account_emergency_email",
-    "account_emergency_phone_number",
-    "auth0_e2e_tests_machine_user_client_id",
-    "auth0_e2e_tests_machine_user_client_secret",
-    "auth0_e2e_tests_machine_user_password",
-    "auth0_e2e_tests_machine_user_username",
-    "auth0_forms_admin_client_id",
-    "auth0_forms_admin_client_secret",
-    "auth0_forms_admin_domain",
-    "auth0_splunk_hec_token",
-    "auth0_terraform_client_id",
-    "auth0_terraform_client_secret",
-    "gds_sso_oauth_client_id",
-    "gds_sso_oauth_client_secret",
-    "google_oauth_client_id",
-    "google_oauth_client_secret",
-    "mailchimp_api_key",
-    "notify_e2e_tests_api_key",
-    "notify_forms_admin_api_key",
-    "notify_forms_runner_api_key",
-    "zendesk_api_user",
-    "zendesk_api_key",
+    # "account_contact_email",
+    # "account_contact_phone_number",
+    # "account_emergency_email",
+    # "account_emergency_phone_number",
+    # "auth0_e2e_tests_machine_user_client_id",
+    # "auth0_e2e_tests_machine_user_client_secret",
+    # "auth0_e2e_tests_machine_user_password",
+    # "auth0_e2e_tests_machine_user_username",
+    # "auth0_forms_admin_client_id",
+    # "auth0_forms_admin_client_secret",
+    # "auth0_forms_admin_domain",
+    # "auth0_splunk_hec_token",
+    # "auth0_terraform_client_id",
+    # "auth0_terraform_client_secret",
+    # "gds_sso_oauth_client_id",
+    # "gds_sso_oauth_client_secret",
+    # "google_oauth_client_id",
+    # "google_oauth_client_secret",
+    # "mailchimp_api_key",
+    # "notify_e2e_tests_api_key",
+    # "notify_forms_admin_api_key",
+    # "notify_forms_runner_api_key",
+    # "zendesk_api_user",
+    # "zendesk_api_key",
   ]
 
   production = [
-    "account_contact_email",
-    "account_contact_phone_number",
-    "account_emergency_email",
-    "account_emergency_phone_number",
-    "auth0_e2e_tests_machine_user_client_id",
-    "auth0_e2e_tests_machine_user_client_secret",
-    "auth0_e2e_tests_machine_user_password",
-    "auth0_e2e_tests_machine_user_username",
-    "auth0_forms_admin_client_id",
-    "auth0_forms_admin_client_secret",
-    "auth0_forms_admin_domain",
-    "auth0_splunk_hec_token",
-    "auth0_terraform_client_id",
-    "auth0_terraform_client_secret",
-    "gds_sso_oauth_client_id",
-    "gds_sso_oauth_client_secret",
-    "google_oauth_client_id",
-    "google_oauth_client_secret",
-    "mailchimp_api_key",
-    "notify_e2e_tests_api_key",
-    "notify_forms_admin_api_key",
-    "notify_forms_runner_api_key",
-    "zendesk_api_user",
-    "zendesk_api_key",
+    # "account_contact_email",
+    # "account_contact_phone_number",
+    # "account_emergency_email",
+    # "account_emergency_phone_number",
+    # "auth0_e2e_tests_machine_user_client_id",
+    # "auth0_e2e_tests_machine_user_client_secret",
+    # "auth0_e2e_tests_machine_user_password",
+    # "auth0_e2e_tests_machine_user_username",
+    # "auth0_forms_admin_client_id",
+    # "auth0_forms_admin_client_secret",
+    # "auth0_forms_admin_domain",
+    # "auth0_splunk_hec_token",
+    # "auth0_terraform_client_id",
+    # "auth0_terraform_client_secret",
+    # "gds_sso_oauth_client_id",
+    # "gds_sso_oauth_client_secret",
+    # "google_oauth_client_id",
+    # "google_oauth_client_secret",
+    # "mailchimp_api_key",
+    # "notify_e2e_tests_api_key",
+    # "notify_forms_admin_api_key",
+    # "notify_forms_runner_api_key",
+    # "zendesk_api_user",
+    # "zendesk_api_key",
   ]
 
   user-research = [
-    "account_contact_email",
-    "account_contact_phone_number",
-    "account_emergency_email",
-    "account_emergency_phone_number",
-    "auth0_forms_admin_client_id",
-    "auth0_forms_admin_client_secret",
-    "auth0_forms_admin_domain",
-    "auth0_terraform_client_id",
-    "auth0_terraform_client_secret",
-    "basic_auth_password",
-    "basic_auth_username",
-    "cddo_sso_oauth_client_id",
-    "cddo_sso_oauth_client_secret",
-    "mailchimp_api_key",
-    "notify_e2e_tests_api_key",
-    "notify_forms_admin_api_key",
-    "notify_forms_runner_api_key",
-    "zendesk_api_user",
-    "zendesk_api_key",
+    # "account_contact_email",
+    # "account_contact_phone_number",
+    # "account_emergency_email",
+    # "account_emergency_phone_number",
+    # "auth0_forms_admin_client_id",
+    # "auth0_forms_admin_client_secret",
+    # "auth0_forms_admin_domain",
+    # "auth0_terraform_client_id",
+    # "auth0_terraform_client_secret",
+    # "basic_auth_password",
+    # "basic_auth_username",
+    # "cddo_sso_oauth_client_id",
+    # "cddo_sso_oauth_client_secret",
+    # "mailchimp_api_key",
+    # "notify_e2e_test_api_key",
+    # "notify_forms_admin_api_key",
+    # "notify_forms_runner_api_key",
+    # "zendesk_api_user",
+    # "zendesk_api_key",
   ]
 
   deploy = [
@@ -111,9 +111,9 @@ secrets_in_environment_type = {
   ]
 
   review = [
-    "account_contact_email",
-    "account_contact_phone_number",
-    "traefik_basic_auth_credentials",
+    # "account_contact_email",
+    # "account_contact_phone_number",
+    # "traefik_basic_auth_credentials",
   ]
 
   ithc = [
@@ -274,43 +274,43 @@ external_global_secrets = {
     description = "The password for the Docker registry"
   }
 
-  dockerhub_username = {
-    name        = "dockerhub/username"
-    description = "The password for the Docker registry"
-  }
+  # dockerhub_username = {
+  #   name        = "dockerhub/username"
+  #   description = "The password for the Docker registry"
+  # }
 
-  pagerduty_integration_url = {
-    name        = "pagerduty/integration-url"
-    description = "URL containing the PagerDuty Integration Key to allow Amazon CloudWatch integration"
-  }
+  # pagerduty_integration_url = {
+  #   name        = "pagerduty/integration-url"
+  #   description = "URL containing the PagerDuty Integration Key to allow Amazon CloudWatch integration"
+  # }
 
-  sentry_dsn_forms_admin = {
-    name        = "sentry/dsn/forms-admin"
-    description = "Sentry DSN (Data Name Source) to send events from forms-admin to the Sentry project"
-  }
+  # sentry_dsn_forms_admin = {
+  #   name        = "sentry/dsn/forms-admin"
+  #   description = "Sentry DSN (Data Name Source) to send events from forms-admin to the Sentry project"
+  # }
 
-  sentry_dsn_forms_api = {
-    name        = "sentry/dsn/forms-api"
-    description = "Sentry DSN (Data Name Source) to send events from forms-forms-api to the Sentry project"
-  }
+  # sentry_dsn_forms_api = {
+  #   name        = "sentry/dsn/forms-api"
+  #   description = "Sentry DSN (Data Name Source) to send events from forms-forms-api to the Sentry project"
+  # }
 
-  sentry_dsn_forms_product_page = {
-    name        = "sentry/dsn/forms-product-page"
-    description = "Sentry DSN (Data Name Source) to send events from forms-product-page to the Sentry project"
-  }
+  # sentry_dsn_forms_product_page = {
+  #   name        = "sentry/dsn/forms-product-page"
+  #   description = "Sentry DSN (Data Name Source) to send events from forms-product-page to the Sentry project"
+  # }
 
-  sentry_dsn_forms_runner = {
-    name        = "sentry/dsn/forms-runner"
-    description = "Sentry DSN (Data Name Source) to send events from forms-runner to the Sentry project"
-  }
+  # sentry_dsn_forms_runner = {
+  #   name        = "sentry/dsn/forms-runner"
+  #   description = "Sentry DSN (Data Name Source) to send events from forms-runner to the Sentry project"
+  # }
 
-  sentry_dsn_forms_runner_queue_worker = {
-    name        = "sentry/dsn/forms-runner-queue-worker"
-    description = "Sentry DSN (Data Name Source) to send events from forms-runner-queue-worker to the Sentry project"
-  }
+  # sentry_dsn_forms_runner_queue_worker = {
+  #   name        = "sentry/dsn/forms-runner-queue-worker"
+  #   description = "Sentry DSN (Data Name Source) to send events from forms-runner-queue-worker to the Sentry project"
+  # }
 
-  zendesk_inbound_email = {
-    name        = "zendesk/inbound-email"
-    description = "Support email for GOV.UK Forms Zendesk"
-  }
+  # zendesk_inbound_email = {
+  #   name        = "zendesk/inbound-email"
+  #   description = "Support email for GOV.UK Forms Zendesk"
+  # }
 }
