@@ -44,7 +44,7 @@ GEM
     jmespath (1.6.2)
     json (2.13.2)
     language_server-protocol (3.17.0.5)
-    libxml-ruby (5.0.4)
+    libxml-ruby (5.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
     minitest (5.25.5)
@@ -149,7 +149,7 @@ DEPENDENCIES
   activesupport-duration-human_string (~> 1.0)
   aws-sdk-codepipeline (~> 1.104)
   concurrent-ruby
-  libxml-ruby (~> 5.0.4)
+  libxml-ruby (~> 5.0.5)
   puma (~> 6.6)
   rackup (~> 2.2)
   rspec (~> 3.13)
