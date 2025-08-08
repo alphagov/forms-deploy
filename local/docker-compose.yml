@@ -5,6 +5,7 @@ services:
       - /tmp
     build:
       args:
+        - BUNDLE_WITHOUT=test
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-admin
@@ -52,6 +53,8 @@ services:
     build:
       context: ../../forms-api
       target: build
+      args:
+        - BUNDLE_WITHOUT=test
     command: >
       sh -c "
         bundle install &&
@@ -79,6 +82,7 @@ services:
       - /tmp
     build:
       args:
+        - BUNDLE_WITHOUT=test
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-product-page
@@ -111,6 +115,7 @@ services:
       - /tmp
     build:
       args:
+        - BUNDLE_WITHOUT=test
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-runner
