@@ -99,6 +99,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "wafv2:ListTagsForResource",
       "wafv2:TagResource",
       "wafv2:UntagResource",
+      "wafv2:*RuleGroup",
     ]
     # TODO: The scope of this should be cloudfront but for some reason it needs global
     resources = [
@@ -106,6 +107,7 @@ data "aws_iam_policy_document" "cloudfront" {
       "arn:aws:wafv2:eu-west-2:${var.account_id}:regional/webacl/alb_${var.environment_name}/*",
       "arn:aws:wafv2:us-east-1:${var.account_id}:global/ipset/${var.environment_name}-*",
       "arn:aws:wafv2:eu-west-2:${var.account_id}:regional/ipset/${var.environment_name}-*",
+      "arn:aws:wafv2:us-east-1:${var.account_id}:global/rulegroup/${var.environment_name}-*/*",
 
       # This ARN pattern is owned by AWS, but we make a change to it when we override part of the rule
       "arn:aws:wafv2:us-east-1:153427709519:global/rulegroup/ShieldMitigationRuleGroup_*"

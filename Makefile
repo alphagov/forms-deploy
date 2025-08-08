@@ -131,6 +131,19 @@ forms_apply_all: target_environment_set not_ci aws_credentials_available
 	@./infra/scripts/apply-forms-roots-in-order.sh
 
 ##
+# Pipeline targets
+##
+
+.PHONY: trigger_terraform_pipeline
+trigger_terraform_pipeline: target_environment_set
+	$(if ${SHA},,$(error Must set SHA with SHA="sha" at the end of this target))
+	@aws codepipeline start-pipeline-execution \
+		--name "apply-forms-terraform-$(TARGET_ENVIRONMENT)" \
+		--source-revisions actionName=get-forms-deploy,revisionType=COMMIT_ID,revisionValue="${SHA}" \
+		--query "pipelineExecutionId" --output text
+
+
+##
 # Utility targets
 ##
 .PHONY: generate-completion-word-list
@@ -196,6 +209,11 @@ tflint_integration:
 			--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
 			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"; \
 	done;
+
+.PHONY: current_sha
+current_sha:
+	$(eval export SHA=$(shell git rev-parse HEAD))
+	@true
 
 ##
 # Help text
@@ -287,7 +305,7 @@ TASKS
 			Checkov is evaluating how we configure things in AWS.
 
 	tflint		Run TFLint (a Terraform linter) against all Terraform code.
-			TFLint is evaluating the quality of our Terraform code.	
+			TFLint is evaluating the quality of our Terraform code.
 endef
 export help_tasks
 
