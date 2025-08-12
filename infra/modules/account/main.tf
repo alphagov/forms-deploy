@@ -1,11 +1,5 @@
-resource "aws_account_alternate_contact" "security" {
-  alternate_contact_type = "SECURITY"
-  name                   = "GOV.UK Forms Infrastructure Team"
-  title                  = "Infra Team"
-  email_address          = data.aws_ssm_parameter.contact_email.value
-  phone_number           = data.aws_ssm_parameter.contact_phone_number.value
-}
-
+# The Security alternate contact for all our accounts is set by the Engineering Enablement team
+# https://github.com/alphagov/gds-aws-organisation-accounts/blob/a82a7eb3604cd192261434dee4ad9f8bae8db25f/terraform/modules/org-account/main.tf#L46-L52
 resource "aws_account_alternate_contact" "operations" {
   alternate_contact_type = "OPERATIONS"
   name                   = "GOV.UK Forms Infrastructure Team"
