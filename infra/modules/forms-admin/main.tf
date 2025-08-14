@@ -175,6 +175,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__REPEATABLE_PAGE_ENABLED",
       value = var.repeatable_page_enabled
+    },
+    {
+      name  = "SETTINGS__USE_DATABASE_AS_TRUTH",
+      value = var.use_database_as_truth
     }
   ]
 

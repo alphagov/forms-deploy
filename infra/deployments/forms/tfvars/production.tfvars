@@ -124,6 +124,7 @@ forms_admin_settings = {
   govuk_app_domain           = "publishing.service.gov.uk"
   synchronize_to_mailchimp   = true
   repeatable_page_enabled    = true
+  use_database_as_truth      = false
 }
 forms_api_settings = {
   cpu          = 512

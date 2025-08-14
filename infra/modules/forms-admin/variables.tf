@@ -150,3 +150,9 @@ variable "alb_listener_arn" {
   type        = string
   description = "The ARN of the load balancer listener to which forms-admin will be attached"
 }
+
+variable "use_database_as_truth" {
+  type        = bool
+  description = "Enables using Forms Admin database as the source of truth"
+  default     = false
+}
