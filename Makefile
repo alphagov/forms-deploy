@@ -188,7 +188,8 @@ generate-completion-word-list:
 
 .PHONY: fmt
 fmt:
-	terraform fmt -recursive infra/
+	$(if ${CHANGED_FILES}, $(eval CHANGED_FILES_ARGS := $(foreach f,$(CHANGED_FILES),$(f))),$(eval CHANGED_FILES_ARGS := --recursive infra/))
+	terraform fmt $(CHANGED_FILES_ARGS)
 
 .PHONY: lint
 lint: checkov tflint spec lint_ruby

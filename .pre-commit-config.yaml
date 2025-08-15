@@ -2,10 +2,13 @@ repos:
   - repo: local
     hooks:
       - id: terraform-fmt
-        name: ===> Making sure new terraform code is in a canonical format
-        entry: pre-commit-tf-fmt.sh
-        language: script
-        files: \.tf$
+        name: terraform fmt
+        entry: ./pre-commit-tf-fmt.sh
+        language: system
+        files: ^infra/
+        pass_filenames: true
+        types_or:
+          - terraform
       - id: tflint
         name: Run tflint (terraform linter)
         require_serial: true
