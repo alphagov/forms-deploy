@@ -104,6 +104,14 @@ additional_dns_records = [
     type    = "TXT"
     ttl     = 86400
     records = ["v=TLSRPTv1;rua=mailto:tls-rua@mailcheck.service.ncsc.gov.uk"]
+  },
+
+  # CNAME record for Statuspage custom domain
+  {
+    name    = "status"
+    type    = "CNAME"
+    ttl     = 300 # TODO: Change to 86400 once confirmed the domain is working
+    records = ["pk3kdktj7wwp.stspg-customer.com"]
   }
 ]
 codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
