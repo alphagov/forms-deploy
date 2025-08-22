@@ -6,7 +6,7 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gem "activesupport", "~> 8.0"
 gem "activesupport-duration-human_string", "~> 1.0"
-gem "aws-sdk-codepipeline", "~> 1.104"
+gem "aws-sdk-codepipeline", "~> 1.105"
 gem "concurrent-ruby", require: "concurrent"
 gem "puma", "~> 6.6"
 gem "rackup", "~> 2.2"
