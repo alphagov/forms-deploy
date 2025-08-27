@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "aws-sdk-codepipeline", "~> 1.102"
-gem "aws-sdk-sns", "~> 1.104"
+gem "aws-sdk-sns", "~> 1.105"
 
 group :development, :test do
   gem "rspec", "~> 3.13"
