@@ -19,10 +19,12 @@ class Bastion
     @ecs = Aws::ECS::Client.new
   end
 
-  def setup
+  def setup(container_image: nil)
+    container_image ||= DEFAULT_CONTAINER_IMAGE
+
     puts "Using terraform to setup configuration for bastion host..."
     terraform_init "-reconfigure"
-    terraform_apply
+    terraform_apply(container_image:)
   end
 
   def teardown
@@ -75,10 +77,6 @@ class Bastion
     @databases ||= DATABASES
   end
 
-  def container_image
-    @container_image ||= DEFAULT_CONTAINER_IMAGE
-  end
-
   def task_configuration
     @task_configuration ||= get_task_configuration
   end
@@ -109,10 +107,10 @@ private
     terraform "init", *args
   end
 
-  def terraform_apply
+  def terraform_apply(container_image:)
     var_flags = [
       "-var=environment=#{environment}", "-var=account_id=#{account_id}",
-      "-var=databases=#{databases}", "-var=container_image=#{DEFAULT_CONTAINER_IMAGE}",
+      "-var=databases=#{databases}", "-var=container_image=#{container_image}",
     ]
 
     terraform "apply", *var_flags
