@@ -13,7 +13,7 @@ class DataApi
     parse_options
     return unless aws_authenticated? && valid_options?
 
-    @connection = DataApiConnection.new(@options[:database], @options[:cluster])
+    @connection = DataApiConnection.new(fetch_environment, @options[:database], @options[:cluster])
 
     begin
       print execute_statement
@@ -67,7 +67,7 @@ private
         @options[:database] = database
       end
 
-      opts.on("-cCLUSTER", "--cluster=CLUSTER", "[Mandatory] The cluster the database is in") do |cluster|
+      opts.on("-cCLUSTER", "--cluster=CLUSTER", "The cluster the database is in") do |cluster|
         @options[:cluster] = cluster
       end
 
