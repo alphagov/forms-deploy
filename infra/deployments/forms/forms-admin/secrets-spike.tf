@@ -1,4 +1,4 @@
-module "all accounts" {
+module "all_accounts" {
   count = var.environment_type == "development" ? 1 : 0
 
   source = "../../../modules/all-accounts"
@@ -34,7 +34,7 @@ module "secrets_spike_task" {
     doglike_arn = var.spike_doglike_secret_arn
   }
 
-  secrets_account_id = module.all_accounts.deploy_account_id
+  secrets_account_id = module.all_accounts[count.index].deploy_account_id
 }
 
 ## inputs

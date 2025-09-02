@@ -113,3 +113,16 @@ variable "enable_execute_command" {
   type        = bool
   default     = false
 }
+
+# Optional extra watched secret identifiers (ARNs or names) per service to include in EventBridge filters
+variable "extra_watched_catlike" {
+  description = "Additional secret identifiers (ARNs or names) to watch for catlike service"
+  type        = list(string)
+  default     = []
+}
+
+variable "extra_watched_doglike" {
+  description = "Additional secret identifiers (ARNs or names) to watch for doglike service"
+  type        = list(string)
+  default     = []
+}

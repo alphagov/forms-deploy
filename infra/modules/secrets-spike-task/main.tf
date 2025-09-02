@@ -161,6 +161,17 @@ locals {
   }
 }
 
+# Derive secrets referenced in container definitions for each service
+locals {
+  catlike_secret_arns  = [for s in local.catlike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
+  doglike_secret_arns  = [for s in local.doglike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
+  catlike_secret_names = [for arn in local.catlike_secret_arns : regex("^arn:aws:secretsmanager:[^:]+:[0-9]+:secret:([^:]+)", arn)[0]]
+  doglike_secret_names = [for arn in local.doglike_secret_arns : regex("^arn:aws:secretsmanager:[^:]+:[0-9]+:secret:([^:]+)", arn)[0]]
+
+  catlike_watched_ids = distinct(concat(local.catlike_secret_arns, local.catlike_secret_names, var.extra_watched_catlike))
+  doglike_watched_ids = distinct(concat(local.doglike_secret_arns, local.doglike_secret_names, var.extra_watched_doglike))
+}
+
 resource "aws_ecs_task_definition" "catlike" {
   family                   = "${var.name_prefix}-catlike"
   network_mode             = "awsvpc"
@@ -317,6 +328,206 @@ resource "aws_appautoscaling_policy" "doglike_cpu" {
 resource "aws_iam_role" "deployer" {
   name               = "${var.name_prefix}-deployer"
   assume_role_policy = data.aws_iam_policy_document.deployer_trust.json
+}
+
+# -----------------------------------------------------------------------------
+# EventBridge rules and Lambda functions to force new deployments on secret updates
+# -----------------------------------------------------------------------------
+
+# Catlike Lambda IAM role
+data "aws_iam_policy_document" "lambda_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "catlike_lambda" {
+  name               = "${var.name_prefix}-catlike-redeploy"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
+}
+
+data "aws_iam_policy_document" "catlike_lambda_inline" {
+  statement {
+    sid       = "EcsUpdate"
+    actions   = ["ecs:UpdateService"]
+    resources = [local.catlike_service_arn]
+  }
+  statement {
+    sid       = "EcsDescribe"
+    actions   = ["ecs:DescribeServices", "ecs:DescribeClusters"]
+    resources = ["*"]
+  }
+  statement {
+    sid = "Logs"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "catlike_lambda" {
+  name   = "${var.name_prefix}-catlike-redeploy-inline"
+  role   = aws_iam_role.catlike_lambda.id
+  policy = data.aws_iam_policy_document.catlike_lambda_inline.json
+}
+
+resource "aws_cloudwatch_log_group" "catlike_lambda" {
+  name              = "/aws/lambda/${var.name_prefix}-catlike-redeploy"
+  retention_in_days = var.log_retention_days
+}
+
+resource "aws_lambda_function" "catlike" {
+  function_name    = "${var.name_prefix}-catlike-redeploy"
+  role             = aws_iam_role.catlike_lambda.arn
+  handler          = "handler.lambda_handler"
+  runtime          = "python3.12"
+  filename         = data.archive_file.catlike_lambda_zip.output_path
+  source_code_hash = data.archive_file.catlike_lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      TARGET_CLUSTER_ARN = aws_ecs_cluster.this.arn
+      TARGET_SERVICE_ARN = local.catlike_service_arn
+      WATCHED_SECRETS    = jsonencode(local.catlike_watched_ids)
+    }
+  }
+}
+
+data "archive_file" "catlike_lambda_zip" {
+  type        = "zip"
+  source_file = "${path.module}/lambda/handler.py"
+  output_path = "${path.module}/.build/${var.name_prefix}-catlike-redeploy.zip"
+}
+
+# Doglike Lambda IAM role/policy
+resource "aws_iam_role" "doglike_lambda" {
+  name               = "${var.name_prefix}-doglike-redeploy"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
+}
+
+data "aws_iam_policy_document" "doglike_lambda_inline" {
+  statement {
+    sid       = "EcsUpdate"
+    actions   = ["ecs:UpdateService"]
+    resources = [local.doglike_service_arn]
+  }
+  statement {
+    sid       = "EcsDescribe"
+    actions   = ["ecs:DescribeServices", "ecs:DescribeClusters"]
+    resources = ["*"]
+  }
+  statement {
+    sid = "Logs"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "doglike_lambda" {
+  name   = "${var.name_prefix}-doglike-redeploy-inline"
+  role   = aws_iam_role.doglike_lambda.id
+  policy = data.aws_iam_policy_document.doglike_lambda_inline.json
+}
+
+resource "aws_cloudwatch_log_group" "doglike_lambda" {
+  name              = "/aws/lambda/${var.name_prefix}-doglike-redeploy"
+  retention_in_days = var.log_retention_days
+}
+
+resource "aws_lambda_function" "doglike" {
+  function_name    = "${var.name_prefix}-doglike-redeploy"
+  role             = aws_iam_role.doglike_lambda.arn
+  handler          = "handler.lambda_handler"
+  runtime          = "python3.12"
+  filename         = data.archive_file.doglike_lambda_zip.output_path
+  source_code_hash = data.archive_file.doglike_lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      TARGET_CLUSTER_ARN = aws_ecs_cluster.this.arn
+      TARGET_SERVICE_ARN = local.doglike_service_arn
+      WATCHED_SECRETS    = jsonencode(local.doglike_watched_ids)
+    }
+  }
+}
+
+data "archive_file" "doglike_lambda_zip" {
+  type        = "zip"
+  source_file = "${path.module}/lambda/handler.py"
+  output_path = "${path.module}/.build/${var.name_prefix}-doglike-redeploy.zip"
+}
+
+# Lambda code (inline, small): parse event, validate secretId, call ecs force new deployment
+# lambda source lives in lambda/handler.py
+
+# EventBridge rules per service
+resource "aws_cloudwatch_event_rule" "catlike" {
+  name = "${var.name_prefix}-catlike-redeploy"
+  event_pattern = jsonencode({
+    source      = ["aws.secretsmanager"],
+    detail-type = ["AWS API Call via CloudTrail"],
+    detail = {
+      eventSource = ["secretsmanager.amazonaws.com"],
+      eventName   = ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"],
+      requestParameters = {
+        secretId = local.catlike_watched_ids
+      }
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_rule" "doglike" {
+  name = "${var.name_prefix}-doglike-redeploy"
+  event_pattern = jsonencode({
+    source      = ["aws.secretsmanager"],
+    detail-type = ["AWS API Call via CloudTrail"],
+    detail = {
+      eventSource = ["secretsmanager.amazonaws.com"],
+      eventName   = ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"],
+      requestParameters = {
+        secretId = local.doglike_watched_ids
+      }
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "catlike" {
+  rule      = aws_cloudwatch_event_rule.catlike.name
+  target_id = "catlike-lambda"
+  arn       = aws_lambda_function.catlike.arn
+}
+
+resource "aws_cloudwatch_event_target" "doglike" {
+  rule      = aws_cloudwatch_event_rule.doglike.name
+  target_id = "doglike-lambda"
+  arn       = aws_lambda_function.doglike.arn
+}
+
+resource "aws_lambda_permission" "allow_events_catlike" {
+  statement_id  = "AllowExecutionFromEventBridgeCatlike"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.catlike.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.catlike.arn
+}
+
+resource "aws_lambda_permission" "allow_events_doglike" {
+  statement_id  = "AllowExecutionFromEventBridgeDoglike"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.doglike.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.doglike.arn
 }
 
 data "aws_iam_policy_document" "deployer_trust" {
