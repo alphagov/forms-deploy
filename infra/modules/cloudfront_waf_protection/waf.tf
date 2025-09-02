@@ -31,6 +31,18 @@ resource "aws_wafv2_ip_set" "ips_to_block" {
   addresses = var.ips_to_block
 }
 
+resource "aws_wafv2_regex_pattern_set" "admin_extended_post_pages" {
+  provider = aws.us-east-1
+
+  name        = "${var.environment_name}-admin-extended-post-pages"
+  description = "Regex patterns for admin pages that require extended POST body size limits"
+  scope       = "CLOUDFRONT"
+
+  regular_expression {
+    regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/guidance-preview$"
+  }
+}
+
 resource "aws_wafv2_rule_group" "admin_body_size_limits" {
   provider = aws.us-east-1
 
@@ -83,6 +95,53 @@ resource "aws_wafv2_rule_group" "admin_body_size_limits" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "BulkOptionsUploads"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    # Allow larger POST bodies for admin endpoints that require extended payload sizes
+    name     = "allow_admin_extended_post_bodies"
+    priority = 2
+
+    action {
+      allow {}
+      # Stop processing
+    }
+
+    statement {
+      and_statement {
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.admin_extended_post_pages.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          size_constraint_statement {
+            field_to_match {
+              body {}
+            }
+            comparison_operator = "LE"
+            size                = var.admin_extended_post_body_max_size
+            text_transformation {
+              priority = 1
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AdminExtendedPostBodies"
       sampled_requests_enabled   = false
     }
   }
