@@ -1,11 +1,11 @@
 module "secrets_spike_task" {
   source = "../../"
 
-  name_prefix         = "secrets-spike"
-  region              = "eu-west-2"
-  vpc_id              = "vpc-1234567890abcdef0"
-  private_subnet_ids  = ["subnet-111", "subnet-222"]
-  security_group_ids  = ["sg-abc123"]
+  name_prefix        = "secrets-spike"
+  region             = "eu-west-2"
+  vpc_id             = "vpc-1234567890abcdef0"
+  private_subnet_ids = ["subnet-111", "subnet-222"]
+  security_group_ids = ["sg-abc123"]
 
   desired_count = 1
   cpu           = 256
