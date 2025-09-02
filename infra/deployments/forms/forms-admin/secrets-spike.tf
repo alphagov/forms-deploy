@@ -19,6 +19,13 @@ resource "aws_security_group" "secrets_spike" {
   }
 }
 
+
+
+locals {
+  catlike_secret_arn = null
+  doglike_secret_arn = null
+}
+
 module "secrets_spike_task" {
   count  = var.environment_type == "development" ? 1 : 0
   source = "../../../modules/secrets-spike-task"
@@ -30,28 +37,9 @@ module "secrets_spike_task" {
   security_group_ids = aws_security_group.secrets_spike[*].id
 
   secrets = {
-    catlike_arn = var.spike_catlike_secret_arn
-    doglike_arn = var.spike_doglike_secret_arn
+    catlike_arn = local.catlike_secret_arn
+    doglike_arn = local.doglike_secret_arn
   }
 
   secrets_account_id = module.all_accounts[count.index].deploy_account_id
-}
-
-## inputs
-
-
-
-##
-# Spike (development-only)
-##
-variable "spike_catlike_secret_arn" {
-  description = "Full ARN of the /spikesecrets/catlike/dummy-secret in the central secrets account"
-  type        = string
-  default     = null
-}
-
-variable "spike_doglike_secret_arn" {
-  description = "Full ARN of the /spikesecrets/doglike/dummy-secret in the central secrets account"
-  type        = string
-  default     = null
 }
