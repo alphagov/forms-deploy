@@ -1,9 +1,3 @@
-
-variable "region" {
-  description = "AWS region"
-  type        = string
-}
-
 variable "enable_rule_management" {
   description = "Attach EventBridge bus resource policy to allow org accounts to manage namespaced rules/targets"
   type        = bool

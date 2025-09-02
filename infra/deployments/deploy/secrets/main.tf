@@ -1,24 +1,10 @@
-terraform {
-  required_version = ">= 1.5.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.11"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.region
-}
-
-# Default event bus in the secrets account
+# Default event bus in the deploy account
 # We reference the default bus via data; do not create a custom bus.
 data "aws_cloudwatch_event_bus" "default" {
   name = "default"
 }
 
-# Derive the AWS Organization ID. Requires Organizations permissions in the secrets account.
+# Derive the AWS Organization ID. Requires Organizations permissions in the deploy account.
 data "aws_organizations_organization" "this" {}
 
 # Build a resource policy that allows org accounts to manage only their namespaced rules
@@ -100,13 +86,4 @@ resource "aws_cloudwatch_event_bus_policy" "org_rule_mgmt" {
       }
     ]
   })
-}
-
-# Validate we actually resolved an org ID; helpful message if Organizations is disabled
-# Helpful error if Organizations is disabled or not accessible
-resource "null_resource" "assert_org_id" {
-  count = var.enable_rule_management && (try(length(data.aws_organizations_organization.this.id) > 0, false) ? 0 : 1)
-  triggers = {
-    reason = "This stack needs Organizations access in the secrets account to derive aws:PrincipalOrgID."
-  }
 }
