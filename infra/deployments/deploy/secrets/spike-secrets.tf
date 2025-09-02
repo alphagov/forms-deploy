@@ -146,7 +146,7 @@ data "aws_iam_policy_document" "catlike_secret_policy" {
   }
 
   statement {
-    sid    = "AllowEnvTypeReaders"
+    sid    = "AllowOrgCatlikeExecutionRoles"
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
@@ -159,13 +159,18 @@ data "aws_iam_policy_document" "catlike_secret_policy" {
     }
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/AccountType"
-      values   = ["catlike"]
+      variable = "aws:PrincipalOrgID"
+      values   = [data.aws_organizations_organization.this.id]
     }
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/AccountType"
       values   = ["catlike"]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "aws:PrincipalArn"
+      values   = ["arn:aws:iam::*:role/*-catlike-execution"]
     }
   }
 }
@@ -188,7 +193,7 @@ data "aws_iam_policy_document" "doglike_secret_policy" {
   }
 
   statement {
-    sid    = "AllowEnvTypeReaders"
+    sid    = "AllowOrgDoglikeExecutionRoles"
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
@@ -201,13 +206,18 @@ data "aws_iam_policy_document" "doglike_secret_policy" {
     }
     condition {
       test     = "StringEquals"
-      variable = "aws:PrincipalTag/AccountType"
-      values   = ["doglike"]
+      variable = "aws:PrincipalOrgID"
+      values   = [data.aws_organizations_organization.this.id]
     }
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceTag/AccountType"
       values   = ["doglike"]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "aws:PrincipalArn"
+      values   = ["arn:aws:iam::*:role/*-doglike-execution"]
     }
   }
 }
