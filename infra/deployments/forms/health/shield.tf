@@ -212,9 +212,6 @@ resource "aws_route53_health_check" "runner" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
-  #checkov:skip=CKV2_FORMS_AWS_1: Not alerting for now because of inter-region complexity, alarm is for Shield Team
-  #checkov:skip=CKV_AWS_319: Not alerting for now because of inter-region complexity, alarm is for Shield Team
-
   provider            = aws.us-east-1
   alarm_name          = "${var.environment_name}_cloudfront_total_error_rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -248,9 +245,6 @@ resource "aws_route53_health_check" "cloudfront_total_error_rate" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
-  #checkov:skip=CKV2_FORMS_AWS_1: Not alerting for now because of inter-region complexity, alarm is for Shield Team
-  #checkov:skip=CKV_AWS_319: Not alerting for now because of inter-region complexity, alarm is for Shield Team
-
   provider            = aws.us-east-1
   alarm_name          = "ddos_detected_in_${var.environment_name}"
   comparison_operator = "GreaterThanThreshold"
