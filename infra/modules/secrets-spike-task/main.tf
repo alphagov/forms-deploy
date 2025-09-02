@@ -159,7 +159,7 @@ resource "aws_ecs_task_definition" "catlike" {
       name      = "catlike"
       image     = local.image_to_use
       essential = true
-  command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
+      command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
       environment = [
         { name = "ENVTYPE", value = "catlike" }
       ]
@@ -196,7 +196,7 @@ resource "aws_ecs_task_definition" "doglike" {
       name      = "doglike"
       image     = local.image_to_use
       essential = true
-  command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
+      command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
       environment = [
         { name = "ENVTYPE", value = "doglike" }
       ]
@@ -217,35 +217,44 @@ resource "aws_ecs_task_definition" "doglike" {
 
 # Services
 resource "aws_ecs_service" "catlike" {
-  name            = "${var.name_prefix}-catlike"
-  cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.catlike.arn
-  desired_count   = var.desired_count
-  launch_type     = "FARGATE"
-  platform_version = "LATEST"
+  name                   = "${var.name_prefix}-catlike"
+  cluster                = aws_ecs_cluster.this.id
+  task_definition        = aws_ecs_task_definition.catlike.arn
+  desired_count          = var.desired_count
+  launch_type            = "FARGATE"
+  platform_version       = "LATEST"
   enable_execute_command = var.enable_execute_command
 
   network_configuration {
-    subnets         = var.private_subnet_ids
-    security_groups = var.security_group_ids
+    subnets          = var.private_subnet_ids
+    security_groups  = var.security_group_ids
     assign_public_ip = var.assign_public_ip
   }
 }
 
 resource "aws_ecs_service" "doglike" {
-  name            = "${var.name_prefix}-doglike"
-  cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.doglike.arn
-  desired_count   = var.desired_count
-  launch_type     = "FARGATE"
-  platform_version = "LATEST"
+  name                   = "${var.name_prefix}-doglike"
+  cluster                = aws_ecs_cluster.this.id
+  task_definition        = aws_ecs_task_definition.doglike.arn
+  desired_count          = var.desired_count
+  launch_type            = "FARGATE"
+  platform_version       = "LATEST"
   enable_execute_command = var.enable_execute_command
 
   network_configuration {
-    subnets         = var.private_subnet_ids
-    security_groups = var.security_group_ids
+    subnets          = var.private_subnet_ids
+    security_groups  = var.security_group_ids
     assign_public_ip = var.assign_public_ip
   }
+}
+
+# Helpers to build service ARNs (ecs_service resource doesn't export an arn attribute)
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+locals {
+  catlike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.this.name}/${aws_ecs_service.catlike.name}"
+  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.this.name}/${aws_ecs_service.doglike.name}"
 }
 
 # Optional autoscaling for each service
@@ -259,8 +268,8 @@ resource "aws_appautoscaling_target" "catlike" {
 }
 
 resource "aws_appautoscaling_policy" "catlike_cpu" {
-  count = var.enable_service_auto_scaling ? 1 : 0
-  name  = "${var.name_prefix}-catlike-cpu"
+  count              = var.enable_service_auto_scaling ? 1 : 0
+  name               = "${var.name_prefix}-catlike-cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.catlike[0].resource_id
   scalable_dimension = aws_appautoscaling_target.catlike[0].scalable_dimension
@@ -286,8 +295,8 @@ resource "aws_appautoscaling_target" "doglike" {
 }
 
 resource "aws_appautoscaling_policy" "doglike_cpu" {
-  count = var.enable_service_auto_scaling ? 1 : 0
-  name  = "${var.name_prefix}-doglike-cpu"
+  count              = var.enable_service_auto_scaling ? 1 : 0
+  name               = "${var.name_prefix}-doglike-cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.doglike[0].resource_id
   scalable_dimension = aws_appautoscaling_target.doglike[0].scalable_dimension
@@ -321,18 +330,18 @@ data "aws_iam_policy_document" "deployer_trust" {
 
 data "aws_iam_policy_document" "deployer_inline" {
   statement {
-    sid     = "EcsUpdateServices"
+    sid = "EcsUpdateServices"
     actions = [
       "ecs:UpdateService"
     ]
     resources = [
-      aws_ecs_service.catlike.arn,
-      aws_ecs_service.doglike.arn
+      local.catlike_service_arn,
+      local.doglike_service_arn
     ]
   }
 
   statement {
-    sid     = "EcsDescribeServices"
+    sid = "EcsDescribeServices"
     actions = [
       "ecs:DescribeServices"
     ]

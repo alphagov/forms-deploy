@@ -9,7 +9,7 @@ output "cluster_arn" {
 }
 
 output "catlike_service_arn" {
-  value       = aws_ecs_service.catlike.arn
+  value       = local.catlike_service_arn
   description = "ARN of the catlike ECS service"
 }
 
@@ -19,7 +19,7 @@ output "catlike_service_name" {
 }
 
 output "doglike_service_arn" {
-  value       = aws_ecs_service.doglike.arn
+  value       = local.doglike_service_arn
   description = "ARN of the doglike ECS service"
 }
 
