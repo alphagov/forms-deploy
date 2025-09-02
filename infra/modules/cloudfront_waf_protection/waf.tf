@@ -31,13 +31,13 @@ resource "aws_wafv2_ip_set" "ips_to_block" {
   addresses = var.ips_to_block
 }
 
-resource "aws_wafv2_rule_group" "request_body_size_limits" {
+resource "aws_wafv2_rule_group" "admin_body_size_limits" {
   provider = aws.us-east-1
 
-  name        = "${var.environment_name}-request-body-size-limits"
-  description = "Rule group for request body size restrictions"
+  name        = "${var.environment_name}-admin-body-size-limits"
+  description = "Rule group for admin request body size restrictions"
   scope       = "CLOUDFRONT"
-  capacity    = 100
+  capacity    = 50
 
   rule {
     # Allow large POSTs when uploading multiple options in bulk (form creation)
@@ -87,10 +87,25 @@ resource "aws_wafv2_rule_group" "request_body_size_limits" {
     }
   }
 
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "AdminBodySizeLimitsRuleGroup"
+    sampled_requests_enabled   = false
+  }
+}
+
+resource "aws_wafv2_rule_group" "public_form_body_size_limits" {
+  provider = aws.us-east-1
+
+  name        = "${var.environment_name}-public-form-body-size-limits"
+  description = "Rule group for public form request body size restrictions"
+  scope       = "CLOUDFRONT"
+  capacity    = 50
+
   rule {
     # Allow file uploads when filling out a form
     name     = "allow_file_uploads"
-    priority = 2
+    priority = 1
 
     action {
       allow {}
@@ -151,9 +166,10 @@ resource "aws_wafv2_rule_group" "request_body_size_limits" {
   }
 
   rule {
-    # Enforce maximum size for base form post bodies
-    name     = "base_form_post_body_size_limit"
-    priority = 3
+    # Enforce standard maximum size for form response bodies
+    # ie. POST requests to standard form fields (text inputs, selections, etc.)
+    name     = "allow_standard_form_responses"
+    priority = 2
 
     action {
       allow {}
@@ -181,7 +197,7 @@ resource "aws_wafv2_rule_group" "request_body_size_limits" {
               body {}
             }
             comparison_operator = "LE"
-            size                = var.base_form_post_body_max_size
+            size                = var.standard_form_response_body_max_size
             text_transformation {
               priority = 1
               type     = "NONE"
@@ -193,16 +209,14 @@ resource "aws_wafv2_rule_group" "request_body_size_limits" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "FormFieldResponse"
+      metric_name                = "StandardFormResponses"
       sampled_requests_enabled   = false
     }
   }
 
-
-
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name                = "FileSizeLimitsRuleGroup"
+    metric_name                = "PublicFormBodySizeLimitsRuleGroup"
     sampled_requests_enabled   = false
   }
 }
@@ -252,7 +266,7 @@ resource "aws_wafv2_web_acl" "this" {
   }
 
   rule {
-    name     = "RequestBodySizeLimitsRuleGroup"
+    name     = "AdminBodySizeLimitsRuleGroup"
     priority = 2
 
     override_action {
@@ -261,20 +275,41 @@ resource "aws_wafv2_web_acl" "this" {
 
     statement {
       rule_group_reference_statement {
-        arn = aws_wafv2_rule_group.request_body_size_limits.arn
+        arn = aws_wafv2_rule_group.admin_body_size_limits.arn
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "RequestBodySizeLimitsRuleGroup"
+      metric_name                = "AdminBodySizeLimitsRuleGroup"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "PublicFormBodySizeLimitsRuleGroup"
+    priority = 3
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.public_form_body_size_limits.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "PublicFormBodySizeLimitsRuleGroup"
       sampled_requests_enabled   = false
     }
   }
 
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 3
+    priority = 4
 
     override_action {
       none {}
@@ -303,7 +338,7 @@ resource "aws_wafv2_web_acl" "this" {
 
   rule {
     name     = "AWS-AWSManagedRulesAmazonIpReputationList"
-    priority = 4
+    priority = 5
 
     override_action {
       none {}

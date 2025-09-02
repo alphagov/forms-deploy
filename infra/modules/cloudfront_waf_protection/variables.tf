@@ -51,7 +51,7 @@ variable "bulk_options_max_size" {
   default = 400 + (1000 * 100) + (1000 * 6) # 106400 bytes (103.91 KB)
 }
 
-variable "base_form_post_body_max_size" {
+variable "standard_form_response_body_max_size" {
   description = "The default maximum size allowed for each form response body in bytes (ie. all response fields except file uploads). This should be larger than the maximum size defined in the form schema, so that people can get the pretty error message from the form rather than a WAF error."
   type        = number
   default     = 100 * 1024 # 100 KB
