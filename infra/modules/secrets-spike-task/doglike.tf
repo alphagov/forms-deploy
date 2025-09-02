@@ -82,9 +82,7 @@ locals {
     }
   }
 
-  doglike_secret_arns  = [for s in local.doglike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
-  doglike_secret_names = [for arn in local.doglike_secret_arns : regex("^arn:aws:secretsmanager:[^:]+:[0-9]+:secret:([^:]+)", arn)[0]]
-  doglike_watched_ids  = distinct(concat(local.doglike_secret_arns, local.doglike_secret_names, var.extra_watched_doglike))
+  doglike_secret_arns = [for s in local.doglike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
 }
 
 # Task definition
@@ -154,87 +152,12 @@ resource "aws_appautoscaling_policy" "doglike_cpu" {
 }
 
 # Lambda role/policy/logs/function
-resource "aws_iam_role" "doglike_lambda" {
+module "doglike_redeploy" {
+  source             = "./modules/redeploy-lambda"
   name               = "${var.name_prefix}-doglike-redeploy"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
-}
-
-data "aws_iam_policy_document" "doglike_lambda_inline" {
-  statement {
-    sid       = "EcsUpdate"
-    actions   = ["ecs:UpdateService"]
-    resources = [local.doglike_service_arn]
-  }
-  statement {
-    sid       = "EcsDescribe"
-    actions   = ["ecs:DescribeServices", "ecs:DescribeClusters"]
-    resources = ["*"]
-  }
-  statement {
-    sid       = "Logs"
-    actions   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "doglike_lambda" {
-  name   = "${var.name_prefix}-doglike-redeploy-inline"
-  role   = aws_iam_role.doglike_lambda.id
-  policy = data.aws_iam_policy_document.doglike_lambda_inline.json
-}
-
-resource "aws_cloudwatch_log_group" "doglike_lambda" {
-  name              = "/aws/lambda/${var.name_prefix}-doglike-redeploy"
-  retention_in_days = var.log_retention_days
-}
-
-data "archive_file" "doglike_lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/lambda/handler.py"
-  output_path = "${path.module}/.build/${var.name_prefix}-doglike-redeploy.zip"
-}
-
-resource "aws_lambda_function" "doglike" {
-  function_name    = "${var.name_prefix}-doglike-redeploy"
-  role             = aws_iam_role.doglike_lambda.arn
-  handler          = "handler.lambda_handler"
-  runtime          = "python3.12"
-  filename         = data.archive_file.doglike_lambda_zip.output_path
-  source_code_hash = data.archive_file.doglike_lambda_zip.output_base64sha256
-
-  environment {
-    variables = {
-      TARGET_CLUSTER_ARN = aws_ecs_cluster.doglike.arn
-      TARGET_SERVICE_ARN = local.doglike_service_arn
-      WATCHED_SECRETS    = jsonencode(local.doglike_watched_ids)
-    }
-  }
-}
-
-# Events and permissions
-resource "aws_cloudwatch_event_rule" "doglike" {
-  name = "${var.name_prefix}-doglike-redeploy"
-  event_pattern = jsonencode({
-    source      = ["aws.secretsmanager"],
-    detail-type = ["AWS API Call via CloudTrail"],
-    detail = {
-      eventSource       = ["secretsmanager.amazonaws.com"],
-      eventName         = ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"],
-      requestParameters = { secretId = local.doglike_watched_ids }
-    }
-  })
-}
-
-resource "aws_cloudwatch_event_target" "doglike" {
-  rule      = aws_cloudwatch_event_rule.doglike.name
-  target_id = "doglike-lambda"
-  arn       = aws_lambda_function.doglike.arn
-}
-
-resource "aws_lambda_permission" "allow_events_doglike" {
-  statement_id  = "AllowExecutionFromEventBridgeDoglike"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.doglike.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.doglike.arn
+  region             = var.region
+  cluster_arn        = aws_ecs_cluster.doglike.arn
+  service_arn        = local.doglike_service_arn
+  secret_arns        = local.doglike_secret_arns
+  log_retention_days = var.log_retention_days
 }

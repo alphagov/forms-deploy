@@ -120,9 +120,3 @@ variable "extra_watched_catlike" {
   type        = list(string)
   default     = []
 }
-
-variable "extra_watched_doglike" {
-  description = "Additional secret identifiers (ARNs or names) to watch for doglike service"
-  type        = list(string)
-  default     = []
-}

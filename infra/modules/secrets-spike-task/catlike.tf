@@ -82,9 +82,7 @@ locals {
     }
   }
 
-  catlike_secret_arns  = [for s in local.catlike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
-  catlike_secret_names = [for arn in local.catlike_secret_arns : regex("^arn:aws:secretsmanager:[^:]+:[0-9]+:secret:([^:]+)", arn)[0]]
-  catlike_watched_ids  = distinct(concat(local.catlike_secret_arns, local.catlike_secret_names, var.extra_watched_catlike))
+  catlike_secret_arns = [for s in local.catlike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
 }
 
 # Task definition
@@ -154,87 +152,12 @@ resource "aws_appautoscaling_policy" "catlike_cpu" {
 }
 
 # Lambda role/policy/logs/function
-resource "aws_iam_role" "catlike_lambda" {
+module "catlike_redeploy" {
+  source             = "./modules/redeploy-lambda"
   name               = "${var.name_prefix}-catlike-redeploy"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
-}
-
-data "aws_iam_policy_document" "catlike_lambda_inline" {
-  statement {
-    sid       = "EcsUpdate"
-    actions   = ["ecs:UpdateService"]
-    resources = [local.catlike_service_arn]
-  }
-  statement {
-    sid       = "EcsDescribe"
-    actions   = ["ecs:DescribeServices", "ecs:DescribeClusters"]
-    resources = ["*"]
-  }
-  statement {
-    sid       = "Logs"
-    actions   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "catlike_lambda" {
-  name   = "${var.name_prefix}-catlike-redeploy-inline"
-  role   = aws_iam_role.catlike_lambda.id
-  policy = data.aws_iam_policy_document.catlike_lambda_inline.json
-}
-
-resource "aws_cloudwatch_log_group" "catlike_lambda" {
-  name              = "/aws/lambda/${var.name_prefix}-catlike-redeploy"
-  retention_in_days = var.log_retention_days
-}
-
-data "archive_file" "catlike_lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/lambda/handler.py"
-  output_path = "${path.module}/.build/${var.name_prefix}-catlike-redeploy.zip"
-}
-
-resource "aws_lambda_function" "catlike" {
-  function_name    = "${var.name_prefix}-catlike-redeploy"
-  role             = aws_iam_role.catlike_lambda.arn
-  handler          = "handler.lambda_handler"
-  runtime          = "python3.12"
-  filename         = data.archive_file.catlike_lambda_zip.output_path
-  source_code_hash = data.archive_file.catlike_lambda_zip.output_base64sha256
-
-  environment {
-    variables = {
-      TARGET_CLUSTER_ARN = aws_ecs_cluster.catlike.arn
-      TARGET_SERVICE_ARN = local.catlike_service_arn
-      WATCHED_SECRETS    = jsonencode(local.catlike_watched_ids)
-    }
-  }
-}
-
-# Events and permissions
-resource "aws_cloudwatch_event_rule" "catlike" {
-  name = "${var.name_prefix}-catlike-redeploy"
-  event_pattern = jsonencode({
-    source      = ["aws.secretsmanager"],
-    detail-type = ["AWS API Call via CloudTrail"],
-    detail = {
-      eventSource       = ["secretsmanager.amazonaws.com"],
-      eventName         = ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"],
-      requestParameters = { secretId = local.catlike_watched_ids }
-    }
-  })
-}
-
-resource "aws_cloudwatch_event_target" "catlike" {
-  rule      = aws_cloudwatch_event_rule.catlike.name
-  target_id = "catlike-lambda"
-  arn       = aws_lambda_function.catlike.arn
-}
-
-resource "aws_lambda_permission" "allow_events_catlike" {
-  statement_id  = "AllowExecutionFromEventBridgeCatlike"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.catlike.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.catlike.arn
+  region             = var.region
+  cluster_arn        = aws_ecs_cluster.catlike.arn
+  service_arn        = local.catlike_service_arn
+  secret_arns        = local.catlike_secret_arns
+  log_retention_days = var.log_retention_days
 }

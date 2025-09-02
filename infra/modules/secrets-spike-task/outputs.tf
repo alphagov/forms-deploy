@@ -54,41 +54,41 @@ output "log_group_doglike" {
 }
 
 output "catlike_event_rule_name" {
-  value       = aws_cloudwatch_event_rule.catlike.name
+  value       = module.catlike_redeploy.rule_name
   description = "EventBridge rule name for catlike"
 }
 
 output "catlike_event_rule_arn" {
-  value       = aws_cloudwatch_event_rule.catlike.arn
+  value       = module.catlike_redeploy.rule_arn
   description = "EventBridge rule arn for catlike"
 }
 
 output "doglike_event_rule_name" {
-  value       = aws_cloudwatch_event_rule.doglike.name
+  value       = module.doglike_redeploy.rule_name
   description = "EventBridge rule name for doglike"
 }
 
 output "doglike_event_rule_arn" {
-  value       = aws_cloudwatch_event_rule.doglike.arn
+  value       = module.doglike_redeploy.rule_arn
   description = "EventBridge rule arn for doglike"
 }
 
 output "catlike_lambda_name" {
-  value       = aws_lambda_function.catlike.function_name
+  value       = module.catlike_redeploy.lambda_name
   description = "Lambda name for catlike redeploy"
 }
 
 output "catlike_lambda_arn" {
-  value       = aws_lambda_function.catlike.arn
+  value       = module.catlike_redeploy.lambda_arn
   description = "Lambda arn for catlike redeploy"
 }
 
 output "doglike_lambda_name" {
-  value       = aws_lambda_function.doglike.function_name
+  value       = module.doglike_redeploy.lambda_name
   description = "Lambda name for doglike redeploy"
 }
 
 output "doglike_lambda_arn" {
-  value       = aws_lambda_function.doglike.arn
+  value       = module.doglike_redeploy.lambda_arn
   description = "Lambda arn for doglike redeploy"
 }
