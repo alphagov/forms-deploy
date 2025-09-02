@@ -2,10 +2,7 @@ locals {
   default_image = "public.ecr.aws/docker/library/busybox:latest"
 }
 
-# ECS Cluster
-resource "aws_ecs_cluster" "this" {
-  name = var.name_prefix
-}
+# Per-environment ECS clusters are defined in catlike.tf and doglike.tf
 
 # Trust policy for ECS tasks
 data "aws_iam_policy_document" "ecs_tasks_assume_role" {

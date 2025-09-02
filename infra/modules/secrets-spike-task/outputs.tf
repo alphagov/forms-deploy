@@ -1,11 +1,21 @@
-output "cluster_name" {
-  description = "ECS cluster name"
-  value       = aws_ecs_cluster.this.name
+output "catlike_cluster_name" {
+  description = "ECS cluster name for catlike"
+  value       = aws_ecs_cluster.catlike.name
 }
 
-output "cluster_arn" {
-  description = "ECS cluster ARN"
-  value       = aws_ecs_cluster.this.arn
+output "catlike_cluster_arn" {
+  description = "ECS cluster ARN for catlike"
+  value       = aws_ecs_cluster.catlike.arn
+}
+
+output "doglike_cluster_name" {
+  description = "ECS cluster name for doglike"
+  value       = aws_ecs_cluster.doglike.name
+}
+
+output "doglike_cluster_arn" {
+  description = "ECS cluster ARN for doglike"
+  value       = aws_ecs_cluster.doglike.arn
 }
 
 output "catlike_service_arn" {

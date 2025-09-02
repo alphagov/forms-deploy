@@ -2,6 +2,11 @@
 # Doglike resources
 ############################################
 
+# ECS Cluster for doglike
+resource "aws_ecs_cluster" "doglike" {
+  name = "${var.name_prefix}-doglike"
+}
+
 # Log group
 resource "aws_cloudwatch_log_group" "doglike" {
   name              = "/ecs/${var.name_prefix}-doglike"
@@ -101,7 +106,7 @@ resource "aws_ecs_task_definition" "doglike" {
 # Service
 resource "aws_ecs_service" "doglike" {
   name                   = "${var.name_prefix}-doglike"
-  cluster                = aws_ecs_cluster.this.id
+  cluster                = aws_ecs_cluster.doglike.id
   task_definition        = aws_ecs_task_definition.doglike.arn
   desired_count          = var.desired_count
   launch_type            = "FARGATE"
@@ -117,7 +122,7 @@ resource "aws_ecs_service" "doglike" {
 
 # Service ARN local
 locals {
-  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.this.id}/${aws_ecs_service.doglike.id}"
+  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.doglike.id}/${aws_ecs_service.doglike.id}"
 }
 
 # Autoscaling
@@ -125,7 +130,7 @@ resource "aws_appautoscaling_target" "doglike" {
   count              = var.enable_service_auto_scaling ? 1 : 0
   max_capacity       = var.autoscaling_max_capacity
   min_capacity       = var.autoscaling_min_capacity
-  resource_id        = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.doglike.name}"
+  resource_id        = "service/${aws_ecs_cluster.doglike.name}/${aws_ecs_service.doglike.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
@@ -199,7 +204,7 @@ resource "aws_lambda_function" "doglike" {
 
   environment {
     variables = {
-      TARGET_CLUSTER_ARN = aws_ecs_cluster.this.arn
+      TARGET_CLUSTER_ARN = aws_ecs_cluster.doglike.arn
       TARGET_SERVICE_ARN = local.doglike_service_arn
       WATCHED_SECRETS    = jsonencode(local.doglike_watched_ids)
     }
