@@ -139,6 +139,26 @@ resource "aws_iam_role_policy_attachment" "task_extra_dog" {
 # Task definitions
 locals {
   image_to_use = coalesce(var.container_image, local.default_image)
+  catlike_container_definition = {
+    name      = "catlike"
+    image     = local.image_to_use
+    essential = true
+    command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
+    environment = [
+      { name = "ENVTYPE", value = "catlike" }
+    ]
+    secrets = [
+      { name = "DUMMY_SECRET", valueFrom = var.secrets.catlike_arn }
+    ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = aws_cloudwatch_log_group.catlike.name
+        awslogs-region        = var.region
+        awslogs-stream-prefix = "ecs"
+      }
+    }
+  }
 }
 
 resource "aws_ecs_task_definition" "catlike" {
@@ -154,28 +174,30 @@ resource "aws_ecs_task_definition" "catlike" {
     cpu_architecture        = "X86_64"
   }
 
-  container_definitions = jsonencode([
-    {
-      name      = "catlike"
-      image     = local.image_to_use
-      essential = true
-      command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
-      environment = [
-        { name = "ENVTYPE", value = "catlike" }
-      ]
-      secrets = [
-        { name = "DUMMY_SECRET", valueFrom = var.secrets.catlike_arn }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.catlike.name
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "ecs"
-        }
+  container_definitions = jsonencode([local.catlike_container_definition])
+}
+
+locals {
+  doglike_container_definition = {
+    name      = "doglike"
+    image     = local.image_to_use
+    essential = true
+    command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
+    environment = [
+      { name = "ENVTYPE", value = "doglike" }
+    ]
+    secrets = [
+      { name = "DUMMY_SECRET", valueFrom = var.secrets.doglike_arn }
+    ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = aws_cloudwatch_log_group.doglike.name
+        awslogs-region        = var.region
+        awslogs-stream-prefix = "ecs"
       }
     }
-  ])
+  }
 }
 
 resource "aws_ecs_task_definition" "doglike" {
@@ -191,28 +213,7 @@ resource "aws_ecs_task_definition" "doglike" {
     cpu_architecture        = "X86_64"
   }
 
-  container_definitions = jsonencode([
-    {
-      name      = "doglike"
-      image     = local.image_to_use
-      essential = true
-      command   = ["/bin/sh", "-c", "while true; do head=$(printf '%s' \"$DUMMY_SECRET\" | cut -c1-8); echo \"$(date) $ENVTYPE secret head: $head\"; sleep 20; done"]
-      environment = [
-        { name = "ENVTYPE", value = "doglike" }
-      ]
-      secrets = [
-        { name = "DUMMY_SECRET", valueFrom = var.secrets.doglike_arn }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.doglike.name
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "ecs"
-        }
-      }
-    }
-  ])
+  container_definitions = jsonencode([local.doglike_container_definition])
 }
 
 # Services

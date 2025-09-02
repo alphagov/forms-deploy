@@ -3,6 +3,7 @@
 This spike module provisions two minimal ECS Fargate services that consume Secrets Manager values from a central account and are intended to be force-redeployed by cross-account automation when secrets change.
 
 It creates:
+
 - One ECS cluster.
 - Two services and task definitions: `catlike` and `doglike`.
 - CloudWatch Logs log groups for each service.
@@ -10,6 +11,7 @@ It creates:
 - A cross-account "deployer" role that the central secrets account can assume to call `ecs:UpdateService` with `forceNewDeployment=true`.
 
 Security posture (spike):
+
 - Each task has access only to its own provided Secret ARN.
 - No explicit KMS permissions are granted; Secrets Manager decrypts on behalf of the caller.
 - The deployer role allows `ecs:UpdateService`/`DescribeServices` only for the two created services and the created cluster.
