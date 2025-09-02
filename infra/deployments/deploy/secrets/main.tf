@@ -7,6 +7,10 @@ data "aws_cloudwatch_event_bus" "default" {
 # Derive the AWS Organization ID. Requires Organizations permissions in the deploy account.
 data "aws_organizations_organization" "this" {}
 
+# Needed to build correct rule ARNs
+data "aws_caller_identity" "this" {}
+data "aws_region" "this" {}
+
 # Build a resource policy that allows org accounts to manage only their namespaced rules
 # and attach targets that are Lambda functions in their own accounts.
 # This attaches to the default event bus.
@@ -33,7 +37,7 @@ resource "aws_cloudwatch_event_bus_policy" "org_rule_mgmt" {
         ],
         Resource = [
           data.aws_cloudwatch_event_bus.default.arn,
-          "${data.aws_cloudwatch_event_bus.default.arn}/rule/*"
+          "arn:aws:events:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:rule/*"
         ],
         Condition = {
           StringEquals = {
@@ -55,7 +59,7 @@ resource "aws_cloudwatch_event_bus_policy" "org_rule_mgmt" {
           "events:RemoveTargets",
           "events:ListTargetsByRule"
         ],
-        Resource = "${data.aws_cloudwatch_event_bus.default.arn}/rule/*",
+        Resource = "arn:aws:events:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:rule/*",
         Condition = {
           StringEquals = {
             "aws:PrincipalOrgID" = data.aws_organizations_organization.this.id
@@ -77,7 +81,7 @@ resource "aws_cloudwatch_event_bus_policy" "org_rule_mgmt" {
         Action = [
           "events:PutTargets"
         ],
-        Resource = "${data.aws_cloudwatch_event_bus.default.arn}/rule/*",
+        Resource = "arn:aws:events:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:rule/*",
         Condition = {
           StringNotLikeIfExists = {
             "events:TargetArn" = ["arn:aws:lambda:*:${"${"aws:PrincipalAccount"}"}:function:*"]

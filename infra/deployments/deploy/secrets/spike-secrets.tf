@@ -14,12 +14,10 @@ variable "initial_doglike_secret_value" {
   default     = null
 }
 
-data "aws_region" "current" {}
 
 #############################
 # Context
 #############################
-data "aws_caller_identity" "this" {}
 
 locals {
   catlike_name = "/spikesecrets/catlike/dummy-secret"
@@ -59,12 +57,12 @@ data "aws_iam_policy_document" "kms_key_policy" {
     condition {
       test     = "StringEquals"
       variable = "kms:ViaService"
-      values   = ["secretsmanager.${data.aws_region.current.region}.amazonaws.com"]
+      values   = ["secretsmanager.${data.aws_region.this.name}.amazonaws.com"]
     }
     condition {
       test     = "StringLike"
       variable = "kms:EncryptionContext:aws:secretsmanager:arn"
-      values   = ["arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.this.account_id}:secret:*"]
+      values   = ["arn:aws:secretsmanager:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:secret:*"]
     }
   }
 }
