@@ -160,4 +160,10 @@ module "doglike_redeploy" {
   service_arn        = local.doglike_service_arn
   secret_arns        = local.doglike_secret_arns
   log_retention_days = var.log_retention_days
+  # Remote EventBridge bus (secrets account)
+  secrets_account_id       = var.secrets_account_id
+  secrets_account_bus_name = "default"
+  org_rule_prefix_mode     = true
+  rule_name_suffix_prefix  = var.name_prefix
+  rule_suffix              = "doglike-redeploy"
 }

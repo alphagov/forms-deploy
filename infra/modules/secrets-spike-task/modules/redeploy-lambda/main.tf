@@ -81,9 +81,22 @@ resource "aws_lambda_function" "this" {
   }
 }
 
-# One rule per redeploy function on the default bus in this account
+# Build remote bus ARN in the secrets account
+locals {
+  remote_bus_arn = "arn:aws:events:${var.region}:${var.secrets_account_id}:event-bus/${var.secrets_account_bus_name}"
+}
+
+# Determine final rule name (org-prefixed or bare)
+data "aws_caller_identity" "current" {}
+locals {
+  base_rule_name  = "${var.rule_name_suffix_prefix}-${var.rule_suffix}"
+  final_rule_name = var.org_rule_prefix_mode ? "${data.aws_caller_identity.current.account_id}-${local.base_rule_name}" : local.base_rule_name
+}
+
+# One rule per redeploy function on the remote bus in the secrets account
 resource "aws_cloudwatch_event_rule" "this" {
-  name = var.name
+  name           = local.final_rule_name
+  event_bus_name = local.remote_bus_arn
   event_pattern = jsonencode({
     source      = ["aws.secretsmanager"],
     detail-type = ["AWS API Call via CloudTrail"],
@@ -96,9 +109,10 @@ resource "aws_cloudwatch_event_rule" "this" {
 }
 
 resource "aws_cloudwatch_event_target" "this" {
-  rule      = aws_cloudwatch_event_rule.this.name
-  target_id = "lambda"
-  arn       = aws_lambda_function.this.arn
+  rule           = aws_cloudwatch_event_rule.this.name
+  event_bus_name = local.remote_bus_arn
+  target_id      = "lambda"
+  arn            = aws_lambda_function.this.arn
 }
 
 resource "aws_lambda_permission" "allow_events" {
@@ -121,10 +135,10 @@ output "lambda_arn" {
 
 output "rule_name" {
   value       = aws_cloudwatch_event_rule.this.name
-  description = "EventBridge rule name"
+  description = "Remote EventBridge rule name"
 }
 
 output "rule_arn" {
   value       = aws_cloudwatch_event_rule.this.arn
-  description = "EventBridge rule ARN"
+  description = "Remote EventBridge rule ARN"
 }

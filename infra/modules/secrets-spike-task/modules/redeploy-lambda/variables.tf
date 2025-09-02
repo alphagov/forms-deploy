@@ -28,3 +28,31 @@ variable "log_retention_days" {
   type        = number
   default     = 14
 }
+
+variable "secrets_account_id" {
+  description = "Account ID that owns the shared EventBridge bus"
+  type        = string
+}
+
+variable "secrets_account_bus_name" {
+  description = "Name of the shared EventBridge bus in the secrets account"
+  type        = string
+  default     = "default"
+}
+
+variable "org_rule_prefix_mode" {
+  description = "If true, prefix remote rule names with the caller's account ID"
+  type        = bool
+  default     = true
+}
+
+variable "rule_name_suffix_prefix" {
+  description = "Suffix prefix used after the account ID, e.g. 'secrets-spike'"
+  type        = string
+  default     = "secrets-spike"
+}
+
+variable "rule_suffix" {
+  description = "Rule suffix component (e.g. 'catlike-redeploy')"
+  type        = string
+}

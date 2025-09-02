@@ -1,14 +1,15 @@
 # secrets-spike-task (Terraform module)
 
-This spike module provisions two minimal ECS Fargate services that consume Secrets Manager values from a central account and are intended to be force-redeployed by cross-account automation when secrets change.
+This spike module provisions two minimal ECS Fargate services that consume Secrets Manager values from a central account and auto-redeploy when secrets change. A per-service Lambda in the env account listens to Events from a central, shared EventBridge bus in the secrets account and calls `ecs:UpdateService`.
 
 It creates:
 
-- One ECS cluster.
+- Two ECS clusters (one per env service).
 - Two services and task definitions: `catlike` and `doglike`.
 - CloudWatch Logs log groups for each service.
 - Minimal IAM roles for task execution and task access to Secrets Manager (scoped per secret ARN).
 - A cross-account "deployer" role that the central secrets account can assume to call `ecs:UpdateService` with `forceNewDeployment=true`.
+- For each service, a small Lambda and a remote EventBridge rule on the secrets account bus targeting that Lambda. Rules are namespaced with the caller account ID.
 
 Security posture (spike):
 
@@ -32,7 +33,7 @@ Security posture (spike):
 - `secrets` (object, required):
   - `catlike_arn` (string)
   - `doglike_arn` (string)
-- `secrets_account_id` (string, required): Account that assumes the deployer role.
+- `secrets_account_id` (string, required): Account that assumes the deployer role and hosts the shared EventBridge bus.
 - `task_execution_role_additional_policies` (list(string), default `[]`)
 - `task_role_additional_policies` (list(string), default `[]`)
 - `enable_service_auto_scaling` (bool, default `false`)
@@ -43,11 +44,16 @@ Security posture (spike):
 
 ## Outputs
 
-- `cluster_name`, `cluster_arn`
+- `catlike_cluster_name`, `catlike_cluster_arn`
+- `doglike_cluster_name`, `doglike_cluster_arn`
 - `catlike_service_arn`, `catlike_service_name`
 - `doglike_service_arn`, `doglike_service_name`
 - `deployer_role_arn`
 - `log_group_catlike`, `log_group_doglike`
+- `catlike_event_rule_name`, `catlike_event_rule_arn` (remote bus)
+- `doglike_event_rule_name`, `doglike_event_rule_arn` (remote bus)
+- `catlike_lambda_name`, `catlike_lambda_arn`
+- `doglike_lambda_name`, `doglike_lambda_arn`
 
 ## Example
 
@@ -75,7 +81,7 @@ module "secrets_spike_task" {
 ## Notes
 
 - The container prints only the first 8 characters of the secret via `${DUMMY_SECRET:0:8}` every ~20 seconds.
-- EventBridge rules and cross-account invocation reside in the central secrets account (out of scope here). Provide `deployer_role_arn` to that automation to call `ecs:UpdateService` with `forceNewDeployment=true` against the appropriate service.
+- The central secrets account should deploy the bus policy provided in `infra/deployments/deploy/secrets` to allow org accounts to manage namespaced rules and Lambda targets in their own accounts.
 
 ## Testing steps
 
