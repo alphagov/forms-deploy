@@ -22,8 +22,8 @@ resource "aws_security_group" "secrets_spike" {
 
 
 locals {
-  catlike_secret_arn = null
-  doglike_secret_arn = null
+  catlike_secret_arn = "arn:aws:secretsmanager:eu-west-2:711966560482:secret:/spikesecrets/catlike/dummy-secret-Ab0Yfc"
+  doglike_secret_arn = "arn:aws:secretsmanager:eu-west-2:711966560482:secret:/spikesecrets/doglike/dummy-secret-r6ogL8"
 }
 
 module "secrets_spike_task" {
