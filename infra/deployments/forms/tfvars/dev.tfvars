@@ -118,3 +118,9 @@ end_to_end_test_settings = {
   aws_s3_bucket   = "govuk-forms-submissions-to-s3-test"
   s3_form_id      = "12457"
 }
+
+
+## secrets spike
+
+spike_catlike_secret_arn = null
+spike_doglike_secret_arn = null
