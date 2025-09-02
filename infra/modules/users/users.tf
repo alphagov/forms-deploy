@@ -108,12 +108,12 @@ locals {
       integration   = "readonly"
     },
     "tom.whitwell" = {
-      deploy        = "support"
-      staging       = "support"
-      production    = "support"
+      deploy        = "admin"
+      staging       = "admin"
+      production    = "admin"
       development   = "admin"
-      user_research = "support"
-      integration   = "readonly"
+      user_research = "admin"
+      integration   = "admin"
     },
   }
 }
