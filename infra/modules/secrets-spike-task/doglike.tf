@@ -120,7 +120,7 @@ resource "aws_ecs_service" "doglike" {
 
 # Service ARN local
 locals {
-  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.doglike.id}/${aws_ecs_service.doglike.id}"
+  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.doglike.id}/${aws_ecs_service.doglike.id}"
 }
 
 # Autoscaling

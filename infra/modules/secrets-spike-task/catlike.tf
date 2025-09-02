@@ -120,7 +120,7 @@ resource "aws_ecs_service" "catlike" {
 
 # Service ARN local
 locals {
-  catlike_service_arn = "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.catlike.id}/${aws_ecs_service.catlike.id}"
+  catlike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.catlike.id}/${aws_ecs_service.catlike.id}"
 }
 
 # Autoscaling
