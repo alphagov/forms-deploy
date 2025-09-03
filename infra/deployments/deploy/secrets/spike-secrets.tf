@@ -2,26 +2,35 @@
 # Inputs (scoped to this stack)
 #############################
 
-variable "initial_catlike_secret_value" {
-  description = "Optional initial value for the catlike secret; defaults to a generated random value if unset"
-  type        = string
-  default     = null
+variable "spike_secret_length" {
+  description = "Length of generated spike secret values"
+  type        = number
+  default     = 32
 }
-
-variable "initial_doglike_secret_value" {
-  description = "Optional initial value for the doglike secret; defaults to a generated random value if unset"
-  type        = string
-  default     = null
-}
-
 
 #############################
 # Context
 #############################
 
 locals {
-  catlike_name = "/spikesecrets/catlike/dummy-secret"
-  doglike_name = "/spikesecrets/doglike/dummy-secret"
+  # Suffix for all spike secrets
+  spike_app_secret_suffix = "fake-app/dummy-secret"
+
+  # Extended environment accounts map including spike accounts
+  # Both catlike and doglike point to the development account for the spike
+  extended_environment_accounts = merge(
+    module.all_accounts.environment_accounts_id,
+    {
+      "catlike" = module.all_accounts.environment_accounts_id["development"]
+      "doglike" = module.all_accounts.environment_accounts_id["development"]
+    }
+  )
+
+  # Generate secret names for all environments
+  environment_secret_names = {
+    for env_name, account_id in local.extended_environment_accounts :
+    env_name => "/spikesecrets/${env_name}/${local.spike_app_secret_suffix}"
+  }
 }
 
 #############################
@@ -79,56 +88,54 @@ resource "aws_kms_alias" "spike_secrets" {
 }
 
 #############################
-# Generate initial values when not provided
+# Generate ephemeral values for all environments
 #############################
-resource "random_password" "catlike" {
-  length  = 32
+ephemeral "random_password" "environment_secrets" {
+  for_each = local.extended_environment_accounts
+
+  length  = var.spike_secret_length
   special = false
 }
 
-resource "random_password" "doglike" {
-  length  = 32
-  special = false
-}
-
-locals {
-  catlike_initial_value = coalesce(var.initial_catlike_secret_value, try(random_password.catlike.result, null))
-  doglike_initial_value = coalesce(var.initial_doglike_secret_value, try(random_password.doglike.result, null))
-}
-
 #############################
-# Secrets and initial versions
+# Secrets and initial versions (programmatic)
 #############################
-resource "aws_secretsmanager_secret" "catlike" {
-  name       = local.catlike_name
+resource "aws_secretsmanager_secret" "environment" {
+  for_each = local.environment_secret_names
+
+  name       = each.value
   kms_key_id = aws_kms_key.spike_secrets.arn
   tags = {
-    AccountType = "catlike"
+    Environment = each.key
   }
 }
 
-resource "aws_secretsmanager_secret" "doglike" {
-  name       = local.doglike_name
-  kms_key_id = aws_kms_key.spike_secrets.arn
-  tags = {
-    AccountType = "doglike"
+resource "aws_secretsmanager_secret_version" "environment" {
+  for_each = local.environment_secret_names
+
+  secret_id                = aws_secretsmanager_secret.environment[each.key].id
+  secret_string_wo         = ephemeral.random_password.environment_secrets[each.key].result
+  secret_string_wo_version = 1
+
+  lifecycle {
+    ignore_changes = [secret_string_wo, secret_string_wo_version]
   }
 }
 
-resource "aws_secretsmanager_secret_version" "catlike" {
-  secret_id     = aws_secretsmanager_secret.catlike.id
-  secret_string = local.catlike_initial_value
-}
+# Create an ephemeral resource to expose the secret version data for consumption
+ephemeral "aws_secretsmanager_secret_version" "environment" {
+  for_each = local.environment_secret_names
 
-resource "aws_secretsmanager_secret_version" "doglike" {
-  secret_id     = aws_secretsmanager_secret.doglike.id
-  secret_string = local.doglike_initial_value
+  secret_id  = aws_secretsmanager_secret.environment[each.key].id
+  version_id = aws_secretsmanager_secret_version.environment[each.key].version_id
 }
 
 #############################
-# Resource-based ABAC policies on each secret
+# Resource-based policies (programmatic)
 #############################
-data "aws_iam_policy_document" "catlike_secret_policy" {
+data "aws_iam_policy_document" "environment_secret_policy" {
+  for_each = local.extended_environment_accounts
+
   statement {
     sid       = "DenyOutsideOrg"
     effect    = "Deny"
@@ -146,90 +153,32 @@ data "aws_iam_policy_document" "catlike_secret_policy" {
   }
 
   statement {
-    sid    = "AllowOrgCatlikeExecutionRoles"
+    sid    = "AllowEnvironmentAccountAccess"
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
       "secretsmanager:DescribeSecret"
     ]
-    resources = [aws_secretsmanager_secret.catlike.arn]
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:PrincipalOrgID"
-      values   = [data.aws_organizations_organization.this.id]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/AccountType"
-      values   = ["catlike"]
-    }
-    condition {
-      test     = "StringLike"
-      variable = "aws:PrincipalArn"
-      values   = ["arn:aws:iam::*:role/*-catlike-execution"]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "doglike_secret_policy" {
-  statement {
-    sid       = "DenyOutsideOrg"
-    effect    = "Deny"
-    actions   = ["secretsmanager:*"]
-    resources = ["*"]
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:PrincipalOrgID"
-      values   = [data.aws_organizations_organization.this.id]
-    }
-  }
-
-  statement {
-    sid    = "AllowOrgDoglikeExecutionRoles"
-    effect = "Allow"
-    actions = [
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:DescribeSecret"
+    resources = [
+      "arn:aws:secretsmanager:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:secret:/spikesecrets/${each.key}/*"
     ]
-    resources = [aws_secretsmanager_secret.doglike.arn]
     principals {
       type        = "AWS"
-      identifiers = ["*"]
+      identifiers = ["arn:aws:iam::${each.value}:root"]
     }
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalOrgID"
       values   = [data.aws_organizations_organization.this.id]
     }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/AccountType"
-      values   = ["doglike"]
-    }
-    condition {
-      test     = "StringLike"
-      variable = "aws:PrincipalArn"
-      values   = ["arn:aws:iam::*:role/*-doglike-execution"]
-    }
   }
 }
 
-resource "aws_secretsmanager_secret_policy" "catlike" {
-  secret_arn = aws_secretsmanager_secret.catlike.arn
-  policy     = data.aws_iam_policy_document.catlike_secret_policy.json
-}
+resource "aws_secretsmanager_secret_policy" "environment" {
+  for_each = local.extended_environment_accounts
 
-resource "aws_secretsmanager_secret_policy" "doglike" {
-  secret_arn = aws_secretsmanager_secret.doglike.arn
-  policy     = data.aws_iam_policy_document.doglike_secret_policy.json
+  secret_arn = aws_secretsmanager_secret.environment[each.key].arn
+  policy     = data.aws_iam_policy_document.environment_secret_policy[each.key].json
 }
 
 #############################
@@ -240,25 +189,10 @@ output "kms_key_arn" {
   value       = aws_kms_key.spike_secrets.arn
 }
 
-output "catlike_secret_arn" {
-  description = "ARN of the catlike spike secret"
-  value       = aws_secretsmanager_secret.catlike.arn
+output "environment_secret_arns" {
+  description = "ARNs of all environment-scoped secrets"
+  value = {
+    for env_name, secret_name in local.environment_secret_names :
+    env_name => aws_secretsmanager_secret.environment[env_name].arn
+  }
 }
-
-output "doglike_secret_arn" {
-  description = "ARN of the doglike spike secret"
-  value       = aws_secretsmanager_secret.doglike.arn
-}
-
-#############################
-# Notes for consumers (inline README)
-#############################
-# Consumers must ensure their runtime role sessions include a session tag AccountType
-# matching the secret's AccountType (catlike or doglike). Typical setup:
-# - Trust policy: allow sts:AssumeRole + sts:TagSession with a Condition requiring
-#   aws:RequestTag/AccountType to be one of the allowed env types for that role.
-# - Identity policy: you may add a condition such as
-#   StringEquals: { "aws:ResourceTag/AccountType": "<envtype>" } when granting
-#   secretsmanager:GetSecretValue/DescribeSecret on relevant ARNs.
-# - No kms:Decrypt permission is needed on consumer roles; Secrets Manager decrypts
-#   the secret using the CMK via the service integration allowed by the key policy.

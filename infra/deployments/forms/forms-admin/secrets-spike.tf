@@ -22,8 +22,13 @@ resource "aws_security_group" "secrets_spike" {
 
 
 locals {
+  # Spike demonstration secrets (catlike/doglike approach)
   catlike_secret_arn = "arn:aws:secretsmanager:eu-west-2:711966560482:secret:/spikesecrets/catlike/dummy-secret-Ab0Yfc"
   doglike_secret_arn = "arn:aws:secretsmanager:eu-west-2:711966560482:secret:/spikesecrets/doglike/dummy-secret-r6ogL8"
+
+  # Production approach: environment-scoped secret
+  # This secret path will be accessible only by this environment account
+  environment_secret_arn = "arn:aws:secretsmanager:eu-west-2:711966560482:secret:/spikesecrets/${var.environment_name}/fake-app/dummy-secret"
 }
 
 module "secrets_spike_task" {
@@ -36,6 +41,7 @@ module "secrets_spike_task" {
   private_subnet_ids = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
   security_group_ids = aws_security_group.secrets_spike[*].id
 
+  # Current spike approach using catlike/doglike
   secrets = {
     catlike_arn = local.catlike_secret_arn
     doglike_arn = local.doglike_secret_arn
@@ -43,3 +49,9 @@ module "secrets_spike_task" {
 
   secrets_account_id = module.all_accounts[count.index].deploy_account_id
 }
+
+# Note: In production, this would be replaced with environment-scoped secrets:
+# The environment secret (local.environment_secret_arn) would be accessible
+# by ANY role in this account due to the account-level principal policy.
+# Example: ECS execution roles would automatically have access to
+# "/spikesecrets/${var.environment_name}/**" secrets without additional policies.
