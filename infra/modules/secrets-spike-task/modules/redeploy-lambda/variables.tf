@@ -37,7 +37,7 @@ variable "secrets_account_id" {
 variable "secrets_account_bus_name" {
   description = "Name of the shared EventBridge bus in the secrets account"
   type        = string
-  default     = "default"
+  default     = "secrets-shared"
 }
 
 variable "org_rule_prefix_mode" {
