@@ -53,14 +53,6 @@ variable "log_retention_days" {
   default     = 7
 }
 
-variable "secrets" {
-  description = "Secret ARNs from the central secrets account"
-  type = object({
-    catlike_arn = string
-    doglike_arn = string
-  })
-}
-
 variable "secrets_account_id" {
   description = "Account ID of the central secrets account that will assume the deployer role"
   type        = string

@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "execution_secret_catlike" {
   statement {
     sid       = "SecretReadCatlike"
     actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
-    resources = [var.secrets.catlike_arn]
+    resources = ["arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/catlike/*"]
   }
 }
 
@@ -72,7 +72,7 @@ locals {
       { name = "ENVTYPE", value = "catlike" }
     ]
     secrets = [
-      { name = "DUMMY_SECRET", valueFrom = var.secrets.catlike_arn }
+      { name = "DUMMY_SECRET", valueFrom = "arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/catlike/dummy-secret" }
     ]
     logConfiguration = {
       logDriver = "awslogs"
