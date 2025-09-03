@@ -2,78 +2,87 @@
 
 This stack runs in the secrets (deploy) account and forwards Secrets Manager change events from the default bus to each environment account's default bus. Environment accounts then handle events locally with their own rules and Lambda functions.
 
+## Architecture
+
+- **Deploy account**: Single EventBridge forwarder rule on default bus that forwards Secrets Manager change events to each environment account's default bus using `module.all-accounts.environment_accounts_id`.
+- **Environment accounts**: Local EventBridge rules on default bus that filter only the secrets referenced by that account's ECS services and invoke per-service Lambda to `ecs:UpdateService --force-new-deployment`.
+
 ## What this provides
 
-- Custom EventBridge bus: `secrets-shared`.
-- Forwarder on default bus → forwards Secrets Manager events to `secrets-shared`.
-- Resource-based policy on `secrets-shared` that allows principals in your AWS Organization (via `aws:PrincipalOrgID`) to:
-  - Manage rules: `events:PutRule`, `DeleteRule`, `EnableRule`, `DisableRule`, `DescribeRule` (namespaced by account-ID prefix).
-  - Manage targets: `events:PutTargets`, `RemoveTargets`, `ListTargetsByRule` (Lambda-only, in caller’s account).
-  - Tag rules: `events:TagResource`, `UntagResource`, `ListTagsForResource`.
-- Guardrails:
-  - Rule names must start with the caller's account ID (e.g. `123456789012-secrets-spike-catlike-redeploy`).
-  - Targets must be Lambda functions in the caller's account only.
+- EventBridge forwarder rule on the default bus that matches Secrets Manager change events.
+- One EventBridge target per environment account that forwards events to that account's default bus.
+- Reuses the existing `event-bridge-actor` IAM role from the coordination stack for cross-account forwarding.
+- Automatic discovery of environment accounts via `module.all-accounts.environment_accounts_id`.
 
-## Variables
+## Event Pattern
 
-- Organization ID is auto-derived via `aws_organizations_organization` (requires Organizations permissions in this account).
-- `region` (required): AWS region.
-- `enable_rule_management` (default `true`): Toggle to attach the policy.
+The forwarder rule matches:
 
-## Outputs
-
-- `shared_event_bus_arn`: ARN of the custom bus.
-- `shared_event_bus_name`: Name of the custom bus.
-- `shared_event_bus_policy_id`: ID of the policy resource (empty if disabled).
-
-## How environment accounts use this bus
-
-1. Create a rule on the shared bus (in the secrets account) with a name prefixed by your AWS account ID, e.g. `123456789012-secrets-spike-catlike-redeploy`.
-2. Use an event pattern that matches your watched secrets. Example fragment:
-
-```
+```json
 {
   "source": ["aws.secretsmanager"],
   "detail-type": ["AWS API Call via CloudTrail"],
   "detail": {
     "eventSource": ["secretsmanager.amazonaws.com"],
-    "eventName": ["PutSecretValue","UpdateSecretVersionStage","RotateSecret"],
-    "requestParameters": {
-      "secretId": [
-        "<full-secret-arn-1>",
-        "<full-secret-arn-2>"
-      ]
-    }
+    "eventName": ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"]
   }
 }
 ```
 
-3. Add your Lambda as a target to your rule. The policy enforces that targets are Lambda functions in your own account only.
-4. Grant the secrets account's EventBridge permission to invoke your Lambda. Example (env account):
+## Variables
 
-```
-resource "aws_lambda_permission" "allow_invoke_from_shared_bus" {
-  statement_id  = "AllowInvokeFromSharedBus"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.redeploy.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = "arn:aws:events:<region>:<secrets-account-id>:rule/secrets-shared/123456789012-secrets-spike-catlike-redeploy"
-}
-```
+- No configuration variables required. Environment accounts are automatically discovered via `module.all-accounts.environment_accounts_id`.
+- Organization ID is auto-derived via `aws_organizations_organization` (requires Organizations permissions in this account).
 
-5. Derive your `secretId` match list from your ECS container definitions (the `secrets.valueFrom` values).
+## Dependencies
+
+- **Coordination stack**: This stack depends on the coordination stack being deployed first, as it reuses the `event-bridge-actor` IAM role created there.
+- **Organization permissions**: Requires Organizations permissions in the deploy account to auto-discover environment accounts.
+- **Environment EventBridge policies**: This forwarder depends on each environment account having an EventBridge bus policy that allows the deploy account to put events. Currently this is provided by `forms/pipelines/eventbridge.tf` in each environment.
+
+## Important Notes for Future Implementation
+
+⚠️ **Spike Architecture Dependency**: This implementation currently relies on the existing EventBridge bus policy created by `forms/pipelines/eventbridge.tf` in environment accounts.
+
+**If this secrets forwarding methodology is adopted for production use beyond the spike**:
+
+1. The running order in `infra/deployments/running-order.yml` may need updating to ensure EventBridge policies are deployed before secrets forwarding is activated
+2. Consider creating a dedicated EventBridge policy module that can be deployed early in the environment setup phase
+3. The dependency on pipelines deployment should be made explicit in the running order documentation
+
+## Outputs
+
+- `forward_rule_name`: Name of the EventBridge forwarder rule on default bus
+- `forward_rule_arn`: ARN of the EventBridge forwarder rule on default bus
+- `forward_target_arns_by_env`: Map of environment names to target default bus ARNs
+- `forward_role_arn`: ARN of the IAM role used by EventBridge to forward events (reused from coordination stack)
+
+## Environment Account Setup
+
+Each environment account must:
+
+1. **EventBridge bus policy**: Already created by `forms/pipelines/eventbridge.tf` deployment which allows the deploy account to put events to the default bus.
+
+2. Create local EventBridge rules on the default bus that filter for their specific secrets and target their Lambda functions.
+
+3. Create Lambda functions that call `ecs:UpdateService --force-new-deployment` for their services.
 
 ## Validation steps
 
-- After apply in the secrets account:
-  - `secrets-shared` bus exists.
-  - A rule on default forwards matching events to `secrets-shared` (check via CloudTrail or metrics).
-  - Policy attached on `secrets-shared`.
-- From an environment account:
-  - Create a namespaced rule on `secrets-shared` with your secretId filters and a Lambda target.
-  - Add the lambda permission referencing the custom bus rule ARN.
-  - Update a secret: event → secrets-shared → env rule → env Lambda → ECS UpdateService → new tasks.
+- After apply in the deploy account:
+  - Forwarder rule exists on default bus with correct event pattern
+  - One target exists per environment account pointing to their default bus
+  - IAM role exists with permissions to put events to all environment default buses
+- Test end-to-end:
+  - Update a secret in the deploy account
+  - Verify: deploy default bus → forwarder → env default bus → env rule → env Lambda → ecs:UpdateService
+
+## Security
+
+- Cross-account EventBridge delivery uses IAM role with least-privilege permissions
+- Environment accounts control their own event processing via local rules and bus policies
+- No shared infrastructure or complex cross-account policies required
 
 ## Provider
 
-- This stack runs in the secrets account; provider is scoped by `region` only.
+- This stack runs in the deploy account; provider is scoped by `region` only.

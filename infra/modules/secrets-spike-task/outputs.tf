@@ -87,8 +87,3 @@ output "doglike_lambda_arn" {
   value       = module.doglike_redeploy.lambda_arn
   description = "Lambda arn for doglike redeploy"
 }
-
-output "bus_policy_id" {
-  value       = aws_cloudwatch_event_bus_policy.allow_deploy_put.id
-  description = "ID of the EventBridge bus policy allowing deploy account to put events"
-}

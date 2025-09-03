@@ -31,20 +31,5 @@ data "aws_iam_policy_document" "lambda_assume" {
   }
 }
 
-# Default bus policy to allow deploy account to put events
-resource "aws_cloudwatch_event_bus_policy" "allow_deploy_put" {
-  event_bus_name = "default"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "AllowDeployAccountPutEvents"
-        Effect    = "Allow"
-        Principal = { "AWS" = "arn:aws:iam::${var.secrets_account_id}:root" }
-        Action    = "events:PutEvents"
-        Resource  = "arn:aws:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:event-bus/default"
-      }
-    ]
-  })
-}
+# Note: EventBridge bus policy to allow deploy account is created
+# by forms/pipelines/eventbridge.tf and is not needed here

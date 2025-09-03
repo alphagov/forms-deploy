@@ -15,3 +15,8 @@ output "forward_target_arns_by_env" {
     env_name => "arn:aws:events:${data.aws_region.this.name}:${account_id}:event-bus/default"
   }
 }
+
+output "forward_role_arn" {
+  description = "ARN of the IAM role used by EventBridge to forward events to environment accounts (reused from coordination)"
+  value       = data.aws_iam_role.eventbridge_actor.arn
+}
