@@ -74,6 +74,30 @@ data "aws_iam_policy_document" "kms_key_policy" {
       values   = ["arn:aws:secretsmanager:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:secret:*"]
     }
   }
+
+  statement {
+    sid    = "AllowCrossAccountECSExecutionRoles"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey"
+    ]
+    resources = ["*"]
+    principals {
+      type        = "AWS"
+      identifiers = [for account_id in toset(values(local.extended_environment_accounts)) : "arn:aws:iam::${account_id}:root"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["secretsmanager.${data.aws_region.this.name}.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalOrgID"
+      values   = [data.aws_organizations_organization.this.id]
+    }
+  }
 }
 
 resource "aws_kms_key" "spike_secrets" {

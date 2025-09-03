@@ -40,6 +40,17 @@ data "aws_iam_policy_document" "execution_secret_doglike" {
     actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
     resources = ["arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/doglike/*"]
   }
+
+  statement {
+    sid       = "KMSDecryptDoglike"
+    actions   = ["kms:Decrypt", "kms:DescribeKey"]
+    resources = ["arn:aws:kms:${var.region}:${var.secrets_account_id}:key/*"]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["secretsmanager.${var.region}.amazonaws.com"]
+    }
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "execution_doglike_secret" {
@@ -70,7 +81,7 @@ locals {
       { name = "ENVTYPE", value = "doglike" }
     ]
     secrets = [
-      { name = "DUMMY_SECRET", valueFrom = "arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/doglike/dummy-secret" }
+      { name = "DUMMY_SECRET", valueFrom = "arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/doglike/fake-app/dummy-secret-YbyTrO" }
     ]
     logConfiguration = {
       logDriver = "awslogs"
@@ -121,7 +132,7 @@ resource "aws_ecs_service" "doglike" {
 
 # Service ARN local
 locals {
-  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.doglike.id}/${aws_ecs_service.doglike.id}"
+  doglike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.doglike.name}/${aws_ecs_service.doglike.name}"
 }
 
 # Autoscaling

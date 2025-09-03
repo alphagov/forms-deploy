@@ -42,6 +42,17 @@ data "aws_iam_policy_document" "execution_secret_catlike" {
     actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
     resources = ["arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/catlike/*"]
   }
+
+  statement {
+    sid       = "KMSDecryptCatlike"
+    actions   = ["kms:Decrypt", "kms:DescribeKey"]
+    resources = ["arn:aws:kms:${var.region}:${var.secrets_account_id}:key/*"]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["secretsmanager.${var.region}.amazonaws.com"]
+    }
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "execution_catlike_secret" {
@@ -72,7 +83,7 @@ locals {
       { name = "ENVTYPE", value = "catlike" }
     ]
     secrets = [
-      { name = "DUMMY_SECRET", valueFrom = "arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/catlike/dummy-secret" }
+      { name = "DUMMY_SECRET", valueFrom = "arn:aws:secretsmanager:${var.region}:${var.secrets_account_id}:secret:/spikesecrets/catlike/fake-app/dummy-secret-MbCFUP" }
     ]
     logConfiguration = {
       logDriver = "awslogs"
@@ -123,7 +134,7 @@ resource "aws_ecs_service" "catlike" {
 
 # Service ARN local
 locals {
-  catlike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.catlike.id}/${aws_ecs_service.catlike.id}"
+  catlike_service_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.catlike.name}/${aws_ecs_service.catlike.name}"
 }
 
 # Autoscaling
