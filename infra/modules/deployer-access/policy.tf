@@ -302,6 +302,17 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
+    sid    = "ManageAccessKeys"
+    effect = "Allow"
+    actions = [
+      "iam:CreateAccessKey"
+    ]
+    resources = [
+      "arn:aws:iam::${var.account_id}:user/auth0"
+    ]
+  }
+
+  statement {
     sid    = "ManageSQS"
     effect = "Allow"
     actions = [
