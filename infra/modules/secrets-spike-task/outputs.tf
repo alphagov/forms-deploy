@@ -38,11 +38,6 @@ output "doglike_service_name" {
   description = "Name of the doglike ECS service"
 }
 
-output "deployer_role_arn" {
-  value       = aws_iam_role.deployer.arn
-  description = "IAM role ARN for cross-account automation to UpdateService"
-}
-
 output "log_group_catlike" {
   value       = aws_cloudwatch_log_group.catlike.name
   description = "CloudWatch Logs log group for catlike"
@@ -55,22 +50,22 @@ output "log_group_doglike" {
 
 output "catlike_event_rule_name" {
   value       = module.catlike_redeploy.rule_name
-  description = "EventBridge rule name for catlike"
+  description = "Local EventBridge rule name for catlike"
 }
 
 output "catlike_event_rule_arn" {
   value       = module.catlike_redeploy.rule_arn
-  description = "EventBridge rule arn for catlike"
+  description = "Local EventBridge rule arn for catlike"
 }
 
 output "doglike_event_rule_name" {
   value       = module.doglike_redeploy.rule_name
-  description = "EventBridge rule name for doglike"
+  description = "Local EventBridge rule name for doglike"
 }
 
 output "doglike_event_rule_arn" {
   value       = module.doglike_redeploy.rule_arn
-  description = "EventBridge rule arn for doglike"
+  description = "Local EventBridge rule arn for doglike"
 }
 
 output "catlike_lambda_name" {
@@ -91,4 +86,9 @@ output "doglike_lambda_name" {
 output "doglike_lambda_arn" {
   value       = module.doglike_redeploy.lambda_arn
   description = "Lambda arn for doglike redeploy"
+}
+
+output "bus_policy_id" {
+  value       = aws_cloudwatch_event_bus_policy.allow_deploy_put.id
+  description = "ID of the EventBridge bus policy allowing deploy account to put events"
 }

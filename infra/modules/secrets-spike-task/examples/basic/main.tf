@@ -1,7 +1,7 @@
 module "secrets_spike_task" {
   source = "../../"
 
-  name_prefix        = "secrets-spike"
+  name_prefix        = "dev-secrets-spike"
   region             = "eu-west-2"
   vpc_id             = "vpc-1234567890abcdef0"
   private_subnet_ids = ["subnet-111", "subnet-222"]
@@ -16,8 +16,14 @@ module "secrets_spike_task" {
     doglike_arn = "arn:aws:secretsmanager:eu-west-2:123456789012:secret:/spikesecrets/doglike/dummy-secret-GhIjKl"
   }
 
-  secrets_account_id = "210987654321"
+  secrets_account_id = "123456789012"
+}
 
-  # container_image can be omitted to use public busybox
-  # container_image = "123456789012.dkr.ecr.eu-west-2.amazonaws.com/secrets-spike:latest"
+output "example_outputs" {
+  value = {
+    catlike_lambda_name = module.secrets_spike_task.catlike_lambda_name
+    doglike_lambda_name = module.secrets_spike_task.doglike_lambda_name
+    catlike_rule_name   = module.secrets_spike_task.catlike_event_rule_name
+    doglike_rule_name   = module.secrets_spike_task.doglike_event_rule_name
+  }
 }

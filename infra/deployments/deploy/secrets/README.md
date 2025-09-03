@@ -1,6 +1,6 @@
-# Shared EventBridge Bus for Secrets Events (custom bus)
+# EventBridge Forwarder for Secrets Events (deploy account)
 
-This stack runs in the secrets (deploy) account and provisions a custom EventBridge bus `secrets-shared`. A single forwarder rule on the default bus forwards Secrets Manager change events to the custom bus. Org members can then create namespaced rules and Lambda targets on `secrets-shared` only.
+This stack runs in the secrets (deploy) account and forwards Secrets Manager change events from the default bus to each environment account's default bus. Environment accounts then handle events locally with their own rules and Lambda functions.
 
 ## What this provides
 

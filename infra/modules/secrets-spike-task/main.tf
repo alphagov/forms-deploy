@@ -1,7 +1,3 @@
-locals {
-  default_image = "public.ecr.aws/docker/library/busybox:latest"
-}
-
 # Per-environment ECS clusters are defined in catlike.tf and doglike.tf
 
 # Trust policy for ECS tasks
@@ -19,10 +15,9 @@ data "aws_iam_policy_document" "ecs_tasks_assume_role" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-# Common image local
+# Common image local - always use busybox
 locals {
-  image_to_use          = coalesce(var.container_image, local.default_image)
-  shared_event_bus_name = "secrets-shared"
+  image_to_use = "public.ecr.aws/docker/library/busybox:latest"
 }
 
 # Lambda assume role policy (shared)
@@ -36,41 +31,20 @@ data "aws_iam_policy_document" "lambda_assume" {
   }
 }
 
-# Cross-account deployer role for UpdateService (trust + inline policy references per-service locals)
-resource "aws_iam_role" "deployer" {
-  name               = "${var.name_prefix}-deployer"
-  assume_role_policy = data.aws_iam_policy_document.deployer_trust.json
-}
+# Default bus policy to allow deploy account to put events
+resource "aws_cloudwatch_event_bus_policy" "allow_deploy_put" {
+  event_bus_name = "default"
 
-data "aws_iam_policy_document" "deployer_trust" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.secrets_account_id}:root"]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "deployer_inline" {
-  statement {
-    sid     = "EcsUpdateServices"
-    actions = ["ecs:UpdateService"]
-    resources = [
-      local.catlike_service_arn,
-      local.doglike_service_arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowDeployAccountPutEvents"
+        Effect    = "Allow"
+        Principal = { "AWS" = "arn:aws:iam::${var.secrets_account_id}:root" }
+        Action    = "events:PutEvents"
+        Resource  = "arn:aws:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:event-bus/default"
+      }
     ]
-  }
-
-  statement {
-    sid       = "EcsDescribeServices"
-    actions   = ["ecs:DescribeServices"]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "deployer" {
-  name   = "${var.name_prefix}-deployer-update"
-  role   = aws_iam_role.deployer.id
-  policy = data.aws_iam_policy_document.deployer_inline.json
+  })
 }

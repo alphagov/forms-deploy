@@ -1,92 +1,85 @@
 # secrets-spike-task (Terraform module)
 
-This spike module provisions two minimal ECS Fargate services that consume Secrets Manager values from a central account and auto-redeploy when secrets change. A per-service Lambda in the env account listens to Events from a central, shared EventBridge bus in the secrets account and calls `ecs:UpdateService`.
+This spike module provisions two minimal ECS Fargate services that consume Secrets Manager values from a central account and auto-redeploy when secrets change. Per-service Lambda functions in the env account listen to Events from the deploy account via EventBridge forwarders and call `ecs:UpdateService`.
 
-It creates:
+## Architecture
 
-- Two ECS clusters (one per env service).
+- **Deploy account**: Single EventBridge forwarder rule on default bus that forwards Secrets Manager change events to each environment account's default bus.
+- **Environment account**: Local EventBridge rules on default bus that filter only the secrets referenced by that account's ECS services and invoke per-service Lambda to `ecs:UpdateService --force-new-deployment`.
 - Two services and task definitions: `catlike` and `doglike`.
-- CloudWatch Logs log groups for each service.
-- Minimal IAM roles for task execution and task access to Secrets Manager (scoped per secret ARN).
-- A cross-account "deployer" role that the central secrets account can assume to call `ecs:UpdateService` with `forceNewDeployment=true`.
-- For each service, a small Lambda and a remote EventBridge rule on the secrets account bus targeting that Lambda. Rules are namespaced with the caller account ID.
+- Each service references secrets via ECS container definition `secrets[].valueFrom`.
+- Local Lambda functions (`{env}-secrets-spike-catlike-redeploy` and `{env}-secrets-spike-doglike-redeploy`) triggered by local EventBridge rules.
+- EventBridge bus policy on default bus allows deploy account to put events.
 
-Security posture (spike):
+## What's included
 
-- Each task has access only to its own provided Secret ARN.
-- No explicit KMS permissions are granted; Secrets Manager decrypts on behalf of the caller.
-- The deployer role allows `ecs:UpdateService`/`DescribeServices` only for the two created services and the created cluster.
+- Two ECS Fargate clusters (one per service type)
+- Two ECS services and task definitions
+- IAM roles and policies for ECS execution/task
+- CloudWatch log groups
+- Local EventBridge rules that listen for Secrets Manager events
+- Lambda functions that call `ecs:UpdateService` when their watched secrets change
+- EventBridge bus policy allowing deploy account to forward events
 
-## Inputs
+## Variables
 
-- `name_prefix` (string, required): Prefix for resource names, e.g. `secrets-spike`.
-- `region` (string, required): AWS region.
-- `vpc_id` (string, required)
-- `private_subnet_ids` (list(string), required)
-- `security_group_ids` (list(string), required)
-- `assign_public_ip` (bool, default `false`)
-- `cpu` (number, default `256`)
-- `memory` (number, default `512`)
-- `desired_count` (number, default `1`)
-- `container_image` (string, optional): If omitted, a public BusyBox image is used.
-- `log_retention_days` (number, default `7`)
-- `secrets` (object, required):
+- `name_prefix` (string, required): Prefix for resource names, e.g. `dev-secrets-spike`.
+- `region` (string, required): AWS region for deployment.
+- `vpc_id` (string, required): VPC ID where resources will be deployed.
+- `private_subnet_ids` (list, required): Private subnet IDs for ECS services.
+- `security_group_ids` (list, required): Security group IDs for ECS tasks.
+- `secrets_account_id` (string, required): Account ID where Secrets Manager resides and EventBridge events originate.
+- `secrets` (object, required): Map containing:
   - `catlike_arn` (string)
   - `doglike_arn` (string)
-- `secrets_account_id` (string, required): Account that assumes the deployer role and hosts the shared EventBridge bus.
-- `task_execution_role_additional_policies` (list(string), default `[]`)
-- `task_role_additional_policies` (list(string), default `[]`)
-- `enable_service_auto_scaling` (bool, default `false`)
-- `autoscaling_min_capacity` (number, default `1`)
-- `autoscaling_max_capacity` (number, default `2`)
-- `autoscaling_target_cpu` (number, default `50`)
-- `enable_execute_command` (bool, default `false`)
 
-## Outputs
+Plus various optional variables for scaling, log retention, additional IAM policies, etc. The module always uses the public busybox image.
 
-- `catlike_cluster_name`, `catlike_cluster_arn`
-- `doglike_cluster_name`, `doglike_cluster_arn`
-- `catlike_service_arn`, `catlike_service_name`
-- `doglike_service_arn`, `doglike_service_name`
-- `deployer_role_arn`
-- `log_group_catlike`, `log_group_doglike`
-- `catlike_event_rule_name`, `catlike_event_rule_arn` (remote bus)
-- `doglike_event_rule_name`, `doglike_event_rule_arn` (remote bus)
-- `catlike_lambda_name`, `catlike_lambda_arn`
-- `doglike_lambda_name`, `doglike_lambda_arn`
-
-## Example
-
-See `examples/basic`:
+## Usage
 
 ```hcl
 module "secrets_spike_task" {
-  source = "../../"
+  source = "../../../modules/secrets-spike-task"
 
-  name_prefix         = "secrets-spike"
-  region              = "eu-west-2"
-  vpc_id              = "vpc-1234567890abcdef0"
-  private_subnet_ids  = ["subnet-111", "subnet-222"]
-  security_group_ids  = ["sg-abc123"]
+  name_prefix        = "dev-secrets-spike"
+  region             = "eu-west-2"
+  vpc_id             = "vpc-12345"
+  private_subnet_ids = ["subnet-12345", "subnet-67890"]
+  security_group_ids = ["sg-12345"]
 
   secrets = {
     catlike_arn = "arn:aws:secretsmanager:eu-west-2:123456789012:secret:/spikesecrets/catlike/dummy-secret-AbCdEf"
     doglike_arn = "arn:aws:secretsmanager:eu-west-2:123456789012:secret:/spikesecrets/doglike/dummy-secret-GhIjKl"
   }
 
-  secrets_account_id = "210987654321"
+  secrets_account_id = "123456789012"
 }
 ```
 
-## Notes
+## Outputs
 
-- The container prints only the first 8 characters of the secret via `${DUMMY_SECRET:0:8}` every ~20 seconds.
-- The central secrets account should deploy the bus policy provided in `infra/deployments/deploy/secrets` to allow org accounts to manage namespaced rules and Lambda targets in their own accounts.
+- `catlike_cluster_name`, `catlike_cluster_arn`
+- `doglike_cluster_name`, `doglike_cluster_arn`
+- `catlike_service_name`, `catlike_service_arn`
+- `doglike_service_name`, `doglike_service_arn`
+- `catlike_event_rule_name`, `catlike_event_rule_arn` (local rules)
+- `doglike_event_rule_name`, `doglike_event_rule_arn` (local rules)
+- `catlike_lambda_name`, `catlike_lambda_arn`
+- `doglike_lambda_name`, `doglike_lambda_arn`
+- `bus_policy_id`
+- Log group names for both services
+
+## Security posture (spike)
+
+- Each task has access only to its own provided Secret ARN.
+- No explicit KMS permissions are granted; Secrets Manager decrypts on behalf of the caller.
+- Lambda functions have permissions to update only their specific ECS service.
+- EventBridge bus policy allows only the deploy account to put events to the default bus.
 
 ## Testing steps
 
 1. Deploy the module with both secret ARNs.
 2. Wait for both services to reach `RUNNING`.
 3. Check CloudWatch Logs in the two log groups for lines like `secret head: XXXXXXXX`.
-4. Update a secret value in the central account and trigger the automation to assume the deployer role and call `UpdateService`. Confirm a new deployment occurs and the logged head changes.
-5. Negative test: swap ARNs between services and redeploy; observe `AccessDeniedException` for `GetSecretValue` in logs/events.
+4. Update a secret value in the deploy account. Confirm EventBridge forwarder → environment default bus → local rule → Lambda → ecs:UpdateService triggers and a new deployment occurs with the updated secret head.
+5. Negative test: change an unrelated secret; no trigger should occur.

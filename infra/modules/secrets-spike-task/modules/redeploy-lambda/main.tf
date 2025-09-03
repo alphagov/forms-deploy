@@ -68,36 +68,30 @@ resource "aws_lambda_function" "this" {
   }
 }
 
-# Build remote bus ARN in the secrets account
-locals {
-  remote_bus_arn = "arn:aws:events:${var.region}:${var.secrets_account_id}:event-bus/${var.secrets_account_bus_name}"
-}
-
-# Determine final rule name (org-prefixed or bare)
+# Current account and region for building local rule ARN
 data "aws_caller_identity" "current" {}
-locals {
-  base_rule_name  = "${var.rule_name_suffix_prefix}-${var.rule_suffix}"
-  final_rule_name = var.org_rule_prefix_mode ? "${data.aws_caller_identity.current.account_id}-${local.base_rule_name}" : local.base_rule_name
-}
+data "aws_region" "current" {}
 
-# One rule per redeploy function on the remote bus in the secrets account
+# Local EventBridge rule on default bus
 resource "aws_cloudwatch_event_rule" "this" {
-  name           = local.final_rule_name
-  event_bus_name = local.remote_bus_arn
+  name           = var.name
+  event_bus_name = "default"
   event_pattern = jsonencode({
     source      = ["aws.secretsmanager"],
     detail-type = ["AWS API Call via CloudTrail"],
     detail = {
-      eventSource       = ["secretsmanager.amazonaws.com"],
-      eventName         = ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"],
-      requestParameters = { secretId = var.secret_arns }
+      eventSource = ["secretsmanager.amazonaws.com"],
+      eventName   = ["PutSecretValue", "UpdateSecretVersionStage", "RotateSecret"],
+      requestParameters = {
+        secretId = var.secret_filters
+      }
     }
   })
 }
 
 resource "aws_cloudwatch_event_target" "this" {
   rule           = aws_cloudwatch_event_rule.this.name
-  event_bus_name = local.remote_bus_arn
+  event_bus_name = "default"
   target_id      = "lambda"
   arn            = aws_lambda_function.this.arn
 }
@@ -107,7 +101,7 @@ resource "aws_lambda_permission" "allow_events" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.this.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.this.arn
+  source_arn    = "arn:aws:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:rule/${aws_cloudwatch_event_rule.this.name}"
 }
 
 output "lambda_name" {
@@ -122,10 +116,10 @@ output "lambda_arn" {
 
 output "rule_name" {
   value       = aws_cloudwatch_event_rule.this.name
-  description = "Remote EventBridge rule name"
+  description = "Local EventBridge rule name"
 }
 
 output "rule_arn" {
   value       = aws_cloudwatch_event_rule.this.arn
-  description = "Remote EventBridge rule ARN"
+  description = "Local EventBridge rule ARN"
 }

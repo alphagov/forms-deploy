@@ -1,24 +1,22 @@
 # redeploy-lambda submodule
 
-Deploys a Lambda that forces an ECS service redeploy when specific Secrets Manager secrets change. EventBridge rules are created on a remote, shared bus in the secrets account and target this Lambda in the environment account.
+Deploys a Lambda that forces an ECS service redeploy when specific Secrets Manager secrets change. EventBridge rules are created on the local default bus in the environment account and target this Lambda.
 
 Inputs (key):
 
-- region: AWS region
+- name: Base name for resources (function, rule, log group)
 - cluster_arn, service_arn: ECS targets
-- secret_arns: List of secret ARNs to watch
-- secrets_account_id: ID of the account hosting the shared EventBridge bus
-- secrets_account_bus_name: Bus name (default "default")
-- org_rule_prefix_mode: Prefix rule name with caller account ID (default true)
-- rule_name_suffix_prefix: e.g. module name prefix
-- rule_suffix: e.g. "catlike-redeploy"
+- secret_arns: List of secret ARNs to watch (used for Lambda environment)
+- secret_filters: List of secret ARNs and names for EventBridge rule filtering
+- log_retention_days: Log retention (default 14 days)
 
 Outputs:
 
 - lambda_name, lambda_arn
-- rule_name, rule_arn (remote bus)
+- rule_name, rule_arn (local default bus)
 
 Notes:
 
-- Adds lambda:InvokeFunction permission for the remote EventBridge rule ARN.
-- Event pattern filters Secrets Manager API calls by provided secret ARNs.
+- Creates local EventBridge rule on default bus that filters by provided secret ARNs/names
+- Adds lambda:InvokeFunction permission for the local EventBridge rule ARN
+- Event pattern filters Secrets Manager API calls by provided secret filters

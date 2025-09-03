@@ -1,6 +1,8 @@
 ############################################
 # Catlike resources
 ############################################
+# Catlike resources
+############################################
 
 # ECS Cluster for catlike
 resource "aws_ecs_cluster" "catlike" {
@@ -82,7 +84,8 @@ locals {
     }
   }
 
-  catlike_secret_arns = [for s in local.catlike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
+  catlike_secret_arns  = [for s in local.catlike_container_definition.secrets : s.valueFrom if startswith(s.valueFrom, "arn:aws:secretsmanager:")]
+  catlike_secret_names = [for arn in local.catlike_secret_arns : regex("^arn:aws:secretsmanager:[^:]+:[0-9]+:secret:([^:]+)", arn)[0]]
 }
 
 # Task definition
@@ -151,19 +154,14 @@ resource "aws_appautoscaling_policy" "catlike_cpu" {
   }
 }
 
-# Lambda role/policy/logs/function
+# Lambda redeploy module for catlike
 module "catlike_redeploy" {
-  source             = "./modules/redeploy-lambda"
+  source = "./modules/redeploy-lambda"
+
   name               = "${var.name_prefix}-catlike-redeploy"
-  region             = var.region
   cluster_arn        = aws_ecs_cluster.catlike.arn
   service_arn        = local.catlike_service_arn
   secret_arns        = local.catlike_secret_arns
+  secret_filters     = concat(local.catlike_secret_arns, local.catlike_secret_names)
   log_retention_days = var.log_retention_days
-  # Remote EventBridge bus (secrets account)
-  secrets_account_id       = var.secrets_account_id
-  secrets_account_bus_name = local.shared_event_bus_name
-  org_rule_prefix_mode     = true
-  rule_name_suffix_prefix  = var.name_prefix
-  rule_suffix              = "catlike-redeploy"
 }

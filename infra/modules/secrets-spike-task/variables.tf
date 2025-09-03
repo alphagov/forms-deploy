@@ -47,12 +47,6 @@ variable "desired_count" {
   default     = 1
 }
 
-variable "container_image" {
-  description = "Container image to run. If null, a public busybox image will be used."
-  type        = string
-  default     = null
-}
-
 variable "log_retention_days" {
   description = "CloudWatch Logs retention in days"
   type        = number
