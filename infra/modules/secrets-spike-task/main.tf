@@ -21,7 +21,8 @@ data "aws_region" "current" {}
 
 # Common image local
 locals {
-  image_to_use = coalesce(var.container_image, local.default_image)
+  image_to_use          = coalesce(var.container_image, local.default_image)
+  shared_event_bus_name = "secrets-shared"
 }
 
 # Lambda assume role policy (shared)

@@ -120,8 +120,9 @@ resource "aws_cloudwatch_event_bus_policy" "org_rule_mgmt" {
         Action    = ["events:TagResource", "events:UntagResource", "events:ListTagsForResource"],
         Resource  = "arn:aws:events:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:rule/${aws_cloudwatch_event_bus.shared.name}/*",
         Condition = {
-          StringEquals       = { "aws:PrincipalOrgID" = data.aws_organizations_organization.this.id },
-          StringLikeIfExists = { "events:ruleName" = ["${"${"aws:PrincipalAccount"}"}-*"] }
+          StringEquals = {
+            "aws:PrincipalOrgID" = data.aws_organizations_organization.this.id
+          }
         }
       },
       {

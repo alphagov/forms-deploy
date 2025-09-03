@@ -162,7 +162,7 @@ module "catlike_redeploy" {
   log_retention_days = var.log_retention_days
   # Remote EventBridge bus (secrets account)
   secrets_account_id       = var.secrets_account_id
-  secrets_account_bus_name = "default"
+  secrets_account_bus_name = local.shared_event_bus_name
   org_rule_prefix_mode     = true
   rule_name_suffix_prefix  = var.name_prefix
   rule_suffix              = "catlike-redeploy"
