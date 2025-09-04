@@ -189,7 +189,12 @@ data "aws_iam_policy_document" "environment_secret_policy" {
     ]
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${each.value}:root"]
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "aws:PrincipalArn"
+      values   = ["arn:aws:iam::${each.value}:role/*-secrets-spike-*-execution"]
     }
     condition {
       test     = "StringEquals"
