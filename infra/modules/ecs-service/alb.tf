@@ -68,3 +68,45 @@ resource "aws_lb_listener_rule" "apex_rule" {
     }
   }
 }
+
+resource "aws_lb_target_group" "internal_tg" {
+  count = var.internal_alb_listener_arn != null ? 1 : 0
+
+  #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
+  name        = "${var.application}-internal"
+  port        = var.container_port
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  deregistration_delay = "60"
+
+  health_check {
+    path     = "/up"
+    matcher  = "200"
+    protocol = "HTTP"
+
+    interval            = 11
+    timeout             = 10
+    unhealthy_threshold = 3
+    healthy_threshold   = 2
+  }
+}
+
+resource "aws_lb_listener_rule" "internal_to_app" {
+  count = var.internal_alb_listener_arn != null ? 1 : 0
+
+  listener_arn = var.internal_alb_listener_arn
+  priority     = var.listener_priority
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.internal_tg[0].arn
+  }
+
+  condition {
+    host_header {
+      values = [var.internal_sub_domain]
+    }
+  }
+}
