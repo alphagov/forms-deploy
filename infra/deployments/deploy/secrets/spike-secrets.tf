@@ -140,10 +140,6 @@ resource "aws_secretsmanager_secret_version" "environment" {
   secret_id                = aws_secretsmanager_secret.environment[each.key].id
   secret_string_wo         = ephemeral.random_password.environment_secrets[each.key].result
   secret_string_wo_version = 1
-
-  lifecycle {
-    ignore_changes = [secret_string_wo, secret_string_wo_version]
-  }
 }
 
 # Create an ephemeral resource to expose the secret version data for consumption
