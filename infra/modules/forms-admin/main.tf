@@ -1,5 +1,6 @@
 data "aws_caller_identity" "current" {}
 locals {
+  sub_domain                  = "admin.${var.root_domain}"
   image                       = var.image_tag == null ? null : "${var.container_registry}/forms-admin-deploy:${var.image_tag}"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
   auth_credentials = {
@@ -89,8 +90,8 @@ module "ecs_service" {
   env_name                     = var.env_name
   application                  = "forms-admin"
   root_domain                  = var.root_domain
-  sub_domain                   = "admin.${var.root_domain}"
-  listener_priority            = 300
+  sub_domain                   = local.sub_domain
+  listener_priority            = 301
   include_domain_root_listener = false
   image                        = local.image
   cpu                          = var.cpu
@@ -202,4 +203,31 @@ module "ecs_service" {
     lookup(local.auth_credentials, var.auth_provider, []),
     lookup(local.auth_credentials, coalesce(var.previous_auth_provider, "_"), [])
   ])
+}
+
+resource "aws_lb_listener_rule" "block_api_access" {
+  listener_arn = var.alb_listener_arn
+  priority     = 300
+
+  action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Forbidden"
+      status_code  = "403"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*", "/api"]
+    }
+  }
+
+  condition {
+    host_header {
+      values = [local.sub_domain]
+    }
+  }
 }
