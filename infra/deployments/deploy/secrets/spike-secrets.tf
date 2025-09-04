@@ -85,12 +85,17 @@ data "aws_iam_policy_document" "kms_key_policy" {
     resources = ["*"]
     principals {
       type        = "AWS"
-      identifiers = [for account_id in toset(values(local.extended_environment_accounts)) : "arn:aws:iam::${account_id}:root"]
+      identifiers = [for account_id in toset(values(local.extended_environment_accounts)) : "arn:aws:iam::${account_id}:role/*-secrets-spike-*-execution"]
     }
     condition {
       test     = "StringEquals"
       variable = "kms:ViaService"
       values   = ["secretsmanager.${data.aws_region.this.name}.amazonaws.com"]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "kms:EncryptionContext:aws:secretsmanager:arn"
+      values   = ["arn:aws:secretsmanager:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:secret:/spikesecrets/*"]
     }
     condition {
       test     = "StringEquals"
