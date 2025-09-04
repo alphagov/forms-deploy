@@ -19,11 +19,6 @@ resource "aws_security_group" "secrets_spike" {
   }
 }
 
-locals {
-  # Environment-scoped secret using the new programmatic namespace
-  environment_secret_arn = "arn:aws:secretsmanager:eu-west-2:711966560482:secret:/spikesecrets/${var.environment_name}/fake-app/dummy-secret"
-}
-
 module "secrets_spike_task" {
   count  = var.environment_type == "development" ? 1 : 0
   source = "../../../modules/secrets-spike-task"

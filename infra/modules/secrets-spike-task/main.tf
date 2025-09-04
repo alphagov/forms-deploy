@@ -11,10 +11,6 @@ data "aws_iam_policy_document" "ecs_tasks_assume_role" {
   }
 }
 
-module "all_accounts" {
-  source = "../../modules/all-accounts"
-}
-
 # Helpers to build service ARNs (ecs_service resource doesn't export an arn attribute)
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
