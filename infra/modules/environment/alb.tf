@@ -37,6 +37,22 @@ locals {
     ]
   }
 
+  # Internal domain names for app-to-app communication
+  internal_domain_names = {
+    user-research = [
+      "admin.internal.research.forms.service.gov.uk",
+    ],
+    dev = [
+      "admin.internal.dev.forms.service.gov.uk",
+    ],
+    staging = [
+      "admin.internal.staging.forms.service.gov.uk",
+    ],
+    production = [
+      "admin.internal.forms.service.gov.uk",
+    ]
+  }
+
   account_id = data.aws_caller_identity.current.account_id
 
   #The AWS managed account for the ALB, see: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-access-logging.html
@@ -76,7 +92,10 @@ data "aws_iam_policy_document" "allow_logs" {
       identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
     }
     actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*"]
+    resources = [
+      "arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*",
+      "arn:aws:s3:::${module.logs_bucket.name}/forms-internal/AWSLogs/${local.account_id}/*"
+    ]
   }
 }
 
@@ -117,6 +136,30 @@ resource "aws_lb" "alb" {
   }
 }
 
+# Internal ALB for app-to-app communication and CloudFront VPC origin
+resource "aws_lb" "internal_alb" {
+  #checkov:skip=CKV2_AWS_28:WAF is not considered necessary at this time.
+
+  name                       = "forms-internal"
+  internal                   = true
+  load_balancer_type         = "application"
+  enable_deletion_protection = true
+  drop_invalid_header_fields = true
+  security_groups            = [aws_security_group.internal_alb.id]
+
+  subnets = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id
+  ]
+
+  access_logs {
+    bucket  = module.logs_bucket.name
+    prefix  = "forms-internal"
+    enabled = true
+  }
+}
+
 resource "aws_security_group" "alb" {
   name        = "alb-${var.env_name}"
   description = "Allows public inbound on 443 and outbound to VPC"
@@ -128,6 +171,28 @@ resource "aws_security_group" "alb" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Any port within VPC using TCP"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.forms.cidr_block]
+  }
+}
+
+resource "aws_security_group" "internal_alb" {
+  name        = "internal-alb"
+  description = "Allows internal traffic on 80 and outbound to VPC"
+  vpc_id      = aws_vpc.forms.id
+
+  ingress {
+    description = "Port 80 from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.forms.cidr_block]
   }
 
   egress {
@@ -156,6 +221,22 @@ resource "aws_lb_listener" "listener" {
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
   certificate_arn   = module.acm_certicate_with_validation.arn
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Service unavailable"
+      status_code  = 503
+    }
+  }
+}
+
+resource "aws_lb_listener" "internal_listener" {
+  load_balancer_arn = aws_lb.internal_alb.arn
+  port              = "80"
+  protocol          = "HTTP"
 
   default_action {
     type = "fixed-response"
