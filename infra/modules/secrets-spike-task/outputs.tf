@@ -87,3 +87,11 @@ output "doglike_lambda_arn" {
   value       = module.doglike_redeploy.lambda_arn
   description = "Lambda arn for doglike redeploy"
 }
+
+output "catlike_execution_role_arn" {
+  value = aws_iam_role.execution_catlike.arn
+}
+
+output "doglike_execution_role_arn" {
+  value = aws_iam_role.execution_doglike.arn
+}

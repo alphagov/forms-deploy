@@ -1,12 +1,9 @@
 module "all_accounts" {
-  count = var.environment_type == "development" ? 1 : 0
-
   source = "../../../modules/all-accounts"
 }
 
 # Development-only: spike module to validate cross-account Secrets Manager access and redeploy
 resource "aws_security_group" "secrets_spike" {
-  count       = var.environment_type == "development" ? 1 : 0
   name        = "${var.environment_name}-secrets-spike"
   description = "Egress-only SG for secrets spike ECS tasks"
   vpc_id      = data.terraform_remote_state.forms_environment.outputs.vpc_id
@@ -29,5 +26,5 @@ module "secrets_spike_task" {
   private_subnet_ids = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
   security_group_ids = aws_security_group.secrets_spike[*].id
 
-  secrets_account_id = module.all_accounts[count.index].deploy_account_id
+  secrets_account_id = module.all_accounts.deploy_account_id
 }
