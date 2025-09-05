@@ -29,7 +29,7 @@ while getopts "a:d:e:r:l:" opt; do
     case "${opt}" in
         a)
             action="${OPTARG}"
-            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" ]] ||  usage
+            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" || $action == "destroy" ]] ||  usage
             ;;
         d)
             deployment="${OPTARG}"
@@ -190,6 +190,10 @@ case "${action}" in
         pre_init
         init
         ;;
+    destroy)
+        pre_apply
+        plan_apply "destroy"
+        ;;
     plan)
         pre_apply # We use pre_apply here so that a plan and application look as similar as possible
         plan_apply "plan"
@@ -203,4 +207,3 @@ case "${action}" in
         unlock
         ;;
 esac
-
