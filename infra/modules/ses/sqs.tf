@@ -3,7 +3,7 @@ module "auth0_bounces_and_complaints_sqs" {
   environment_name = var.environment_name
   environment_type = var.environment_type
   account_id       = local.account_id
-  identifier       = "ses"
+  identifier       = "auth0_ses"
   policy_id        = "SESBouncesComplaintsQueueTopic"
   sqs_type         = "bounces_and_complaints"
 }
