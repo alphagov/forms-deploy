@@ -4,7 +4,7 @@ module "redis" {
   vpc_id              = data.terraform_remote_state.forms_environment.outputs.vpc_id
   subnet_ids          = data.terraform_remote_state.forms_environment.outputs.private_subnet_ids
   ingress_cidr_blocks = [data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block]
-
+  multi_az_enabled    = var.environmental_settings.redis_multi_az_enabled
 }
 
 

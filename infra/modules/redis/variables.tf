@@ -84,3 +84,9 @@ variable "ingress_cidr_blocks" {
   type        = list(string)
   description = "List of CIDR blocks from which ingress will be permitted"
 }
+
+variable "multi_az_enabled" {
+  description = "Enable multi-availability zone support for Redis cluster. Improves resilience during planned maintenance and AZ failures."
+  type        = bool
+  default     = false
+}

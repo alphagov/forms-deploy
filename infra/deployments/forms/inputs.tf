@@ -203,6 +203,7 @@ variable "environmental_settings" {
     rate_limit_bypass_cidrs                  = list(string)
     enable_shield_advanced_healthchecks      = bool
     allow_pagerduty_alerts                   = bool
+    redis_multi_az_enabled                   = bool
   })
 }
 
@@ -224,3 +225,4 @@ variable "end_to_end_test_settings" {
     s3_form_id      = string
   })
 }
+

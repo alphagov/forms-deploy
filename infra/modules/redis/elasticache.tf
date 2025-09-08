@@ -12,6 +12,7 @@ resource "aws_elasticache_replication_group" "forms_runner" {
   num_cache_clusters         = var.number_cache_clusters
   node_type                  = var.redis_node_type
   automatic_failover_enabled = var.automatic_failover_enabled
+  multi_az_enabled           = var.multi_az_enabled
   engine                     = "redis"
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
