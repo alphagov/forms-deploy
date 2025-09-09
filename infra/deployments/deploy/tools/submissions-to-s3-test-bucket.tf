@@ -1,7 +1,8 @@
 module "submissions_to_s3_test_bucket" {
   source = "../../../modules/secure-bucket"
 
-  name = "govuk-forms-submissions-to-s3-test"
+  name                   = "govuk-forms-submissions-to-s3-test"
+  access_logging_enabled = true
   extra_bucket_policies = [
     data.aws_iam_policy_document.allow_writes_from_other_accounts.json
   ]

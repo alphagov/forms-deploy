@@ -12,7 +12,8 @@ variable "bucket_name" {
 module "state_bucket" {
   source = "../../../../modules/state-bucket"
 
-  bucket_name = var.bucket_name
+  bucket_name            = var.bucket_name
+  access_logging_enabled = true
 }
 
 

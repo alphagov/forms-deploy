@@ -12,7 +12,9 @@
 
 module "lambda_bucket" {
   source = "../../../modules/secure-bucket"
-  name   = "govuk-forms-${var.environment_name}-pipeline-invoker"
+
+  name                   = "govuk-forms-${var.environment_name}-pipeline-invoker"
+  access_logging_enabled = true
 }
 
 resource "aws_lambda_function" "pipeline_invoker" {

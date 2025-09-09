@@ -224,5 +224,7 @@ data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
 ##
 module "pipeline_visualiser_artifact_bucket" {
   source = "../../../modules/secure-bucket"
-  name   = "pipeline-pipeline-visualiser-artifacts"
+
+  name                   = "pipeline-pipeline-visualiser-artifacts"
+  access_logging_enabled = true
 }

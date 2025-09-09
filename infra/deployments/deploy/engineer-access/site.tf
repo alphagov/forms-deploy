@@ -16,7 +16,8 @@ provider "aws" {
 module "state_bucket" {
   source = "../../../modules/state-bucket"
 
-  bucket_name = "gds-forms-deploy-tfstate"
+  bucket_name            = "gds-forms-deploy-tfstate"
+  access_logging_enabled = true
 }
 
 
