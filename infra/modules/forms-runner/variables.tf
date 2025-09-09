@@ -179,3 +179,9 @@ variable "queue_worker_capacity" {
   type        = number
   description = "Sets the desired number of tasks for the SolidQueue worker"
 }
+
+variable "enable_builtin_solidqueue_worker" {
+  type        = bool
+  description = "Whether to enable the built-in SolidQueue worker"
+  default     = true
+}

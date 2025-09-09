@@ -200,6 +200,10 @@ module "ecs_service" {
     {
       name  = "KMS_KEY_ID",
       value = aws_kms_alias.active_record_alias.name
+    },
+    {
+      name  = "DISABLE_SOLID_QUEUE",
+      value = var.enable_builtin_solidqueue_worker ? "false" : "true"
     }
   ]
 

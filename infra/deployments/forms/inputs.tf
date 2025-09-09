@@ -183,6 +183,7 @@ variable "forms_runner_settings" {
     ses_submission_email_from_email_address                         = string
     ses_submission_email_reply_to_email_address                     = string
     queue_worker_capacity                                           = string
+    enable_builtin_solidqueue_worker                                = bool
   })
 }
 
