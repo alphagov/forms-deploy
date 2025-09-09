@@ -147,6 +147,13 @@ trigger_terraform_pipeline: target_environment_set
 
 
 ##
+# Rotate aws access keys targets
+##
+.PHONY: rotate_aws_auth0_access_keys
+rotate_aws_auth0_access_keys: target_environment_set
+	@./support/rotate-aws-auth0-access-keys.sh -e "$${TARGET_ENVIRONMENT}"
+
+##
 # Utility targets
 ##
 .PHONY: generate-completion-word-list
