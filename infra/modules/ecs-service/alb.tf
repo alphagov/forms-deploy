@@ -46,6 +46,23 @@ resource "aws_lb_listener_rule" "to_app" {
   }
 }
 
+# TODO: check relevant values for internal ALB
+resource "aws_lb_listener_rule" "internal_alb_to_app" {
+  listener_arn = var.internal_alb_listener_arn
+  priority     = var.listener_priority
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg.arn
+  }
+
+  condition {
+    host_header {
+      values = [var.sub_domain]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "apex_rule" {
   count = var.include_domain_root_listener ? 1 : 0
 

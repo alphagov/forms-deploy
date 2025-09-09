@@ -153,6 +153,11 @@ variable "alb_listener_arn" {
   description = "The ARN of the load balancer listener to which the application will be attached"
 }
 
+variable "internal_alb_listener_arn" {
+  type        = string
+  description = "The ARN of the internal load balancer listener to which forms-admin will be attached"
+}
+
 variable "ecs_cluster_arn" {
   type        = string
   description = "The arn for the ECS cluster"
