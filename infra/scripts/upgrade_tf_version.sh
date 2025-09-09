@@ -10,6 +10,9 @@ IGNORED_PROVIDERS=("auth0/auth0")
 # Global variable for terraform version override
 TF_VERSION="latest"
 
+# Global variable for lock-only mode
+LOCK_ONLY=false
+
 # Function to check if a command is available
 check_command() {
 	local cmd="$1"
@@ -21,11 +24,15 @@ check_command() {
 
 # Function to get terraform version from versions.tf
 get_terraform_version() {
+	check_command "hcl2json"
+	check_command "jq"
 	hcl2json versions.tf | jq -r '.terraform[0].required_version'
 }
 
 # Function to get filtered providers using jq
 get_filtered_providers() {
+	check_command "hcl2json"
+	check_command "jq"
 	# Convert bash array to jq array format for filtering
 	local ignored_json
 	ignored_json=$(printf '%s\n' "${IGNORED_PROVIDERS[@]}" | jq -R . | jq -s .)
@@ -41,6 +48,8 @@ get_filtered_providers() {
 
 # Function to get provider info (source and version) for tracking changes
 get_provider_info() {
+	check_command "hcl2json"
+	check_command "jq"
 	# Convert bash array to jq array format for filtering
 	local ignored_json
 	ignored_json=$(printf '%s\n' "${IGNORED_PROVIDERS[@]}" | jq -R . | jq -s .)
@@ -56,6 +65,7 @@ get_provider_info() {
 
 # Function to update providers
 update_providers() {
+	check_command "tfupdate"
 	pushd "$SHARED_DIR" >/dev/null || exit 1
 	echo "Updating providers..."
 
@@ -114,6 +124,7 @@ update_providers() {
 
 # Function to lock providers
 lock_providers() {
+	check_command "tfupdate"
 	echo "Locking providers..."
 	tfupdate lock -r \
 		--platform linux_arm64 \
@@ -126,6 +137,7 @@ lock_providers() {
 
 # Function to update terraform
 update_terraform() {
+	check_command "tfupdate"
 	pushd "$SHARED_DIR" >/dev/null || exit 1
 	echo "Updating terraform..."
 
@@ -161,20 +173,25 @@ while [[ $# -gt 0 ]]; do
 		TF_VERSION="$2"
 		shift 2
 		;;
+	--lock-only)
+		LOCK_ONLY=true
+		shift
+		;;
 	*)
-		echo "Usage: $0 [--tf-version VERSION]"
+		echo "Usage: $0 [--tf-version VERSION] [--lock-only]"
 		echo "  --tf-version VERSION  Set terraform to specific version (default: latest)"
+		echo "  --lock-only           Only update provider locks, skip terraform and provider updates"
 		echo "  (no args)             Update terraform, providers, and lock providers"
 		exit 1
 		;;
 	esac
 done
 
-# Check for required commands
-check_command "tfupdate"
-check_command "hcl2json"
-check_command "jq"
-
-update_terraform
-update_providers
-lock_providers
+if [[ "$LOCK_ONLY" == "true" ]]; then
+	echo "Running in lock-only mode..."
+	lock_providers
+else
+	update_terraform
+	update_providers
+	lock_providers
+fi
