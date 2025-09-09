@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+GIT_DIR=$(git rev-parse --show-toplevel)
+SHARED_DIR="${GIT_DIR}/infra/shared"
+
+# List of providers to ignore during update
+IGNORED_PROVIDERS=("auth0/auth0")
+
+# Global variable for terraform version override
+TF_VERSION="latest"
+
+# Function to check if a command is available
+check_command() {
+	local cmd="$1"
+	command -v "$cmd" >/dev/null 2>&1 || {
+		echo >&2 "$cmd is required but it's not installed. Aborting."
+		exit 1
+	}
+}
+
+# Function to get terraform version from versions.tf
+get_terraform_version() {
+	hcl2json versions.tf | jq -r '.terraform[0].required_version'
+}
+
+# Function to get filtered providers using jq
+get_filtered_providers() {
+	# Convert bash array to jq array format for filtering
+	local ignored_json
+	ignored_json=$(printf '%s\n' "${IGNORED_PROVIDERS[@]}" | jq -R . | jq -s .)
+
+	# Use jq to filter out ignored providers
+	hcl2json versions.tf | jq -r --argjson ignored "$ignored_json" '
+    .terraform[0].required_providers[0] |
+    to_entries[] |
+    select(.value.source as $source | $ignored | index($source) | not) |
+    .value.source
+  '
+}
+
+# Function to get provider info (source and version) for tracking changes
+get_provider_info() {
+	# Convert bash array to jq array format for filtering
+	local ignored_json
+	ignored_json=$(printf '%s\n' "${IGNORED_PROVIDERS[@]}" | jq -R . | jq -s .)
+
+	# Use jq to get both source and version for filtered providers
+	hcl2json versions.tf | jq -r --argjson ignored "$ignored_json" '
+    .terraform[0].required_providers[0] |
+    to_entries[] |
+    select(.value.source as $source | $ignored | index($source) | not) |
+    "\(.value.source)|\(.value.version)"
+  '
+}
+
+# Function to update providers
+update_providers() {
+	pushd "$SHARED_DIR" >/dev/null || exit 1
+	echo "Updating providers..."
+
+	# Get provider info before update
+	local provider_info_before
+	readarray -t provider_info_before < <(get_provider_info)
+
+	# Create associative array for before versions
+	declare -A before_versions
+	for info in "${provider_info_before[@]}"; do
+		local source="${info%|*}"
+		local version="${info#*|}"
+		before_versions["$source"]="$version"
+	done
+
+	# Update each provider
+	local providers
+	readarray -t providers < <(get_filtered_providers)
+
+	for provider in "${providers[@]}"; do
+		echo "Updating provider: $provider"
+		tfupdate provider "$provider" .
+	done
+
+	# Get provider info after update
+	local provider_info_after
+	readarray -t provider_info_after < <(get_provider_info)
+
+	# Print version changes
+	echo "Provider version changes:"
+	for info in "${provider_info_after[@]}"; do
+		local source="${info%|*}"
+		local after_version="${info#*|}"
+		local before_version="${before_versions[$source]}"
+
+		if [[ "$before_version" != "$after_version" ]]; then
+			echo "  $source: $before_version → $after_version"
+		else
+			echo "  $source: unchanged ($before_version)"
+		fi
+	done
+
+	echo "maintaining ignored providers:"
+	for ignored in "${IGNORED_PROVIDERS[@]}"; do
+		local version="${before_versions[$ignored]:-not present}"
+		if [[ "$ignored" == "auth0/auth0" ]]; then
+			echo "  $ignored: (There is an issue with auth0/auth0: https://github.com/alphagov/forms-deploy/pull/1142)"
+		else
+			echo "  $ignored"
+		fi
+
+	done
+
+	popd >/dev/null || exit 1
+}
+
+# Function to lock providers
+lock_providers() {
+	echo "Locking providers..."
+	tfupdate lock -r \
+		--platform linux_arm64 \
+		--platform linux_amd64 \
+		--platform darwin_arm64 \
+		--platform darwin_amd64 \
+		--platform windows_amd64 \
+		-i infra/shared infra/
+}
+
+# Function to update terraform
+update_terraform() {
+	pushd "$SHARED_DIR" >/dev/null || exit 1
+	echo "Updating terraform..."
+
+	# Get the version before update
+	local pre_version
+	pre_version=$(get_terraform_version)
+
+	# Run tfupdate with or without version parameter
+	if [[ "$TF_VERSION" != "latest" ]]; then
+		echo "Updating terraform to specific version: $TF_VERSION"
+	fi
+	tfupdate terraform --version "$TF_VERSION" .
+
+	# Get the version after update
+	local post_version
+	post_version=$(get_terraform_version)
+
+	echo -n "$post_version" >"${GIT_DIR}/.terraform-version"
+
+	# Print the update information
+	if [[ "$pre_version" != "$post_version" ]]; then
+		echo "Updated terraform from $pre_version to $post_version"
+	else
+		echo "Terraform version unchanged: $pre_version"
+	fi
+	popd >/dev/null || exit 1
+}
+
+# Command line parsing
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	--tf-version)
+		TF_VERSION="$2"
+		shift 2
+		;;
+	*)
+		echo "Usage: $0 [--tf-version VERSION]"
+		echo "  --tf-version VERSION  Set terraform to specific version (default: latest)"
+		echo "  (no args)             Update terraform, providers, and lock providers"
+		exit 1
+		;;
+	esac
+done
+
+# Check for required commands
+check_command "tfupdate"
+check_command "hcl2json"
+check_command "jq"
+
+update_terraform
+update_providers
+lock_providers

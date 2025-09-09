@@ -1,7 +1,10 @@
+data "local_file" "terraform_version" {
+  filename = "${path.module}/../../../.terraform-version"
+}
 locals {
   environment_variables = {
     "ENVIRONMENT"       = var.environment
-    "TERRAFORM_VERSION" = var.terraform_version
+    "TERRAFORM_VERSION" = trimspace(data.local_file.terraform_version.content)
   }
 
   deploy_directory = {
