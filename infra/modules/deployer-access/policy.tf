@@ -445,6 +445,12 @@ data "aws_iam_policy_document" "pipelines" {
 
       "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection",
       "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection/*",
+
+      "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection-access-logs",
+      "arn:aws:s3:::govuk-forms-*-paused-pipeline-detection-access-logs/*",
+
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker-access-logs",
+      "arn:aws:s3:::govuk-forms-*-pipeline-invoker-access-logs/*",
     ]
   }
 
@@ -454,6 +460,26 @@ data "aws_iam_policy_document" "pipelines" {
     actions = ["s3:*"]
     resources = [
       "arn:aws:s3:::govuk-forms-${var.environment_name}-file-upload*",
+    ]
+  }
+
+  statement {
+    sid     = "ManageStateBucketAccessLogs"
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate-access-logs",
+      "arn:aws:s3:::gds-forms-${var.environment_type}-tfstate-access-logs/*",
+    ]
+  }
+
+  statement {
+    sid     = "ManageALBAccessLogsAccessLogs"
+    effect  = "Allow"
+    actions = ["s3:*"]
+    resources = [
+      "arn:aws:s3:::*-alb-access-logs-access-logs",
+      "arn:aws:s3:::*-alb-access-logs-access-logs/*",
     ]
   }
 
