@@ -118,6 +118,7 @@ def upgrade_terraform_root(root, plugin_cache_dir)
                 "-chdir=#{root}",
                 "providers",
                 "lock",
+                "-enable-plugin-cache",
                 "-platform=linux_arm64",
                 "-platform=linux_amd64",
                 "-platform=darwin_amd64",
