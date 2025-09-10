@@ -77,3 +77,16 @@ resource "aws_vpc_endpoint" "cloudwatch" {
     Name = "toools-cloudwatch-endpoint"
   }
 }
+
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id              = aws_vpc.tools.id
+  service_name        = "com.amazonaws.eu-west-2.ssm"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids          = local.subnets_to_deploy_vpc_endpoints_to
+
+  tags = {
+    Name = "tools-ssm-endpoint"
+  }
+}
