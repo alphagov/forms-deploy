@@ -51,8 +51,8 @@ running-order:
             - forms/forms-api
             - forms/forms-admin
             - forms/forms-runner
+        - roots:
             - forms/health
         - roots:
             - forms/pipelines
             - forms/dns
-
