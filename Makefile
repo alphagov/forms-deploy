@@ -126,6 +126,9 @@ unlock: target_environment_set target_tf_root_set aws_credentials_available show
 	$(if ${LOCK_ID},,$(error Must set lock id with LOCK_ID="lock_id" at the end of this target))
 	@./support/invoke-terraform.sh -a unlock -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}" -l "$${LOCK_ID}"
 
+tf_shell: init
+	@./support/invoke-terraform.sh -a shell -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+
 .PHONY: forms_apply_all
 forms_apply_all: target_environment_set not_ci aws_credentials_available
 	@./infra/scripts/apply-forms-roots-in-order.sh

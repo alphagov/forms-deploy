@@ -29,7 +29,7 @@ while getopts "a:d:e:r:l:" opt; do
     case "${opt}" in
         a)
             action="${OPTARG}"
-            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" ]] ||  usage
+            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" || $action == "shell" ]] ||  usage
             ;;
         d)
             deployment="${OPTARG}"
@@ -111,26 +111,31 @@ pre_apply() {
   fi
 }
 
-plan_apply(){
-    action="$1"
-    extra_args=""
-
+_build_terraform_vars_file_args() {
+    tfvars_arguments=""
     ## forms/account needs different vars files to other forms/roots
     if [ "${deployment}" == "forms" ] && [ "${tf_root}" == "account" ]; then
-        extra_args="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
+        tfvars_arguments="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
     elif [ "${deployment}" == "forms" ] ; then
-        extra_args="${extra_args} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
+        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
     fi
 
     if [ "${deployment}" == "integration" ]; then
-        extra_args="${extra_args} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars -var-file ${deployments_dir}/integration/tfvars/backend/integration.tfvars";
+        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars -var-file ${deployments_dir}/integration/tfvars/backend/integration.tfvars";
     fi
 
     case "${deployment}+${tf_root}" in
         "forms+pipelines")
-            extra_args="${extra_args} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars";
+            tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars";
             ;;
     esac
+
+    echo "${tfvars_arguments}"
+}
+
+plan_apply(){
+    action="$1"
+    extra_args="$(_build_terraform_vars_file_args)"
 
     if [ "${FORMS_TF_AUTO_APPROVE:-false}" = true ] && [ "${action}" = "apply" ]; then
         echo "FORMS_TF_AUTO_APPROVE was set to true"
@@ -181,6 +186,22 @@ post_apply() {
     fi
 }
 
+shell() {
+    pushd "${src_dir}" >/dev/null || exit 1
+    echo ""
+    echo "Starting interactive shell in ${environment} environment, ${deployment}/${tf_root} deployment."
+    echo ""
+    echo "WARNING: terraform commands will act on the above environment/deployment's state!"
+    echo ""
+    echo "Terraform variable file arguments for this environment/deployment are:"
+    echo "  $(_build_terraform_vars_file_args)"
+    echo ""
+    echo "To exit, type 'exit' or press Ctrl-D"
+    echo ""
+    $SHELL -i
+    popd >/dev/null || exit 1
+}
+
 case "${action}" in
     apply)
         pre_apply
@@ -202,5 +223,9 @@ case "${action}" in
     unlock)
         unlock
         ;;
-esac
 
+    shell)
+        init
+        shell
+        ;;
+esac
