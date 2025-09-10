@@ -38,6 +38,11 @@ output "cloudfront_hosted_zone_id" {
   value = module.cloudfront[0].cloudfront_hosted_zone_id
 }
 
+output "cloudfront_secret" {
+  value     = var.enable_cloudfront ? module.cloudfront[0].cloudfront_secret : null
+  sensitive = true
+}
+
 output "eventbridge_dead_letter_queue_arn" {
   value = aws_sqs_queue.event_bridge_dlq.arn
 }
