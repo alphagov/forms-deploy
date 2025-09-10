@@ -4,9 +4,6 @@ set -euo pipefail
 GIT_DIR=$(git rev-parse --show-toplevel)
 SHARED_DIR="${GIT_DIR}/infra/shared"
 
-# List of providers to ignore during update
-IGNORED_PROVIDERS=("auth0/auth0")
-
 # Global variable for terraform version override
 TF_VERSION="latest"
 
@@ -29,19 +26,15 @@ get_terraform_version() {
 	hcl2json versions.tf | jq -r '.terraform[0].required_version'
 }
 
-# Function to get filtered providers using jq
-get_filtered_providers() {
+# Function to get all providers using jq
+get_all_providers() {
 	check_command "hcl2json"
 	check_command "jq"
-	# Convert bash array to jq array format for filtering
-	local ignored_json
-	ignored_json=$(printf '%s\n' "${IGNORED_PROVIDERS[@]}" | jq -R . | jq -s .)
 
-	# Use jq to filter out ignored providers
-	hcl2json versions.tf | jq -r --argjson ignored "$ignored_json" '
+	# Use jq to get all providers
+	hcl2json versions.tf | jq -r '
     .terraform[0].required_providers[0] |
     to_entries[] |
-    select(.value.source as $source | $ignored | index($source) | not) |
     .value.source
   '
 }
@@ -50,15 +43,11 @@ get_filtered_providers() {
 get_provider_info() {
 	check_command "hcl2json"
 	check_command "jq"
-	# Convert bash array to jq array format for filtering
-	local ignored_json
-	ignored_json=$(printf '%s\n' "${IGNORED_PROVIDERS[@]}" | jq -R . | jq -s .)
 
-	# Use jq to get both source and version for filtered providers
-	hcl2json versions.tf | jq -r --argjson ignored "$ignored_json" '
+	# Use jq to get both source and version for all providers
+	hcl2json versions.tf | jq -r '
     .terraform[0].required_providers[0] |
     to_entries[] |
-    select(.value.source as $source | $ignored | index($source) | not) |
     "\(.value.source)|\(.value.version)"
   '
 }
@@ -83,7 +72,7 @@ update_providers() {
 
 	# Update each provider
 	local providers
-	readarray -t providers < <(get_filtered_providers)
+	readarray -t providers < <(get_all_providers)
 
 	for provider in "${providers[@]}"; do
 		echo "Updating provider: $provider"
@@ -108,16 +97,6 @@ update_providers() {
 		fi
 	done
 
-	echo "maintaining ignored providers:"
-	for ignored in "${IGNORED_PROVIDERS[@]}"; do
-		local version="${before_versions[$ignored]:-not present}"
-		if [[ "$ignored" == "auth0/auth0" ]]; then
-			echo "  $ignored: (There is an issue with auth0/auth0: https://github.com/alphagov/forms-deploy/pull/1142)"
-		else
-			echo "  $ignored"
-		fi
-
-	done
 
 	popd >/dev/null || exit 1
 }
