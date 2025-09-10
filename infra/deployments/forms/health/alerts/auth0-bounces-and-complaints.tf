@@ -1,5 +1,5 @@
-resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_buildup" {
-  alarm_name          = "ses_bounces_and_complaints_queue_buildup"
+resource "aws_cloudwatch_metric_alarm" "auth0_ses_bounces_and_complaints_queue_buildup" {
+  alarm_name          = "auth0_ses_bounces_and_complaints_queue_buildup"
   alarm_description   = <<EOF
     There is a queue buildup in ${var.auth0_email_bounces_and_complaints_queue_name} in the ${var.environment} account.
 
@@ -38,11 +38,11 @@ EOF
   alarm_actions = [local.alert_severity.eu_west_2.info]
 }
 
-resource "aws_cloudwatch_metric_alarm" "ses_bounces_and_complaints_queue_contains_message" {
-  alarm_name          = "ses_bounces_and_complaints_queue_contains_message"
+resource "aws_cloudwatch_metric_alarm" "auth0_ses_bounces_and_complaints_queue_contains_message" {
+  alarm_name          = "auth0_ses_bounces_and_complaints_queue_contains_message"
   alarm_description   = <<EOF
     There is a message in ${var.auth0_email_bounces_and_complaints_queue_name} in the ${var.environment} account.
-    
+
     When SES sends an email to a user and the email bounces or is marked as spam ('complaints'),
     SES will log the event as a message on an SQS queue.
 
