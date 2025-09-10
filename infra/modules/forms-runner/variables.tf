@@ -185,3 +185,9 @@ variable "enable_builtin_solidqueue_worker" {
   description = "Whether to enable the built-in SolidQueue worker"
   default     = true
 }
+
+variable "cloudfront_secret" {
+  type        = string
+  description = "The secret header value that CloudFront sends to verify requests"
+  sensitive   = true
+}

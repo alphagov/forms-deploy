@@ -75,6 +75,13 @@ resource "aws_lb_listener_rule" "to_app" {
       values = [var.sub_domain]
     }
   }
+
+  condition {
+    http_header {
+      http_header_name = "X-CloudFront-Secret"
+      values           = [var.cloudfront_secret]
+    }
+  }
 }
 
 resource "aws_lb_listener_rule" "internal_alb_to_app" {
@@ -113,6 +120,13 @@ resource "aws_lb_listener_rule" "apex_rule" {
   condition {
     host_header {
       values = [var.root_domain]
+    }
+  }
+
+  condition {
+    http_header {
+      http_header_name = "X-CloudFront-Secret"
+      values           = [var.cloudfront_secret]
     }
   }
 }

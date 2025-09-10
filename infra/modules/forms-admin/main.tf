@@ -109,6 +109,7 @@ module "ecs_service" {
   alb_listener_arn             = var.alb_listener_arn
   internal_alb_listener_arn    = var.internal_alb_listener_arn
   ecs_cluster_arn              = var.ecs_cluster_arn
+  cloudfront_secret            = var.cloudfront_secret
   scaling_rules = {
     min_capacity                                = var.min_capacity
     max_capacity                                = var.max_capacity
@@ -233,4 +234,5 @@ resource "aws_lb_listener_rule" "block_api_access" {
       values = [local.sub_domain]
     }
   }
+
 }
