@@ -25,28 +25,6 @@ resource "aws_wafv2_web_acl" "alb" {
   }
 
   rule {
-    name     = "AWS-AWSManagedRulesAmazonIpDDoSList"
-    priority = 10
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        vendor_name = "AWS"
-        name        = "AWSManagedRulesAmazonIpDDoSList"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesAmazonIpDDoSList-ALB"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
     name     = "OriginIPBlock"
     priority = 110
 

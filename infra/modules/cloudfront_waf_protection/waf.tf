@@ -407,34 +407,20 @@ resource "aws_wafv2_web_acl" "this" {
       managed_rule_group_statement {
         vendor_name = "AWS"
         name        = "AWSManagedRulesAmazonIpReputationList"
+
+        rule_action_override {
+          action_to_use {
+            block {}
+          }
+
+          name = "AWSManagedIPDDoSList"
+        }
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWS-AWSManagedRulesAmazonIpDDoSList"
-    priority = 6
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        vendor_name = "AWS"
-        name        = "AWSManagedRulesAmazonIpDDoSList"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesAmazonIpDDoSList"
       sampled_requests_enabled   = true
     }
   }
