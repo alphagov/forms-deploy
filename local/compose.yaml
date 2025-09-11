@@ -41,6 +41,8 @@ services:
       - host.docker.internal:host-gateway
     ports:
       - "127.0.0.1:3000:3000"
+    stdin_open: true
+    tty: true
     volumes:
       - ../../forms-admin:/app:cached
       - admin-bundle:/usr/local/bundle
@@ -61,6 +63,7 @@ services:
       target: build
     command: >
       sh -c "
+        bundle config unset --local without &&
         bundle install &&
         npm install &&
         bin/vite build &&
@@ -74,6 +77,8 @@ services:
       - SECRET_KEY_BASE=dummyvalue
     ports:
       - "127.0.0.1:3002:3002"
+    stdin_open: true
+    tty: true
     volumes:
       - ../../forms-product-page:/app:cached
       - product-page-bundle:/usr/local/bundle
@@ -94,6 +99,7 @@ services:
       target: build
     command: >
       sh -c "
+        bundle config unset --local without &&
         bundle install &&
         rails db:prepare &&
         npm install &&
@@ -115,6 +121,8 @@ services:
       - SETTINGS__FORMS_API__BASE_URL=http://admin:3000
     ports:
       - "127.0.0.1:3001:3001"
+    stdin_open: true
+    tty: true
     volumes:
       - ../../forms-runner:/app:cached
       - runner-bundle:/usr/local/bundle
