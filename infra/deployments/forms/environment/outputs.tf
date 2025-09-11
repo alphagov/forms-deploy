@@ -22,6 +22,10 @@ output "internal_alb_listener_arn" {
   value = module.environment.internal_alb_listener_arn
 }
 
+output "internal_alb_https_listener_arn" {
+  value = module.environment.internal_alb_https_listener_arn
+}
+
 output "cloudfront_arn" {
   value = module.environment.cloudfront_arn
 }
