@@ -312,3 +312,23 @@ resource "aws_iam_policy" "lock_state_files" {
     ]
   })
 }
+
+resource "aws_iam_policy" "get_ux_customisation" {
+  name = "allow-get-uxc"
+  path = "/"
+
+  description = "Allow access to AWS Console UX Customisation"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "uxc:GetAccountColor",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
