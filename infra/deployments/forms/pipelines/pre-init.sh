@@ -21,7 +21,7 @@ init_ruby_project(){
           export RBENV_VERSION
         fi
 
-        rbenv version
+        rbenv version || mise list -c ruby
 
         BUNDLE_PATH="vendor/bundle" BUNDLE_WITHOUT="development:test" bundle install
     )

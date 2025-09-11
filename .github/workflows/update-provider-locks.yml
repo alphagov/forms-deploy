@@ -1,0 +1,183 @@
+name: Update Provider Lock Files
+
+on:
+  pull_request:
+    paths:
+      - "infra/shared/versions.tf"
+
+jobs:
+  update-locks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          # Use the pull request head ref to ensure we're on the PR branch
+          ref: ${{ github.head_ref }}
+          # Use PAT for Dependabot PRs, regular token for others
+          # The current PAT is whi-tw's, it needs repo:write permissions
+          # We need to update it if they move on from the team, or if it expires.
+          token: ${{ github.actor == 'dependabot[bot]' && secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+
+      - name: Install tfupdate
+        run: |
+          go install github.com/minamijoyo/tfupdate@latest
+
+      - name: Run lock update script
+        run: |
+          ./infra/scripts/upgrade_tf_version.sh --lock-only
+
+      - name: Check for changed files
+        id: git-check
+        run: |
+          # Check if there are any changes
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "No changes detected"
+          else
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+            echo "Changes detected:"
+            git diff --name-only
+          fi
+
+      - name: Handle Dependabot PR - commit lock files
+        if: steps.git-check.outputs.changed == 'true' && github.actor == 'dependabot[bot]'
+        env:
+          PUSH_REF: ${{ github.head_ref }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Add only .terraform.lock.hcl files
+          git add '**/.terraform.lock.hcl'
+
+          # Check if there are staged changes
+          if git diff --cached --quiet; then
+            echo "No .terraform.lock.hcl files to commit"
+          else
+            git commit -m "Update provider lock files"
+            # Push using the PAT token configured in checkout
+            git push origin HEAD:"${PUSH_REF}"
+          fi
+
+      - name: Check for uncommitted changes (Dependabot PR)
+        if: github.actor == 'dependabot[bot]'
+        run: |
+          # After committing lock files, check if there are still any changes
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            echo "Error: There are still uncommitted changes after processing lock files:"
+            git status --porcelain
+            echo ""
+            echo "Changed files:"
+            git diff --name-only
+            if git diff --cached --quiet; then
+              echo "No staged changes"
+            else
+              echo "Staged changes:"
+              git diff --cached --name-only
+            fi
+            echo ""
+            echo "This suggests there are changes beyond just .terraform.lock.hcl files that need attention."
+            exit 1
+          else
+            echo "All changes have been properly handled"
+          fi
+
+      - name: Check for missing lock updates (Non-Dependabot PR)
+        if: steps.git-check.outputs.changed == 'true' && github.actor != 'dependabot[bot]'
+        env:
+          COMMENT_MARKER: "<!-- provider-locks: missing updates -->"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # shellcheck disable=SC2296
+          # shellcheck disable=SC2016
+          echo "Error: Provider lock files are out of date!"
+          echo ""
+          echo "You have modified infra/shared/versions.tf but the corresponding .terraform.lock.hcl files"
+          echo "have not been updated. Please run the following command locally and commit the changes:"
+          echo ""
+          echo "  ./infra/scripts/upgrade_tf_version.sh --lock-only"
+          echo ""
+          echo "Changed files detected:"
+          git status --porcelain
+          echo ""
+          git diff --name-only
+
+          # Leave a comment on the PR
+          cat <<EOF > "${{runner.temp}}/pr-comment.md"
+          > [!CAUTION]
+          > **Provider lock files are out of date!**
+          >
+          > You have modified \`infra/shared/versions.tf\` but the corresponding \`.terraform.lock.hcl\` files
+          > have not been updated. Please run the following command locally and commit the changes:
+          >
+          > \`\`\`bash
+          > ./infra/scripts/upgrade_tf_version.sh --lock-only
+          > \`\`\`
+
+          ${COMMENT_MARKER}
+          EOF
+
+          # Remove any existing comments from this workflow
+          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
+          for comment_id in $old_comment_ids; do
+            gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
+          done
+
+          gh pr comment "${{github.event.pull_request.html_url}}" --body-file "${{runner.temp}}/pr-comment.md"
+
+          exit 1
+
+      - name: Comment on Dependabot PR success
+        if: steps.git-check.outputs.changed == 'true' && github.actor == 'dependabot[bot]'
+        env:
+          COMMENT_MARKER: "<!-- provider-locks: dependabot updated -->"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # shellcheck disable=SC2296
+          # shellcheck disable=SC2016
+          # Leave a comment on the PR
+          cat <<EOF > "${{runner.temp}}/pr-comment.md"
+          > [!NOTE]
+          > **Provider lock files have been automatically updated**
+          >
+          > This Dependabot PR modified \`infra/shared/versions.tf\`, so the corresponding
+          > \`.terraform.lock.hcl\` files have been automatically updated and committed.
+          >
+          > The changes are ready for review and merge.
+
+          ${COMMENT_MARKER}
+          EOF
+
+          # Remove any existing comments from this workflow
+          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
+          for comment_id in $old_comment_ids; do
+            gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
+          done
+
+          gh pr comment "${{github.event.pull_request.html_url}}" --body-file "${{runner.temp}}/pr-comment.md"
+
+      - name: Remove stale comments when no changes needed
+        if: steps.git-check.outputs.changed == 'false'
+        env:
+          COMMENT_MARKER_MISSING: "<!-- provider-locks: missing updates -->"
+          COMMENT_MARKER_DEPENDABOT: "<!-- provider-locks: dependabot updated -->"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # shellcheck disable=SC2296
+          # shellcheck disable=SC2016
+          # Remove any existing comments from this workflow since no changes are needed
+          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and ((.body | endswith($ENV.COMMENT_MARKER_MISSING + "\n")) or (.body | endswith($ENV.COMMENT_MARKER_DEPENDABOT + "\n"))))) | .[].id')
+          for comment_id in $old_comment_ids; do
+            echo "Removing stale comment: $comment_id"
+            gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
+          done
+
+          echo "No provider lock updates needed - removed any stale comments"
