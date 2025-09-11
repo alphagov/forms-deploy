@@ -34,6 +34,11 @@ output "cloudfront_hosted_zone_id" {
   value = module.environment.cloudfront_hosted_zone_id
 }
 
+output "cloudfront_secret" {
+  value     = module.environment.cloudfront_secret
+  sensitive = true
+}
+
 output "eventbridge_dead_letter_queue_arn" {
   value = module.environment.eventbridge_dead_letter_queue_arn
 }
