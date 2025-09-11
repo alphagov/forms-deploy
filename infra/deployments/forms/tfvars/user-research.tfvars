@@ -21,6 +21,7 @@ environmental_settings = {
   rate_limit_bypass_cidrs                  = []
   enable_shield_advanced_healthchecks      = false
   allow_pagerduty_alerts                   = false
+  redis_multi_az_enabled                   = false
 }
 root_domain             = "research.forms.service.gov.uk"
 additional_dns_records  = []
