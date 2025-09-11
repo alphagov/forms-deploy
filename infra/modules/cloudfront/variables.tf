@@ -19,6 +19,11 @@ variable "alb_dns_name" {
   description = "The alb dns name to use as the origin of the distribution"
 }
 
+variable "internal_alb_arn" {
+  type        = string
+  description = "The ARN of the internal ALB to use as the VPC origin"
+}
+
 variable "subject_alternative_names" {
   type        = list(string)
   description = "Alternative names for the distribution and its certificate"

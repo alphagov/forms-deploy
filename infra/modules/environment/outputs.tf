@@ -38,6 +38,10 @@ output "internal_alb_listener_arn" {
   value = aws_lb_listener.internal_listener.arn
 }
 
+output "internal_alb_https_listener_arn" {
+  value = aws_lb_listener.internal_https_listener.arn
+}
+
 output "internal_alb_zone_id" {
   value = aws_lb.internal_alb.zone_id
 }
