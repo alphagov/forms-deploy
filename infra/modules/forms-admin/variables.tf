@@ -155,3 +155,13 @@ variable "internal_alb_listener_arn" {
   type        = string
   description = "The ARN of the internal load balancer listener to which forms-admin will be attached"
 }
+
+variable "elasticache_port" {
+  type        = number
+  description = "The port number for the Redis ElastiCache cluster"
+}
+
+variable "elasticache_primary_endpoint_address" {
+  type        = string
+  description = "The Redis ElastiCache unique address used to by applications to connect to the database"
+}

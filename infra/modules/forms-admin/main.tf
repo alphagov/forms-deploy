@@ -101,6 +101,7 @@ module "ecs_service" {
   container_port               = 3000
   permit_internet_egress       = true
   permit_postgres_egress       = true
+  permit_redis_egress          = true
   vpc_id                       = var.vpc_id
   vpc_cidr_block               = var.vpc_cidr_block
   private_subnet_ids           = var.private_subnet_ids
@@ -119,6 +120,10 @@ module "ecs_service" {
   ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
 
   environment_variables = [
+    {
+      name  = "REDIS_URL",
+      value = "rediss://${var.elasticache_primary_endpoint_address}:${var.elasticache_port}"
+    },
     {
       name  = "SETTINGS__FORMS_API__BASE_URL",
       value = var.api_base_url
