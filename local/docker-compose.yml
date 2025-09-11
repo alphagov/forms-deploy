@@ -32,6 +32,7 @@ services:
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
+      - RAILS_DEVELOPMENT_HOSTS=.host.docker.internal,forms-admin:3000
       - SECRET_KEY_BASE=assets
       - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL-http://forms-api:9292}
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
@@ -140,7 +141,7 @@ services:
       - RAILS_ENV=development
       - REDIS_URL=redis://redis/
       - SECRET_KEY_BASE=dummyvalue
-      - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL-http://forms-api:9292}
+      - SETTINGS__FORMS_API__BASE_URL=${SETTINGS__FORMS_API__BASE_URL-http://forms-admin:3000}
     ports:
       - "127.0.0.1:3001:3001"
     volumes:
