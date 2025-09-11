@@ -74,3 +74,17 @@ resource "aws_route53_record" "private_internal_admin" {
     evaluate_target_health = true
   }
 }
+
+# Private zone record for internal forms-runner
+resource "aws_route53_record" "private_internal_runner" {
+  #checkov:skip=CKV2_AWS_23:Not applicable to alias records
+  zone_id = data.terraform_remote_state.forms_environment.outputs.private_internal_zone_id
+  name    = "submit.internal.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = data.terraform_remote_state.forms_environment.outputs.internal_alb_dns_name
+    zone_id                = data.terraform_remote_state.forms_environment.outputs.internal_alb_zone_id
+    evaluate_target_health = true
+  }
+}

@@ -86,13 +86,13 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
 }
 
 module "ecs_service" {
-  source      = "../ecs-service"
-  env_name    = var.env_name
-  application = "forms-admin"
-  root_domain = var.root_domain
-  sub_domain  = "admin.${var.root_domain}"
-  # internal_sub_domain          = "admin.internal.${var.root_domain}"
-  listener_priority            = 300
+  source                       = "../ecs-service"
+  env_name                     = var.env_name
+  application                  = "forms-admin"
+  root_domain                  = var.root_domain
+  sub_domain                   = "admin.${var.root_domain}"
+  internal_sub_domain          = "admin.internal.${var.root_domain}"
+  listener_priority            = 301
   include_domain_root_listener = false
   image                        = local.image
   cpu                          = var.cpu

@@ -41,15 +41,19 @@ locals {
   internal_domain_names = {
     user-research = [
       "admin.internal.research.forms.service.gov.uk",
+      "submit.internal.research.forms.service.gov.uk",
     ],
     dev = [
       "admin.internal.dev.forms.service.gov.uk",
+      "submit.internal.dev.forms.service.gov.uk",
     ],
     staging = [
       "admin.internal.staging.forms.service.gov.uk",
+      "submit.internal.staging.forms.service.gov.uk",
     ],
     production = [
       "admin.internal.forms.service.gov.uk",
+      "submit.internal.forms.service.gov.uk",
     ]
   }
 
@@ -91,7 +95,7 @@ data "aws_iam_policy_document" "allow_logs" {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
     }
-    actions   = ["s3:PutObject"]
+    actions = ["s3:PutObject"]
     resources = [
       "arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*",
       "arn:aws:s3:::${module.logs_bucket.name}/forms-internal/AWSLogs/${local.account_id}/*"
