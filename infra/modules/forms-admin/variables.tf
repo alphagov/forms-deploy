@@ -155,3 +155,8 @@ variable "internal_alb_listener_arn" {
   type        = string
   description = "The ARN of the internal load balancer listener to which forms-admin will be attached"
 }
+
+variable "internal_alb_https_listener_arn" {
+  type        = string
+  description = "The ARN of the internal HTTPS load balancer listener to which forms-admin will be attached"
+}

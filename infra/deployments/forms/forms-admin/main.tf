@@ -37,4 +37,5 @@ module "forms_admin" {
   alb_arn_suffix                    = data.terraform_remote_state.forms_environment.outputs.alb_arn_suffix
   alb_listener_arn                  = data.terraform_remote_state.forms_environment.outputs.alb_main_listener_arn
   internal_alb_listener_arn         = data.terraform_remote_state.forms_environment.outputs.internal_alb_listener_arn
+  internal_alb_https_listener_arn   = data.terraform_remote_state.forms_environment.outputs.internal_alb_https_listener_arn
 }
