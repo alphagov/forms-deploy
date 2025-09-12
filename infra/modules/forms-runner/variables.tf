@@ -155,6 +155,11 @@ variable "alb_listener_arn" {
   description = "The ARN of the load balancer listener to which forms-runner will be attached"
 }
 
+variable "internal_alb_listener_arn" {
+  type        = string
+  description = "The ARN of the internal load balancer listener to which forms-runner will be attached for internal communication"
+}
+
 variable "send_logs_to_cyber" {
   type        = bool
   description = "Whether logs should be sent to cyber"
