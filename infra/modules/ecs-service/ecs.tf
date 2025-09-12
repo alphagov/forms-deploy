@@ -81,6 +81,15 @@ resource "aws_ecs_service" "app_service" {
     container_port   = var.container_port
   }
 
+  dynamic "load_balancer" {
+    for_each = var.internal_sub_domain != null ? [1] : []
+    content {
+      target_group_arn = aws_lb_target_group.internal_tg[0].arn
+      container_name   = var.application
+      container_port   = var.container_port
+    }
+  }
+
   lifecycle {
     prevent_destroy = true # ECS services cannot be destructively replaced without downtime. This helps to avoid accidentally doing so.
     ignore_changes  = [desired_count]

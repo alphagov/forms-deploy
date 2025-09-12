@@ -17,6 +17,13 @@ variable "sub_domain" {
   # When we are on Terraform 1.9, we should address this.
 }
 
+variable "internal_sub_domain" {
+  type        = string
+  description = "The internal subdomain for this service (e.g., admin.internal.forms.service.gov.uk)."
+  nullable    = true
+  default     = null
+}
+
 variable "listener_priority" {
   type        = number
   description = "The priority number for the load balancer listener rule that will be created. Numbers must be distinct across all invocations of this module in a deployment."
@@ -151,6 +158,13 @@ variable "alb_arn_suffix" {
 variable "alb_listener_arn" {
   type        = string
   description = "The ARN of the load balancer listener to which the application will be attached"
+}
+
+variable "internal_alb_listener_arn" {
+  type        = string
+  description = "The ARN of the internal load balancer listener to which forms-admin will be attached"
+  nullable    = true
+  default     = null
 }
 
 variable "ecs_cluster_arn" {
