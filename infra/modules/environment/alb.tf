@@ -75,8 +75,11 @@ data "aws_iam_policy_document" "allow_logs" {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
     }
-    actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*"]
+    actions = ["s3:PutObject"]
+    resources = [
+      "arn:aws:s3:::${module.logs_bucket.name}/${var.env_name}/AWSLogs/${local.account_id}/*",
+      "arn:aws:s3:::${module.logs_bucket.name}/forms-internal/AWSLogs/${local.account_id}/*"
+    ]
   }
 }
 
@@ -139,6 +142,53 @@ resource "aws_security_group" "alb" {
   }
 }
 
+# Internal ALB for app-to-app communication
+resource "aws_lb" "internal_alb" {
+  #checkov:skip=CKV2_AWS_28:WAF is not considered necessary at this time.
+  #checkov:skip=CKV2_AWS_20:HTTP to HTTPS redirect not required for internal service-to-service communication
+
+  name                       = "forms-internal"
+  internal                   = true
+  load_balancer_type         = "application"
+  enable_deletion_protection = true
+  drop_invalid_header_fields = true
+  security_groups            = [aws_security_group.internal_alb.id]
+
+  subnets = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id
+  ]
+
+  access_logs {
+    bucket  = module.logs_bucket.name
+    prefix  = "forms-internal"
+    enabled = true
+  }
+}
+
+resource "aws_security_group" "internal_alb" {
+  name        = "internal-alb"
+  description = "Allows internal traffic on 80 and outbound to VPC"
+  vpc_id      = aws_vpc.forms.id
+
+  ingress {
+    description = "Port 80 from VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.forms.cidr_block]
+  }
+
+  egress {
+    description = "Any port within VPC using TCP"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.forms.cidr_block]
+  }
+}
+
 module "acm_certicate_with_validation" {
   source = "../acm-cert-with-dns-validation"
   providers = {
@@ -152,6 +202,44 @@ module "acm_certicate_with_validation" {
 
 resource "aws_lb_listener" "listener" {
   load_balancer_arn = aws_lb.alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = module.acm_certicate_with_validation.arn
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Service unavailable"
+      status_code  = 503
+    }
+  }
+}
+
+resource "aws_lb_listener" "internal_listener" {
+  #checkov:skip=CKV_AWS_2:HTTP listener is used for internal service-to-service communication within VPC
+  #checkov:skip=CKV_AWS_103:TLS not required for internal HTTP listener used for service-to-service communication
+
+  load_balancer_arn = aws_lb.internal_alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Service unavailable"
+      status_code  = 503
+    }
+  }
+}
+
+# This listener exists to facilitate future cloudfront to ALB HTTPS communication.
+resource "aws_lb_listener" "internal_https_listener" {
+  load_balancer_arn = aws_lb.internal_alb.arn
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
