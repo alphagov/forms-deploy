@@ -47,20 +47,6 @@ module "cloudfront_waf_protection" {
   }
 }
 
-resource "aws_cloudfront_vpc_origin" "internal_alb" {
-  vpc_origin_endpoint_config {
-    arn                    = var.internal_alb_arn
-    http_port              = 80
-    https_port             = 443
-    name                   = "forms-internal-alb-${var.env_name}"
-    origin_protocol_policy = "https-only"
-    origin_ssl_protocols {
-      items    = ["TLSv1.2"]
-      quantity = 1
-    }
-  }
-}
-
 resource "aws_cloudfront_distribution" "main" {
   #checkov:skip=CKV_AWS_34:viewer_protocol_policy is already redirect-to-https
   #checkov:skip=CKV_AWS_86:Access logging not necessary currently.
@@ -87,20 +73,6 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   origin {
-    origin_id   = "internal_application_load_balancer"
-    domain_name = "unused.example.com"
-
-    vpc_origin_config {
-      vpc_origin_id = aws_cloudfront_vpc_origin.internal_alb.id
-    }
-
-    custom_header {
-      name  = "X-CloudFront-Secret"
-      value = random_password.cloudfront_secret.result
-    }
-  }
-
-  origin {
     domain_name = module.error_page_bucket.website_url
     origin_id   = "error_page"
 
@@ -116,7 +88,7 @@ resource "aws_cloudfront_distribution" "main" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "internal_application_load_balancer"
+    target_origin_id       = "application_load_balancer"
 
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.cors.id
 
@@ -169,7 +141,7 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern           = "/assets/*"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "internal_application_load_balancer"
+    target_origin_id       = "application_load_balancer"
     viewer_protocol_policy = "redirect-to-https"
     compress               = true
 
@@ -177,5 +149,3 @@ resource "aws_cloudfront_distribution" "main" {
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer.id
   }
 }
-
-

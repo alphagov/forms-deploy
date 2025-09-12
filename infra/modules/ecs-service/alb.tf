@@ -86,22 +86,6 @@ resource "aws_lb_listener_rule" "internal_alb_to_app" {
   }
 }
 
-resource "aws_lb_listener_rule" "internal_alb_cloudfront_to_app" {
-  count        = var.internal_sub_domain != null ? 1 : 0
-  listener_arn = var.internal_alb_listener_arn
-  priority     = var.listener_priority + 50 # Offset to avoid conflicts
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.internal_tg[0].arn
-  }
-
-  condition {
-    host_header {
-      values = [var.sub_domain] # External hostname for CloudFront
-    }
-  }
-}
 
 
 resource "aws_lb_listener_rule" "apex_rule" {

@@ -1,15 +1,5 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_ec2_managed_prefix_list" "cloudfront" {
-  filter {
-    name   = "prefix-list-name"
-    values = ["com.amazonaws.global.cloudfront.origin-facing"]
-  }
-  filter {
-    name   = "owner-id"
-    values = ["AWS"]
-  }
-}
 
 locals {
   # domain_names and zone_names can be combined after the migration.
@@ -218,13 +208,6 @@ resource "aws_security_group" "internal_alb" {
     cidr_blocks = [aws_vpc.forms.cidr_block]
   }
 
-  ingress {
-    description     = "Port 443 from CloudFront for VPC origin"
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
-  }
 
   egress {
     description = "Any port within VPC using TCP"
