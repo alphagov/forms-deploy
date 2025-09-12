@@ -71,6 +71,7 @@ resource "aws_ecs_service" "app_service" {
   task_definition                    = "${aws_ecs_task_definition.task.family}:${aws_ecs_task_definition.task.revision}"
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
+  enable_execute_command             = true
 
   launch_type      = "FARGATE"
   platform_version = "1.4.0"
