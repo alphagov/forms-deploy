@@ -18,6 +18,14 @@ output "alb_main_listener_arn" {
   value = module.environment.alb_main_listener_arn
 }
 
+output "internal_alb_listener_arn" {
+  value = module.environment.internal_alb_listener_arn
+}
+
+output "internal_alb_https_listener_arn" {
+  value = module.environment.internal_alb_https_listener_arn
+}
+
 output "cloudfront_arn" {
   value = module.environment.cloudfront_arn
 }
@@ -65,5 +73,16 @@ output "ecs_cluster_arn" {
 
 output "ecs_cluster_name" {
   value = module.environment.ecs_cluster_name
+}
 
+output "private_internal_zone_id" {
+  value = module.environment.private_internal_zone_id
+}
+
+output "internal_alb_dns_name" {
+  value = module.environment.internal_alb_dns_name
+}
+
+output "internal_alb_zone_id" {
+  value = module.environment.internal_alb_zone_id
 }

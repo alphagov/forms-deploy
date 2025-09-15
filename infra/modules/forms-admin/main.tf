@@ -1,6 +1,7 @@
 data "aws_caller_identity" "current" {}
 locals {
   sub_domain                  = "admin.${var.root_domain}"
+  internal_sub_domain         = "admin.internal.${var.root_domain}"
   image                       = var.image_tag == null ? null : "${var.container_registry}/forms-admin-deploy:${var.image_tag}"
   maintenance_mode_bypass_ips = join(", ", module.common_values.vpn_ip_addresses)
   auth_credentials = {
@@ -91,6 +92,7 @@ module "ecs_service" {
   application                  = "forms-admin"
   root_domain                  = var.root_domain
   sub_domain                   = local.sub_domain
+  internal_sub_domain          = local.internal_sub_domain
   listener_priority            = 301
   include_domain_root_listener = false
   image                        = local.image
@@ -105,6 +107,7 @@ module "ecs_service" {
   private_subnet_ids           = var.private_subnet_ids
   alb_arn_suffix               = var.alb_arn_suffix
   alb_listener_arn             = var.alb_listener_arn
+  internal_alb_listener_arn    = var.internal_alb_listener_arn
   ecs_cluster_arn              = var.ecs_cluster_arn
   scaling_rules = {
     min_capacity                                = var.min_capacity

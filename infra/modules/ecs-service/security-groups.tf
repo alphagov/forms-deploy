@@ -34,11 +34,27 @@ resource "aws_security_group_rule" "egress_to_s3_endpoint" {
   security_group_id = aws_security_group.baseline.id
 }
 
-resource "aws_security_group_rule" "egress_to_vpc" {
+resource "aws_security_group_rule" "egress_to_vpc_https" {
   description       = "Permit outbound to VPC CIDR on 443"
   type              = "egress"
   from_port         = 443
   to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.baseline.id
+}
+moved {
+  from = aws_security_group_rule.egress_to_vpc
+  to   = aws_security_group_rule.egress_to_vpc_https
+}
+
+resource "aws_security_group_rule" "egress_to_vpc_http" {
+  count = var.internal_sub_domain != null ? 1 : 0
+
+  description       = "Permit outbound to VPC CIDR on 80"
+  type              = "egress"
+  from_port         = 80
+  to_port           = 80
   protocol          = "tcp"
   cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.baseline.id
