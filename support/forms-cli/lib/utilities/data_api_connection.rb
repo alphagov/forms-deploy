@@ -9,9 +9,10 @@ require "aws-sdk-rdsdataservice"
 
 # Executes statements on AWS RDS using the Data API.
 class DataApiConnection
-  def initialize(database_name, cluster_name)
+  def initialize(env, database_name, cluster_name)
+    @env = env
     @database_name = database_name
-    @cluster_name = cluster_name
+    @cluster_name = cluster_name || default_cluster_name
 
     @data_service = Aws::RDSDataService::Client.new
     @rds = Aws::RDS::Client.new
@@ -36,6 +37,10 @@ class DataApiConnection
   end
 
 private
+
+  def default_cluster_name
+    "aurora-v2-cluster-#{@env}"
+  end
 
   def query_credential_arn
     credential_name = "#{@database_name}-app"

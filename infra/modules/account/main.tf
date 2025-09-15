@@ -63,3 +63,20 @@ resource "aws_iam_account_password_policy" "strong" {
   password_reuse_prevention      = 24 # prevent use from re-using our last 24 passwords
   allow_users_to_change_password = true
 }
+
+data "aws_account_primary_contact" "current" {}
+
+locals {
+  // We'll set the account alias to the full name of the primary contact if it's set
+  // convention dictates that this will be set to the same value as the account name.
+  // If https://github.com/hashicorp/terraform-provider-aws/pull/44085 is released we can
+  // use that instead.
+  account_alias = data.aws_account_primary_contact.current.full_name != null ? data.aws_account_primary_contact.current.full_name : ""
+}
+
+resource "aws_iam_account_alias" "alias" {
+  // Only create the alias if we have a valid value to set it to
+  count = can(regex("^[a-zA-Z0-9-]+$", local.account_alias)) ? 1 : 0
+
+  account_alias = local.account_alias
+}

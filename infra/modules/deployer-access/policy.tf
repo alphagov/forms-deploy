@@ -302,6 +302,17 @@ data "aws_iam_policy_document" "ses" {
   }
 
   statement {
+    sid    = "ManageAccessKeys"
+    effect = "Allow"
+    actions = [
+      "iam:CreateAccessKey"
+    ]
+    resources = [
+      "arn:aws:iam::${var.account_id}:user/auth0"
+    ]
+  }
+
+  statement {
     sid    = "ManageSQS"
     effect = "Allow"
     actions = [
@@ -322,7 +333,8 @@ data "aws_iam_policy_document" "ses" {
       "sns:UntagResource",
     ]
     resources = [
-      "arn:aws:sns:eu-west-2:${var.account_id}:ses_bounces_and_complaints",
+      "arn:aws:sns:eu-west-2:${var.account_id}:ses_bounces_and_complaints", # TODO: remove me once all envs use the new queues
+      "arn:aws:sns:eu-west-2:${var.account_id}:auth0_ses_bounces_and_complaints",
       "arn:aws:sns:eu-west-2:${var.account_id}:submission_email_ses_bounces_and_complaints",
       "arn:aws:sns:eu-west-2:${var.account_id}:submission_email_ses_successful_deliveries",
     ]
@@ -331,7 +343,7 @@ data "aws_iam_policy_document" "ses" {
 }
 
 data "aws_iam_policy_document" "code_build_modules" {
-  # These are needed for: 
+  # These are needed for:
   # code-build-build
   # code-build-run-docker-build
   # code-build-run-smoke-tests
@@ -624,6 +636,18 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
     resources = [
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:*",
       "arn:aws:logs:us-east-1:${var.account_id}:log-group:*",
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "PutSubscriptionFilterForCSLS"
+    actions = [
+      "logs:PutSubscriptionFilter",
+    ]
+    resources = [
+      "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython",
+      "arn:aws:logs:us-east-1:885513274347:destination:csls_cw_logs_destination_prodpython",
     ]
     effect = "Allow"
   }

@@ -41,6 +41,7 @@ running-order:
         - roots:
             - forms/environment
             - forms/ses
+        - roots:
             - forms/auth0
         - roots:
             - forms/redis

@@ -41,6 +41,7 @@ environmental_settings = {
   rate_limit_bypass_cidrs             = []
   enable_shield_advanced_healthchecks = true
   allow_pagerduty_alerts              = true
+  redis_multi_az_enabled              = true
 }
 root_domain = "forms.service.gov.uk"
 additional_dns_records = [

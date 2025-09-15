@@ -1,3 +1,8 @@
+resource "random_password" "cloudfront_secret" {
+  length  = 32
+  special = true
+}
+
 # The Certificate for CloudFront must be in us-east-1
 module "acm_certificate_with_validation" {
   source = "../acm-cert-with-dns-validation"
@@ -59,6 +64,11 @@ resource "aws_cloudfront_distribution" "main" {
       http_port              = 80
       origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2"]
+    }
+
+    custom_header {
+      name  = "X-CloudFront-Secret"
+      value = random_password.cloudfront_secret.result
     }
   }
 
