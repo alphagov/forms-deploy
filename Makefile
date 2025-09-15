@@ -74,6 +74,17 @@ $(INTEGRATION_TF_ROOTS):
 ##
 # Action targets
 ##
+## Generic deferral snippet: place this as the first line of any recipe that
+## should defer execution when called alongside 'assume_deployer_role'. It will
+## no-op in the initial invocation and run in the re-invoked make (with creds).
+DEFER_IF_ASSUMING = \
+	if echo "$(MAKECMDGOALS)" | grep -qw "assume_deployer_role"; then \
+		if [ "$$${ASSUMED_ROLE:-0}" != "1" ]; then \
+			echo "Deferring '$@' until after assume_deployer_role..."; \
+			exit 0; \
+		fi; \
+	fi; \
+	exit 1
 aws_credentials_available:
 	@if [ "${CODEBUILD_CI}" = false ]; then \
 		if [ -z "${AWS_SESSION_TOKEN}" ]; then \
@@ -107,31 +118,48 @@ show_info:
 
 .PHONY: init
 init: target_environment_set target_tf_root_set aws_credentials_available show_info
-	@./support/invoke-terraform.sh -a init -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+	@$(DEFER_IF_ASSUMING) || ./support/invoke-terraform.sh -a init -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: plan
 plan: init
-	@./support/invoke-terraform.sh -a plan -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+	@$(DEFER_IF_ASSUMING) || ./support/invoke-terraform.sh -a plan -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: apply
 apply: init
-	@./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+	@$(DEFER_IF_ASSUMING) || ./support/invoke-terraform.sh -a apply -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: validate
 validate: init
-	@./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+	@$(DEFER_IF_ASSUMING) || ./support/invoke-terraform.sh -a validate -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: unlock
 unlock: target_environment_set target_tf_root_set aws_credentials_available show_info
 	$(if ${LOCK_ID},,$(error Must set lock id with LOCK_ID="lock_id" at the end of this target))
-	@./support/invoke-terraform.sh -a unlock -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}" -l "$${LOCK_ID}"
+	@$(DEFER_IF_ASSUMING) || ./support/invoke-terraform.sh -a unlock -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}" -l "$${LOCK_ID}"
 
 tf_shell: init
-	@./support/invoke-terraform.sh -a shell -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
+	@$(DEFER_IF_ASSUMING) || ./support/invoke-terraform.sh -a shell -d "$${TARGET_DEPLOYMENT}" -e "$${TARGET_ENVIRONMENT}" -r "$${TARGET_TF_ROOT}"
 
 .PHONY: forms_apply_all
 forms_apply_all: target_environment_set not_ci aws_credentials_available
-	@./infra/scripts/apply-forms-roots-in-order.sh
+	@$(DEFER_IF_ASSUMING) || ./infra/scripts/apply-forms-roots-in-order.sh
+
+##
+# Role assumption targets
+##
+
+.PHONY: assume_deployer_role
+assume_deployer_role: target_environment_set aws_credentials_available
+	@set -euo pipefail; \
+		# Source the script to assume the deployer role in this shell, then re-invoke make
+		. infra/scripts/assume_deployer_role.sh "$${TARGET_ENVIRONMENT}"; \
+		ASSUMED_ROLE=1 $(MAKE) --no-print-directory $(filter-out assume_deployer_role,$(MAKECMDGOALS))
+
+
+.PHONY: sts
+sts: target_environment_set aws_credentials_available
+	@$(DEFER_IF_ASSUMING) || aws sts get-caller-identity
+
 
 ##
 # Pipeline targets

@@ -61,15 +61,29 @@ data "aws_iam_policy_document" "acm_cert_with_dns_validation" {
 
 data "aws_iam_policy_document" "internal_dns" {
   statement {
-    sid    = "ManageInternalDNSRecordSets"
+    sid    = "ManageInternalDNSZone"
     effect = "Allow"
     actions = [
-      "route53:CreateHostedZone"
+      "route53:CreateHostedZone",
+      "route53:ChangeTagsForResource"
     ]
     resources = [
       "*",
     ]
   }
+  # statement {
+  #   sid    = "ManageInternalDNSRecordSets"
+  #   effect = "Allow"
+  #   actions = [
+  #     "route53:ChangeResourceRecordSets",
+  #     "route53:GetHostedZone",
+  #     "route53:ListResourceRecordSets",
+  #     "route53:ListTagsForResource",
+  #   ]
+  #   resources = [
+  #     "arn:aws:route53:::hostedzone/${var.internal_hosted_zone_id}",
+  #   ]
+  # }
 }
 
 data "aws_iam_policy_document" "cloudfront" {
