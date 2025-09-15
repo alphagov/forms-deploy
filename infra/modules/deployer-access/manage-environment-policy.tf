@@ -5,6 +5,7 @@ data "aws_iam_policy_document" "environment" {
     data.aws_iam_policy_document.public_bucket.json,
     data.aws_iam_policy_document.secure_bucket.json,
     data.aws_iam_policy_document.network.json,
+    data.aws_iam_policy_document.internal_dns.json,
   ]
 }
 
@@ -54,6 +55,19 @@ data "aws_iam_policy_document" "acm_cert_with_dns_validation" {
     ]
     resources = [
       "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "internal_dns" {
+  statement {
+    sid    = "ManageInternalDNSRecordSets"
+    effect = "Allow"
+    actions = [
+      "route53:CreateHostedZone"
+    ]
+    resources = [
+      "*",
     ]
   }
 }
