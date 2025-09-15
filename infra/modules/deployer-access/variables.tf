@@ -28,3 +28,9 @@ variable "codestar_connection_arn" {
   type        = string
   description = "ARN of the CodeStar connection in the account"
 }
+
+variable "admin_engineer_role_arns" {
+  type        = list(string)
+  description = "List of ARNs of roles to be able to assume the deployer role"
+  nullable    = false
+}

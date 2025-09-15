@@ -35,6 +35,28 @@ where
 > Our `make` commands have tab completion! Source the tab completion script for your shell under `support/` (e.g. `support/makefile_completion.bash`) as part of your shell profile.
 
 ## Common tasks
+
+#### Testing infrastructure changes with the deployer role (dev only)
+
+For testing Terraform operations in the same context as CI pipelines, admin engineers can assume the deployer role directly from their local machines. This functionality is only available for the **dev environment**.
+
+Use the deployer role for dev environment Terraform operations:
+```bash
+# Test a plan operation
+gds aws forms-dev-admin -- make dev deployer_role forms/forms-admin plan
+
+# Apply changes using the deployer role
+gds aws forms-dev-admin -- make dev deployer_role forms/rds apply
+```
+
+> [!IMPORTANT]
+> - The deployer role functionality is **only available for the dev environment**
+> - The deployer role credentials are only active within the make command - they don't persist in your shell session
+> - You must include `deployer_role` in the same command as your Terraform action
+
+> [!NOTE]
+> This is primarily for testing permissions and validating changes in dev. All other environments (staging, production, user-research) should only be deployed through the CI pipeline.
+
 #### Updating Terraform 
 
 We have a lot of Terraform code, across a lot of distinct root modules. To keep versioning consistent we have [a shared versions file](infra/shared/versions.tf.json) which is symlinked into each root.

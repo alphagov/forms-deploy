@@ -92,6 +92,13 @@ not_ci:
 	fi;
 	@true
 
+only_dev: target_environment_set
+	@if [ "$(TARGET_ENVIRONMENT)" != "dev" ]; then \
+		>&2 echo "Error: This operation is only available for the dev environment. Use 'make dev ...' instead."; \
+		false; \
+	fi
+	@true
+
 show_info:
 	@echo ""
 	@echo "========[Terraform target information]"
@@ -132,6 +139,17 @@ tf_shell: init
 .PHONY: forms_apply_all
 forms_apply_all: target_environment_set not_ci aws_credentials_available
 	@./infra/scripts/apply-forms-roots-in-order.sh
+
+.PHONY: deployer_role
+deployer_role: only_dev not_ci aws_credentials_available
+	$(eval ACCOUNT_ID := $(shell aws sts get-caller-identity --query Account --output text))
+	$(eval ROLE_ARN := arn:aws:iam::$(ACCOUNT_ID):role/deployer-$(TARGET_ENVIRONMENT))
+	@echo "Assuming role $(ROLE_ARN)"
+	$(eval CREDS := $(shell aws sts assume-role --role-arn "$(ROLE_ARN)" --role-session-name "LocalDeployerSession" --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text))
+	$(eval export AWS_ACCESS_KEY_ID := $(word 1,$(CREDS)))
+	$(eval export AWS_SECRET_ACCESS_KEY := $(word 2,$(CREDS)))
+	$(eval export AWS_SESSION_TOKEN := $(word 3,$(CREDS)))
+	@echo "AWS credentials updated for $(TARGET_ENVIRONMENT) environment"
 
 ##
 # Pipeline targets
