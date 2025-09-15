@@ -33,7 +33,7 @@ resource "aws_lb_target_group" "tg" {
 resource "aws_lb_target_group" "internal_tg" {
   count = var.internal_sub_domain != null ? 1 : 0
   #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
-  name        = "${var.application}-${var.env_name}-internal"
+  name        = "${var.application}-internal"
   port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -50,6 +50,10 @@ resource "aws_lb_target_group" "internal_tg" {
     timeout             = 10
     unhealthy_threshold = 3
     healthy_threshold   = 2
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
