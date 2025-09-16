@@ -6,6 +6,7 @@ on:
       - "**.rb"
       - "**Gemfile"
       - "**Rakefile"
+      - ".github/workflows/ruby-ci.yml"
   merge_group:
     types: [checks_requested]
 jobs:
@@ -20,7 +21,7 @@ jobs:
         run: |
           wget "https://github.com/tmccombs/hcl2json/releases/download/v0.6.1/hcl2json_linux_amd64"
           chmod +x hcl2json_linux_amd64
-          sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json        
+          sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json
 
       - name: Determine Ruby version
         id: determine-ruby-version
