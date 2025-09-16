@@ -10,6 +10,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      actions-all-dependencies:
+        patterns:
+          - "*"
 
   # Maintain Python dependencies (for Checkov)
   - package-ecosystem: "pip"
