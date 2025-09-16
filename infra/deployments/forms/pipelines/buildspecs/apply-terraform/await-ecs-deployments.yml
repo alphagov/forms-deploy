@@ -6,5 +6,17 @@ phases:
     commands:
       - echo "Waiting for the following services to be stable ${ECS_SERVICES}"
       - |
-        # shellcheck disable=SC2046 # services-stable expects a list of strings
-        aws ecs wait services-stable --cluster "${ECS_CLUSTER}" --services $(echo "${ECS_SERVICES}" | tr ',' ' ')
+        # shellcheck disable=SC2086 # services-stable expects a list of strings
+        if ! aws ecs wait services-stable --cluster "${ECS_CLUSTER}" --services ${ECS_SERVICES//,/ }; then
+          echo "Some services are not stable"
+          echo -e "Current status:\n"
+          # shellcheck disable=SC2086 # describe-services expects a list of strings
+          aws ecs describe-services --cluster "${ECS_CLUSTER}" --services ${ECS_SERVICES//,/ } | jq '["Service Name", "Desired", "Actual", "Discrepancy"],
+            (.services[] |
+            select(.deployments | length > 0) |
+            [.serviceName, .desiredCount, .runningCount, (.runningCount - .desiredCount)]) |
+            @tsv' | column -t -s $'\t'
+          exit 1
+        else
+          echo "All services are stable"
+        fi
