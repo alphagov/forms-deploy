@@ -1,5 +1,4 @@
 resource "aws_s3_bucket" "state" {
-  #checkov:skip=CKV_AWS_18:Review S3 access logging in https://trello.com/c/qUzZfopX/416-review-s3-bucket-access-logging
   #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
   #checkov:skip=CKV_AWS_21:Versioning is enabled via aws_s3_bucket_versioning below
   #checkov:skip=CKV_AWS_144:No need for cross-region replication
@@ -70,3 +69,106 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.state.id
   policy = data.aws_iam_policy_document.https_only.json
 }
+
+# S3 Access Logging Configuration
+resource "aws_s3_bucket" "access_logs" {
+  #checkov:skip=CKV_AWS_18:Access logs buckets themselves don't need access logging (infinite recursion)
+  #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
+  #checkov:skip=CKV_AWS_21:Versioning is enabled via aws_s3_bucket_versioning below
+  #checkov:skip=CKV_AWS_144:No need for cross-region replication for access logs
+  #checkov:skip=CKV_AWS_145:S3-SSE mode using AES256 is sufficient for access logs.
+  #checkov:skip=CKV2_AWS_6:Access logs buckets have public access blocked via separate resource
+  #checkov:skip=CKV2_AWS_61:Lifecycle rules are not needed for access logs at this time
+  #checkov:skip=CKV2_AWS_62:Event notifications are not needed for access logs at this time
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = "${var.bucket_name}-access-logs"
+
+  tags = {
+    Name = "${var.bucket_name}-access-logs"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "access_logs" {
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = aws_s3_bucket.access_logs[0].id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_versioning" "access_logs" {
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = aws_s3_bucket.access_logs[0].id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = aws_s3_bucket.access_logs[0].id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "access_logs_owner" {
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = aws_s3_bucket.access_logs[0].id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+
+}
+
+data "aws_iam_policy_document" "access_logs_policy" {
+  count = var.access_logging_enabled ? 1 : 0
+
+  statement {
+    sid    = "S3ServerAccessLogsPolicy"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logging.s3.amazonaws.com"]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+    resources = ["${aws_s3_bucket.access_logs[0].arn}/*"]
+  }
+}
+
+data "aws_iam_policy_document" "access_logs_combined_policy" {
+  count = var.access_logging_enabled ? 1 : 0
+  source_policy_documents = [
+    data.aws_iam_policy_document.access_logs_policy[0].json
+  ]
+}
+
+resource "aws_s3_bucket_policy" "access_logs_bucket_policy" {
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = aws_s3_bucket.access_logs[0].id
+  policy = data.aws_iam_policy_document.access_logs_combined_policy[0].json
+}
+
+resource "aws_s3_bucket_logging" "state" {
+  count  = var.access_logging_enabled ? 1 : 0
+  bucket = aws_s3_bucket.state.id
+
+  target_bucket = aws_s3_bucket.access_logs[0].id
+  target_prefix = "s3-access-logs"
+
+  target_object_key_format {
+    partitioned_prefix {
+      partition_date_source = "DeliveryTime"
+    }
+  }
+}
+

@@ -1,6 +1,8 @@
 module "paused_pipeline_lambda_bucket" {
   source = "../../../modules/secure-bucket"
-  name   = "govuk-forms-${var.environment_name}-paused-pipeline-detection"
+
+  name                   = "govuk-forms-${var.environment_name}-paused-pipeline-detection"
+  access_logging_enabled = true
 }
 
 ## Lambda

@@ -21,3 +21,11 @@ variable "versioning_enabled" {
   nullable    = false
 }
 
+variable "access_logging_enabled" {
+  type        = bool
+  description = "Whether S3 bucket access logging should be enabled"
+  default     = false
+  nullable    = false
+}
+
+

@@ -114,8 +114,9 @@ module "acm_certicate_with_validation" {
 
 module "logs_bucket" {
   source = "../../../modules/secure-bucket"
-  name   = "govuk-forms-alb-logs-deploy"
 
+  name                   = "govuk-forms-alb-logs-deploy"
+  access_logging_enabled = true
   extra_bucket_policies = flatten([
     [data.aws_iam_policy_document.allow_logs.json],
     var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []
