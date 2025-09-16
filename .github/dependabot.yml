@@ -34,6 +34,10 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
+    groups:
+      ruby-all-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: terraform
     directory: "/infra/shared"
