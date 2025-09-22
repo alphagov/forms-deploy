@@ -12,7 +12,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_utilization" {
   alarm_description   = "This metric checks the memory utilization of the ECS service: ${each.value} in ${var.environment} environment"
 
   dimensions = {
-    ClusterName = data.aws_ecs_cluster.cluster_name.id
+    ClusterName = data.aws_ecs_cluster.cluster_name.cluster_name
     ServiceName = each.value
   }
 
