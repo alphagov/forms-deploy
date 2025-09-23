@@ -171,3 +171,9 @@ variable "ecs_cluster_arn" {
   type        = string
   description = "The arn for the ECS cluster"
 }
+
+variable "cloudfront_secret" {
+  type        = string
+  description = "The secret header value that CloudFront sends to verify requests"
+  sensitive   = true
+}

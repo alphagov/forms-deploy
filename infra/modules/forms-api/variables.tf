@@ -69,3 +69,9 @@ variable "alb_listener_arn" {
   type        = string
   description = "The ARN of the load balancer listener to which forms-api will be attached"
 }
+
+variable "cloudfront_secret" {
+  type        = string
+  description = "The secret header value that CloudFront sends to verify requests"
+  sensitive   = true
+}

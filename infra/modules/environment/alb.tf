@@ -212,8 +212,8 @@ resource "aws_lb_listener" "listener" {
 
     fixed_response {
       content_type = "text/plain"
-      message_body = "Service unavailable"
-      status_code  = 503
+      message_body = "Access denied"
+      status_code  = 403
     }
   }
 }

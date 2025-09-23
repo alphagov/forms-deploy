@@ -23,4 +23,5 @@ module "forms_product_page" {
   ecs_cluster_arn      = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_arn
   alb_arn_suffix       = data.terraform_remote_state.forms_environment.outputs.alb_arn_suffix
   alb_listener_arn     = data.terraform_remote_state.forms_environment.outputs.alb_main_listener_arn
+  cloudfront_secret    = data.terraform_remote_state.forms_environment.outputs.cloudfront_secret
 }
