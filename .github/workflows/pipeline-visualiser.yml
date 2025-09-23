@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "support/pipeline-visualiser/**"
+      - ".github/workflows/pipeline-visualiser.yml"
   merge_group:
     types: [checks_requested]
 jobs:

@@ -4,6 +4,7 @@ on:
     branches: [forms_cli]
     paths:
       - "support/forms-cli/**"
+      - ".github/workflows/forms-cli.yml"
   pull_request:
     branches: [main]
     paths:

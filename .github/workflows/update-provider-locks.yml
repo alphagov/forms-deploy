@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "infra/shared/versions.tf"
+      - "infra/scripts/upgrade_tf_version.sh"
+      - ".github/workflows/update-provider-locks.yml"
 
 jobs:
   update-locks:

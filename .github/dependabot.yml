@@ -5,39 +5,47 @@
 
 version: 2
 updates:
-    # Maintain dependencies for GitHub Actions
-    - package-ecosystem: "github-actions"
-      directory: "/"
-      schedule:
-          interval: "daily"
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      actions-all-dependencies:
+        patterns:
+          - "*"
 
-    # Maintain Python dependencies (for Checkov)
-    - package-ecosystem: "pip"
-      directory: "/"
-      schedule:
-        interval: "daily"
-      open-pull-requests-limit: 10
+  # Maintain Python dependencies (for Checkov)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
 
-    # Maintain Ruby dependencies
-    - package-ecosystem: "bundler"
-      directories:
-        - "/"
-        - "/infra"
-        - "/support/forms-cli"
-        - "/support/pipeline-visualiser"
-        - "/support/paused-pipeline-detector"
-        - "/infra/deployments/forms/pipelines/pipeline-invoker"
-      schedule:
-        interval: "daily"
-      open-pull-requests-limit: 10
+  # Maintain Ruby dependencies
+  - package-ecosystem: "bundler"
+    directories:
+      - "/"
+      - "/infra"
+      - "/support/forms-cli"
+      - "/support/pipeline-visualiser"
+      - "/support/paused-pipeline-detector"
+      - "/infra/deployments/forms/pipelines/pipeline-invoker"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    groups:
+      ruby-all-dependencies:
+        patterns:
+          - "*"
 
-    - package-ecosystem: terraform
-      directory: "/infra/shared"
-      schedule:
-        interval: weekly
-      open-pull-requests-limit: 10
-      groups:
-        terraform-all-dependencies:
-          patterns:
-            - "*"
-      target-branch: main
+  - package-ecosystem: terraform
+    directory: "/infra/shared"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      terraform-all-dependencies:
+        patterns:
+          - "*"
+    target-branch: main

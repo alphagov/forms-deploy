@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".terraform-version"
+      - ".github/workflows/guardrail_tf_version_upgrade.yml"
 
 jobs:
   leave_a_comment:
@@ -18,7 +19,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-
       - name: Leave a comment
         env:
           COMMENT_MARKER: "<!-- guardrail: tf version change -->"
@@ -30,13 +30,13 @@ jobs:
           > [!WARNING]
           > You are changing the Terraform version.
           >
-          > Before you merge this PR, you must apply the \`forms/pipelines\` 
+          > Before you merge this PR, you must apply the \`forms/pipelines\`
           > Terraform root from this branch in each of the \`forms\` environments.
           >
           > \`\`\`
           > make ENV forms/pipelines apply
           > \`\`\`
-          
+
           ${COMMENT_MARKER}
           EOF
 
