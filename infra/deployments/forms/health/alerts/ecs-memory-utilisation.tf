@@ -16,6 +16,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_utilization" {
     ServiceName = each.value
   }
 
+  actions_enabled    = var.enable_alert_actions
   alarm_actions      = [local.alert_severity.eu_west_2.warn]
   ok_actions         = [local.alert_severity.eu_west_2.warn]
   treat_missing_data = "missing"
