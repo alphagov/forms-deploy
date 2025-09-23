@@ -19,6 +19,11 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgres_v16" {
   name_prefix = "forms-${var.identifier}-pg16"
   family      = "aurora-postgresql16"
   description = "RDS cluster parameter group for Aurora Serverless for PostgreSQL 16"
+
+  parameter {
+    name  = "rds.allowed_delegated_extensions"
+    value = "pg_trgm"
+  }
 }
 
 
