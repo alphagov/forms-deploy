@@ -12,7 +12,7 @@ jobs:
     name: Run tests
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # Grab the last 75 commits. Later on we need to a git diff, and it's
           # very likely that two commits involved will be inside the last 75
@@ -115,7 +115,7 @@ jobs:
       ## It is purely needed to install a tool in this pipeline
       - name: "Install Go ${{env.GO_VERSION}}"
         if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "${{env.GO_VERSION}}"
 
@@ -140,7 +140,7 @@ jobs:
           path: ~/.tflint.d/plugins
           key: tflint-${{ hashFiles('.tflint.hcl') }}
 
-      - uses: terraform-linters/setup-tflint@v4
+      - uses: terraform-linters/setup-tflint@v5
         with:
           tflint_version: v0.52.0
 
