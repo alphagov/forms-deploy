@@ -151,6 +151,14 @@ deployer_role: only_dev not_ci aws_credentials_available
 	$(eval export AWS_SESSION_TOKEN := $(word 3,$(CREDS)))
 	@echo "AWS credentials updated for $(TARGET_ENVIRONMENT) environment"
 
+
+##
+# Terraform Plugin Cache Targets
+##
+.PHONY: clear-tf-plugin-cache
+clear-tf-plugin-cache:
+	@./support/invoke-terraform.sh -a clear-plugin-cache -d dummy -e dummy
+
 ##
 # Pipeline targets
 ##

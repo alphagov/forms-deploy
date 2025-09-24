@@ -6,6 +6,10 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 root_dir="$(realpath "${script_dir}/../")"
 deployments_dir="$(realpath "${script_dir}/../infra/deployments/")"
 
+TF_PLUGIN_CACHE_DIR="${root_dir}/.terraform-plugin-cache"
+mkdir -p "${TF_PLUGIN_CACHE_DIR}"
+export TF_PLUGIN_CACHE_DIR
+
 action=""
 deployment=""
 environment=""
@@ -202,6 +206,17 @@ shell() {
     popd >/dev/null || exit 1
 }
 
+clear-plugin-cache() {
+    echo "Clearing Terraform plugin cache at ${TF_PLUGIN_CACHE_DIR}"
+    # Safety check: ensure TF_PLUGIN_CACHE_DIR is not empty or /
+    if [[ -z "${TF_PLUGIN_CACHE_DIR}" || "${TF_PLUGIN_CACHE_DIR}" == "/" ]]; then
+        echo "Refusing to clear plugin cache: TF_PLUGIN_CACHE_DIR is empty or /" >&2
+        exit 1
+    fi
+    # Use find to safely delete all contents
+    find "${TF_PLUGIN_CACHE_DIR}" -mindepth 1 -exec rm -rf -- {} +
+}
+
 case "${action}" in
 apply)
     pre_apply
@@ -226,6 +241,9 @@ unlock)
 
 shell)
     shell
+    ;;
+clear-plugin-cache)
+    clear-plugin-cache
     ;;
 *)
     usage
