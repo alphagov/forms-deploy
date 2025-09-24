@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-script_dir="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 root_dir="$(realpath "${script_dir}/../")"
 deployments_dir="$(realpath "${script_dir}/../infra/deployments/")"
 
@@ -27,32 +27,32 @@ EOF
 # Parse args
 while getopts "a:d:e:r:l:" opt; do
     case "${opt}" in
-        a)
-            action="${OPTARG}"
-            [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" || $action == "shell" ]] ||  usage
-            ;;
-        d)
-            deployment="${OPTARG}"
-            ;;
-        e)
-            environment="${OPTARG}"
-            ;;
-        r)
-            tf_root="${OPTARG}"
-            ;;
+    a)
+        action="${OPTARG}"
+        [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" || $action == "shell" ]] || usage
+        ;;
+    d)
+        deployment="${OPTARG}"
+        ;;
+    e)
+        environment="${OPTARG}"
+        ;;
+    r)
+        tf_root="${OPTARG}"
+        ;;
 
-        l)
-            lock_id="${OPTARG}"
-            ;;
+    l)
+        lock_id="${OPTARG}"
+        ;;
 
-        *)
-            usage
-            ;;
+    *)
+        usage
+        ;;
     esac
 
 done
 
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 # Validate require args were set
 if [ -z "${action}" ] || [ -z "${deployment}" ] || [ -z "${environment}" ]; then
     usage
@@ -68,18 +68,18 @@ src_dir="${deployments_dir}/${deployment}/${tf_root}"
 
 # Handlers
 pre_init() {
-  pre_init_script="${src_dir}/pre-init.sh"
-  if [ -e "${pre_init_script}" ]; then
-    echo "PRE-INIT: Running pre-init script ${pre_init_script}"
-    set -e
-    bash "${pre_init_script}" "${root_dir}" "${environment}" "${src_dir}" | sed  's/^/[PRE-INIT] /'
-    set +e
-  else
-    echo "PRE-INIT: No pre-init script found at ${pre_init_script}"
-  fi
+    pre_init_script="${src_dir}/pre-init.sh"
+    if [ -e "${pre_init_script}" ]; then
+        echo "PRE-INIT: Running pre-init script ${pre_init_script}"
+        set -e
+        bash "${pre_init_script}" "${root_dir}" "${environment}" "${src_dir}" | sed 's/^/[PRE-INIT] /'
+        set +e
+    else
+        echo "PRE-INIT: No pre-init script found at ${pre_init_script}"
+    fi
 }
 
-init(){
+init() {
     extra_args=""
 
     if [ "${deployment}" == "forms" ]; then
@@ -87,7 +87,7 @@ init(){
     fi
 
     if [ "${deployment}" == "integration" ]; then
-        extra_args="${extra_args} -backend-config ${deployments_dir}/integration/tfvars/backend/integration.tfvars";
+        extra_args="${extra_args} -backend-config ${deployments_dir}/integration/tfvars/backend/integration.tfvars"
     fi
 
     # shellcheck disable=SC2086
@@ -100,54 +100,54 @@ init(){
 }
 
 pre_apply() {
-  pre_apply_script="${src_dir}/pre-apply.sh"
-  if [ -e "${pre_apply_script}" ]; then
-    echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
-    tfvars_arguments="$(_build_terraform_vars_file_args)"
-    set -e
-    bash "${pre_apply_script}" "${root_dir}" "${environment}" "${src_dir}" "${tfvars_arguments}" | sed  's/^/[PRE-APPLY] /'
-    set +e
-  else
-    echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
-  fi
+    pre_apply_script="${src_dir}/pre-apply.sh"
+    if [ -e "${pre_apply_script}" ]; then
+        echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
+        tfvars_arguments="$(_build_terraform_vars_file_args)"
+        set -e
+        bash "${pre_apply_script}" "${root_dir}" "${environment}" "${src_dir}" "${tfvars_arguments}" | sed 's/^/[PRE-APPLY] /'
+        set +e
+    else
+        echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
+    fi
 }
 
 _build_terraform_vars_file_args() {
     tfvars_arguments=""
     ## forms/account needs different vars files to other forms/roots
     if [ "${deployment}" == "forms" ] && [ "${tf_root}" == "account" ]; then
-        tfvars_arguments="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
-    elif [ "${deployment}" == "forms" ] ; then
-        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars";
+        tfvars_arguments="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars"
+    elif [ "${deployment}" == "forms" ]; then
+        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars"
     fi
 
     if [ "${deployment}" == "integration" ]; then
-        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars -var-file ${deployments_dir}/integration/tfvars/backend/integration.tfvars";
+        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars -var-file ${deployments_dir}/integration/tfvars/backend/integration.tfvars"
     fi
 
     case "${deployment}+${tf_root}" in
-        "forms+pipelines")
-            tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars";
-            ;;
+    "forms+pipelines")
+        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars"
+        ;;
     esac
 
     echo "${tfvars_arguments}"
 }
 
-plan_apply(){
+plan_apply() {
     action="$1"
     extra_args="$(_build_terraform_vars_file_args)"
 
     if [ "${FORMS_TF_AUTO_APPROVE:-false}" = true ] && [ "${action}" = "apply" ]; then
         echo "FORMS_TF_AUTO_APPROVE was set to true"
         echo "Terraform will be automatically applied"
-        extra_args="${extra_args} -auto-approve";
+        extra_args="${extra_args} -auto-approve"
     fi
     # shellcheck disable=SC2086
     terraform \
-		-chdir="${src_dir}" \
-		${action} \
-		${extra_args}
+        -chdir="${src_dir}" \
+        ${action} \
+        ${extra_args}
     tf_exit_code=$?
 
     # Terraform only gives an exit code of 0 on a successful run
@@ -158,16 +158,16 @@ plan_apply(){
 }
 
 validate() {
-  terraform \
-    -chdir="${src_dir}" \
-    validate
+    terraform \
+        -chdir="${src_dir}" \
+        validate
 }
 
 unlock() {
-  terraform \
-    -chdir="${src_dir}" \
-    force-unlock \
-    "${lock_id}"
+    terraform \
+        -chdir="${src_dir}" \
+        force-unlock \
+        "${lock_id}"
 }
 
 post_apply() {
@@ -178,12 +178,12 @@ post_apply() {
 
     post_apply_script="${src_dir}/post-apply.sh"
     if [ -e "${post_apply_script}" ]; then
-      echo "POST-APPLY: Running post-apply script ${post_apply_script}"
-      set -e
-      bash "${post_apply_script}" "${root_dir}" "${environment}" "${src_dir}" | sed  's/^/[POST-APPLY] /'
-      set +e
+        echo "POST-APPLY: Running post-apply script ${post_apply_script}"
+        set -e
+        bash "${post_apply_script}" "${root_dir}" "${environment}" "${src_dir}" | sed 's/^/[POST-APPLY] /'
+        set +e
     else
-      echo "POST-APPLY: No post-apply script found at ${post_apply_script}"
+        echo "POST-APPLY: No post-apply script found at ${post_apply_script}"
     fi
 }
 
@@ -204,29 +204,29 @@ shell() {
 }
 
 case "${action}" in
-    apply)
-        pre_apply
-        plan_apply "apply"
-        ;;
-    init)#
-        pre_init
-        init
-        ;;
-    plan)
-        pre_apply # We use pre_apply here so that a plan and application look as similar as possible
-        plan_apply "plan"
-        ;;
+apply)
+    pre_apply
+    plan_apply "apply"
+    ;;
+init) #
+    pre_init
+    init
+    ;;
+plan)
+    pre_apply # We use pre_apply here so that a plan and application look as similar as possible
+    plan_apply "plan"
+    ;;
 
-    validate)
-        validate
-        ;;
+validate)
+    validate
+    ;;
 
-    unlock)
-        unlock
-        ;;
+unlock)
+    unlock
+    ;;
 
-    shell)
-        init
-        shell
-        ;;
+shell)
+    init
+    shell
+    ;;
 esac
