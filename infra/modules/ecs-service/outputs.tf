@@ -20,3 +20,7 @@ output "application_log_group_name" {
 output "task_definition_family" {
   value = aws_ecs_task_definition.task.family
 }
+
+output "target_group_arn" {
+  value = aws_lb_target_group.tg.arn
+}

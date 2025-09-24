@@ -8,23 +8,16 @@ set -euo pipefail
 # exist, or update them if they do.
 
 environment="${2}"
+src_dir="${3}"
 
-get_load_balancer_arn() {
-    local environment="$1"
-    aws elbv2 describe-load-balancers \
-        --names "forms-${environment}" \
-        --query 'LoadBalancers[0].LoadBalancerArn' \
-        --output text
+get_load_balancer_name() {
+    terraform -chdir="${src_dir}" output -raw load_balancer_name
 }
 
-# Function to get the TargetGroup ARN
-get_target_group_arn() {
+# Function to get the TargetGroup name
+get_target_group_name() {
     local app="$1"
-    local environment="$2"
-    aws elbv2 describe-target-groups \
-        --names "${app}-${environment}" \
-        --query 'TargetGroups[0].TargetGroupArn' \
-        --output text
+    terraform -chdir="${src_dir}" output -raw "${app/forms-/forms_}_target_group_name"
 }
 
 # Function to get metric configuration from template
@@ -33,22 +26,22 @@ get_metric_config() {
     local target_group_name="$2"
     local load_balancer_name="$3"
     local threshold="${4:-}"
-    
+
     # Read the template file
     local config
     config=$(cat "$(dirname "$0")/${template_file}")
-    
+
     # Replace placeholders with actual values
     # Use different delimiter for sed to avoid issues with slashes in the values
     config=$(echo "$config" | sed "s|\${target_group_name}|${target_group_name}|g")
     config=$(echo "$config" | sed "s|\${load_balancer_name}|${load_balancer_name}|g")
     config=$(echo "$config" | sed "s|\${environment}|${environment}|g")
-    
+
     # Replace threshold if provided
     if [ -n "$threshold" ]; then
         config=$(echo "$config" | sed "s|\${threshold}|${threshold}|g")
     fi
-    
+
     echo "$config"
 }
 
@@ -117,9 +110,9 @@ create_or_update_slo() {
     fi
 }
 
-load_balancer_name=$(get_load_balancer_arn "${environment}" | sed 's/.*:loadbalancer\///')
-forms_admin_target_group_name=$(get_target_group_arn "forms-admin" "${environment}" | sed 's/.*:targetgroup\//targetgroup\//')
-forms_runner_target_group_name=$(get_target_group_arn "forms-runner" "${environment}" | sed 's/.*:targetgroup\//targetgroup\//')
+load_balancer_name=$(get_load_balancer_name)
+forms_admin_target_group_name=$(get_target_group_name "forms-admin")
+forms_runner_target_group_name=$(get_target_group_name "forms-runner")
 
 # Admin HTTP Server
 

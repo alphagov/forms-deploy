@@ -14,6 +14,10 @@ output "alb_arn_suffix" {
   value = module.environment.alb_arn_suffix
 }
 
+output "alb_arn" {
+  value = module.environment.alb_arn
+}
+
 output "alb_main_listener_arn" {
   value = module.environment.alb_main_listener_arn
 }

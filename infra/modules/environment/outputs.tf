@@ -18,6 +18,10 @@ output "alb_arn_suffix" {
   value = aws_lb.alb.arn_suffix
 }
 
+output "alb_arn" {
+  value = aws_lb.alb.arn
+}
+
 output "alb_main_listener_arn" {
   value = aws_lb_listener.listener.arn
 }
