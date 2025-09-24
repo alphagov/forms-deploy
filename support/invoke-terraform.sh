@@ -225,7 +225,6 @@ unlock)
     ;;
 
 shell)
-    init
     shell
     ;;
 *)
