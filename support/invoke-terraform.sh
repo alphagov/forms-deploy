@@ -29,7 +29,6 @@ while getopts "a:d:e:r:l:" opt; do
     case "${opt}" in
     a)
         action="${OPTARG}"
-        [[ $action == "apply" || $action == "init" || $action == "plan" || $action == "validate" || $action == "unlock" || $action == "shell" ]] || usage
         ;;
     d)
         deployment="${OPTARG}"
@@ -208,7 +207,7 @@ apply)
     pre_apply
     plan_apply "apply"
     ;;
-init) #
+init)
     pre_init
     init
     ;;
@@ -228,5 +227,8 @@ unlock)
 shell)
     init
     shell
+    ;;
+*)
+    usage
     ;;
 esac
