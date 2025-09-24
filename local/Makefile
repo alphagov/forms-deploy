@@ -5,7 +5,6 @@ help:
 	@echo "make all		- run the whole docker-compose stack"
 	@echo "make admin		- run everything BUT the admin"
 	@echo "make runner		- run everything BUT the runner"
-	@echo "make api		- run everything BUT the API"
 	@echo "make product-page	- run everything BUT the product-page"
 	@echo "make db			- run just postgres"
 	@echo "make logs		- show docker-compose logs"
@@ -19,8 +18,6 @@ admin:
 	docker-compose up -d redis postgres forms-runner forms-api forms-product-page
 runner:
 	docker-compose up -d redis postgres forms-admin forms-api forms-product-page
-api:
-	SETTINGS__FORMS_API__BASE_URL=http://host.docker.internal:9292 docker-compose up -d redis postgres forms-runner forms-admin forms-product-page
 product-page:
 	docker-compose up -d redis postgres forms-runner forms-api forms-admin
 db:
