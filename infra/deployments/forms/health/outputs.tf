@@ -15,9 +15,9 @@ output "load_balancer_name" {
 }
 
 output "forms_admin_target_group_name" {
-  value = "targetgroup/${data.aws_lb_target_group.forms_admin_tg.arn_suffix}"
+  value = data.aws_lb_target_group.forms_admin_tg.arn_suffix
 }
 
 output "forms_runner_target_group_name" {
-  value = "targetgroup/${data.aws_lb_target_group.forms_runner_tg.arn_suffix}"
+  value = data.aws_lb_target_group.forms_runner_tg.arn_suffix
 }
