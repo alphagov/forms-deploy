@@ -2,10 +2,14 @@
 
 set -euo pipefail
 
+# Path constants
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 root_dir="$(realpath "${script_dir}/../")"
+readonly root_dir
 deployments_dir="$(realpath "${script_dir}/../infra/deployments/")"
+readonly deployments_dir
 
+# Plugin cache setup
 TF_PLUGIN_CACHE_DIR="${root_dir}/.terraform-plugin-cache"
 mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 export TF_PLUGIN_CACHE_DIR
@@ -16,9 +20,31 @@ environment=""
 tf_root=""
 lock_id=""
 
+validate_deployment() {
+    [[ -n "${deployment}" ]] || { echo "Error: Deployment not set" >&2 && exit 1; }
+}
+validate_environment() {
+    [[ -n "${environment}" ]] || { echo "Error: Environment not set" >&2 && exit 1; }
+}
+validate_lock_id() {
+    [[ -n "${lock_id}" ]] || { echo "Error: Lock ID not set" >&2 && exit 1; }
+}
+
+validate_terraform() {
+    if ! command -v terraform &>/dev/null; then
+        echo "Error: Terraform is not installed or not in PATH" >&2
+        exit 1
+    fi
+    validate_source_dir
+    validate_deployment
+    validate_environment
+}
+
 usage() {
     cat <<EOF >&2
-Usage: $0 -a apply|init|plan|validate|unlock -d deployment -e environment [-r terraform_root] [-l lock_id]
+Usage: $0 -a <action> -d <deployment> -e <environment> [-r <terraform_root>] [-l <lock_id>]
+
+Actions: apply|init|plan|validate|unlock|shell|clear-plugin-cache
 
 This helper script invokes Terraform in the correct manner, given the deployment,
 environment, and root. It encodes the different arguments required for different
@@ -55,34 +81,43 @@ while getopts "a:d:e:r:l:" opt; do
 
 done
 
-shift $((OPTIND - 1))
-# Validate require args were set
-if [ -z "${action}" ] || [ -z "${deployment}" ] || [ -z "${environment}" ]; then
-    usage
-fi
-
-if [[ $action == "unlock" ]] && [ -z "${lock_id}" ]; then
-    >&2 echo "Lock id must be set"
-    usage
-fi
-
-# Set source directory
+# Set source directory and validate
 src_dir="${deployments_dir}/${deployment}/${tf_root}"
 
-# Handlers
-pre_init() {
-    pre_init_script="${src_dir}/pre-init.sh"
-    if [ -e "${pre_init_script}" ]; then
-        echo "PRE-INIT: Running pre-init script ${pre_init_script}"
-        set -e
-        bash "${pre_init_script}" "${root_dir}" "${environment}" "${src_dir}" | sed 's/^/[PRE-INIT] /'
-        set +e
-    else
-        echo "PRE-INIT: No pre-init script found at ${pre_init_script}"
+validate_source_dir() {
+    if [ ! -d "${src_dir}" ]; then
+        echo "Error: Source directory does not exist: ${src_dir}" >&2
+        exit 1
     fi
 }
 
-init() {
+# Run hook script with error handling
+run_hook_script() {
+    local hook_type="$1"
+    local hook_script="${src_dir}/${hook_type}.sh"
+    local hook_label
+    hook_label="$(echo "${hook_type}" | tr '[:lower:]' '[:upper:]')"
+
+    local tfvars_arguments
+    tfvars_arguments="$(_build_terraform_vars_file_args)"
+
+    if [ -e "${hook_script}" ]; then
+        echo "${hook_label}: Running ${hook_type} script ${hook_script}"
+        if ! bash "${hook_script}" "${root_dir}" "${environment}" "${src_dir}" "${tfvars_arguments}" | sed "s/^/[${hook_label}] /"; then
+            echo "${hook_label}: Script failed" >&2
+            exit 1
+        fi
+    else
+        echo "${hook_label}: No ${hook_type} script found at ${hook_script}"
+    fi
+}
+
+# Handlers
+pre_init() {
+    run_hook_script "pre-init"
+}
+
+tf_init() {
     extra_args=""
 
     if [ "${deployment}" == "forms" ]; then
@@ -103,41 +138,59 @@ init() {
 }
 
 pre_apply() {
-    pre_apply_script="${src_dir}/pre-apply.sh"
-    if [ -e "${pre_apply_script}" ]; then
-        echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
-        tfvars_arguments="$(_build_terraform_vars_file_args)"
-        set -e
-        bash "${pre_apply_script}" "${root_dir}" "${environment}" "${src_dir}" "${tfvars_arguments}" | sed 's/^/[PRE-APPLY] /'
-        set +e
-    else
-        echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
-    fi
+    run_hook_script "pre-apply"
 }
 
+# Build terraform var-file arguments based on deployment and environment
 _build_terraform_vars_file_args() {
-    tfvars_arguments=""
-    ## forms/account needs different vars files to other forms/roots
-    if [ "${deployment}" == "forms" ] && [ "${tf_root}" == "account" ]; then
-        tfvars_arguments="-var-file ${deployments_dir}/forms/account/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars"
-    elif [ "${deployment}" == "forms" ]; then
-        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/tfvars/${environment}.tfvars -var-file ${deployments_dir}/forms/account/tfvars/backends/${environment}.tfvars"
-    fi
+    local tfvars_files=()
+    local forms_account_dir="${deployments_dir}/forms/account/tfvars"
+    local forms_tfvars_dir="${deployments_dir}/forms/tfvars"
+    local integration_tfvars_dir="${deployments_dir}/integration/tfvars"
 
-    if [ "${deployment}" == "integration" ]; then
-        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/integration/tfvars/integration.tfvars -var-file ${deployments_dir}/integration/tfvars/backend/integration.tfvars"
-    fi
-
-    case "${deployment}+${tf_root}" in
-    "forms+pipelines")
-        tfvars_arguments="${tfvars_arguments} -var-file ${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars"
+    # Build tfvars file list based on deployment and root
+    case "${deployment}" in
+    "forms")
+        if [ "${tf_root}" == "account" ]; then
+            # forms/account uses different vars files
+            tfvars_files+=(
+                "${forms_account_dir}/${environment}.tfvars"
+                "${forms_account_dir}/backends/${environment}.tfvars"
+            )
+        else
+            # Other forms roots use shared forms vars plus backend
+            tfvars_files+=(
+                "${forms_tfvars_dir}/${environment}.tfvars"
+                "${forms_account_dir}/backends/${environment}.tfvars"
+            )
+        fi
+        ;;
+    "integration")
+        tfvars_files+=(
+            "${integration_tfvars_dir}/integration.tfvars"
+            "${integration_tfvars_dir}/backend/integration.tfvars"
+        )
         ;;
     esac
 
-    echo "${tfvars_arguments}"
+    # Add deployment+root specific vars
+    case "${deployment}+${tf_root}" in
+    "forms+pipelines")
+        tfvars_files+=("${deployments_dir}/forms/pipelines/tfvars/${environment}.tfvars")
+        ;;
+    esac
+
+    # Convert array to terraform arguments
+    local tfvars_args=""
+    for tfvars_file in "${tfvars_files[@]}"; do
+        tfvars_args="${tfvars_args} -var-file ${tfvars_file}"
+    done
+
+    echo "${tfvars_args}"
 }
 
-plan_apply() {
+# Execute terraform plan or apply with appropriate var files and options
+tf_plan_apply() {
     action="$1"
     extra_args="$(_build_terraform_vars_file_args)"
 
@@ -160,34 +213,30 @@ plan_apply() {
     fi
 }
 
-validate() {
+tf_validate() {
     terraform \
         -chdir="${src_dir}" \
         validate
 }
 
-unlock() {
+tf_unlock() {
     terraform \
         -chdir="${src_dir}" \
         force-unlock \
         "${lock_id}"
 }
 
+# Run post-apply tasks including AWS Shield subscription and hook scripts
 post_apply() {
-    if [ "${deployment}+${tf_root}" = "forms+account" ] || [ "${deployment}+${tf_root}" = "deploy+account" ] || [ "${deployment}+${tf_root}" = "integration+account" ]; then
+    # Run AWS Shield subscription for account deployments
+    case "${deployment}+${tf_root}" in
+    "forms+account" | "deploy+account" | "integration+account")
         echo "POST-APPLY: Checking AWS Shield subscription"
         "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
-    fi
+        ;;
+    esac
 
-    post_apply_script="${src_dir}/post-apply.sh"
-    if [ -e "${post_apply_script}" ]; then
-        echo "POST-APPLY: Running post-apply script ${post_apply_script}"
-        set -e
-        bash "${post_apply_script}" "${root_dir}" "${environment}" "${src_dir}" | sed 's/^/[POST-APPLY] /'
-        set +e
-    else
-        echo "POST-APPLY: No post-apply script found at ${post_apply_script}"
-    fi
+    run_hook_script "post-apply"
 }
 
 shell() {
@@ -219,27 +268,34 @@ clear-plugin-cache() {
 
 case "${action}" in
 apply)
+    validate_terraform
     pre_apply
-    plan_apply "apply"
+    tf_plan_apply "apply"
     ;;
 init)
+    validate_terraform
     pre_init
-    init
+    tf_init
     ;;
 plan)
+    validate_terraform
     pre_apply # We use pre_apply here so that a plan and application look as similar as possible
-    plan_apply "plan"
+    tf_plan_apply "plan"
     ;;
 
 validate)
-    validate
+    validate_terraform
+    tf_validate
     ;;
 
 unlock)
-    unlock
+    validate_terraform
+    validate_lock_id
+    tf_unlock
     ;;
 
 shell)
+    validate_terraform
     shell
     ;;
 clear-plugin-cache)
