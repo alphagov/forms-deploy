@@ -1,0 +1,54 @@
+{
+  "RequestBasedSliMetricConfig": {
+    "TotalRequestCountMetric": [
+      {
+        "Id": "cwMetricDenominator",
+        "MetricStat": {
+          "Metric": {
+            "Namespace": "AWS/ApplicationELB",
+            "MetricName": "TargetResponseTime",
+            "Dimensions": [
+              {
+                "Name": "TargetGroup",
+                "Value": "${target_group_name}"
+              },
+              {
+                "Name": "LoadBalancer",
+                "Value": "${load_balancer_name}"
+              }
+            ]
+          },
+          "Period": 60,
+          "Stat": "SampleCount"
+        },
+        "ReturnData": true
+      }
+    ],
+    "MonitoredRequestCountMetric": {
+      "GoodCountMetric": [
+        {
+          "Id": "cwMetricNumerator",
+          "MetricStat": {
+            "Metric": {
+              "Namespace": "AWS/ApplicationELB",
+              "MetricName": "TargetResponseTime",
+              "Dimensions": [
+                {
+                  "Name": "TargetGroup",
+                  "Value": "${target_group_name}"
+                },
+                {
+                  "Name": "LoadBalancer",
+                  "Value": "${load_balancer_name}"
+                }
+              ]
+            },
+            "Period": 60,
+            "Stat": "TC(:${threshold})"
+          },
+          "ReturnData": true
+        }
+      ]
+    }
+  }
+}

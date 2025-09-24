@@ -1,0 +1,22 @@
+{
+  "RequestBasedSliMetricConfig": {
+    "TotalRequestCountMetric": [
+      {
+        "Id": "cwMetricDenominator",
+        "Expression": "SUM(SEARCH('{Forms,Environment,SubmissionDeliveryMethod} MetricName=\"SubmissionDeliveryLatency\" Environment=\"${environment}\"', 'SampleCount', 60))",
+        "Period": 60,
+        "ReturnData": true
+      }
+    ],
+    "MonitoredRequestCountMetric": {
+      "GoodCountMetric": [
+        {
+          "Id": "cwMetricNumerator",
+          "Expression": "SUM(SEARCH('{Forms,Environment,SubmissionDeliveryMethod} MetricName=\"SubmissionDeliveryLatency\" Environment=\"${environment}\"', 'TC(:${threshold})', 60))",
+          "Period": 60,
+          "ReturnData": true
+        }
+      ]
+    }
+  }
+}
