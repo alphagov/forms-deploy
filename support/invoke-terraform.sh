@@ -103,8 +103,9 @@ pre_apply() {
   pre_apply_script="${src_dir}/pre-apply.sh"
   if [ -e "${pre_apply_script}" ]; then
     echo "PRE-APPLY: Running pre-apply script ${pre_apply_script}"
+    tfvars_arguments="$(_build_terraform_vars_file_args)"
     set -e
-    bash "${pre_apply_script}" "${root_dir}" "${environment}" "${src_dir}" | sed  's/^/[PRE-APPLY] /'
+    bash "${pre_apply_script}" "${root_dir}" "${environment}" "${src_dir}" "${tfvars_arguments}" | sed  's/^/[PRE-APPLY] /'
     set +e
   else
     echo "PRE-APPLY: No pre-apply script found at ${pre_apply_script}"
