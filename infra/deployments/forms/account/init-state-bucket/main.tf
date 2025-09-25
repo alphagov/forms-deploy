@@ -1,6 +1,6 @@
 terraform {
-  backend "local" {
-    path = "state-bucket.tfstate"
+  backend "s3" {
+    key = "state-bucket.tfstate"
   }
 }
 
