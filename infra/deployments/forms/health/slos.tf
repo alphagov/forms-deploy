@@ -246,6 +246,14 @@ resource "awscc_applicationsignals_service_level_objective" "latency" {
   ]
 }
 
+# We need this until https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/2372 is resolved
+# If we add any other submission delivery methods, they must be added to this list, otherwise the SLO will not account for them
+variable "submission_delivery_methods" {
+  description = "List of submission delivery methods configured in this environment"
+  type        = list(string)
+  default     = ["Email", "S3"]
+}
+
 # Submission Delivery SLOs
 resource "awscc_applicationsignals_service_level_objective" "submission_delivery" {
   for_each = local.submission_delivery_slos
@@ -255,24 +263,93 @@ resource "awscc_applicationsignals_service_level_objective" "submission_delivery
 
   request_based_sli = {
     request_based_sli_metric = {
-      total_request_count_metric = [
-        {
-          id          = "cwMetricDenominator"
-          expression  = "SUM(SEARCH('{Forms,Environment,SubmissionDeliveryMethod} MetricName=\"SubmissionDeliveryLatency\" Environment=\"${var.environment_name}\"', 'SampleCount', 60))"
-          period      = 60
-          return_data = true
-        }
-      ]
-
-      monitored_request_count_metric = {
-        good_count_metric = [
-          {
-            id          = "cwMetricNumerator"
-            expression  = "SUM(SEARCH('{Forms,Environment,SubmissionDeliveryMethod} MetricName=\"SubmissionDeliveryLatency\" Environment=\"${var.environment_name}\"', 'TC(:${each.value.threshold})', 60))"
-            period      = 60
-            return_data = true
+      # This is how we *should* be doing this. However, CloudFormation does not yet support the period parameter in a MetricDataQuery object, so we have to use the metric_stat approach below.
+      # See: https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/2372
+      # total_request_count_metric = [
+      #   {
+      #     id          = "cwMetricDenominator"
+      #     expression  = "SUM(SEARCH('{Forms,Environment,SubmissionDeliveryMethod} MetricName=\"SubmissionDeliveryLatency\" Environment=\"${var.environment_name}\"', 'SampleCount', 60))"
+      #     return_data = true
+      #     period      = 60 # Not currently supported by Cloudformation. Reinstate this once supported.
+      #   }
+      # ]
+      total_request_count_metric = concat(
+        # Individual metrics for each delivery method (SampleCount)
+        [
+          for method in var.submission_delivery_methods : {
+            id          = "total_${lower(method)}"
+            return_data = false
+            metric_stat = {
+              metric = {
+                metric_name = "SubmissionDeliveryLatency"
+                namespace   = "Forms"
+                dimensions = [
+                  {
+                    name  = "Environment"
+                    value = var.environment_name
+                  },
+                  {
+                    name  = "SubmissionDeliveryMethod"
+                    value = method
+                  }
+                ]
+              }
+              period = 60
+              stat   = "SampleCount"
+            }
           }
-        ]
+        ],
+        # SUM expression that combines all total metrics
+        [{
+          id          = "cwMetricDenominator"
+          expression  = "SUM([${join(", ", [for method in var.submission_delivery_methods : "total_${lower(method)}"])}])"
+          return_data = true
+        }]
+      )
+      monitored_request_count_metric = {
+        # Again, this is how we *should* be doing this. However, CloudFormation does not yet support the period parameter in a MetricDataQuery object, so we have to use the metric_stat approach below.
+        # See: https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/2372
+        # good_count_metric = [
+        #   {
+        #     id          = "cwMetricNumerator"
+        #     expression  = "SUM(SEARCH('{Forms,Environment,SubmissionDeliveryMethod} MetricName=\"SubmissionDeliveryLatency\" Environment=\"${var.environment_name}\"', 'TC(:${each.value.threshold})', 60))"
+        #     return_data = true
+        #     period      = 60 # Not currently supported by Cloudformation. Reinstate this once supported.
+        #   }
+        # ]
+        good_count_metric = concat(
+          # Individual metrics for each delivery method (percentile count)
+          [
+            for method in var.submission_delivery_methods : {
+              id          = "good_${lower(method)}"
+              return_data = false
+              metric_stat = {
+                metric = {
+                  metric_name = "SubmissionDeliveryLatency"
+                  namespace   = "Forms"
+                  dimensions = [
+                    {
+                      name  = "Environment"
+                      value = var.environment_name
+                    },
+                    {
+                      name  = "SubmissionDeliveryMethod"
+                      value = method
+                    }
+                  ]
+                }
+                period = 60
+                stat   = "TC(:${each.value.threshold})"
+              }
+            }
+          ],
+          # SUM expression that combines all good metrics
+          [{
+            id          = "cwMetricNumerator"
+            expression  = "SUM([${join(", ", [for method in var.submission_delivery_methods : "good_${lower(method)}"])}])"
+            return_data = true
+          }]
+        )
       }
     }
   }
