@@ -1,17 +1,15 @@
 # GOV.UK Forms Development
 
-This is a guide to getting the Gov.uk Forms development environment up and running.
-
-list of github projects.
+This is a guide to getting the GOV.UK Forms development environment up and running.
 
 This repo lives at:
 https://github.com/alphagov/forms-deploy
 
 The components which make up the service are:
-https://github.com/alphagov/forms-runner
-https://github.com/alphagov/forms-api
-https://github.com/alphagov/forms-admin
-https://github.com/alphagov/forms-product-page
+
+- https://github.com/alphagov/forms-runner
+- https://github.com/alphagov/forms-admin
+- https://github.com/alphagov/forms-product-page
 
 ## How it works
 Each of the components above has a Dockerfile in its repo which is used to build
@@ -20,15 +18,15 @@ those images to run GOVUK Forms locally including a Postgres and Redis
 container.
 
 The local repo for each component is mounted into its corresponding container,
-for example the local directory `../forms-api` is mounted into the forms-api
+for example the local directory `../forms-admin` is mounted into the forms-admin
 container under the `/app` directory so that any changes made to that
 component's code locally is immediately apparent in the locally running
 services.
 
 ### Setting up the databases
 There is a single postgres container defined within the docker-compose setup
-which is configured with two databases named `forms-admin` and `forms-api`. The two
-databases are initially created using the the `local/postgres/initdb.d` which is
+which is configured with two databases named `forms-admin` and `forms-runner`. The two
+databases are initially created using the `local/postgres/initdb.d` which is
 mounted into the postgres container's 'docker-entrypoint-initdb.d' directory.
 The start command for `forms-admin` is modified by the docker-compose.yml file
 to include running `rails db:setup` and `rails db:seed` which will run
@@ -47,7 +45,6 @@ Your directory structure should look like this:
 ```
 top-level/
 ├── forms-admin
-├── forms-api
 ├── forms-product-page
 └── forms-runner
 └── forms-deploy
