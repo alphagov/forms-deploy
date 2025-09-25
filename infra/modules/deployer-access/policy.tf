@@ -36,6 +36,7 @@ data "aws_iam_policy_document" "forms_infra_3" {
   source_policy_documents = [
     data.aws_iam_policy_document.pipelines.json,
     data.aws_iam_policy_document.application_signals.json,
+    data.aws_iam_policy_document.cloud_control_api.json
   ]
 }
 
@@ -850,6 +851,7 @@ data "aws_iam_policy_document" "application_signals" {
       "application-signals:CreateServiceLevelObjective",
       "application-signals:UpdateServiceLevelObjective",
       "application-signals:DeleteServiceLevelObjective",
+      "application-signals:ListServiceLevelObjectiveExclusionWindows",
       "application-signals:TagResource",
       "application-signals:UntagResource"
     ]
@@ -881,5 +883,32 @@ data "aws_iam_policy_document" "application_signals" {
       "arn:aws:cloudwatch:eu-west-2:${var.account_id}:alarm:SLO-WarningAlarm-*",
       "arn:aws:cloudwatch:eu-west-2:${var.account_id}:alarm:SLI-HealthAlarm-*"
     ]
+  }
+}
+
+data "aws_iam_policy_document" "cloud_control_api" {
+  # These permissions are required for the `awscc` provider to create, update, delete, and list
+  # Cloud Control API resources, which includes the Application Signals SLO resources.
+  # See: https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/security.html
+
+  # It seems super scary to give `cloudformation:*` permissions, but the Cloud Control API
+  # is implemented as a layer on top of CloudFormation, and the `awscc` provider
+  # needs these permissions to manage resources. These permissions are essentially saying
+  # 'allow the deployer to use the Cloud Control API to attempt to CRUDL any resource'
+  # The deployer role will still be limited by the other permissions it has, so it won't be able
+  # to create resources we haven't explicitly given it permission for.
+  # eg. if we removed `s3:CreateBucket` from the deployer role, it wouldn't be able to create S3 buckets,
+  # even though it has `cloudformation:CreateResource` permission.
+  statement {
+    sid    = "CloudControlAPIActions"
+    effect = "Allow"
+    actions = [
+      "cloudformation:CreateResource",
+      "cloudformation:GetResource",
+      "cloudformation:UpdateResource",
+      "cloudformation:DeleteResource",
+      "cloudformation:ListResources",
+    ]
+    resources = ["*"]
   }
 }
