@@ -63,6 +63,8 @@ module "logs_bucket" {
   source = "../secure-bucket"
   name   = "govuk-forms-alb-logs-${var.env_name}"
 
+  access_logging_enabled = true
+
   extra_bucket_policies = flatten([
     [data.aws_iam_policy_document.allow_logs.json],
     var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []

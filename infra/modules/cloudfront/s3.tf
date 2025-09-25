@@ -1,6 +1,8 @@
 module "error_page_bucket" {
   source = "../public-bucket"
-  name   = "govuk-forms-${var.env_name}-error-page"
+
+  access_logging_enabled = true
+  name                   = "govuk-forms-${var.env_name}-error-page"
 }
 
 locals {

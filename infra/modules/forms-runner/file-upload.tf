@@ -7,6 +7,8 @@ module "file_upload_bucket" {
   name               = local.file_upload_bucket_name
   versioning_enabled = false
 
+  access_logging_enabled = true
+
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
 
   # In order to use KMS for server side encryption we need to disable the defaul AES256 encyrption in the module
@@ -158,6 +160,8 @@ module "file_upload_bucket_logs" {
   source = "../secure-bucket"
   name   = "${local.file_upload_bucket_name}-logs"
 
+  access_logging_enabled = true
+
   extra_bucket_policies = flatten([
     [data.aws_iam_policy_document.file_upload_bucket_logs.json],
     var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []
@@ -202,4 +206,3 @@ module "s3_log_shipping" {
   s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
   s3_name                  = module.file_upload_bucket_logs.name
 }
-
