@@ -10,6 +10,13 @@ variable "access_logging_enabled" {
   nullable    = false
 }
 
+variable "send_access_logs_to_cyber" {
+  type        = bool
+  description = "Whether access logs should be sent to cyber"
+  default     = false
+  nullable    = false
+}
+
 
 output "bucket_name" {
   value = aws_s3_bucket.state.id

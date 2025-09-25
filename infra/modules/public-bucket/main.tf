@@ -15,6 +15,13 @@ variable "access_logging_enabled" {
   nullable    = false
 }
 
+variable "send_access_logs_to_cyber" {
+  type        = bool
+  description = "Whether access logs should be sent to cyber"
+  default     = false
+  nullable    = false
+}
+
 
 resource "aws_s3_bucket" "this" {
   #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
@@ -89,6 +96,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "owner" {
+  count  = !var.send_access_logs_to_cyber ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
   rule {
@@ -164,7 +172,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "access_logs_owner" {
-  count  = var.access_logging_enabled ? 1 : 0
+  count  = var.access_logging_enabled && !var.send_access_logs_to_cyber ? 1 : 0
   bucket = aws_s3_bucket.access_logs[0].id
 
   rule {
@@ -190,11 +198,22 @@ data "aws_iam_policy_document" "access_logs_policy" {
   }
 }
 
+module "s3_log_shipping_access_logs" {
+  count = var.access_logging_enabled && var.send_access_logs_to_cyber ? 1 : 0
+
+  # Double slash after .git in the module source below is required
+  # https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
+  source                   = "git::https://github.com/alphagov/cyber-security-shared-terraform-modules.git//s3/s3_log_shipping?ref=6fecf620f987ba6456ea6d7307aed7d83f077c32"
+  s3_processor_lambda_role = "arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython"
+  s3_name                  = aws_s3_bucket.access_logs[0].id
+}
+
 data "aws_iam_policy_document" "access_logs_combined_policy" {
   count = var.access_logging_enabled ? 1 : 0
-  source_policy_documents = [
-    data.aws_iam_policy_document.access_logs_policy[0].json
-  ]
+  source_policy_documents = flatten([
+    [data.aws_iam_policy_document.access_logs_policy[0].json],
+    var.send_access_logs_to_cyber ? [module.s3_log_shipping_access_logs[0].s3_policy] : []
+  ])
 }
 
 resource "aws_s3_bucket_policy" "access_logs_bucket_policy" {
@@ -217,3 +236,12 @@ resource "aws_s3_bucket_logging" "this" {
   }
 }
 
+resource "aws_s3_bucket_notification" "access_logs_bucket_notification" {
+  count = var.access_logging_enabled && var.send_access_logs_to_cyber ? 1 : 0
+
+  bucket = aws_s3_bucket.access_logs[0].id
+  queue {
+    queue_arn = "arn:aws:sqs:eu-west-2:885513274347:cyber-security-s3-to-splunk-prodpython"
+    events    = ["s3:ObjectCreated:*"]
+  }
+}
