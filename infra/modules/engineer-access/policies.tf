@@ -91,12 +91,11 @@ resource "aws_iam_policy" "query_rds_with_data_api" {
         Sid = "SecretsManager"
         Action = [
           "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-api-app/*",
-          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-admin-app/*",
-          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:rds-db-credentials/*/forms-runner-app/*"
+          "arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:data-api/${var.env_name}/*"
         ]
       },
     ]

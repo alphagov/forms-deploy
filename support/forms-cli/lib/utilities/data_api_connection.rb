@@ -43,17 +43,14 @@ private
   end
 
   def query_credential_arn
-    credential_name = "#{@database_name}-app"
-    params = {
-      filters: [
-        { key: "all", values: [credential_name] },
-      ],
-    }
-    arn = @secrets_manager.list_secrets(params)&.secret_list&.[](0)&.arn
+    secret_name = "data-api/#{@env}/#{@database_name}/rds-credentials"
 
-    raise "Credential named #{credential_name} was not found" if arn.nil?
-
-    arn
+    begin
+      secret = @secrets_manager.describe_secret({ secret_id: secret_name })
+      secret.arn
+    rescue Aws::SecretsManager::Errors::ResourceNotFoundException
+      raise "Data API credential secret '#{secret_name}' was not found. Ensure the secret is created in Terraform."
+    end
   end
 
   def query_database_cluster_arn

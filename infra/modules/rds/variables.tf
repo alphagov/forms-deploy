@@ -71,8 +71,10 @@ variable "identifier" {
 }
 
 variable "apps_list" {
-  type        = list(string)
-  description = "List of the apps that the cluster db is for. Used for the creation of app specific parameters"
+  type = map(object({
+    username = string
+  }))
+  description = "Map of apps and their database usernames for the cluster"
 }
 
 variable "database_identifier" {

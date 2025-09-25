@@ -17,11 +17,10 @@ resource "aws_ssm_parameter" "database_password_for_root_user" {
 
 resource "aws_ssm_parameter" "database_password" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
-  # count = contains(var.apps_list, "forms-admin") ? 1 : 0
-  for_each = toset(var.apps_list)
+  for_each = var.apps_list
 
-  name        = "/${each.value}-${var.env_name}/database/password"
-  description = "Password for the ${each.value}-app user in the ${each.value} database in the ${var.env_name} environment"
+  name        = "/${each.key}-${var.env_name}/database/password"
+  description = "Password for the ${each.value.username} user in the ${each.key} database in the ${var.env_name} environment"
   type        = "SecureString"
   value       = "dummy-value"
 
@@ -32,18 +31,38 @@ resource "aws_ssm_parameter" "database_password" {
   }
 }
 
+resource "aws_secretsmanager_secret" "data_api_credentials" {
+  #checkov:skip=CKV_AWS_149:The secret is already using the default key, which is sufficient
+  #checkov:skip=CKV2_AWS_57:We're setting this manually from an authoritative source, so rotation would be actively harmful
+  for_each = var.apps_list
+
+  name        = "data-api/${var.env_name}/${each.key}/rds-credentials"
+  description = "Data API credentials for ${each.key} in ${var.env_name} environment"
+}
+
+resource "aws_secretsmanager_secret_version" "data_api_credentials" {
+  for_each = var.apps_list
+
+  secret_id = aws_secretsmanager_secret.data_api_credentials[each.key].id
+  secret_string = jsonencode({
+    username = each.value.username
+    password = aws_ssm_parameter.database_password[each.key].value
+  })
+}
+
+
 resource "aws_ssm_parameter" "database_url" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
-  for_each = toset(var.apps_list)
+  #checkov:skip=CKV2_FORMS_AWS_7:Database URLs should update when passwords or endpoints change
+  for_each = var.apps_list
 
-  name        = "/${each.value}-${var.env_name}/database/url"
-  description = "URL for connecting to the ${each.value} database in the ${var.env_name} environment using the ${each.value}-app user"
+  name        = "/${each.key}-${var.env_name}/database/url"
+  description = "URL for connecting to the ${each.key} database in the ${var.env_name} environment using the ${each.value.username} user"
   type        = "SecureString"
-  value       = "dummy-value"
-
-  lifecycle {
-    ignore_changes = [
-      value
-    ]
-  }
+  value = format("postgres://%s:%s@%s/%s",
+    each.value.username,
+    aws_ssm_parameter.database_password[each.key].value,
+    aws_rds_cluster.cluster_aurora_v2.endpoint,
+    each.key
+  )
 }
