@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "traefik" {
     {
       name = "traefik",
       command = [
-        "--log.level=INFO",
+        "--log.level=DEBUG",
         "--log.format=json",
         "--accesslog=true",
 
