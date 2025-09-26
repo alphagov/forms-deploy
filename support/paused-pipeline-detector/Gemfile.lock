@@ -116,9 +116,9 @@ GEM
     uri (1.0.3)
 
 PLATFORMS
-  arm64-darwin-23
+  arm64-darwin
   ruby
-  x86_64-linux
+  x86_64-linux-gnu
 
 DEPENDENCIES
   aws-sdk-codepipeline (~> 1.106)

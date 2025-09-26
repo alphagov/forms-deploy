@@ -83,8 +83,9 @@ GEM
     uri (1.0.3)
 
 PLATFORMS
+  arm64-darwin
   ruby
-  x86_64-darwin-23
+  x86_64-linux-gnu
 
 DEPENDENCIES
   rubocop-govuk (~> 5.1)

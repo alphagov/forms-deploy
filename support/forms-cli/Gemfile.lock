@@ -1778,13 +1778,9 @@ GEM
     uri (1.0.3)
 
 PLATFORMS
-  arm64-darwin-21
-  arm64-darwin-22
-  arm64-darwin-23
-  x86_64-darwin-22
-  x86_64-darwin-23
-  x86_64-darwin-24
-  x86_64-linux
+  arm64-darwin
+  ruby
+  x86_64-linux-gnu
 
 DEPENDENCIES
   aws-sdk (~> 3)
