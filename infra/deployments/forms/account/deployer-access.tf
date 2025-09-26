@@ -5,8 +5,9 @@ module "deployer_access" {
   account_id               = var.aws_account_id
   deploy_account_id        = var.deploy_account_id
   hosted_zone_id           = aws_route53_zone.public.id
+  private_internal_zone_id = aws_route53_zone.private_internal.id
   codestar_connection_arn  = var.codestar_connection_arn
   admin_engineer_role_arns = module.engineer_access.admin_role_arns
 
-  depends_on = [aws_route53_zone.public]
+  depends_on = [aws_route53_zone.public, aws_route53_zone.private_internal]
 }

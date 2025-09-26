@@ -24,6 +24,12 @@ variable "hosted_zone_id" {
   nullable    = false
 }
 
+variable "private_internal_zone_id" {
+  description = "The ID of the private internal hosted zone in the account"
+  type        = string
+  nullable    = false
+}
+
 variable "codestar_connection_arn" {
   type        = string
   description = "ARN of the CodeStar connection in the account"
