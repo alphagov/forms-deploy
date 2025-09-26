@@ -198,12 +198,7 @@ resource "aws_s3_bucket_logging" "this" {
   }
 }
 
-resource "aws_s3_bucket_notification" "access_logs_bucket_notification" {
-  count = var.access_logging_enabled && var.send_access_logs_to_cyber ? 1 : 0
-
-  bucket = aws_s3_bucket.access_logs[0].id
-  queue {
-    queue_arn = module.cyber_s3_log_shipping[0].s3_to_splunk_queue_arn
-    events    = ["s3:ObjectCreated:*"]
-  }
+moved {
+  from = aws_s3_bucket_notification.access_logs_bucket_notification[0]
+  to   = module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
 }

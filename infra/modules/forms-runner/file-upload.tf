@@ -208,3 +208,8 @@ moved {
   from = module.s3_log_shipping[0]
   to   = module.cyber_s3_log_shipping[0].module.s3_log_shipping
 }
+
+moved {
+  from = aws_s3_bucket_notification.file_upload_logs_bucket_notification[0]
+  to   = module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
+}

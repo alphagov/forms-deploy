@@ -41,14 +41,9 @@ moved {
   to   = module.cyber_s3_log_shipping[0].module.s3_log_shipping
 }
 
-resource "aws_s3_bucket_notification" "bucket_notification" {
-  count = var.send_logs_to_cyber ? 1 : 0
-
-  bucket = module.logs_bucket.name
-  queue {
-    queue_arn = module.cyber_s3_log_shipping[0].s3_to_splunk_queue_arn
-    events    = ["s3:ObjectCreated:*"]
-  }
+moved {
+  from = aws_s3_bucket_notification.bucket_notification[0]
+  to   = module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
 }
 
 moved {
