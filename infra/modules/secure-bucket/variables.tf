@@ -34,3 +34,4 @@ variable "send_access_logs_to_cyber" {
   default     = false
   nullable    = false
 }
+
