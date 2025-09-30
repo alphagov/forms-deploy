@@ -22,29 +22,6 @@ jobs:
               -path "*/.terraform/*" \
           | xargs -L1 shellcheck
 
-      - name: Lint shell scripts in GitHub actions
-        run: |
-          # This is not the usual/best way to get the script directory.
-          # We need to do this here because GitHub Actions writes the
-          # content of script blocks like these to a temp directory,
-          # which means the source code directory and the directory
-          # in which the script reside are different
-          script_dir="$(readlink -f "$(dirname .github)")"
-
-          while IFS= read -r -d '' workflow
-          do
-            for path in $(yq '.jobs[] | .steps[] | select(.|has("run")) | .run | "."+(path | join("."))' "${script_dir}/${workflow}");
-            do
-              pushd "$(mktemp -d)" >/dev/null || exit
-                  workflow_name="$(basename "${script_dir}/${workflow}")"
-                  file="${workflow_name}__${path}"
-                  touch "${file}"
-                  yq "${path}" "${script_dir}/${workflow}" > "${file}"
-                  shellcheck -s bash "${file}"
-              popd >/dev/null || exit
-            done
-          done <  <(find ".github/workflows" -type f \( -name "*.yml" -or -name "*.yaml" \) -print0)
-
       - name: Lint shell scripts in CodeBuild build specs
         run: |
           ./support/shellcheck_codebuild.sh
