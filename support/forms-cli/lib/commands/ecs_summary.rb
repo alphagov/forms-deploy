@@ -58,7 +58,7 @@ private
   def fetch_services
     opts = {
       cluster: "forms-#{@environment}",
-      services: %w[forms-api forms-admin forms-runner forms-product-page],
+      services: %w[forms-admin forms-runner forms-product-page],
     }
     @ecs.describe_services(opts).services
   end

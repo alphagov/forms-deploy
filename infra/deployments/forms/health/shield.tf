@@ -151,20 +151,6 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
 }
 
-resource "aws_route53_health_check" "api" {
-  count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
-
-  failure_threshold = "3"
-  fqdn              = "api.${var.root_domain}"
-  port              = 443
-  request_interval  = "30"
-  resource_path     = "/up"
-  type              = "HTTPS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 resource "aws_route53_health_check" "admin" {
   count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
@@ -297,7 +283,6 @@ resource "aws_route53_health_check" "aggregated" {
   type                   = "CALCULATED"
   child_health_threshold = 1
   child_healthchecks = concat([
-    aws_route53_health_check.api[0].id,
     aws_route53_health_check.admin[0].id,
     aws_route53_health_check.product_page[0].id,
     aws_route53_health_check.runner[0].id,

@@ -14,13 +14,6 @@ resource "aws_route53_record" "admin" {
   records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
 }
 
-resource "aws_route53_record" "api" {
-  zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id
-  name    = "api.${var.root_domain}"
-  type    = "CNAME"
-  ttl     = 60
-  records = [data.terraform_remote_state.forms_environment.outputs.cloudfront_distribution_domain_name]
-}
 
 resource "aws_route53_record" "product_page" {
   zone_id = data.terraform_remote_state.account.outputs.route53_hosted_zone_id

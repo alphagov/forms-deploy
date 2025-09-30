@@ -188,7 +188,7 @@ resource "aws_codepipeline" "apply_terroform" {
           },
           {
             name  = "ECS_SERVICES"
-            value = "forms-admin,forms-api,forms-product-page,forms-runner"
+            value = "forms-admin,forms-product-page,forms-runner"
             type  = "PLAINTEXT"
           },
         ])

@@ -9,15 +9,6 @@ locals {
   ]
 }
 
-resource "aws_ecr_repository" "forms_api" {
-  #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
-  #checkov:skip=CKV_AWS_51:Permit mutable tags on application images
-  name                 = "forms-api-deploy"
-  image_tag_mutability = "MUTABLE"
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
 
 resource "aws_ecr_repository" "forms_runner" {
   #checkov:skip=CKV_AWS_136:AWS Managed SSE is sufficient.
@@ -69,47 +60,6 @@ resource "aws_ecr_repository" "pipeline_visualiser" {
   }
 }
 
-resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_api" {
-  repository = aws_ecr_repository.forms_api.name
-  policy     = data.aws_iam_policy_document.aws_ecr_repository_policy_api_document.json
-
-}
-
-data "aws_iam_policy_document" "aws_ecr_repository_policy_api_document" {
-  statement {
-    sid    = "AllowEveryRoleInOtherAccountsToPullImages"
-    effect = "Allow"
-    actions = [
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability"
-    ]
-    principals {
-      type = "AWS"
-      identifiers = [
-        for _, id in module.all_accounts.all_accounts_id :
-        "arn:aws:iam::${id}:root"
-      ]
-    }
-  }
-
-  statement {
-    sid    = "AllowDeployerRolesToPushImages"
-    effect = "Allow"
-    actions = [
-      "ecr:CompleteLayerUpload",
-      "ecr:GetAuthorizationToken",
-      "ecr:UploadLayerPart",
-      "ecr:InitiateLayerUpload",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:PutImage"
-    ]
-    principals {
-      type        = "AWS"
-      identifiers = local.deployer_roles
-    }
-  }
-}
 
 
 resource "aws_ecr_repository_policy" "aws_ecr_repository_policy_admin" {

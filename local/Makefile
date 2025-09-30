@@ -15,11 +15,11 @@ help:
 all:
 	docker-compose up -d
 admin:
-	docker-compose up -d redis postgres forms-runner forms-api forms-product-page
+	docker-compose up -d redis postgres forms-runner forms-product-page
 runner:
-	docker-compose up -d redis postgres forms-admin forms-api forms-product-page
+	docker-compose up -d redis postgres forms-admin forms-product-page
 product-page:
-	docker-compose up -d redis postgres forms-runner forms-api forms-admin
+	docker-compose up -d redis postgres forms-runner forms-admin
 db:
 	docker-compose up -d postgres
 logs:

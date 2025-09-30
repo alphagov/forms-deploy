@@ -122,10 +122,6 @@ module "ecs_service" {
 
   environment_variables = [
     {
-      name  = "SETTINGS__FORMS_API__BASE_URL",
-      value = var.api_base_url
-    },
-    {
       name  = "RACK_ENV",
       value = "production"
     },

@@ -16,14 +16,6 @@ deploy-forms-runner-container = {
   pipeline_execution_mode  = "QUEUED"
 }
 
-deploy-forms-api-container = {
-  trigger_on_tag_patterns  = ["merged-*"]
-  retag_image_on_success   = true
-  retagging_sed_expression = "s/merged-\\(.*\\)/stg-\\1/" # "This was OK in staging"
-  apply_latest_tag         = false
-  disable_end_to_end_tests = false
-  pipeline_execution_mode  = "QUEUED"
-}
 
 deploy-forms-admin-container = {
   trigger_on_tag_patterns  = ["merged-*"]

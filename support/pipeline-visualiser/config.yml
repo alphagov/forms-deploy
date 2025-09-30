@@ -25,13 +25,6 @@ groups:
     - "deploy-forms-product-page-container-user-research"
     - "deploy-forms-product-page-container-dev"
 
-  "API":
-    - "forms-api-image-builder"
-    - "deploy-forms-api-container-staging"
-    - "deploy-forms-api-container-production"
-    - "deploy-forms-api-container-user-research"
-    - "deploy-forms-api-container-dev"
-
   "Admin":
     - "forms-admin-image-builder"
     - "deploy-forms-admin-container-staging"

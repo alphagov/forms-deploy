@@ -14,7 +14,7 @@ def api_db
   @api_db ||= if ENV["FORMS_ENV"] == "local"
                 PG.connect(ENV["DATABASE_URL"], dbname: "forms_api_development")
               else
-                DataApiConnection.new("forms-api")
+                raise "forms-api database connection no longer available"
               end
 end
 

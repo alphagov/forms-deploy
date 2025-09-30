@@ -99,11 +99,9 @@ data "aws_iam_policy_document" "ecs" {
     ]
     resources = [
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task",
-      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-api-ecs-task",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task-execution",
-      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-api-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-exec"
@@ -122,7 +120,6 @@ data "aws_iam_policy_document" "ecs" {
     ]
     resources = [
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-execution-additional",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-api-ecs-task-execution-additional",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-execution-additional",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-execution-additional"
     ]
@@ -140,7 +137,6 @@ data "aws_iam_policy_document" "ecs" {
     ]
     resources = [
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-policy",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-api-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-queue-worker-ecs-task-additional-policies",
@@ -285,7 +281,6 @@ data "aws_iam_policy_document" "logs" {
     ]
     resources = [
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-admin-${var.environment_name}:*",
-      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-api-${var.environment_name}:*",
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-runner-${var.environment_name}:*",
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-product-page-${var.environment_name}:*"
     ]

@@ -18,10 +18,6 @@ output "forms_runner_ecr_repository_url" {
   description = "ECR repository URL for forms-runner image."
 }
 
-output "forms_api_ecr_repository_url" {
-  value       = aws_ecr_repository.forms_api.repository_url
-  description = "ECR repository URL for forms-api image."
-}
 
 output "forms_admin_ecr_repository_url" {
   value       = aws_ecr_repository.forms_admin.repository_url

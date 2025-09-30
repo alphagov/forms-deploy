@@ -28,7 +28,6 @@ class DevelopmentAWSSDKFactory
         deploy-pipeline-visualiser
         forms-runner-image-builder
         forms-product-page-image-builder
-        forms-api-image-builder
         forms-admin-image-builder
         e2e-image
       ],

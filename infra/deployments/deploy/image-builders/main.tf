@@ -17,14 +17,6 @@ module "build_forms_runner_container" {
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_runner_ecr_repository_url
 }
 
-module "build_forms_api_container" {
-  source                  = "../../../modules/image-builder-pipeline"
-  application_name        = "forms-api"
-  container_repository    = "forms-api-deploy"
-  source_repository       = "alphagov/forms-api"
-  codestar_connection_arn = var.codestar_connection_arn
-  ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_api_ecr_repository_url
-}
 
 module "build_forms_admin_container" {
   source                  = "../../../modules/image-builder-pipeline"
