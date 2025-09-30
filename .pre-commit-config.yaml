@@ -40,3 +40,11 @@ repos:
           - hcl
           - terraform
         pass_filenames: true
+
+      - id: rubocop
+        name: lint ruby
+        require_serial: true
+        types:
+          - ruby
+        language: system
+        entry: make lint_ruby
