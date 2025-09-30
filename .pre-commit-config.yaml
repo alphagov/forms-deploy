@@ -30,19 +30,13 @@ repos:
         files: ^infra/
         pass_filenames: true
         entry: ./pre-commit-tflint.sh
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: "3.2.386"
-    hooks:
+
       - id: checkov
-        verbose: true
-        args:
-          [
-            -d,
-            infra/,
-            --external-checks-dir,
-            infra/checkov/,
-            --framework,
-            terraform,
-            --quiet,
-            --skip-download,
-          ]
+        name: checkov
+        entry: ./pre-commit-checkov.sh
+        language: system
+        require_serial: true
+        types_or:
+          - hcl
+          - terraform
+        pass_filenames: true
