@@ -19,15 +19,16 @@ repos:
         pass_filenames: true
         types_or:
           - terraform
+
       - id: tflint
-        name: Run tflint (terraform linter)
+        name: tflint
         require_serial: true
         types_or:
           - hcl
           - terraform
-        language: golang
-        additional_dependencies:
-          - github.com/terraform-linters/tflint@v0.52.0
+        language: system
+        files: ^infra/
+        pass_filenames: true
         entry: ./pre-commit-tflint.sh
   - repo: https://github.com/bridgecrewio/checkov.git
     rev: "3.2.386"

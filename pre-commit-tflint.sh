@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 tflint --init
-make tflint
+make -j4 -k tflint CHANGED_FILES="${*}"

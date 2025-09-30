@@ -220,32 +220,73 @@ tflint_init:
 tflint_modules:
 	@# some rules are disabled because modules don't
 	@# need to define the things those rules check for
-	tflint --chdir=infra/modules/ --recursive --config "$$(pwd)/.tflint.hcl" \
-		--disable-rule "terraform_required_version" \
-		--disable-rule "terraform_required_providers" \
-		${TFLINT_ARGS}
+	@mods='$(filter infra/modules/%,$(CHANGED_FILES))'; \
+	if [ -z "$$mods" ]; then \
+	  echo "No module changes; skipping tflint_modules"; \
+	else \
+	  filters='$(patsubst infra/modules/%,--filter=%,$(filter infra/modules/%,$(CHANGED_FILES)))'; \
+	  tflint --chdir=infra/modules --recursive --config "$$(pwd)/.tflint.hcl" \
+	    --disable-rule "terraform_required_version" \
+	    --disable-rule "terraform_required_providers" \
+	    $(TFLINT_ARGS) $$filters; \
+	fi
 
 .PHONY: tflint_deploy
 tflint_deploy:
-	for root in $(DEPLOY_TF_ROOTS); do \
-		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS}; \
-	done;
+	@# Pick only roots that have changes. If no CHANGED_FILES, lint all.
+	$(eval ROOTS_TO_LINT := $(if $(strip $(CHANGED_FILES)), \
+		$(sort $(foreach r,$(DEPLOY_TF_ROOTS), \
+			$(if $(filter infra/deployments/$(r)/%,$(CHANGED_FILES)),$(r)) \
+		)), \
+		$(DEPLOY_TF_ROOTS)))
+
+	$(if $(strip $(ROOTS_TO_LINT)),,$(info No changed deploy roots; skipping tflint_deploy))
+
+	$(foreach root,$(ROOTS_TO_LINT), \
+		$(eval _CHANGED := $(filter infra/deployments/$(root)/%,$(CHANGED_FILES))) \
+		$(eval _FILTERS := $(patsubst infra/deployments/$(root)/%,--filter=%,$(_CHANGED))) \
+		tflint --chdir="infra/deployments/$(root)" --config "$$(pwd)/.tflint.hcl" $(TFLINT_ARGS) $(_FILTERS) ; \
+	)
 
 .PHONY: tflint_forms
 tflint_forms:
-	for root in $(FORMS_TF_ROOTS); do \
-		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
+	@# Lint only forms roots touched by CHANGED_FILES; if none given, lint all
+	$(eval ROOTS_TO_LINT := $(if $(strip $(CHANGED_FILES)), \
+		$(sort $(foreach r,$(FORMS_TF_ROOTS), \
+			$(if $(filter infra/deployments/$(r)/%,$(CHANGED_FILES)),$(r)) \
+		)), \
+		$(FORMS_TF_ROOTS)))
+
+	$(if $(strip $(ROOTS_TO_LINT)),,$(info No changed forms roots; skipping tflint_forms))
+
+	$(foreach root,$(ROOTS_TO_LINT), \
+		$(eval _CHANGED := $(filter infra/deployments/$(root)/%,$(CHANGED_FILES))) \
+		$(eval _FILTERS := $(patsubst infra/deployments/$(root)/%,--filter=%,$(_CHANGED))) \
+		tflint --chdir="infra/deployments/$(root)" --config "$$(pwd)/.tflint.hcl" $(TFLINT_ARGS) \
 			--var-file="$$(pwd)/infra/deployments/forms/tfvars/production.tfvars" \
-			--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars"; \
-	done;
+			--var-file="$$(pwd)/infra/deployments/forms/account/tfvars/backends/production.tfvars" \
+			$(_FILTERS) ; \
+	)
 
 .PHONY: tflint_integration
 tflint_integration:
-	for root in $(INTEGRATION_TF_ROOTS); do \
-		tflint --chdir="infra/deployments/$${root}" --config "$$(pwd)/.tflint.hcl" ${TFLINT_ARGS} \
+	@# Lint only integration roots touched by CHANGED_FILES; if none given, lint all
+	$(eval ROOTS_TO_LINT := $(if $(strip $(CHANGED_FILES)), \
+		$(sort $(foreach r,$(INTEGRATION_TF_ROOTS), \
+			$(if $(filter infra/deployments/$(r)/%,$(CHANGED_FILES)),$(r)) \
+		)), \
+		$(INTEGRATION_TF_ROOTS)))
+
+	$(if $(strip $(ROOTS_TO_LINT)),,$(info No changed integration roots; skipping tflint_integration))
+
+	$(foreach root,$(strip $(ROOTS_TO_LINT)), \
+		$(eval _CHANGED := $(filter infra/deployments/$(root)/%,$(CHANGED_FILES))) \
+		$(eval _FILTERS := $(patsubst infra/deployments/$(root)/%,--filter=%,$(_CHANGED))) \
+		tflint --chdir="infra/deployments/$(root)" --config "$$(pwd)/.tflint.hcl" $(TFLINT_ARGS) \
 			--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
-			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars"; \
-	done;
+			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars" \
+			$(_FILTERS) ; \
+	)
 
 .PHONY: current_sha
 current_sha:
