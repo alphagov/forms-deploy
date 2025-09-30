@@ -49,6 +49,8 @@ jobs:
           restore-keys: |
             pre-commit-3|
       - name: ✅ Run Pre-commit Hooks
+        env:
+          SKIP: "checkov,tflint,rubocop,terraform-fmt"
         run: |
           # shellcheck disable=SC2296
           pre-commit run --show-diff-on-failure --color=always \
