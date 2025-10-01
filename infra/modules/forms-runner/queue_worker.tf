@@ -27,10 +27,6 @@ locals {
 
       secrets = [
         {
-          name      = "SETTINGS__FORMS_API__AUTH_KEY",
-          valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
-        },
-        {
           name      = "SETTINGS__SENTRY__DSN",
           valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-queue-worker-${var.env_name}/sentry/dsn"
         },
