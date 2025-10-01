@@ -137,8 +137,8 @@ forms_admin_settings = {
 forms_api_settings = {
   cpu          = 512
   memory       = 1024
-  min_capacity = 6
-  max_capacity = 36
+  min_capacity = 0
+  max_capacity = 0
 }
 forms_product_page_settings = {
   cpu          = 256
