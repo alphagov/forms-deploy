@@ -54,3 +54,4 @@ logs/
 
 # Ignore backup files
 *.bak
+.infracost

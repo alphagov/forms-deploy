@@ -1,0 +1,83 @@
+name: "Guardrail: Infracost config sync"
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/guardrail_infracost_config.yml"
+      - ".infracost.yml"
+
+jobs:
+  check_infracost_config:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    name: Check infracost config is up to date
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        with:
+          ruby-version: "3.2"
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@e9d6e6cd65e168e76b0de50ff9957d2fe8bb1832 # v3.0.1
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }} # @whi-tw's CI/CD token
+          currency: GBP
+
+      - name: Generate infracost config and check for changes
+        run: |
+          # Generate new config
+          ./infra/scripts/generate-infracost-config.rb -o infracost-generated.yml
+
+          # Check if it differs from current
+          if ! diff -q infracost.yml infracost-generated.yml > /dev/null; then
+            echo "ERROR: infracost.yml is out of sync with infrastructure changes"
+            echo ""
+            echo "Differences found:"
+            diff infracost.yml infracost-generated.yml || true
+            echo ""
+            echo "To fix this, run: ./infra/scripts/generate-infracost-config.rb -o infracost.yml"
+            exit 1
+          else
+            echo "infracost.yml is up to date"
+          fi
+
+      - name: Update or remove comment based on status
+        if: always()
+        env:
+          COMMENT_MARKER: "<!-- guardrail: infracost config out of sync -->"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Remove any existing comments first
+          # shellcheck disable=SC2016 # $ENV is not a shell variable in the context of the jq expression
+          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
+          for comment_id in $old_comment_ids; do
+            gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
+          done
+
+          # Only add comment if the check failed
+          if [ "${{ job.status }}" = "failure" ]; then
+            # shellcheck disable=SC2296
+            # shellcheck disable=SC2016
+            cat <<EOF > "${{runner.temp}}/pr-comment.md"
+          > [!WARNING]
+          > Your changes to \`infra/\` require updating \`infracost.yml\`.
+          >
+          > Please run the following command and commit the result:
+          >
+          > \`\`\`
+          > ./infra/scripts/generate-infracost-config.rb -o infracost.yml
+          > \`\`\`
+
+          ${COMMENT_MARKER}
+          EOF
+
+            gh pr comment "${{github.event.pull_request.html_url}}" --body-file "${{runner.temp}}/pr-comment.md"
+          fi
