@@ -76,11 +76,6 @@ This will find the latest version of Terraform and all of the Terraform provider
 - Staging: https://admin.staging.forms.service.gov.uk/
 - Production: https://admin.forms.service.gov.uk/
 
-### API
-
-- Staging: https://api.staging.forms.service.gov.uk/
-- Production: https://api.forms.service.gov.uk/
-
 ### Runner
 
 - Staging: https://submit.staging.forms.service.gov.uk/
