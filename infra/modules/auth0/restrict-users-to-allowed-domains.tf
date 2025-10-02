@@ -1,7 +1,7 @@
 resource "auth0_action" "restrict_users_to_allowed_domains" {
   name = "restrict-users-to-allowed-domains"
 
-  runtime = "node18"
+  runtime = "node22"
   code    = <<-EOT
     /**
     * Handler that will be called during the execution of a PreUserRegistration flow.

@@ -1,7 +1,7 @@
 resource "auth0_action" "add_strategy_claim" {
   name = "add-strategy-claim"
 
-  runtime = "node18"
+  runtime = "node22"
   code    = <<-EOT
     /**
     * Handler that will be called during the execution of a PostLogin flow.
