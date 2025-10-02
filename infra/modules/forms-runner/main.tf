@@ -210,10 +210,6 @@ module "ecs_service" {
 
   secrets = [
     {
-      name      = "SETTINGS__FORMS_API__AUTH_KEY",
-      valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/forms-api-key"
-    },
-    {
       name      = "SETTINGS__GOVUK_NOTIFY__API_KEY",
       valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-runner-${var.env_name}/notify-api-key"
     },
