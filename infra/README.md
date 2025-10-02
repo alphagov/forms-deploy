@@ -26,7 +26,7 @@ This is also true for the `forms/account` root, which is intended to only ever b
 
 ### Applying Terraform manually
 
-To apply a Terraform root (such as `forms-api` in the `forms` deployment) in an environment (such as `dev`):
+To apply a Terraform root (such as `forms-runner` in the `forms` deployment) in an environment (such as `dev`):
 
 1. Use the [GDS CLI](https://github.com/alphgov/gds-cli) to assume a role in the right account
     ```shell
@@ -35,7 +35,7 @@ To apply a Terraform root (such as `forms-api` in the `forms` deployment) in an 
 2. Invoke `make` like
 
     ```shell
-    make dev forms/forms-api apply
+    make dev forms/forms-runner apply
     ```
     with the environment, deployment/root, and action (`init`, `plan`, or `apply`) in that order
 

@@ -76,11 +76,6 @@ This will find the latest version of Terraform and all of the Terraform provider
 - Staging: https://admin.staging.forms.service.gov.uk/
 - Production: https://admin.forms.service.gov.uk/
 
-### API
-
-- Staging: https://api.staging.forms.service.gov.uk/
-- Production: https://api.forms.service.gov.uk/
-
 ### Runner
 
 - Staging: https://submit.staging.forms.service.gov.uk/
@@ -92,7 +87,10 @@ https://github.com/alphagov/forms/tree/main/ADR
 [^1]: This should not be confused with `forms-cli` at `support/forms-cli`. `forms-cli` is intended for working with a deployment of GOV.UK Forms, not deploying it.
 
 ### Path to production for apps
-https://github.com/alphagov/forms-team/wiki/Path-to-production%3a-applications
+https://github.com/alphagov/forms-team/wiki/Deploying-to-production%3a-applications
+
+### Path to production for Terraform
+https://github.com/alphagov/forms-team/wiki/Deploying-to-production%3a-Terraform
 
 ### Pipeline Visualiser
 https://pipelines.tools.forms.service.gov.uk/
