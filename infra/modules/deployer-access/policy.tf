@@ -133,6 +133,7 @@ data "aws_iam_policy_document" "alerts" {
     resources = [
       "arn:aws:sns:eu-west-2:${var.account_id}:pagerduty_integration_${var.environment_name}",
       "arn:aws:sns:eu-west-2:${var.account_id}:alert_zendesk_${var.environment_name}",
+      "arn:aws:sns:eu-west-2:${var.account_id}:slo-alerts",
       "arn:aws:sns:us-east-1:${var.account_id}:cloudwatch-alarms",
     ]
     effect = "Allow"
