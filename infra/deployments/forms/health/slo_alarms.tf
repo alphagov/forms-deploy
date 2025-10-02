@@ -99,6 +99,7 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_fast_alarms" {
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-fast-1hour) AND ALARM(slo-burn-rate-${each.value.slo_name}-fast-5min)"
   alarm_actions     = [data.terraform_remote_state.forms_environment.outputs.slo_alerts_topic_arn]
   actions_enabled   = true
+  depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
   tags = {
     Environment = var.environment_name
@@ -121,6 +122,7 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_medium_alarms" {
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-medium-6hour) AND ALARM(slo-burn-rate-${each.value.slo_name}-medium-30min)"
   alarm_actions     = [data.terraform_remote_state.forms_environment.outputs.slo_alerts_topic_arn]
   actions_enabled   = true
+  depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
   tags = {
     Environment = var.environment_name
@@ -143,6 +145,7 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_slow_alarms" {
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-slow-3day) AND ALARM(slo-burn-rate-${each.value.slo_name}-slow-6hour)"
   alarm_actions     = [data.terraform_remote_state.forms_environment.outputs.slo_alerts_topic_arn]
   actions_enabled   = true
+  depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
   tags = {
     Environment = var.environment_name
