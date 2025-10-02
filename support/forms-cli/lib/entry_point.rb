@@ -7,7 +7,6 @@ require_relative "commands/pipeline_summary"
 require_relative "commands/notify"
 require_relative "commands/data_api"
 require_relative "commands/run_task"
-require_relative "commands/forms_api_tokens"
 require "colorize"
 
 # Add new commands here
@@ -18,7 +17,6 @@ COMMANDS = {
   notify: -> { Notify.new.run },
   data_api: -> { DataApi.new.run },
   run_task: -> { RunTask.new.run },
-  forms_api_tokens: -> { FormsApiTokens.new.run },
 }.freeze
 
 command = ARGV[0]
