@@ -1,6 +1,8 @@
 module "artifact_bucket" {
   source = "../secure-bucket"
   name   = "pipeline-e2e-image"
+
+  access_logging_enabled = true
 }
 
 resource "aws_codepipeline" "main" {

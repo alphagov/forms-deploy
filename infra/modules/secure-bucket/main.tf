@@ -76,113 +76,34 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "owner" {
+  count  = !var.send_access_logs_to_cyber ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
-  # For logs ingested by Cyber, the object_ownership automatically changes to `BucketOwnerPreferred`
-  # as per Cyber's configuration (see Cyber's module.s3_log_shipping.s3_policy JSON policy).
-  # This creates a distracting change in the Terraform output.
-  # We intentionally ignore changes to the rule to avoid the distraction.
-  lifecycle {
-    ignore_changes = [rule]
-  }
 }
 
 # S3 Access Logging Configuration
-resource "aws_s3_bucket" "access_logs" {
-  #checkov:skip=CKV_AWS_18:Access logs buckets themselves don't need access logging (infinite recursion)
-  #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
-  #checkov:skip=CKV_AWS_21:Versioning is enabled via aws_s3_bucket_versioning below
-  #checkov:skip=CKV_AWS_144:No need for cross-region replication for access logs
-  #checkov:skip=CKV_AWS_145:S3-SSE mode using AES256 is sufficient for access logs.
-  #checkov:skip=CKV2_AWS_6:Access logs buckets have public access blocked via separate resource
-  #checkov:skip=CKV2_AWS_61:Lifecycle rules are not needed for access logs at this time
-  #checkov:skip=CKV2_AWS_62:Event notifications are not needed for access logs at this time
-  count  = var.access_logging_enabled ? 1 : 0
-  bucket = "${var.name}-access-logs"
-
-  tags = {
-    Name = "${var.name}-access-logs"
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "access_logs" {
-  count  = var.access_logging_enabled ? 1 : 0
-  bucket = aws_s3_bucket.access_logs[0].id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_s3_bucket_versioning" "access_logs" {
-  count  = var.access_logging_enabled ? 1 : 0
-  bucket = aws_s3_bucket.access_logs[0].id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
-  count  = var.access_logging_enabled ? 1 : 0
-  bucket = aws_s3_bucket.access_logs[0].id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
-resource "aws_s3_bucket_ownership_controls" "access_logs_owner" {
-  count  = var.access_logging_enabled ? 1 : 0
-  bucket = aws_s3_bucket.access_logs[0].id
-
-  rule {
-    object_ownership = "BucketOwnerEnforced"
-  }
-
-}
-
-data "aws_iam_policy_document" "access_logs_policy" {
+module "access_logs_bucket" {
   count = var.access_logging_enabled ? 1 : 0
 
-  statement {
-    sid    = "S3ServerAccessLogsPolicy"
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["logging.s3.amazonaws.com"]
-    }
-    actions = [
-      "s3:PutObject",
-    ]
-    resources = ["${aws_s3_bucket.access_logs[0].arn}/*"]
-  }
+  source = "../access-logs-bucket"
+
+  bucket_name               = "${var.name}-access-logs"
+  send_access_logs_to_cyber = var.send_access_logs_to_cyber
 }
 
-data "aws_iam_policy_document" "access_logs_combined_policy" {
-  count = var.access_logging_enabled ? 1 : 0
-  source_policy_documents = [
-    data.aws_iam_policy_document.access_logs_policy[0].json
-  ]
-}
-
-resource "aws_s3_bucket_policy" "access_logs_bucket_policy" {
-  count  = var.access_logging_enabled ? 1 : 0
-  bucket = aws_s3_bucket.access_logs[0].id
-  policy = data.aws_iam_policy_document.access_logs_combined_policy[0].json
+moved {
+  from = module.s3_log_shipping_access_logs[0]
+  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].module.s3_log_shipping
 }
 
 resource "aws_s3_bucket_logging" "this" {
   count  = var.access_logging_enabled ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
-  target_bucket = aws_s3_bucket.access_logs[0].id
+  target_bucket = module.access_logs_bucket[0].bucket_id
   target_prefix = "s3-access-logs"
 
   target_object_key_format {
@@ -190,4 +111,34 @@ resource "aws_s3_bucket_logging" "this" {
       partition_date_source = "DeliveryTime"
     }
   }
+}
+
+moved {
+  from = aws_s3_bucket_notification.access_logs_bucket_notification[0]
+  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
+}
+
+moved {
+  from = aws_s3_bucket.access_logs[0]
+  to   = module.access_logs_bucket[0].aws_s3_bucket.access_logs
+}
+moved {
+  from = aws_s3_bucket_policy.access_logs_bucket_policy[0]
+  to   = module.access_logs_bucket[0].aws_s3_bucket_policy.access_logs_bucket_policy
+}
+moved {
+  from = aws_s3_bucket_public_access_block.access_logs[0]
+  to   = module.access_logs_bucket[0].aws_s3_bucket_public_access_block.access_logs
+}
+moved {
+  from = aws_s3_bucket_versioning.access_logs[0]
+  to   = module.access_logs_bucket[0].aws_s3_bucket_versioning.access_logs
+}
+moved {
+  from = aws_s3_bucket_ownership_controls.access_logs_owner[0]
+  to   = module.access_logs_bucket[0].aws_s3_bucket_ownership_controls.access_logs_owner[0]
+}
+moved {
+  from = aws_s3_bucket_server_side_encryption_configuration.access_logs[0]
+  to   = module.access_logs_bucket[0].aws_s3_bucket_server_side_encryption_configuration.access_logs
 }

@@ -1,6 +1,8 @@
 module "artifact_bucket" {
   source = "../secure-bucket"
   name   = "pipeline-${local.name_suffix}"
+
+  access_logging_enabled = true
 }
 
 resource "aws_codepipeline" "main" {
