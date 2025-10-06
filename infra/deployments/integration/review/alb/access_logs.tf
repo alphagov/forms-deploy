@@ -6,15 +6,11 @@ locals {
 }
 
 module "access_logs_bucket" {
-  source = "../../../../modules/secure-bucket"
+  source = "../../../../modules/access-logs-bucket"
 
-  name                   = "govuk-forms-review-alb-access-logs"
-  access_logging_enabled = true
-
-  extra_bucket_policies = flatten([
-    [data.aws_iam_policy_document.allow_logs.json],
-    var.send_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
-  ])
+  bucket_name               = "govuk-forms-review-alb-access-logs"
+  send_access_logs_to_cyber = var.send_logs_to_cyber
+  extra_bucket_policies     = [data.aws_iam_policy_document.allow_logs.json]
 }
 
 data "aws_iam_policy_document" "allow_logs" {
@@ -24,23 +20,57 @@ data "aws_iam_policy_document" "allow_logs" {
       identifiers = ["arn:aws:iam::${local.aws_lb_account_id}:root"]
     }
     actions   = ["s3:PutObject"]
-    resources = ["arn:aws:s3:::${module.access_logs_bucket.name}/alb/AWSLogs/*"]
+    resources = ["arn:aws:s3:::${module.access_logs_bucket.bucket_name}/alb/AWSLogs/*"]
   }
+}
+
+# Move resources from old secure-bucket structure to new access-logs-bucket structure
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket.this
+  to   = module.access_logs_bucket.aws_s3_bucket.access_logs
+}
+
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket_public_access_block.this
+  to   = module.access_logs_bucket.aws_s3_bucket_public_access_block.access_logs
+}
+
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket_versioning.this
+  to   = module.access_logs_bucket.aws_s3_bucket_versioning.access_logs
+}
+
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket_server_side_encryption_configuration.this[0]
+  to   = module.access_logs_bucket.aws_s3_bucket_server_side_encryption_configuration.access_logs
+}
+
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket_ownership_controls.owner[0]
+  to   = module.access_logs_bucket.aws_s3_bucket_ownership_controls.access_logs_owner[0]
+}
+
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket_policy.bucket_policy
+  to   = module.access_logs_bucket.aws_s3_bucket_policy.access_logs_bucket_policy
+}
+
+moved {
+  from = module.access_logs_bucket.aws_s3_bucket_lifecycle_configuration.access_logs[0]
+  to   = module.access_logs_bucket.aws_s3_bucket_lifecycle_configuration.access_logs
+}
+
+moved {
+  from = module.cyber_s3_log_shipping[0]
+  to   = module.access_logs_bucket.module.cyber_s3_log_shipping[0]
+}
+
+moved {
+  from = module.cyber_s3_log_shipping[0].module.s3_log_shipping
+  to   = module.access_logs_bucket.module.cyber_s3_log_shipping[0].module.s3_log_shipping
 }
 
 moved {
   from = aws_s3_bucket_notification.bucket_notification[0]
-  to   = module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
-}
-
-module "cyber_s3_log_shipping" {
-  count = var.send_logs_to_cyber ? 1 : 0
-
-  source  = "../../../../modules/cyber_s3_log_shipping"
-  s3_name = module.access_logs_bucket.name
-}
-
-moved {
-  from = module.s3_log_shipping[0]
-  to   = module.cyber_s3_log_shipping[0].module.s3_log_shipping
+  to   = module.access_logs_bucket.module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
 }

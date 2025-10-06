@@ -10,8 +10,13 @@ module "s3_log_shipping" {
   s3_processor_lambda_role = local.s3_logs_processor_role_arn
   s3_name                  = var.s3_name
 }
+moved {
+  from = aws_s3_bucket_ownership_controls.transfer_object_ownership
+  to   = module.s3_log_shipping.aws_s3_bucket_ownership_controls.transfer_object_ownership
+}
 
 resource "aws_s3_bucket_notification" "s3_bucket_notification" {
+  count  = var.enable_bucket_notification ? 1 : 0
   bucket = var.s3_name
   queue {
     queue_arn = local.s3_to_splunk_queue_arn

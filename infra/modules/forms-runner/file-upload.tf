@@ -7,8 +7,6 @@ module "file_upload_bucket" {
   name               = local.file_upload_bucket_name
   versioning_enabled = false
 
-  access_logging_enabled = true
-
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
 
   # In order to use KMS for server side encryption we need to disable the defaul AES256 encyrption in the module
@@ -160,11 +158,9 @@ module "file_upload_bucket_logs" {
   source = "../secure-bucket"
   name   = "${local.file_upload_bucket_name}-logs"
 
-  access_logging_enabled = true
-
   extra_bucket_policies = flatten([
     [data.aws_iam_policy_document.file_upload_bucket_logs.json],
-    var.send_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
+    var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []
   ])
 }
 
@@ -196,20 +192,12 @@ data "aws_iam_policy_document" "file_upload_bucket_logs" {
   }
 }
 
+
 # this is for csls log shipping
-module "cyber_s3_log_shipping" {
+module "s3_log_shipping" {
   count = var.send_logs_to_cyber ? 1 : 0
 
-  source  = "../cyber_s3_log_shipping"
-  s3_name = module.file_upload_bucket_logs.name
-}
-
-moved {
-  from = module.s3_log_shipping[0]
-  to   = module.cyber_s3_log_shipping[0].module.s3_log_shipping
-}
-
-moved {
-  from = aws_s3_bucket_notification.file_upload_logs_bucket_notification[0]
-  to   = module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
+  source                     = "../cyber_s3_log_shipping"
+  s3_name                    = module.file_upload_bucket_logs.name
+  enable_bucket_notification = false
 }
