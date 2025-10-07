@@ -17,6 +17,7 @@ data "aws_iam_policy_document" "forms_infra_1" {
     data.aws_iam_policy_document.redis.json,
     data.aws_iam_policy_document.code_build_modules.json,
     data.aws_iam_policy_document.ssm.json,
+    data.aws_iam_policy_document.secrets_manager.json,
   ]
 }
 
@@ -911,5 +912,25 @@ data "aws_iam_policy_document" "cloud_control_api" {
       "cloudformation:ListResources",
     ]
     resources = ["*"]
+  }
+}
+
+data "aws_iam_policy_document" "secrets_manager" {
+  statement {
+    sid = "ManageSecretsManagerSecrets"
+    actions = [
+      "secretsmanager:CreateSecret",
+      "secretsmanager:DeleteSecret",
+      "secretsmanager:UpdateSecret",
+      "secretsmanager:TagResource",
+      "secretsmanager:UntagResource",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:UpdateSecretVersionStage",
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:data-api/${var.environment_name}/*",
+    ]
+    effect = "Allow"
   }
 }
