@@ -13,7 +13,7 @@ resource "aws_lb" "load_balancer" {
   drop_invalid_header_fields = true
 
   access_logs {
-    bucket  = module.access_logs_bucket.name
+    bucket  = module.access_logs_bucket.bucket_name
     prefix  = "alb"
     enabled = true
   }
