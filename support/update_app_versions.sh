@@ -19,11 +19,11 @@ if ! docker info > /dev/null 2>&1 ; then
 fi
 
 # Update these values as necessary and then run the script
-NEW_RUBY_VERSION="3.3.4"
-NEW_ALPINE_VERSION="3.19"
+NEW_RUBY_VERSION="3.4.6"
+NEW_ALPINE_VERSION="3.22"
 
 # Constants that should not need to be updated
-APPS=(forms-api forms-admin forms-runner forms-product-page forms-e2e-tests)
+APPS=(forms-admin forms-runner forms-product-page forms-e2e-tests)
 DOCKER_IMAGE_NAME=ruby
 DOCKER_IMAGE_TAG="${NEW_RUBY_VERSION}-alpine${NEW_ALPINE_VERSION}"
 GIT_BRANCH_NAME="bump_base_image_to_${DOCKER_IMAGE_TAG}"
