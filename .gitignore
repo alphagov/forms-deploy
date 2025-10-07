@@ -8,6 +8,9 @@
 # terraform lock files where we don't want them
 infra/modules/*/.terraform.lock.hcl
 
+# terraform plugin cache
+.terraform-plugin-cache
+
 # Crash log files
 crash.log
 crash.*.log
