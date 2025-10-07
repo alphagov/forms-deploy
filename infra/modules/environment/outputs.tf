@@ -51,7 +51,7 @@ output "internal_alb_zone_id" {
 }
 
 output "private_internal_zone_id" {
-  value = aws_route53_zone.private_internal.id
+  value = data.aws_route53_zone.private_internal.zone_id
 }
 
 output "cloudfront_arn" {

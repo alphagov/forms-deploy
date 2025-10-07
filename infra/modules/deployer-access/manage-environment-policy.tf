@@ -53,7 +53,8 @@ data "aws_iam_policy_document" "acm_cert_with_dns_validation" {
       "route53:ListTagsForResource",
     ]
     resources = [
-      "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+      "arn:aws:route53:::hostedzone/${var.hosted_zone_id}",
+      "arn:aws:route53:::hostedzone/${var.private_internal_zone_id}"
     ]
   }
 }

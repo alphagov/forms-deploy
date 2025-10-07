@@ -167,6 +167,18 @@ data "aws_iam_policy_document" "dns" {
       "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
     ]
   }
+
+  statement {
+    sid    = "ManageInternalZoneAssociation"
+    effect = "Allow"
+    actions = [
+      "route53:AssociateVPCWithHostedZone",
+      "route53:DisassociateVPCFromHostedZone",
+    ]
+    resources = [
+      "arn:aws:route53:::hostedzone/${var.private_internal_zone_id}"
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "monitoring" {
