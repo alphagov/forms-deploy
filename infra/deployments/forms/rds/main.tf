@@ -20,7 +20,10 @@ module "rds" {
   seconds_until_auto_pause = var.environmental_settings.pause_databases_after_inactivity_seconds
   backup_retention_period  = var.environmental_settings.database_backup_retention_period_days
 
-  apps_list           = ["forms-admin", "forms-api"]
+  apps_list = {
+    forms-admin = { username = "forms-admin-app" }
+    forms-api   = { username = "forms-api-app" }
+  }
   database_identifier = "primary"
 }
 
@@ -40,6 +43,9 @@ module "forms_runner_rds" {
   seconds_until_auto_pause = var.environmental_settings.pause_databases_after_inactivity_seconds
   backup_retention_period  = var.environmental_settings.database_backup_retention_period_days
 
-  apps_list           = ["forms-runner", "forms-runner-queue"]
+  apps_list = {
+    forms-runner       = { username = "forms-runner-app" }
+    forms-runner-queue = { username = "forms-runner-app-queue" }
+  }
   database_identifier = "forms-runner-${var.environment_name}-primary"
 }
