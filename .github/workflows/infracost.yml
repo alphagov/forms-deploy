@@ -1,0 +1,90 @@
+# Infracost runs on pull requests (PR) and posts PR comments.
+# If you use Infracost Cloud, Infracost also runs on main/master branch pushes so the dashboard is updated.
+# The GitHub Action docs (https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows) describe other trigger options.
+name: "Infracost"
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+    paths:
+      - ".terraform-version"
+      - ".github/workflows/guardrail_tf_version_upgrade.yml"
+
+env:
+  INFRACOST_AWS_OVERRIDE_REGION: "eu-west-2" # Set the default AWS region for Infracost
+
+jobs:
+  # This stage runs the Infracost CLI and posts PR comments.
+  # It also updates PR comments when the PR is updated (synchronize event).
+  infracost-pull-request-checks:
+    name: Infracost Pull Request Checks
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Required to post comments
+    env:
+      INFRACOST_CONFIG_FILE: /tmp/infracost.yml # required until merged to main
+    steps:
+      # BEGIN: Required until merged to main
+      - name: Checkout PR branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 1
+      - name: Copy Infracost config to runner
+        run: cp infracost.yml "${INFRACOST_CONFIG_FILE}"
+      # END: Required until merged to main
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@e9d6e6cd65e168e76b0de50ff9957d2fe8bb1832 # v3.0.1
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+          currency: GBP
+
+      # Checkout the base branch of the pull request (e.g. main/master).
+      - name: Checkout base branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: "${{ github.event.pull_request.base.ref }}"
+
+      # Generate Infracost JSON file as the baseline.
+      - name: Generate Infracost cost estimate baseline
+        run: |
+          infracost breakdown --config-file "${INFRACOST_CONFIG_FILE}" \
+                              --format=json \
+                              --out-file=/tmp/infracost-base.json
+
+      # Checkout the current PR branch so we can create a diff.
+      - name: Checkout PR branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 1
+
+      # Generate an Infracost diff and save it to a JSON file.
+      - name: Generate Infracost diff
+        run: |
+          infracost diff --config-file "${INFRACOST_CONFIG_FILE}" \
+                          --format=json \
+                          --compare-to=/tmp/infracost-base.json \
+                          --out-file=/tmp/infracost.json
+
+      # Posts a comment to the PR using the 'update' behavior.
+      # This creates a single comment and updates it. The "quietest" option.
+      # The other valid behaviors are:
+      #   delete-and-new - Delete previous comments and create a new one.
+      #   hide-and-new - Minimize previous comments and create a new one.
+      #   new - Create a new cost estimate comment on every push.
+      # See https://www.infracost.io/docs/features/cli_commands/#comment-on-pull-requests for other options.
+      - name: Post Infracost comment
+        run: |
+          infracost comment github --path=/tmp/infracost.json \
+                                   --repo="${GITHUB_REPOSITORY}" \
+                                   --github-token=${{ github.token }} \
+                                   --pull-request=${{ github.event.pull_request.number }} \
+                                   --behavior=update
+
+      # Upload the Infracost JSON file as a workflow artifact.
+      - name: Upload Infracost JSON artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: infracost-diff
+          path: /tmp/infracost.json
