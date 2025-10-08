@@ -34,7 +34,9 @@ repos:
       - id: checkov
         name: checkov
         entry: ./pre-commit-checkov.sh
-        language: system
+        language: python
+        additional_dependencies:
+          - checkov==3.2.386
         require_serial: true
         types_or:
           - hcl
