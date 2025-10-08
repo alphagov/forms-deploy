@@ -66,7 +66,6 @@ forms_runner_settings = {
   enable_maintenance_mode                                         = false
   cloudwatch_metrics_enabled                                      = true
   analytics_enabled                                               = true
-  api_v2_enabled                                                  = true
   use_admin_api                                                   = true
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = false
   allow_human_readonly_roles_to_assume_submissions_to_runner_role = false
