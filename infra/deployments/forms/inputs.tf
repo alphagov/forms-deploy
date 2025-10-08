@@ -177,8 +177,6 @@ variable "forms_runner_settings" {
     enable_maintenance_mode                                         = bool
     cloudwatch_metrics_enabled                                      = bool
     analytics_enabled                                               = bool
-    api_v2_enabled                                                  = bool
-    use_admin_api                                                   = bool
     allow_human_readonly_roles_to_assume_submissions_to_s3_role     = bool
     allow_human_readonly_roles_to_assume_submissions_to_runner_role = bool
     ses_submission_email_from_email_address                         = string

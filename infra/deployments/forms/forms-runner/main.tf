@@ -31,12 +31,6 @@ locals {
     ) : (
     []
   )
-
-  api_base_url = var.forms_runner_settings.use_admin_api ? (
-    "http://admin.internal.${var.root_domain}"
-    ) : (
-    "https://api.${var.root_domain}"
-  )
 }
 
 module "forms_runner" {
@@ -49,13 +43,12 @@ module "forms_runner" {
   memory                                      = var.forms_runner_settings.memory
   min_capacity                                = var.forms_runner_settings.min_capacity
   max_capacity                                = var.forms_runner_settings.max_capacity
-  api_base_url                                = local.api_base_url
+  api_base_url                                = "http://admin.internal.${var.root_domain}"
   admin_base_url                              = "https://admin.${var.root_domain}"
   enable_maintenance_mode                     = var.forms_runner_settings.enable_maintenance_mode
   cloudwatch_metrics_enabled                  = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled                           = var.forms_runner_settings.analytics_enabled
   deploy_account_id                           = var.deploy_account_id
-  api_v2_enabled                              = var.forms_runner_settings.api_v2_enabled
   ses_submission_email_from_email_address     = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address = var.forms_runner_settings.ses_submission_email_reply_to_email_address
   ses_submission_configuration_set_name       = data.terraform_remote_state.forms_ses.outputs.form_submissions_configuration_set_name
