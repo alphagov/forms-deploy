@@ -1,34 +1,55 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+      - id: mixed-line-ending
+      - id: check-executables-have-shebangs
+      - id: check-symlinks
+      - id: destroyed-symlinks
   - repo: local
     hooks:
       - id: terraform-fmt
-        name: ===> Making sure new terraform code is in a canonical format
-        entry: pre-commit-tf-fmt.sh
-        language: script
-        files: \.tf$
+        name: terraform fmt
+        entry: ./pre-commit-tf-fmt.sh
+        language: system
+        files: ^infra/
+        pass_filenames: true
+        types_or:
+          - terraform
+
       - id: tflint
-        name: Run tflint (terraform linter)
+        name: tflint
         require_serial: true
         types_or:
           - hcl
           - terraform
-        language: golang
-        additional_dependencies:
-          - github.com/terraform-linters/tflint@v0.52.0
+        language: system
+        files: ^infra/
+        pass_filenames: true
         entry: ./pre-commit-tflint.sh
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: "3.2.386"
-    hooks:
+
       - id: checkov
-        verbose: true
-        args:
-          [
-            -d,
-            infra/,
-            --external-checks-dir,
-            infra/checkov/,
-            --framework,
-            terraform,
-            --quiet,
-            --skip-download,
-          ]
+        name: checkov
+        entry: ./pre-commit-checkov.sh
+        language: system
+        require_serial: true
+        types_or:
+          - hcl
+          - terraform
+        pass_filenames: true
+
+      - id: rubocop
+        name: lint ruby
+        require_serial: true
+        types:
+          - ruby
+        language: system
+        entry: make lint_ruby
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
