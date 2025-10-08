@@ -64,7 +64,6 @@ forms_runner_settings = {
   enable_maintenance_mode                                         = false
   cloudwatch_metrics_enabled                                      = false
   analytics_enabled                                               = false
-  use_admin_api                                                   = true
   ses_submission_email_from_email_address                         = "no-reply@research.forms.service.gov.uk"
   ses_submission_email_reply_to_email_address                     = "no-reply@research.forms.service.gov.uk"
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = false
