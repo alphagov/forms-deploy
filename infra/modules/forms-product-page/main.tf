@@ -80,4 +80,3 @@ module "ecs_service" {
     },
   ]
 }
-

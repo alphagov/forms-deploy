@@ -13,4 +13,3 @@ definition:
           attribute: "min_capacity"
           operator: "greater_than"
           value: 0
-    

@@ -34,7 +34,7 @@ migrations and prepare a local dev user respectively.
 
 If you need to connect to the postgres instance directly you can use `psql -h
 localhost -p 5432 -U postgres` and enter `postgres` for the password when
-prompted. To view available databases use `\l` and to connect to one use 
+prompted. To view available databases use `\l` and to connect to one use
 `\c databasename`. For more information view psql help page.
 
 ## Commands for running the whole thing in docker.

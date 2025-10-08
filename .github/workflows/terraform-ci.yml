@@ -38,8 +38,6 @@ jobs:
           GIT_TO: ${{github.event.pull_request.head.sha}}
           TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
         run: |
-          # shellcheck disable=SC2199
-          # shellcheck disable=SC2076
           set -e -u -o pipefail
           mkdir "$TF_PLUGIN_CACHE_DIR"
           if [[ $(git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json" | wc -l) -eq 0 ]]; then
@@ -51,32 +49,34 @@ jobs:
           | sort \
           | uniq \
           > modified-tf-dirs.txt
-          
+
           all_roots=$(find infra/deployments -type d \
             -mindepth 1 -maxdepth 2 \
             -not -path "*/tfvars" \
             -not -path "infra/deployments/forms" \
             -not -path "infra/deployments/deploy" \
-            -not -path "infra/deployments/integration" 
+            -not -path "infra/deployments/integration"
           )
-          
+
           for start in ${all_roots}; do
             echo "Inspecting ${start}"
             stack=("${start}")
             visited=()
-          
+
             while [[ "${#stack[@]}" -gt 0 ]]; do
-          
+
               path="${stack[0]}"
               stack=("${stack[@]:1}") # Shift the front element off
-          
+
+              # shellcheck disable=SC2199
+              # shellcheck disable=SC2076
               if [[ "${visited[@]}" =~ "${path}" ]]; then
                 # Skip because it's already been visited
                 continue
               fi
-          
+
               visited+=("${path}")
-          
+
               declare -a new_paths
               readarray -t new_paths < <(terraform-config-inspect --json "${path}" \
                 | jq -r '.module_calls | to_entries | .[] | .value.source' \
@@ -86,16 +86,16 @@ jobs:
                 | xargs -I{} realpath --relative-to "$(pwd)" "{}" \
                 | sort
               )
-          
+
               if [[ "${#new_paths[@]}" -gt 0 ]]; then
                 stack+=( "${stack[@]}" "${new_paths[@]}" )
               fi
             done
-          
+
             printf '%s\n' "${visited[@]}" | sort | uniq > "${start}/directories.txt"
-          
+
             matching_lines="$(comm -1 -2 modified-tf-dirs.txt "${start}/directories.txt")"
-          
+
             if [[ -n "$matching_lines" ]]; then
               echo "Requires validation"
               terraform -chdir="${start}" init -backend=false || exit
@@ -103,7 +103,7 @@ jobs:
             else
               echo "Does not require validation"
             fi
-          done;    
+          done;
 
       - uses: actions/cache/restore@v4
         id: restore-terraform-config-inspect
@@ -123,7 +123,7 @@ jobs:
         if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
         run: |
           go install "github.com/hashicorp/terraform-config-inspect@latest"
-          
+
           # Copy the binary to a known place in the path so that we have
           # a consistent path for it, for caching purposes
           cp "$(which terraform-config-inspect)" /usr/local/bin/terraform-config-inspect

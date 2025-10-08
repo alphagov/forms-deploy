@@ -63,4 +63,3 @@ variable "send_logs_to_cyber" {
   description = "Whether logs should be sent to cyber"
   type        = bool
 }
-

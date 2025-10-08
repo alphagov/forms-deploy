@@ -62,4 +62,3 @@ variable "pentester_cidr_ranges" {
     error_message = "Each entry in the last must be a valid IPv4 CIDR range"
   }
 }
-

@@ -6,4 +6,3 @@ resource "aws_ecs_cluster" "forms" {
     value = "enabled"
   }
 }
-

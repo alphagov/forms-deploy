@@ -57,4 +57,3 @@ resource "aws_iam_role_policy_attachment" "codebuild" {
   policy_arn = aws_iam_policy.codebuild.arn
   role       = aws_iam_role.codebuild.id
 }
-

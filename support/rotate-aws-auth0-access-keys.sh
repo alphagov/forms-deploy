@@ -40,7 +40,7 @@ access_keys_count=$(echo "$access_keys" | jq -s 'map(.) | length')
 echo "Access keys for auth0:"
 for key in $( echo "$access_keys" | jq -r '.AccessKeyId'); do
   last_used_date=$(aws iam get-access-key-last-used --access-key-id "${key}" | jq -rc '.AccessKeyLastUsed.LastUsedDate')
-  echo "$access_keys" | jq -rc --arg ACCESSKEYID "${key}" --arg LASTUSEDDATE "${last_used_date}" 'select(.AccessKeyId | contains($ACCESSKEYID)) | . += {"LastUsedDate":$LASTUSEDDATE}' 
+  echo "$access_keys" | jq -rc --arg ACCESSKEYID "${key}" --arg LASTUSEDDATE "${last_used_date}" 'select(.AccessKeyId | contains($ACCESSKEYID)) | . += {"LastUsedDate":$LASTUSEDDATE}'
 done
 
 echo "There is a maximum of 2 keys allowed."

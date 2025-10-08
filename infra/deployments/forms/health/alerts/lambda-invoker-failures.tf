@@ -63,4 +63,3 @@ EOF
 
   alarm_actions = [local.alert_severity.eu_west_2.warn]
 }
-

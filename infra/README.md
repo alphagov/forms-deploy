@@ -16,7 +16,7 @@ The `modules` directory contains reusable Terraform modules which are referenced
 
 **deployment:** a set of one or more roots that, in combination, describe a full set of infrastructure for some purpose.
 
-**module:** a (reusable) Terraform module. It cannot be independently deployed. 
+**module:** a (reusable) Terraform module. It cannot be independently deployed.
 
 ### How to manage the deployments
 
@@ -50,7 +50,7 @@ To apply a Terraform root (such as `forms-runner` in the `forms` deployment) in 
 > [!NOTE]
 > This section does not apply to the `deploy` deployment, because it is a singular environment.
 
-Our Terraform deployments are structured to accept the differences between environments as Terraform variables defined in the `inputs.tf` file of each deployment, and their distinct values are defined in a set of `*.tfvars` files in the `tfvars/` directories.  
+Our Terraform deployments are structured to accept the differences between environments as Terraform variables defined in the `inputs.tf` file of each deployment, and their distinct values are defined in a set of `*.tfvars` files in the `tfvars/` directories.
 
 ### Deployment order and dependencies
 

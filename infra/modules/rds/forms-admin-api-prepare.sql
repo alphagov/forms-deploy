@@ -26,4 +26,3 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA "public" TO "forms-admin-readwrite";
 ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT USAGE ON SEQUENCES TO "forms-admin-readwrite";
 -- CREATE USER "forms-admin-app" WITH PASSWORD [REPLACE WITH VALUE FROM SSM PARAMETER STORE /forms-admin/database/password and then uncomment];
 GRANT "forms-admin-readwrite" TO "forms-admin-app";
-
