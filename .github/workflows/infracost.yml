@@ -6,8 +6,9 @@ on:
   pull_request:
     types: [opened, synchronize, closed]
     paths:
-      - ".terraform-version"
-      - ".github/workflows/guardrail_tf_version_upgrade.yml"
+      - "infra/**"
+      - "infracost.yml"
+      - ".github/workflows/infracost.yml"
 
 env:
   INFRACOST_AWS_OVERRIDE_REGION: "eu-west-2" # Set the default AWS region for Infracost
