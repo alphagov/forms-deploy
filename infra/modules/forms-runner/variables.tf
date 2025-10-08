@@ -80,12 +80,6 @@ variable "deploy_account_id" {
   description = "the account number for the deploy account"
 }
 
-variable "api_v2_enabled" {
-  type        = bool
-  description = "Use v2 API of forms-api when enabled."
-  default     = false
-}
-
 variable "additional_submissions_to_s3_role_assumers" {
   type        = list(string)
   description = "A list of role ARNs which are also allowed to assume the role for submissions to s3"
@@ -191,4 +185,3 @@ variable "cloudfront_secret" {
   description = "The secret header value that CloudFront sends to verify requests"
   sensitive   = true
 }
-

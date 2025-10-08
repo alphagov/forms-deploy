@@ -55,7 +55,6 @@ module "forms_runner" {
   cloudwatch_metrics_enabled                  = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled                           = var.forms_runner_settings.analytics_enabled
   deploy_account_id                           = var.deploy_account_id
-  api_v2_enabled                              = var.forms_runner_settings.api_v2_enabled
   ses_submission_email_from_email_address     = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address = var.forms_runner_settings.ses_submission_email_reply_to_email_address
   ses_submission_configuration_set_name       = data.terraform_remote_state.forms_ses.outputs.form_submissions_configuration_set_name
