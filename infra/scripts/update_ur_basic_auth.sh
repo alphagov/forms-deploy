@@ -55,4 +55,3 @@ gds-cli aws forms-user-research-admin -- \
 echo "Redeploy instruction sent. Wait for update to finish"
 gds-cli aws forms-user-research-admin -- \
   ../../infra/modules/code-build-deploy-ecs/scripts/wait-for-deploy.sh "forms-admin" "forms-user-research"
-

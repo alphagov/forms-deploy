@@ -13,11 +13,10 @@ definition:
           connected_resource_types:
               - "aws_appautoscaling_target"
           operator: "exists"
-          
+
         - cond_type: "attribute"
           resource_types:
               - "aws_ecs_service"
           attribute: "lifecycle.ignore_changes"
           operator: "contains"
           value: "desired_count"
-    

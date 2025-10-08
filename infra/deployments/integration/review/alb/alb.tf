@@ -36,4 +36,3 @@ resource "aws_lb_listener" "tls_listener" {
     }
   }
 }
-

@@ -24,8 +24,6 @@ jobs:
           COMMENT_MARKER: "<!-- guardrail: tf version change -->"
           GH_TOKEN: ${{ github.token }}
         run: |
-          # shellcheck disable=SC2296
-          # shellcheck disable=SC2016
           cat <<EOF > "${{runner.temp}}/pr-comment.md"
           > [!WARNING]
           > You are changing the Terraform version.
@@ -40,6 +38,7 @@ jobs:
           ${COMMENT_MARKER}
           EOF
 
+          # shellcheck disable=SC2016 # $ENV is not a shell variable
           old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
           for comment_id in $old_comment_ids; do
             gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"

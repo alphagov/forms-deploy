@@ -3,7 +3,13 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: &exclude_from_whitespace |
+          (?x)^(
+              infra/modules/cloudfront/html/assets/.*$|
+              support/pipeline-visualiser/public/.*$
+          )$
       - id: end-of-file-fixer
+        exclude: *exclude_from_whitespace
       - id: check-added-large-files
       - id: mixed-line-ending
       - id: check-executables-have-shebangs

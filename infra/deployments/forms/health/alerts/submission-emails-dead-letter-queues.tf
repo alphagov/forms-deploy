@@ -2,7 +2,7 @@ resource "aws_cloudwatch_metric_alarm" "submission_email_ses_bounces_and_complai
   alarm_name          = "${var.environment}-submission-email-ses-bounces-and-complaints-dead-letter-queue-contains-message"
   alarm_description   = <<EOF
     There is a message in ${var.submission_email_bounces_and_complaints_dlq_name} in the ${var.environment} account.
-    
+
     When SQS receives messages that are not processed successfully, it will add them to that queue's dead letter queue.
 
     NEXT STEPS:

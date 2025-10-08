@@ -67,4 +67,3 @@ aws ecr get-login-password --region eu-west-2 \
 docker tag "${APP}:${TAG}" "711966560482.dkr.ecr.eu-west-2.amazonaws.com/${APP}-deploy:${TAG}"
 
 docker push "711966560482.dkr.ecr.eu-west-2.amazonaws.com/${APP}-deploy:${TAG}"
-

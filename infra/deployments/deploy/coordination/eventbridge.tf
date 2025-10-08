@@ -64,5 +64,3 @@ resource "aws_iam_role_policy" "allow_sending_to_other_accounts" {
   role   = aws_iam_role.eventbridge_actor.id
   policy = data.aws_iam_policy_document.allow_sending_events_to_other_accounts.json
 }
-
-

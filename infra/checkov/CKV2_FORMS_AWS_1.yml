@@ -12,10 +12,9 @@ definition:
               - "aws_cloudwatch_metric_alarm"
           attribute: "alarm_actions"
           operator: "is_not_empty"
-          
+
         - cond_type: "attribute"
           resource_types:
               - "aws_cloudwatch_metric_alarm"
           attribute: "alarm_actions"
-          operator: "exists"       
-    
+          operator: "exists"

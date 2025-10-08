@@ -98,8 +98,6 @@ jobs:
           COMMENT_MARKER: "<!-- provider-locks: missing updates -->"
           GH_TOKEN: ${{ github.token }}
         run: |
-          # shellcheck disable=SC2296
-          # shellcheck disable=SC2016
           echo "Error: Provider lock files are out of date!"
           echo ""
           echo "You have modified infra/shared/versions.tf but the corresponding .terraform.lock.hcl files"
@@ -128,6 +126,7 @@ jobs:
           EOF
 
           # Remove any existing comments from this workflow
+          # shellcheck disable=SC2016 # $ENV is not a shell variable
           old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
           for comment_id in $old_comment_ids; do
             gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
@@ -143,8 +142,6 @@ jobs:
           COMMENT_MARKER: "<!-- provider-locks: dependabot updated -->"
           GH_TOKEN: ${{ github.token }}
         run: |
-          # shellcheck disable=SC2296
-          # shellcheck disable=SC2016
           # Leave a comment on the PR
           cat <<EOF > "${{runner.temp}}/pr-comment.md"
           > [!NOTE]
@@ -159,6 +156,7 @@ jobs:
           EOF
 
           # Remove any existing comments from this workflow
+          # shellcheck disable=SC2016 # $ENV is not a shell variable
           old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
           for comment_id in $old_comment_ids; do
             gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
@@ -173,9 +171,8 @@ jobs:
           COMMENT_MARKER_DEPENDABOT: "<!-- provider-locks: dependabot updated -->"
           GH_TOKEN: ${{ github.token }}
         run: |
-          # shellcheck disable=SC2296
-          # shellcheck disable=SC2016
           # Remove any existing comments from this workflow since no changes are needed
+          # shellcheck disable=SC2016 # $ENV is not a shell variable
           old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and ((.body | endswith($ENV.COMMENT_MARKER_MISSING + "\n")) or (.body | endswith($ENV.COMMENT_MARKER_DEPENDABOT + "\n"))))) | .[].id')
           for comment_id in $old_comment_ids; do
             echo "Removing stale comment: $comment_id"

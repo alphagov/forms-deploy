@@ -33,4 +33,3 @@ data "terraform_remote_state" "forms_ses" {
     use_lockfile = true
   }
 }
-

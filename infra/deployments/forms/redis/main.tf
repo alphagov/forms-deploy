@@ -6,5 +6,3 @@ module "redis" {
   ingress_cidr_blocks = [data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block]
   multi_az_enabled    = var.environmental_settings.redis_multi_az_enabled
 }
-
-

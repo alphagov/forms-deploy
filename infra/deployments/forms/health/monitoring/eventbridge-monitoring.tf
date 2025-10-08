@@ -19,7 +19,7 @@ resource "aws_cloudwatch_metric_alarm" "event_bridge_dlq_delivery_alarm" {
 
     NEXT STEPS:
     1. Log into the ${var.environment_type} account
-    
+
     2. Go look at the message in SQS console by visiting the URL below and
     presing "Poll for messages". Error details are found in the message "Attributes" tab.
 

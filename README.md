@@ -57,11 +57,11 @@ gds aws forms-dev-admin -- make dev deployer_role forms/rds apply
 > [!NOTE]
 > This is primarily for testing permissions and validating changes in dev. All other environments (staging, production, user-research) should only be deployed through the CI pipeline.
 
-#### Updating Terraform 
+#### Updating Terraform
 
 We have a lot of Terraform code, across a lot of distinct root modules. To keep versioning consistent we have [a shared versions file](infra/shared/versions.tf.json) which is symlinked into each root.
 
-To simplify performing the upgrade, you can run 
+To simplify performing the upgrade, you can run
 
 ```
 ./infra/scripts/upgrade_tf_version.sh
@@ -82,7 +82,7 @@ This will find the latest version of Terraform and all of the Terraform provider
 - Production: https://submit.forms.service.gov.uk/
 
 ### Architecture decision records
-https://github.com/alphagov/forms/tree/main/ADR 
+https://github.com/alphagov/forms/tree/main/ADR
 
 [^1]: This should not be confused with `forms-cli` at `support/forms-cli`. `forms-cli` is intended for working with a deployment of GOV.UK Forms, not deploying it.
 

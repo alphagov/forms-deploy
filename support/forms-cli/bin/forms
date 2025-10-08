@@ -3,4 +3,3 @@
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 entry_point="${parent_path%*/bin}/lib/entry_point.rb"
 ruby "$entry_point" "$@"
-

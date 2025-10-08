@@ -191,4 +191,3 @@ variable "cloudfront_secret" {
   description = "The secret header value that CloudFront sends to verify requests"
   sensitive   = true
 }
-
