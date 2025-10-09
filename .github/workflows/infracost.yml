@@ -19,6 +19,7 @@ jobs:
   infracost-pull-request-checks:
     name: Infracost Pull Request Checks
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     permissions:
       contents: read
       pull-requests: write # Required to post comments
