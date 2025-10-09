@@ -26,6 +26,9 @@ jobs:
     if: github.event_name != 'merge_group'
     runs-on: ubuntu-latest
     name: Run pre-commit # Replace with '*job_name' once actionlint supports anchors
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: 📦 Check Out Repository Code
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
@@ -49,13 +52,147 @@ jobs:
           restore-keys: |
             pre-commit-3|
       - name: ✅ Run Pre-commit Hooks
+        id: pre-commit
         env:
           SKIP: "checkov,tflint,rubocop,terraform-fmt"
         run: |
-          pre-commit run --show-diff-on-failure --color=always \
+          pre-commit run --show-diff-on-failure --color=never \
           --from-ref "${{ github.event.pull_request.base.sha }}" \
-          --to-ref "${{ github.event.pull_request.head.sha }}"
+          --to-ref "${{ github.event.pull_request.head.sha }}" \
+          | tee result.out; test "${PIPESTATUS[0]}" -eq 0
         shell: bash
+
+      - name: 📄 Parse pre-commit output and manage PR comment
+        if: always() && github.event_name == 'pull_request'
+        env:
+          COMMENT_MARKER: "<!-- pre-commit-comment -->"
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ steps.pre-commit.outcome }}
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # shellcheck disable=SC2016
+          # Check if the pre-commit job failed
+          if [ "$JOB_STATUS" = "failure" ]; then
+            # Parse the output to extract failed checks
+            echo "Parsing pre-commit output for failed checks..."
+
+            # Create the comment body file with marker expansion
+            cat > "${{runner.temp}}/pr-comment.md" <<EOF
+          ${COMMENT_MARKER}
+
+          <h3>Pre-Commit report</h3>
+
+          This pull request had errors when running pre-commit.
+
+          [View workflow run →](${WORKFLOW_RUN_URL})
+
+          EOF
+
+            # Extract failed checks and their details into a single code block
+            # Look for lines ending with "Failed" and capture them plus following lines starting with "-"
+            {
+              echo '```'
+              awk '
+              /Failed$/ {
+                # Start of a failed check
+                if (buffer != "") {
+                  # Print previous buffer with blank line separator
+                  print buffer
+                  print ""
+                }
+                buffer = $0
+                in_failed = 1
+                next
+              }
+              in_failed && /^- / {
+                # Lines starting with "- " are details of the failed check
+                buffer = buffer "\n" $0
+                next
+              }
+              in_failed && !/^- / {
+                # Any line not starting with "- " ends the current failed check
+                in_failed = 0
+              }
+              END {
+                # Print final buffer if exists
+                if (buffer != "") {
+                  print buffer
+                }
+              }
+              ' result.out
+              echo '```'
+            } >> "${{runner.temp}}/pr-comment.md"
+
+            # Add footer with diff section
+            {
+              cat <<'EOF'
+
+          Reproduce locally with: `pre-commit run --all-files`.<br/>
+          To run `pre-commit` as part of git workflow, use `pre-commit install`.
+
+          <details >
+            <summary>Full diff of automatic changes</summary>
+            <br/>
+
+          ```diff
+          EOF
+              # Extract the diff section if it exists (everything after "All changes made by hooks:")
+              sed -n '/^All changes made by hooks:/,$p' result.out | tail -n +2
+              cat <<'EOF'
+          ```
+
+          </details>
+
+          <hr/>
+
+          <sub>
+            This comment will be updated when code changes.
+          </sub>
+          EOF
+            } >> "${{runner.temp}}/pr-comment.md"
+
+            # Find and update or create comment
+            old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | startswith($ENV.COMMENT_MARKER)))) | .[].id')
+
+            if [ -n "$old_comment_ids" ]; then
+              # Update existing comment
+              comment_id=$(echo "$old_comment_ids" | head -n1)
+              gh api -X PATCH "repos/{owner}/{repo}/issues/comments/${comment_id}" \
+                -F body=@"${{runner.temp}}/pr-comment.md"
+              echo "Updated existing comment: $comment_id"
+            else
+              # Create new comment
+              gh pr comment "${{github.event.pull_request.html_url}}" --body-file "${{runner.temp}}/pr-comment.md"
+              echo "Created new comment"
+            fi
+          else
+            # Pre-commit passed - check if there's an existing comment to update
+            old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | startswith($ENV.COMMENT_MARKER)))) | .[].id')
+
+            if [ -n "$old_comment_ids" ]; then
+              # Update the comment to say it's fixed
+              comment_id=$(echo "$old_comment_ids" | head -n1)
+              cat > "${{runner.temp}}/pr-comment-fixed.md" <<EOF
+          ${COMMENT_MARKER}
+
+          <h3>Pre-Commit report</h3>
+
+          ✅ All pre-commit checks are now passing!
+
+          <hr/>
+
+          <sub>
+            This comment will be updated when code changes.
+          </sub>
+          EOF
+              gh api -X PATCH "repos/{owner}/{repo}/issues/comments/${comment_id}" \
+                -F body=@"${{runner.temp}}/pr-comment-fixed.md"
+              echo "Updated comment to show checks are passing"
+            else
+              echo "No existing comment to update, and checks passed - nothing to do"
+            fi
+          fi
       - name: 🧹 Cache Cleanup
+        if: always() # always run to ensure cache is cleaned up even if previous steps fail
         run: pre-commit gc
         shell: bash
