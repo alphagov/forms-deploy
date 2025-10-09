@@ -23,17 +23,8 @@ jobs:
       contents: read
       pull-requests: write # Required to post comments
     env:
-      INFRACOST_CONFIG_FILE: /tmp/infracost.yml # required until merged to main
+      INFRACOST_CONFIG_FILE: infracost.yml
     steps:
-      # BEGIN: Required until merged to main
-      - name: Checkout PR branch
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          fetch-depth: 1
-      - name: Copy Infracost config to runner
-        run: cp infracost.yml "${INFRACOST_CONFIG_FILE}"
-      # END: Required until merged to main
-
       - name: Setup Infracost
         uses: infracost/actions/setup@e9d6e6cd65e168e76b0de50ff9957d2fe8bb1832 # v3.0.1
         with:
