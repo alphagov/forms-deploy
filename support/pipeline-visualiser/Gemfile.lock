@@ -48,7 +48,7 @@ GEM
     lint_roller (1.1.0)
     logger (1.7.0)
     minitest (5.25.5)
-    mustermann (3.0.3)
+    mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.7.4)
     parallel (1.27.0)
@@ -60,7 +60,7 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.2)
-    rack-protection (4.1.1)
+    rack-protection (4.2.0)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
@@ -123,14 +123,14 @@ GEM
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.4.1)
-    sinatra (4.1.1)
+    sinatra (4.2.0)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
       rack (>= 3.0.0, < 4)
-      rack-protection (= 4.1.1)
+      rack-protection (= 4.2.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
-    tilt (2.4.0)
+    tilt (2.6.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -153,7 +153,7 @@ DEPENDENCIES
   rackup (~> 2.2)
   rspec (~> 3.13)
   rubocop-govuk (~> 5.1)
-  sinatra (~> 4.1)
+  sinatra (~> 4.2)
 
 CHECKSUMS
   activesupport (8.0.3) sha256=a711ce5e30660b23232f26a38699469f8d859d47aa1f722e183fda6d7cc17823
@@ -179,7 +179,7 @@ CHECKSUMS
   lint_roller (1.1.0) sha256=2c0c845b632a7d172cb849cc90c1bce937a28c5c8ccccb50dfd46a485003cc87
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   minitest (5.25.5) sha256=391b6c6cb43a4802bfb7c93af1ebe2ac66a210293f4a3fb7db36f2fc7dc2c756
-  mustermann (3.0.3) sha256=d1f8e9ba2ddaed47150ddf81f6a7ea046826b64c672fbc92d83bce6b70657e88
+  mustermann (3.0.4) sha256=85fadcb6b3c6493a8b511b42426f904b7f27b282835502233dd154daab13aa22
   nio4r (2.7.4) sha256=d95dee68e0bb251b8ff90ac3423a511e3b784124e5db7ff5f4813a220ae73ca9
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
   parser (3.3.9.0) sha256=94d6929354b1a6e3e1f89d79d4d302cc8f5aa814431a6c9c7e0623335d7687f2
@@ -187,7 +187,7 @@ CHECKSUMS
   puma (7.0.4) sha256=b4c6ae11d1458052eeaa415176c3bf0000f4232287f413525ab2504446154b7a
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
   rack (3.2.2) sha256=74d20a7a17e8c6bc1fd506fa7d83ccf6b7a40869e81572928ca95346dccd92b0
-  rack-protection (4.1.1) sha256=51a254a5d574a7f0ca4f0672025ce2a5ef7c8c3bd09c431349d683e825d7d16a
+  rack-protection (4.2.0) sha256=67909eb1c29ebb52a9bdedfd4201cec70a542edd7671dbd87eae3d73d2d115bf
   rack-session (2.1.1) sha256=0b6dc07dea7e4b583f58a48e8b806d4c9f1c6c9214ebc202ec94562cbea2e4e9
   rackup (2.2.1) sha256=f737191fd5c5b348b7f0a4412a3b86383f88c43e13b8217b63d4c8d90b9e798d
   rainbow (3.1.1) sha256=039491aa3a89f42efa1d6dec2fc4e62ede96eb6acd95e52f1ad581182b79bc6a
@@ -207,8 +207,8 @@ CHECKSUMS
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
   ruby2_keywords (0.0.5) sha256=ffd13740c573b7301cf7a2e61fc857b2a8e3d3aff32545d6f8300d8bae10e3ef
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
-  sinatra (4.1.1) sha256=4e997b859aa1b5d2e624f85d5b0fd0f0b3abc0da44daa6cbdf10f7c0da9f4d00
-  tilt (2.4.0) sha256=df74f29a451daed26591a85e8e0cebb198892cb75b6573394303acda273fba4d
+  sinatra (4.2.0) sha256=3fab45063312c298dc4153ba35736b755eda329695d2bdf28129ad99131964ef
+  tilt (2.6.1) sha256=35a99bba2adf7c1e362f5b48f9b581cce4edfba98117e34696dde6d308d84770
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b
   unicode-display_width (3.1.4) sha256=8caf2af1c0f2f07ec89ef9e18c7d88c2790e217c482bfc78aaa65eadd5415ac1
   unicode-emoji (4.0.4) sha256=2c2c4ef7f353e5809497126285a50b23056cc6e61b64433764a35eff6c36532a
