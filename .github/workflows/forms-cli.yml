@@ -19,13 +19,13 @@ jobs:
         working-directory: support/forms-cli
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.0.0
       - name: Determine Ruby version
         id: determine-ruby-version
         run: |
           echo "RUBY_VERSION=$(cat ../../.ruby-version)" >> "$GITHUB_OUTPUT"
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        uses: ruby/setup-ruby@6797dcbb9a1889fd411d07e8aba7eded53fb8b48 # v1.264.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
