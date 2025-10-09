@@ -12,6 +12,7 @@ repos:
         exclude: *exclude_from_whitespace
       - id: check-added-large-files
       - id: mixed-line-ending
+        args: ["--fix=lf"]
       - id: check-executables-have-shebangs
       - id: check-symlinks
       - id: destroyed-symlinks
