@@ -34,7 +34,7 @@ jobs:
 
       # Checkout the base branch of the pull request (e.g. main/master).
       - name: Checkout base branch
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
         with:
           ref: "${{ github.event.pull_request.base.ref }}"
 
@@ -47,7 +47,7 @@ jobs:
 
       # Checkout the current PR branch so we can create a diff.
       - name: Checkout PR branch
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
         with:
           fetch-depth: 1
 

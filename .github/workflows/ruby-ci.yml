@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.0.0
 
       - name: Install hcl2json
         run: |
@@ -35,27 +35,27 @@ jobs:
       # time. So instead we enumerate them all.
       ##
       - name: Install Ruby and gems at root
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        uses: ruby/setup-ruby@6797dcbb9a1889fd411d07e8aba7eded53fb8b48 # v1.264.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
 
       - name: "Install Ruby and gems in infra/"
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        uses: ruby/setup-ruby@6797dcbb9a1889fd411d07e8aba7eded53fb8b48 # v1.264.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
           working-directory: "infra/"
 
       - name: Install Ruby and gems in pipeline visualiser
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        uses: ruby/setup-ruby@6797dcbb9a1889fd411d07e8aba7eded53fb8b48 # v1.264.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
           working-directory: "support/pipeline-visualiser"
 
       - name: Install Ruby and gems in pipeline invoker
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a # v1.263.0
+        uses: ruby/setup-ruby@6797dcbb9a1889fd411d07e8aba7eded53fb8b48 # v1.264.0
         with:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
