@@ -4,7 +4,7 @@
 name: "Infracost"
 on:
   pull_request:
-    types: [opened, synchronize, closed]
+    types: [opened, synchronize]
     paths:
       - "infra/**"
       - "infracost.yml"
@@ -18,7 +18,6 @@ jobs:
   # It also updates PR comments when the PR is updated (synchronize event).
   infracost-pull-request-checks:
     name: Infracost Pull Request Checks
-    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
     runs-on: ubuntu-latest
     permissions:
       contents: read
