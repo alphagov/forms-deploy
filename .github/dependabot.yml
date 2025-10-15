@@ -10,6 +10,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
     groups:
       actions-all-dependencies:
         patterns:
@@ -20,6 +22,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
 
   # Maintain Ruby dependencies
@@ -33,6 +37,8 @@ updates:
       - "/infra/deployments/forms/pipelines/pipeline-invoker"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
     groups:
       ruby-all-dependencies:
@@ -43,6 +49,8 @@ updates:
     directory: "/infra/shared"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
     groups:
       terraform-all-dependencies:
