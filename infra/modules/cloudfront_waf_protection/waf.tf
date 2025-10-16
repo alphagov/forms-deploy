@@ -378,13 +378,6 @@ resource "aws_wafv2_web_acl" "this" {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
-
-        rule_action_override {
-          name = "SizeRestrictions_BODY"
-          action_to_use {
-            count {} # Switch to count action, to check for false positives after applying new bypass rules
-          }
-        }
       }
     }
 
