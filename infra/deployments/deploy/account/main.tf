@@ -2,6 +2,14 @@ module "account" {
   source = "../../../modules/account"
 }
 
+# Deploy account doesn't use public buckets, so we can safely block public access account-wide
+resource "aws_s3_account_public_access_block" "block_public_access" {
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 # Sometimes we log in to Docker when pulling images
 # Docker limits the number of images you can pull to 100 without authenticating
 resource "aws_ssm_parameter" "docker_username" {
