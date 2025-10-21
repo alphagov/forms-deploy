@@ -15,3 +15,9 @@ variable "send_logs_to_cyber" {
   type        = bool
   default     = true
 }
+
+variable "log_to_splunk" {
+  description = "This is a duplicate of send_logs_to_cyber while we transition between csls and cribl. They will eventually be one variable, but for now this makes it easier for us to test"
+  type        = bool
+  default     = true
+}

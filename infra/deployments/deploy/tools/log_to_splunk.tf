@@ -1,4 +1,6 @@
 module "log_to_splunk" {
+  count = var.log_to_splunk ? 1 : 0
+
   source = "./log_to_splunk"
 
   cribl_worker_arn    = ""
