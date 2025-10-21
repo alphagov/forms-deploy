@@ -224,6 +224,22 @@ resource "aws_codepipeline" "deploy_runner_container" {
       }
     }
 
+    action {
+      name            = "deploy-new-worker-task-definition"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      version         = "1"
+      run_order       = 3
+      input_artifacts = ["image-defs-json"]
+      configuration = {
+        ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
+        ServiceName       = "forms-runner-queue-worker"
+        DeploymentTimeout = 15
+        FileName          = "image-defs.json"
+      }
+    }
+
     # It isn't possible to conditionally skip or disable an action in CodePipeline
     # but we need to be able to do so because we can't run the end-to-end tests in the user-research
     # environment. We don't want to make the end-to-end tests module responsible for skipping itself
@@ -238,7 +254,7 @@ resource "aws_codepipeline" "deploy_runner_container" {
       content {
         name            = "run-end-to-end-tests"
         category        = "Build"
-        run_order       = 3
+        run_order       = 4
         owner           = "AWS"
         provider        = "CodeBuild"
         version         = "1"
