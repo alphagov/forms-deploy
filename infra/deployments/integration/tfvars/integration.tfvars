@@ -7,3 +7,4 @@ send_logs_to_cyber      = false
 
 pentester_email_addresses = []
 pentester_cidr_ranges     = []
+kinesis_destination_arn   = ""

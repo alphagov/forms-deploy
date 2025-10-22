@@ -110,3 +110,12 @@ variable "pentester_cidr_ranges" {
     error_message = "Penetration testing should not be taking place in a production environment"
   }
 }
+
+##
+# Logging to Splunk
+##
+variable "kinesis_destination_arn" {
+  type        = string
+  default     = ""
+  description = "The arn of the cloudwatch log destination for kinesis. We create the stream in the `deploy` account"
+}
