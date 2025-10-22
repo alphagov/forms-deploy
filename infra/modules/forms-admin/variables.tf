@@ -161,3 +161,11 @@ variable "cloudfront_secret" {
   description = "The secret header value that CloudFront sends to verify requests"
   sensitive   = true
 }
+
+variable "log_to_splunk_settings" {
+  description = "The arns for the centralised destination kinesis stream and role that is allowed to subscribe to it. We create the stream in the `deploy` account"
+  type = object({
+    kinesis_destination_arn       = string
+    kinesis_subscription_role_arn = string
+  })
+}

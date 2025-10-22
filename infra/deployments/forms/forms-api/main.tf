@@ -23,4 +23,8 @@ module "forms_api" {
   alb_arn_suffix       = data.terraform_remote_state.forms_environment.outputs.alb_arn_suffix
   alb_listener_arn     = data.terraform_remote_state.forms_environment.outputs.alb_main_listener_arn
   cloudfront_secret    = data.terraform_remote_state.forms_environment.outputs.cloudfront_secret
+  log_to_splunk_settings = {
+    kinesis_destination_arn       = data.terraform_remote_state.account.outputs.kinesis_destination_arn
+    kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+  }
 }

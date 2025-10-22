@@ -70,4 +70,8 @@ module "forms_runner" {
   deliveries_kms_key_arn                      = data.terraform_remote_state.forms_ses.outputs.submission_email_successful_deliveries_kms_key_arn
   queue_worker_capacity                       = var.forms_runner_settings.queue_worker_capacity
   enable_builtin_solidqueue_worker            = var.forms_runner_settings.enable_builtin_solidqueue_worker
+  log_to_splunk_settings = {
+    kinesis_destination_arn       = data.terraform_remote_state.account.outputs.kinesis_destination_arn
+    kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+  }
 }
