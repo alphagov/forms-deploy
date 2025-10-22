@@ -277,7 +277,9 @@ resource "aws_lb_listener" "internal_https_listener" {
 module "alb_waf_protection" {
   source = "../alb_waf_protection"
 
-  alb_arn            = aws_lb.alb.arn
-  environment_name   = var.env_name
-  send_logs_to_cyber = var.send_logs_to_cyber
+  alb_arn                = aws_lb.alb.arn
+  environment_name       = var.env_name
+  send_logs_to_cyber     = var.send_logs_to_cyber
+  log_to_splunk_settings = var.log_to_splunk_settings
+
 }
