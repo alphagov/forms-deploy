@@ -9,3 +9,4 @@ codestar_connection_arn   = "arn:aws:codestar-connections:eu-west-2:498160065950
 deploy_account_id         = "711966560482"
 pentester_email_addresses = []
 pentester_cidr_ranges     = []
+kinesis_destination_arn   = ""
