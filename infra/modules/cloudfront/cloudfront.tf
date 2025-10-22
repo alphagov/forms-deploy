@@ -40,6 +40,7 @@ module "cloudfront_waf_protection" {
   nat_gateway_egress_ips  = var.nat_gateway_egress_ips
   send_logs_to_cyber      = var.send_logs_to_cyber
   rate_limit_bypass_cidrs = var.rate_limit_bypass_cidrs
+  log_to_splunk_settings  = var.log_to_splunk_settings
 
   providers = {
     aws           = aws

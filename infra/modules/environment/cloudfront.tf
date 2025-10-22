@@ -20,6 +20,8 @@ module "cloudfront" {
   ]
 
   subject_alternative_names = local.subject_alternative_names[var.env_name]
+  log_to_splunk_settings    = var.log_to_splunk_settings
+
 }
 
 resource "aws_ssm_parameter" "email_zendesk" {
