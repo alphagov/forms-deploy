@@ -1,7 +1,7 @@
 module "log_to_splunk" {
   source = "./log_to_splunk"
 
-  cribl_worker_arn    = ""
+  cribl_worker_arn    = "arn:aws:iam::195936642447:role/main-gds-general"
   account_access_arns = local.all_account_arns
   aws_account_sources = local.all_account_ids
 }
