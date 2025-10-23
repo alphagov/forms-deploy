@@ -10,7 +10,6 @@ data "aws_ecs_container_definition" "active_container" {
 }
 
 locals {
-  log_group_name         = "/aws/ecs/${var.application}-${var.env_name}"
   task_definition_family = "${var.env_name}_${var.application}"
 
   image = var.image == null ? data.aws_ecs_container_definition.active_container[0].image : var.image
@@ -30,9 +29,9 @@ locals {
     logConfiguration = {
       logDriver = "awslogs",
       options = {
-        awslogs-group         = local.log_group_name,
+        awslogs-group         = "${var.application}-${var.env_name}",
         awslogs-region        = "eu-west-2",
-        awslogs-stream-prefix = local.log_group_name
+        awslogs-stream-prefix = "${var.application}-${var.env_name}"
       }
     },
   }
