@@ -200,10 +200,15 @@ resource "aws_codepipeline" "deploy_runner_container" {
             type  = "PLAINTEXT"
           },
           {
-            name  = "APP_NAME"
+            name  = "APP_NAME_1"
             value = "forms-runner"
             type  = "PLAINTEXT"
-          }
+          },
+          {
+            name  = "APP_NAME_2"
+            value = "forms-runner-queue-worker"
+            type  = "PLAINTEXT"
+          },
         ])
       }
     }
@@ -220,7 +225,23 @@ resource "aws_codepipeline" "deploy_runner_container" {
         ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
         ServiceName       = "forms-runner"
         DeploymentTimeout = 15
-        FileName          = "image-defs.json"
+        FileName          = "task-image-definition-1.json"
+      }
+    }
+
+    action {
+      name            = "deploy-new-worker-task-definition"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      version         = "1"
+      run_order       = 3
+      input_artifacts = ["image-defs-json"]
+      configuration = {
+        ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
+        ServiceName       = "forms-runner-queue-worker"
+        DeploymentTimeout = 15
+        FileName          = "task-image-definition-2.json"
       }
     }
 
@@ -238,7 +259,7 @@ resource "aws_codepipeline" "deploy_runner_container" {
       content {
         name            = "run-end-to-end-tests"
         category        = "Build"
-        run_order       = 3
+        run_order       = 4
         owner           = "AWS"
         provider        = "CodeBuild"
         version         = "1"
@@ -288,7 +309,7 @@ module "generate_forms_runner_container_image_defs" {
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buildspecs/generate-container-image-defs/generate-container-image-defs.yml")
+  buildspec                  = file("${path.root}/buildspecs/generate-container-image-defs/generate-multiple-container-image-defs.yml")
   log_group_name             = "codebuild/generate_forms_runner_container_image_defs_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }
