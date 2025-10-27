@@ -7,4 +7,4 @@ send_logs_to_cyber      = false
 
 pentester_email_addresses = []
 pentester_cidr_ranges     = []
-kinesis_destination_arn   = ""
+kinesis_destination_arn   = "arn:aws:logs:eu-west-2:711966560482:destination:kinesis-log-destination"
