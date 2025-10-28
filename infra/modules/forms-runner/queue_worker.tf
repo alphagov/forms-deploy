@@ -2,6 +2,9 @@ locals {
   queue_worker_name = "forms-runner-queue-worker"
 
   # Take the exported task container definition and override some parts of it
+  # Note: the ENV variables aren't overridden because it's not possible to cherry pick them
+  # This means DISABLE_SOLID_QUEUE is always set to true, but that instruction is overridden
+  # by the command `bin/jobs` which starts the SolidQueue worker but not the Rails server
   queue_worker_container_definitions = merge(
     module.ecs_service.task_container_definition,
     {
