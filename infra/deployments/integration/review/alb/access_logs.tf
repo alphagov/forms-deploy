@@ -66,11 +66,6 @@ moved {
 }
 
 moved {
-  from = module.cyber_s3_log_shipping[0].module.s3_log_shipping
-  to   = module.access_logs_bucket.module.cyber_s3_log_shipping[0].module.s3_log_shipping
-}
-
-moved {
   from = aws_s3_bucket_notification.bucket_notification[0]
   to   = module.access_logs_bucket.module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
 }
