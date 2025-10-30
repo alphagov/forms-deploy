@@ -1,5 +1,5 @@
 locals {
-  apps       = ["forms-admin", "forms-api", "forms-runner", "forms-product-page"]
+  apps       = ["forms-admin", "forms-runner", "forms-product-page"]
   account_id = data.aws_caller_identity.current.account_id
 }
 

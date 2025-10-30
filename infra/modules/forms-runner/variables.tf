@@ -33,7 +33,7 @@ variable "admin_base_url" {
 
 variable "api_base_url" {
   type        = string
-  description = "The url for connecting to forms-api"
+  description = "The url for connecting to forms-admin"
 }
 
 variable "enable_maintenance_mode" {
