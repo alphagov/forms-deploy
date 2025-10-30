@@ -9,15 +9,12 @@
             "properties": {
                 "metrics": [
                     [ { "expression": "100*(m1/m5)", "id": "e3", "label": "forms-admin", "region": "eu-west-2" } ],
-                    [ { "expression": "100*(m2/m6)", "id": "e2", "label": "forms-api", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m3/m7)", "id": "e1", "label": "forms-runner", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m4/m8)", "id": "e4", "label": "forms-product-page", "region": "eu-west-2" } ],
                     [ "ECS/ContainerInsights", "CpuUtilized", "TaskDefinitionFamily", "${environment_name}_forms-admin", "ClusterName", "forms-${environment_name}", { "id": "m1", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "${environment_name}_forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
                     [ "...", "${environment_name}_forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
                     [ "...", "${environment_name}_forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
                     [ ".", "CpuReserved", ".", "forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "${environment_name}_forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "visible": false } ],
                     [ "...", "${environment_name}_forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "visible": false } ],
                     [ "...", "${environment_name}_forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "visible": false } ]
                 ],
@@ -49,15 +46,12 @@
             "properties": {
                 "metrics": [
                     [ { "expression": "100*(m1/m5)", "label": "forms-admin", "id": "e1", "region": "eu-west-2" } ],
-                    [ { "expression": "100*(m2/m6)", "label": "forms-api", "id": "e2", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m3/m7)", "label": "forms-runner", "id": "e3", "region": "eu-west-2" } ],
                     [ { "expression": "100*(m4/m8)", "label": "forms-product-page", "id": "e4", "region": "eu-west-2" } ],
                     [ "ECS/ContainerInsights", "MemoryUtilized", "ServiceName", "forms-admin", "ClusterName", "forms-${environment_name}", { "id": "m1", "region": "eu-west-2", "visible": false } ],
-                    [ "...", "forms-api", ".", ".", { "id": "m2", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-runner", ".", ".", { "id": "m3", "region": "eu-west-2", "visible": false } ],
                     [ "...", "forms-product-page", ".", ".", { "id": "m4", "region": "eu-west-2", "visible": false } ],
                     [ ".", "MemoryReserved", ".", "forms-admin", ".", ".", { "id": "m5", "region": "eu-west-2", "label": "forms-admin MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
-                    [ "...", "forms-api", ".", ".", { "id": "m6", "region": "eu-west-2", "label": "forms-api MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
                     [ "...", "forms-runner", ".", ".", { "id": "m7", "region": "eu-west-2", "label": "forms-runner MemoryReserved [last: ${LAST}]", "yAxis": "right" } ],
                     [ "...", "forms-product-page", ".", ".", { "id": "m8", "region": "eu-west-2", "label": "forms-product-page MemoryReserved [last: ${LAST}]", "yAxis": "right" } ]
                 ],
@@ -435,32 +429,6 @@
             }
         },
         {
-            "height": 3,
-            "width": 12,
-            "y": 3,
-            "x": 12,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "ECS/ContainerInsights", "RunningTaskCount", "ServiceName", "forms-api", "ClusterName", "forms-${environment_name}", { "region": "eu-west-2" } ],
-                    [ ".", "DesiredTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ],
-                    [ ".", "PendingTaskCount", ".", ".", ".", ".", { "region": "eu-west-2" } ]
-                ],
-                "view": "singleValue",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "forms-api: ECS Pending/Running Task Count",
-                "period": 300,
-                "stat": "Maximum",
-                "setPeriodToTimeRange": false,
-                "legend": {
-                    "position": "bottom"
-                },
-                "sparkline": true,
-                "trend": true
-            }
-        },
-        {
             "height": 6,
             "width": 6,
             "y": 42,
@@ -526,31 +494,6 @@
                 "stacked": false,
                 "region": "eu-west-2",
                 "title": "forms-product-page: ALB Latency (Target Response Time)",
-                "period": 60,
-                "stat": "Maximum",
-                "yAxis": {
-                    "left": {
-                        "label": "Seconds"
-                    }
-                }
-            }
-        },
-        {
-            "height": 6,
-            "width": 6,
-            "y": 42,
-            "x": 6,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-api', 'Average')", "label": "Average", "id": "e1" } ],
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-api', 'p99')", "label": "p99", "id": "e2" } ],
-                    [ { "expression": "SEARCH('{AWS/ApplicationELB, LoadBalancer, TargetGroup} MetricName=\"TargetResponseTime\" forms-api', 'Maximum')", "label": "Max", "id": "e3" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-2",
-                "title": "forms-api: ALB Latency (Target Response Time)",
                 "period": 60,
                 "stat": "Maximum",
                 "yAxis": {

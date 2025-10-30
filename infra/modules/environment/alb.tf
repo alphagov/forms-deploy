@@ -12,25 +12,21 @@ locals {
 
   subject_alternative_names = {
     user-research = [
-      "api.research.forms.service.gov.uk",
       "admin.research.forms.service.gov.uk",
       "submit.research.forms.service.gov.uk",
       "www.research.forms.service.gov.uk",
     ],
     dev = [
-      "api.dev.forms.service.gov.uk",
       "admin.dev.forms.service.gov.uk",
       "submit.dev.forms.service.gov.uk",
       "www.dev.forms.service.gov.uk",
     ],
     staging = [
-      "api.staging.forms.service.gov.uk",
       "admin.staging.forms.service.gov.uk",
       "submit.staging.forms.service.gov.uk",
       "www.staging.forms.service.gov.uk",
     ],
     production = [
-      "api.forms.service.gov.uk",
       "admin.forms.service.gov.uk",
       "submit.forms.service.gov.uk",
       "www.forms.service.gov.uk",

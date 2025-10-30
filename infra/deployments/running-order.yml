@@ -48,7 +48,6 @@ running-order:
             - forms/rds
         - roots:
             - forms/forms-product-page
-            - forms/forms-api
             - forms/forms-admin
             - forms/forms-runner
         - roots:

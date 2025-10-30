@@ -17,22 +17,21 @@ function usage() {
   .
   ├── forms-deploy
   ├── forms-admin
-  ├── forms-api
   ├── forms-runner
 
   Usage:
      Run in a authorized shell for the deploy account using gds-cli or aws-vault
      $0 app-name
 
-     app-name, the name of the application to build forms-api | forms-admin | forms-runner
+     app-name, the name of the application to build forms-admin | forms-runner
 
      Example:
-     gds aws forms-deploy-admin -- ${0} forms-api"
+     gds aws forms-deploy-admin -- ${0} forms-admin"
   exit 0
 }
 
-if [ "$APP" != "forms-api" ] && [ "$APP" != "forms-admin" ] && [ "$APP" != "forms-runner" ]; then
-  echo "APP must be either 'forms-api', 'forms-admin' or 'forms-runner'."
+if [ "$APP" != "forms-admin" ] && [ "$APP" != "forms-runner" ]; then
+  echo "APP must be either 'forms-admin' or 'forms-runner'."
   usage
 fi
 

@@ -27,10 +27,6 @@ variable "memory" {
   type = number
 }
 
-variable "api_base_url" {
-  type        = string
-  description = "The url for connecting to forms-api"
-}
 
 variable "runner_base" {
   type        = string
