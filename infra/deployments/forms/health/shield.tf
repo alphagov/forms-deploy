@@ -260,7 +260,7 @@ resource "aws_route53_health_check" "ddos_detection" {
 }
 
 locals {
-  apps = ["forms-admin", "forms-api", "forms-runner", "forms-product-page"]
+  apps = ["forms-admin", "forms-runner", "forms-product-page"]
 }
 
 data "aws_lb_target_group" "target_groups" {

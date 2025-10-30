@@ -44,12 +44,6 @@ forms_admin_settings = {
   synchronize_to_mailchimp   = false
   repeatable_page_enabled    = true
 }
-forms_api_settings = {
-  cpu          = 256
-  memory       = 512
-  min_capacity = 0
-  max_capacity = 0
-}
 forms_product_page_settings = {
   cpu          = 256
   memory       = 512

@@ -2,9 +2,8 @@ locals {
   # The ordering here is arbitrary so long as they don't clash.
   listener_priority = {
     forms-runner : 100
-    forms-api : 200
-    forms-admin : 300
-    forms-product-page : 400
+    forms-admin : 200
+    forms-product-page : 300
   }
 }
 

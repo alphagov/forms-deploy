@@ -146,17 +146,6 @@ variable "forms_admin_settings" {
   nullable = false
 }
 
-variable "forms_api_settings" {
-  description = "Forms API configuration values"
-  type = object({
-    cpu          = number
-    memory       = number
-    min_capacity = number
-    max_capacity = number
-  })
-  nullable = false
-}
-
 variable "forms_product_page_settings" {
   description = "Forms Product Page configuration values"
   type = object({
