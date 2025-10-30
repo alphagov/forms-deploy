@@ -16,7 +16,9 @@ environmental_settings = {
   database_backup_retention_period_days = 30
   enable_alert_actions                  = true
   allow_authentication_from_email_domains = [
+    ".gov.scot",
     ".gov.uk",
+    ".gov.wales",
     ".mod.uk",
     "@cefas.co.uk",
     "@certoffice.org",
