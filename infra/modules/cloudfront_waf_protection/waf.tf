@@ -492,12 +492,14 @@ resource "aws_cloudwatch_log_subscription_filter" "waf_csls_log_subscription" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "waf" {
+  provider = aws.us-east-1
+
   name = "via-cribl-to-splunk"
 
   log_group_name = aws_cloudwatch_log_group.waf.name
 
   filter_pattern  = ""
-  destination_arn = var.log_to_splunk_settings.kinesis_destination_arn
+  destination_arn = var.log_to_splunk_settings.kinesis_destination_arn_us_east_1
   distribution    = "ByLogStream"
   role_arn        = var.log_to_splunk_settings.kinesis_subscription_role_arn
 }

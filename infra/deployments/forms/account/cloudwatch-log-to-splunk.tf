@@ -34,6 +34,14 @@ resource "aws_iam_policy" "kinesis_subscription_policy" {
           "logs:PutSubscriptionFilter"
         ],
         "Resource" : var.kinesis_destination_arn
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:PutLogEvents",
+          "logs:PutSubscriptionFilter"
+        ],
+        "Resource" : var.kinesis_destination_arn_us_east_1
       }
     ]
   })

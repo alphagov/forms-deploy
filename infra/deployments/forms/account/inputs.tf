@@ -119,3 +119,9 @@ variable "kinesis_destination_arn" {
   default     = ""
   description = "The arn of the cloudwatch log destination for kinesis. We create the stream in the `deploy` account"
 }
+
+variable "kinesis_destination_arn_us_east_1" {
+  type        = string
+  default     = ""
+  description = "The arn of the cloudwatch log destination for kinesis in the us-east-1 region. We create the stream in the `deploy` account"
+}

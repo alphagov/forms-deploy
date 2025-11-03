@@ -49,7 +49,7 @@ variable "rate_limit_bypass_cidrs" {
 variable "log_to_splunk_settings" {
   description = "The arns for cloudwatch log destination for kinesis and role that is allowed to subscribe to to the kinesis stream. We create the destination in the `deploy` account"
   type = object({
-    kinesis_destination_arn       = string
-    kinesis_subscription_role_arn = string
+    kinesis_destination_arn_us_east_1 = string
+    kinesis_subscription_role_arn     = string
   })
 }
