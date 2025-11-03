@@ -18,7 +18,7 @@ module "cloudfront" {
   nat_gateway_egress_ips = module.vpc.nat_gateway_egress_ips
   send_logs_to_cyber     = var.send_logs_to_cyber
   log_to_splunk_settings = {
-    kinesis_destination_arn       = data.terraform_remote_state.account.outputs.kinesis_destination_arn
-    kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+    kinesis_destination_arn_us_east_1 = data.terraform_remote_state.account.outputs.kinesis_destination_arn_us_east_1
+    kinesis_subscription_role_arn     = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
   }
 }
