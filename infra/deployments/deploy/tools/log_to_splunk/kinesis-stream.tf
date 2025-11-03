@@ -45,6 +45,25 @@ resource "aws_cloudwatch_log_destination_policy" "kinesis_log_destination_policy
   })
 }
 
+resource "aws_cloudwatch_log_destination_policy" "kinesis_log_destination_policy_us_east_1" {
+  provider         = aws.us-east-1
+  destination_name = aws_cloudwatch_log_destination.kinesis_log_destination_us_east_1.name
+  access_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : var.aws_account_sources
+        },
+        "Action" : "logs:PutSubscriptionFilter",
+        "Resource" : aws_cloudwatch_log_destination.kinesis_log_destination_us_east_1.arn
+      }
+    ]
+  })
+}
+
 
 resource "aws_iam_role" "logs_kinesis_role" {
   name = "kinesis-cloudwatch-logs-producer-role"
