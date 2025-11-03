@@ -17,6 +17,14 @@ resource "aws_cloudwatch_log_destination" "kinesis_log_destination" {
   target_arn = aws_kinesis_stream.log_stream.arn
 }
 
+resource "aws_cloudwatch_log_destination" "kinesis_log_destination_us_east_1" {
+  provider = aws.us-east-1
+
+  depends_on = [aws_kinesis_stream.log_stream, aws_iam_role.logs_kinesis_role, aws_iam_policy.logs_kinesis_policy]
+  name       = "kinesis-log-destination-us-east-1"
+  role_arn   = aws_iam_role.logs_kinesis_role.arn
+  target_arn = aws_kinesis_stream.log_stream.arn
+}
 
 resource "aws_cloudwatch_log_destination_policy" "kinesis_log_destination_policy" {
   destination_name = aws_cloudwatch_log_destination.kinesis_log_destination.name
@@ -36,6 +44,24 @@ resource "aws_cloudwatch_log_destination_policy" "kinesis_log_destination_policy
   })
 }
 
+resource "aws_cloudwatch_log_destination_policy" "kinesis_log_destination_policy_us_east_1" {
+  destination_name = aws_cloudwatch_log_destination.kinesis_log_destination_us_east_1.name
+  access_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : var.aws_account_sources
+        },
+        "Action" : "logs:PutSubscriptionFilter",
+        "Resource" : aws_cloudwatch_log_destination.kinesis_log_destination_us_east_1.arn
+      }
+    ]
+  })
+  region = "us-east-1"
+}
 
 resource "aws_iam_role" "logs_kinesis_role" {
   name = "kinesis-cloudwatch-logs-producer-role"
