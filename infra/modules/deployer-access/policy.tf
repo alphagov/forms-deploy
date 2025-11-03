@@ -692,6 +692,17 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
     ]
     effect = "Allow"
   }
+
+  statement {
+    sid = "ManageSubscriptionFilterForCRIBL"
+    actions = [
+      "logs:*SubscriptionFilter"
+    ]
+    resources = [
+      "arn:aws:logs:*:${var.deploy_account_id}:destination:kinesis-log-destination",
+      "arn:aws:logs:*:${var.account_id}:log-group:*:log-stream:*",
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "shield" {
