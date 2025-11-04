@@ -47,6 +47,7 @@ projects:
   skip_autodetect: true
   dependency_paths:
   - infra/deployments/deploy/tools/**
+  - infra/deployments/deploy/tools/log_to_splunk/**
   - infra/modules/acm-cert-with-dns-validation/**
   - infra/modules/all-accounts/**
   - infra/modules/code-build-build/**
@@ -282,50 +283,6 @@ projects:
   - infra/deployments/forms/forms-admin/**
   - infra/deployments/forms/tfvars/user-research.tfvars
   - infra/modules/forms-admin/**
-- path: infra/deployments/forms/forms-api
-  name: forms-forms-api-dev
-  skip_autodetect: true
-  terraform_var_files:
-  - "../account/tfvars/backends/dev.tfvars"
-  - "../tfvars/dev.tfvars"
-  dependency_paths:
-  - infra/deployments/forms/account/tfvars/backends/dev.tfvars
-  - infra/deployments/forms/forms-api/**
-  - infra/deployments/forms/tfvars/dev.tfvars
-  - infra/modules/forms-api/**
-- path: infra/deployments/forms/forms-api
-  name: forms-forms-api-production
-  skip_autodetect: true
-  terraform_var_files:
-  - "../account/tfvars/backends/production.tfvars"
-  - "../tfvars/production.tfvars"
-  dependency_paths:
-  - infra/deployments/forms/account/tfvars/backends/production.tfvars
-  - infra/deployments/forms/forms-api/**
-  - infra/deployments/forms/tfvars/production.tfvars
-  - infra/modules/forms-api/**
-- path: infra/deployments/forms/forms-api
-  name: forms-forms-api-staging
-  skip_autodetect: true
-  terraform_var_files:
-  - "../account/tfvars/backends/staging.tfvars"
-  - "../tfvars/staging.tfvars"
-  dependency_paths:
-  - infra/deployments/forms/account/tfvars/backends/staging.tfvars
-  - infra/deployments/forms/forms-api/**
-  - infra/deployments/forms/tfvars/staging.tfvars
-  - infra/modules/forms-api/**
-- path: infra/deployments/forms/forms-api
-  name: forms-forms-api-user-research
-  skip_autodetect: true
-  terraform_var_files:
-  - "../account/tfvars/backends/user-research.tfvars"
-  - "../tfvars/user-research.tfvars"
-  dependency_paths:
-  - infra/deployments/forms/account/tfvars/backends/user-research.tfvars
-  - infra/deployments/forms/forms-api/**
-  - infra/deployments/forms/tfvars/user-research.tfvars
-  - infra/modules/forms-api/**
 - path: infra/deployments/forms/forms-product-page
   name: forms-forms-product-page-dev
   skip_autodetect: true

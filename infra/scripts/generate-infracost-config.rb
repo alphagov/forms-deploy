@@ -44,6 +44,10 @@ private
     project["dependency_paths"]&.sort!
   end
 
+  def directory_has_files?(path)
+    Dir.glob("#{path}/**/*").any? { |f| File.file?(f) }
+  end
+
   def get_auto_config
     result = `infracost generate config --repo-path . 2>/dev/null`
     return {} if $CHILD_STATUS.exitstatus != 0
@@ -85,6 +89,7 @@ private
 
     forms_roots = Dir.glob("infra/deployments/forms/*")
                      .select { |path| File.directory?(path) }
+                     .select { |path| directory_has_files?(path) }
                      .map { |path| File.basename(path) }
                      .reject { |root| root == "tfvars" || root.start_with?(".") }
                      .sort
@@ -142,6 +147,7 @@ private
 
     deploy_roots = Dir.glob("infra/deployments/deploy/*")
                       .select { |path| File.directory?(path) }
+                      .select { |path| directory_has_files?(path) }
                       .map { |path| File.basename(path) }
                       .reject { |root| root.start_with?(".") }
                       .sort
@@ -179,6 +185,7 @@ private
     # Main integration roots
     integration_roots = Dir.glob("infra/deployments/integration/*")
                            .select { |path| File.directory?(path) }
+                           .select { |path| directory_has_files?(path) }
                            .map { |path| File.basename(path) }
                            .reject { |root| root == "tfvars" || root.start_with?(".") }
                            .sort

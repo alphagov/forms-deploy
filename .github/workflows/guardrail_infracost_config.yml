@@ -6,7 +6,7 @@ on:
     paths:
       - "infra/**"
       - ".github/workflows/guardrail_infracost_config.yml"
-      - ".infracost.yml"
+      - "infracost.yml"
 
 jobs:
   check_infracost_config:
