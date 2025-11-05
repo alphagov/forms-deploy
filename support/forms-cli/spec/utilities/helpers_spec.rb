@@ -34,7 +34,7 @@ describe Helpers do
     [
       ["admin", "dev", "admin.dev.forms.service.gov.uk"],
       ["product-page", "production", "forms.service.gov.uk"],
-      ["api", "staging", "api.staging.forms.service.gov.uk"],
+      ["runner", "staging", "submit.staging.forms.service.gov.uk"],
     ].each do |app, environment, expected|
       it "returns the #{app} host name in #{environment}" do
         expect(dummy_class.new.forms_app_host(app, environment:)).to eq expected

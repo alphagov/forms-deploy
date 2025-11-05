@@ -21,17 +21,6 @@ module SecretsManagerFixtures
                                             ],
                                           },
                                         },
-                                        {
-                                          arn: "arn-for-forms-api-database-credentials",
-                                          description: "forms-api-database credentials",
-                                          last_changed_date: Time.parse("2023-01-01"),
-                                          name: "forms-api-database",
-                                          secret_versions_to_stages: {
-                                            "EXAMPLE2-90ab-cdef-fedc-ba987EXAMPLE" => %w[
-                                              AWSCURRENT
-                                            ],
-                                          },
-                                        },
                                       ],
                                     })
   end
@@ -43,9 +32,9 @@ module SecretsManagerFixtures
   def self.describe_secret
     @secrets_manager_stub.stub_data(:describe_secret,
                                     {
-                                      arn: "arn:aws:secretsmanager:eu-west-2:123456789012:secret:data-api/dev/forms-api/rds-credentials-AbCdEf",
-                                      name: "data-api/dev/forms-api/rds-credentials",
-                                      description: "Data API credentials for forms-api in dev environment",
+                                      arn: "arn:aws:secretsmanager:eu-west-2:123456789012:secret:data-api/dev/forms-admin/rds-credentials-AbCdEf",
+                                      name: "data-api/dev/forms-admin/rds-credentials",
+                                      description: "Data API credentials for forms-admin in dev environment",
                                     })
   end
 end
