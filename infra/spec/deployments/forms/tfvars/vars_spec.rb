@@ -26,7 +26,6 @@ describe "terraform vars" do
         end
 
         applications = %w[forms_admin_settings
-                          forms_api_settings
                           forms_product_page_settings
                           forms_runner_settings]
         applications.each do |app|

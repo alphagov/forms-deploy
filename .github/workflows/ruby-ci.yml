@@ -7,62 +7,79 @@ on:
       - "**Gemfile"
       - "**Rakefile"
       - ".github/workflows/ruby-ci.yml"
+      - "infra/**"
+      - ".mise.toml"
   merge_group:
     types: [checks_requested]
+  push:
+    branches: [main]
 jobs:
-  ruby-ci:
-    name: "Ruby"
+  setup:
+    name: "Setup"
     runs-on: ubuntu-latest
+    outputs:
+      ruby-version: ${{ steps.set-ruby-version.outputs.ruby-version }}
+      spec-matrix: ${{ steps.build-matrix.outputs.spec-matrix }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Install hcl2json
+      - name: Initialise mise and cache `hcl2json`
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
+        with:
+          install_args: hcl2json
+
+      - name: Set Ruby version
+        id: set-ruby-version
         run: |
-          wget "https://github.com/tmccombs/hcl2json/releases/download/v0.6.1/hcl2json_linux_amd64"
-          chmod +x hcl2json_linux_amd64
-          sudo mv hcl2json_linux_amd64 /usr/local/bin/hcl2json
+          echo "ruby-version=$(mise current ruby)" >> "$GITHUB_OUTPUT"
 
-      - name: Determine Ruby version
-        id: determine-ruby-version
+      - name: Build spec matrix
+        id: build-matrix
         run: |
-          echo "RUBY_VERSION=$(cat .ruby-version)" >> "$GITHUB_OUTPUT"
+          spec_dirs_json="$(find . -type d -name 'spec' -not -path '*vendor*' | sed 's|/spec$||g' | jq -Rnc '[inputs]')"
+          echo "spec-matrix=$spec_dirs_json" >> "$GITHUB_OUTPUT"
 
-      ##
-      # We have multiple distinct Ruby code bases
-      # and GitHub Actions does not have a good way to
-      # repeat one step with a different parameter each
-      # time. So instead we enumerate them all.
-      ##
+  ruby-lint:
+    name: "Ruby Lint"
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Install Ruby and gems at root
         uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
         with:
           bundler-cache: true
-          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
-
-      - name: "Install Ruby and gems in infra/"
-        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
-        with:
-          bundler-cache: true
-          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
-          working-directory: "infra/"
-
-      - name: Install Ruby and gems in pipeline visualiser
-        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
-        with:
-          bundler-cache: true
-          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
-          working-directory: "support/pipeline-visualiser"
-
-      - name: Install Ruby and gems in pipeline invoker
-        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
-        with:
-          bundler-cache: true
-          ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
-          working-directory: "infra/deployments/forms/pipelines/pipeline-invoker"
-
+          ruby-version: ${{needs.setup.outputs.ruby-version}}
       - name: Run rubocop
         run: make lint_ruby
 
+  ruby-spec:
+    name: "Rspec"
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      fail-fast: false
+      matrix:
+        spec_target: ${{ fromJSON(needs.setup.outputs.spec-matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Set up hcl2json
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
+        with:
+          install_args: hcl2json
+
+      - name: "Install Ruby and gems in ${{matrix.spec_target}}"
+        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
+        with:
+          bundler-cache: true
+          ruby-version: ${{needs.setup.outputs.ruby-version}}
+          working-directory: "${{matrix.spec_target}}"
+
       - name: Run specs
-        run: make spec
+        run: |
+          cd "${{matrix.spec_target}}"
+          bundle exec rspec
