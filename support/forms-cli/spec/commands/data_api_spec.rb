@@ -23,7 +23,7 @@ describe DataApi do
     end
 
     before do
-      stub_const("ARGV", ["-d", "forms-api", "-c", "cluster-name", "-s", "select * from testing;"])
+      stub_const("ARGV", ["-d", "forms-admin", "-c", "cluster-name", "-s", "select * from testing;"])
 
       allow_any_instance_of(Helpers) # rubocop:todo RSpec/AnyInstance
         .to receive_messages(aws_authenticated?: true, fetch_environment: "dev")
@@ -38,7 +38,7 @@ describe DataApi do
 
       expect(DataApiConnection)
         .to have_received(:new)
-        .with("dev", "forms-api", "cluster-name")
+        .with("dev", "forms-admin", "cluster-name")
         .at_least(:once)
     end
 

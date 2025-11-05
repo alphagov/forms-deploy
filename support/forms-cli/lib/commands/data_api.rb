@@ -39,8 +39,8 @@ private
       end
     end
 
-    unless %w[forms-api forms-admin forms-runner].include? @options[:database]
-      puts "database must be either 'forms-api', 'forms-admin' or 'forms-runner'".red
+    unless %w[forms-admin forms-runner].include? @options[:database]
+      puts "database must be either 'forms-admin' or 'forms-runner'".red
       return false
     end
 
@@ -56,14 +56,14 @@ private
       Run in a authorized shell using gds-cli or aws-vault.
 
       Example:
-      gds aws forms-dev-support -- forms data_api --database forms-api --cluster aurora-v2-cluster-dev --statement 'select * from forms;'\n\n"
+      gds aws forms-dev-support -- forms data_api --database forms-admin --cluster aurora-v2-cluster-dev --statement 'select * from forms;'\n\n"
 
       opts.on("-h", "--help", "Prints help") do
         puts opts
         exit
       end
 
-      opts.on("-dDATABASE", "--database=DATABASE", "[Mandatory] database to query, forms-api forms-admin") do |database|
+      opts.on("-dDATABASE", "--database=DATABASE", "[Mandatory] database to query, forms-runner forms-admin") do |database|
         @options[:database] = database
       end
 
