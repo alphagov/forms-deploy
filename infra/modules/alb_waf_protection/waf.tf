@@ -68,15 +68,19 @@ resource "aws_cloudwatch_log_subscription_filter" "waf_alb_csls_log_subscription
   destination_arn = "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
 }
 
+module "cribl_well_known" {
+  source = "../well-known/cribl"
+}
+
 resource "aws_cloudwatch_log_subscription_filter" "via_cribl_to_splunk" {
   name = "via-cribl-to-splunk"
 
   log_group_name = aws_cloudwatch_log_group.waf_alb_log_group.name
 
   filter_pattern  = ""
-  destination_arn = var.log_to_splunk_settings.kinesis_destination_arn
+  destination_arn = module.cribl_well_known.kinesis_log_destination_arns["eu-west-2"]
   distribution    = "ByLogStream"
-  role_arn        = var.log_to_splunk_settings.kinesis_subscription_role_arn
+  role_arn        = var.kinesis_subscription_role_arn
 }
 
 moved {

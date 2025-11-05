@@ -491,6 +491,10 @@ resource "aws_cloudwatch_log_subscription_filter" "waf_csls_log_subscription" {
   destination_arn = "arn:aws:logs:us-east-1:885513274347:destination:csls_cw_logs_destination_prodpython"
 }
 
+module "cribl_well_known" {
+  source = "../well-known/cribl"
+}
+
 resource "aws_cloudwatch_log_subscription_filter" "waf" {
   provider = aws.us-east-1
 
@@ -499,9 +503,9 @@ resource "aws_cloudwatch_log_subscription_filter" "waf" {
   log_group_name = aws_cloudwatch_log_group.waf.name
 
   filter_pattern  = ""
-  destination_arn = var.log_to_splunk_settings.kinesis_destination_arn_us_east_1
+  destination_arn = module.cribl_well_known.kinesis_log_destination_arns["us-east-1"]
   distribution    = "ByLogStream"
-  role_arn        = var.log_to_splunk_settings.kinesis_subscription_role_arn
+  role_arn        = var.kinesis_subscription_role_arn
 }
 
 moved {
