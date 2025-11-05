@@ -42,7 +42,6 @@ module Helpers
     domain = DOMAINS.fetch environment
     subdomain = {
       "admin" => "admin.",
-      "api" => "api.",
       "product-page" => "",
       "runner" => "submit.",
     }.fetch app
