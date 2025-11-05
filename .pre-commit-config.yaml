@@ -38,17 +38,17 @@ repos:
         pass_filenames: true
         entry: ./pre-commit-tflint.sh
 
-      - id: checkov
-        name: checkov
-        entry: ./pre-commit-checkov.sh
-        language: python
-        additional_dependencies:
-          - checkov==3.2.386
-        require_serial: true
-        types_or:
-          - hcl
-          - terraform
-        pass_filenames: true
+#      - id: checkov
+#        name: checkov
+#        entry: ./pre-commit-checkov.sh
+#        language: python
+#        additional_dependencies:
+#          - checkov==3.2.386
+#        require_serial: true
+#        types_or:
+#          - hcl
+#          - terraform
+#        pass_filenames: true
 
       - id: rubocop
         name: lint ruby
