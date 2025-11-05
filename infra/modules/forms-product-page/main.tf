@@ -26,6 +26,8 @@ module "ecs_service" {
   alb_listener_arn             = var.alb_listener_arn
   ecs_cluster_arn              = var.ecs_cluster_arn
   cloudfront_secret            = var.cloudfront_secret
+  log_to_splunk_settings       = var.log_to_splunk_settings
+
   scaling_rules = {
     min_capacity                                = var.min_capacity
     max_capacity                                = var.max_capacity
