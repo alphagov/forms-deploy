@@ -10,14 +10,6 @@ def admin_db
                 end
 end
 
-def api_db
-  @api_db ||= if ENV["FORMS_ENV"] == "local"
-                PG.connect(ENV["DATABASE_URL"], dbname: "forms_api_development")
-              else
-                raise "forms-api database connection no longer available"
-              end
-end
-
 def format_sql_literal(obj)
   if obj.is_a? String
     "'#{obj}'"
