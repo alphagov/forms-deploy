@@ -69,15 +69,17 @@ data "aws_iam_policy_document" "access_logs_policy" {
 module "cyber_s3_log_shipping" {
   count = var.send_access_logs_to_cyber ? 1 : 0
 
-  source  = "../cyber_s3_log_shipping"
-  s3_name = aws_s3_bucket.access_logs.id
+  source       = "../cyber_s3_log_shipping"
+  s3_name      = aws_s3_bucket.access_logs.id
+  enable_cribl = var.enable_cribl
 }
 
 data "aws_iam_policy_document" "access_logs_combined_policy" {
   source_policy_documents = flatten([
     [data.aws_iam_policy_document.access_logs_policy.json],
     var.extra_bucket_policies,
-    var.send_access_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
+    var.send_access_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : [],
+    var.send_access_logs_to_cyber && var.enable_cribl ? [module.cyber_s3_log_shipping[0].cribl_s3_policy] : []
   ])
 }
 

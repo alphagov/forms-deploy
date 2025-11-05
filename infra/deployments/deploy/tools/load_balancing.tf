@@ -109,7 +109,7 @@ module "logs_bucket" {
   access_logging_enabled = true
   extra_bucket_policies = flatten([
     [data.aws_iam_policy_document.allow_logs.json],
-    var.send_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
+    var.send_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy, module.cyber_s3_log_shipping[0].cribl_s3_policy] : [],
   ])
 }
 

@@ -15,3 +15,9 @@ variable "extra_bucket_policies" {
   description = "Extra bucket policies to apply to this bucket. List of json policies"
   default     = []
 }
+
+variable "enable_cribl" {
+  type        = bool
+  description = "Whether to enable Cribl S3 event notifications and bucket access"
+  default     = true
+}
