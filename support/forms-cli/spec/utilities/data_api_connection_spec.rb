@@ -11,7 +11,7 @@ describe DataApiConnection do
     secrets_manager_mock = instance_double(Aws::SecretsManager::Client)
     allow(secrets_manager_mock)
       .to receive(:describe_secret)
-      .with(hash_including(secret_id: "data-api/dev/forms-api/rds-credentials"))
+      .with(hash_including(secret_id: "data-api/dev/forms-admin/rds-credentials"))
       .and_return(SecretsManagerFixtures.describe_secret)
 
     secrets_manager_mock
@@ -50,20 +50,20 @@ describe DataApiConnection do
   end
 
   it "set correct rds cluster arn and secret arn" do
-    described_class.new("dev", "forms-api", "cluster-name").execute_statement("select * from testing;")
+    described_class.new("dev", "forms-admin", "cluster-name").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
       .with(hash_including(
               resource_arn: "cluster-arn",
-              secret_arn: "arn:aws:secretsmanager:eu-west-2:123456789012:secret:data-api/dev/forms-api/rds-credentials-AbCdEf",
+              secret_arn: "arn:aws:secretsmanager:eu-west-2:123456789012:secret:data-api/dev/forms-admin/rds-credentials-AbCdEf",
             ))
       .at_least(:once)
   end
 
   context "when cluster is nil or empty" do
     it "uses the default cluster name" do
-      described_class.new("dev", "forms-api", nil).execute_statement("select * from testing;")
+      described_class.new("dev", "forms-admin", nil).execute_statement("select * from testing;")
 
       expect(rds_mock)
         .to have_received(:describe_db_clusters)
@@ -73,25 +73,25 @@ describe DataApiConnection do
   end
 
   it "database_name is correctly passed to secrets manager" do
-    described_class.new("dev", "forms-api", "cluster-name").execute_statement("select * from testing;")
+    described_class.new("dev", "forms-admin", "cluster-name").execute_statement("select * from testing;")
 
     expect(secrets_manager_mock)
       .to have_received(:describe_secret)
-      .with(hash_including(secret_id: "data-api/dev/forms-api/rds-credentials"))
+      .with(hash_including(secret_id: "data-api/dev/forms-admin/rds-credentials"))
       .at_least(:once)
   end
 
   it "database_name is correctly passed to data api" do
-    described_class.new("dev", "forms-api", "cluster-name").execute_statement("select * from testing;")
+    described_class.new("dev", "forms-admin", "cluster-name").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
-      .with(hash_including(database: "forms-api"))
+      .with(hash_including(database: "forms-admin"))
       .at_least(:once)
   end
 
   it "statement is correctly passed" do
-    described_class.new("dev", "forms-api", "cluster-name").execute_statement("select * from testing;")
+    described_class.new("dev", "forms-admin", "cluster-name").execute_statement("select * from testing;")
 
     expect(data_api_mock)
       .to have_received(:execute_statement)
@@ -100,7 +100,7 @@ describe DataApiConnection do
   end
 
   it "parses records returned into an array of hashes" do
-    response = described_class.new("dev", "forms-api", "cluster-name").execute_statement("select * from testing;")
+    response = described_class.new("dev", "forms-admin", "cluster-name").execute_statement("select * from testing;")
 
     expect(response.formatted_records).to eq('[{"id": 1, "name": "some-form"}]')
     expect(response.records).to eq([{ id: 1, name: "some-form" }])
@@ -111,7 +111,7 @@ describe DataApiConnection do
       secrets_manager_mock_no_secret = instance_double(Aws::SecretsManager::Client)
       allow(secrets_manager_mock_no_secret)
         .to receive(:describe_secret)
-        .with(hash_including(secret_id: "data-api/dev/forms-api/rds-credentials"))
+        .with(hash_including(secret_id: "data-api/dev/forms-admin/rds-credentials"))
         .and_raise(Aws::SecretsManager::Errors::ResourceNotFoundException.new("context", "Secret not found"))
 
       secrets_manager_mock_no_secret
@@ -125,8 +125,8 @@ describe DataApiConnection do
 
     it "raises an error about missing secret" do
       expect {
-        described_class.new("dev", "forms-api", "cluster-name").execute_statement("select * from testing;")
-      }.to raise_error(/Data API credential secret 'data-api\/dev\/forms-api\/rds-credentials' was not found/)
+        described_class.new("dev", "forms-admin", "cluster-name").execute_statement("select * from testing;")
+      }.to raise_error(/Data API credential secret 'data-api\/dev\/forms-admin\/rds-credentials' was not found/)
     end
   end
 end
