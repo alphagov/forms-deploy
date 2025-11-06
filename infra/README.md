@@ -64,7 +64,7 @@ In the unlikely event of needing to recreate an entire GOV.UK Forms environment 
 4. `forms/pipelines` to deploy the pipelines for the environment
 5. `forms/rds` to deploy the database needed for the applications
 6. `forms/redis` to deploy the Redis cache needed for the applications
-7. `forms/forms-{admin,api,product-page,runner}` to perform the first-time deployment of the applications. This is a manual step in the first instance because we need to supply a container image URI. After the first deployment, Terraform can look up the currently running container and maintain that image URI.
+7. `forms/forms-{admin,product-page,runner}` to perform the first-time deployment of the applications. This is a manual step in the first instance because we need to supply a container image URI. After the first deployment, Terraform can look up the currently running container and maintain that image URI.
 
 At this point the pipelines in the environment can be triggered which will deploy everything else.
 
@@ -74,7 +74,7 @@ To recreate the `deploy` environment, apply the following roots:
 2. `account` to ensure the account is configured correctly.
 3. `ecr` to create the ECR repositories that store the Docker images used by the ECS services in each environment.
 4. `coordination` to allow the `deploy` environment to coordinate the deployments of other environments.
-5. `forms-admin-pipeline`, `forms-api-pipeline` and `forms-runner-pipeline` to create the CodePipeline pipelines and CodeBuild projects.
+5. `forms-admin-pipeline` and `forms-runner-pipeline` to create the CodePipeline pipelines and CodeBuild projects.
 
 
 ### DNS For GOV.UK Forms

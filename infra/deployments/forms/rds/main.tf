@@ -5,7 +5,7 @@ variable "apply_immediately" {
 }
 
 module "rds" {
-  # this is the rds cluster for the forms-admin and forms-api databases
+  # this is the rds cluster for the forms-admin database
   source     = "../../../modules/rds"
   env_name   = var.environment_name
   identifier = var.environment_name
@@ -22,7 +22,6 @@ module "rds" {
 
   apps_list = {
     forms-admin = { username = "forms-admin-app" }
-    forms-api   = { username = "forms-api-app" }
   }
   database_identifier = "primary"
 }
