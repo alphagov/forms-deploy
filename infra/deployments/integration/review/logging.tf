@@ -4,3 +4,14 @@ resource "aws_cloudwatch_log_group" "review_apps" {
   name              = "/aws/ecs/review-apps"
   retention_in_days = 30
 }
+
+resource "aws_cloudwatch_log_subscription_filter" "via_cribl_to_splunk" {
+  name = "via-cribl-to-splunk"
+
+  log_group_name = aws_cloudwatch_log_group.review_apps.name
+
+  filter_pattern  = ""
+  destination_arn = data.terraform_remote_state.account.outputs.kinesis_destination_arn
+  distribution    = "ByLogStream"
+  role_arn        = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+}
