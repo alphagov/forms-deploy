@@ -92,7 +92,7 @@ To deploy the changes to dev, run the following command:
 gds aws forms-dev-admin -- make development forms/environment apply
 ```
 
-The error page will be accessible from the product pages, admin, api, and runner domains.
+The error page will be accessible from the product pages, admin and runner domains.
 
 For example
 

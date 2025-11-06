@@ -15,6 +15,5 @@ The network topology consists of a single public Application Load Balancer (ALB)
 A certificate is created via Amazon Certificate Manager (ACM) and attached to the ALB listener for the domain with alternate names to cover each of the sub-domains used by each of the three GOV.UK Forms applications and the product pages:
 - `[dev.|staging.]forms.service.gov.uk` -> domain
 - `admin[.dev|.staging].forms.service.gov.uk` -> forms-admin
-- `api[.dev|.staging].forms.service.gov.uk` -> forms-api
 - `submit[.dev|.staging].forms.service.gov.uk` -> forms-runner
 - `www[.dev|.staging].forms.service.gov.uk` -> product pages

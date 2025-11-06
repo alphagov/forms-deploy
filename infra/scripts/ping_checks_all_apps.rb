@@ -1,10 +1,10 @@
 # This script checks if our services are running by requesting the following
-# admin, submit, api urls in the dev and staging environments.
+# admin, submit urls in the dev and staging environments.
 
 require "net/http"
 
 environments = %w[dev stage]
-apps = %w[admin submit api]
+apps = %w[admin submit]
 
 environments.each do |environment|
   apps.each do |app|
