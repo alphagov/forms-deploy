@@ -22,18 +22,6 @@ data "terraform_remote_state" "forms_admin" {
   }
 }
 
-data "terraform_remote_state" "forms_api" {
-  backend = "s3"
-
-  config = {
-    key    = "forms_api.tfstate"
-    bucket = var.bucket
-    region = "eu-west-2"
-
-    use_lockfile = true
-  }
-}
-
 data "terraform_remote_state" "forms_runner" {
   backend = "s3"
 
