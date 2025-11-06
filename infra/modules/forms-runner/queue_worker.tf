@@ -118,8 +118,8 @@ resource "aws_security_group" "queue_worker" {
 }
 
 resource "aws_iam_role" "ecs_task_exec_role" {
-  name               = "${var.env_name}-${local.queue_worker_name}-ecs-task-exec"
-  description        = "Used by ECS to create forms-runner-queue-worker task"
+  name               = "${var.env_name}-${local.queue_worker_name}-ecs-task-execution"
+  description        = "Used by ECS to create ${local.queue_worker_name} task"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_exec_role_assume_role.json
 }
 
@@ -142,7 +142,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_exec_standard_policy" {
 }
 
 resource "aws_iam_policy" "ecs_task_exec_additional_policy" {
-  name   = "${var.env_name}-${local.queue_worker_name}-ecs-task-additional-policies"
+  name   = "${var.env_name}-${local.queue_worker_name}-ecs-task-execution-additional"
   policy = data.aws_iam_policy_document.queue_worker_ecs_task_exec_additional_policy.json
 }
 
