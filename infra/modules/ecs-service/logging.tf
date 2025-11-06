@@ -5,16 +5,6 @@ resource "aws_cloudwatch_log_group" "log" {
   retention_in_days = 30
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "csls_log_subscription" {
-  name            = "csls_log_subscription"
-  log_group_name  = aws_cloudwatch_log_group.log.name
-  filter_pattern  = "-\"deprecated\""
-  destination_arn = "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
-  depends_on = [
-    aws_cloudwatch_log_group.log
-  ]
-}
-
 resource "aws_cloudwatch_log_subscription_filter" "via_cribl_to_splunk" {
   count = (var.log_to_splunk_settings.kinesis_destination_arn != ""
   && var.log_to_splunk_settings.kinesis_subscription_role_arn != "") ? 1 : 0
