@@ -51,7 +51,7 @@ private
   end
 
   def log_group_name
-    "forms-#{app}-#{env}"
+    "/aws/ecs/forms-#{app}-#{env}"
   end
 
   def log_stream_name
