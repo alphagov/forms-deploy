@@ -666,6 +666,10 @@ data "aws_iam_policy_document" "eventbridge" {
   }
 }
 
+module "csls_well_known" {
+  source = "../well-known/csls"
+}
+
 data "aws_iam_policy_document" "cloudwatch_logging" {
   statement {
     actions = [
@@ -686,11 +690,8 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
     actions = [
       "logs:PutSubscriptionFilter",
     ]
-    resources = [
-      "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython",
-      "arn:aws:logs:us-east-1:885513274347:destination:csls_cw_logs_destination_prodpython",
-    ]
-    effect = "Allow"
+    resources = values(module.csls_well_known.cloudwatch_to_splunk_destination_arns)
+    effect    = "Allow"
   }
 
   statement {

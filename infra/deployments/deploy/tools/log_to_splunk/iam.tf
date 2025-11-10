@@ -4,7 +4,7 @@ resource "random_uuid" "external_id" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "cribl_ingest" {
-  name = "cribl-ingest"
+  name = module.cribl_well_known.cribl_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -25,7 +25,7 @@ resource "aws_iam_role" "cribl_ingest" {
   })
 
   tags = {
-    Name = "cribl-ingest"
+    Name = module.cribl_well_known.cribl_role_name
   }
 }
 
