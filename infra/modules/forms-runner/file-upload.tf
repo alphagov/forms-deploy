@@ -7,6 +7,8 @@ module "file_upload_bucket" {
   name               = local.file_upload_bucket_name
   versioning_enabled = false
 
+  send_access_logs_to_cyber = false # TODO: Only required until we migrate to Cribl for log shipping. CSLS doesn't accept access logs from this bucket
+
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
 
   # In order to use KMS for server side encryption we need to disable the defaul AES256 encyrption in the module
@@ -151,53 +153,21 @@ data "aws_iam_policy_document" "file_upload" {
   }
 }
 
-# Configure logging
-# We are not using CloudTrail because we cannot edit the existing trail
-# New trails are pricey
-module "file_upload_bucket_logs" {
-  source = "../secure-bucket"
-  name   = "${local.file_upload_bucket_name}-logs"
+// We need to remove the duplicate bucket resources created by the old secure-bucket module
+// As we are migrating to send logs through Cribl. Terraform won't be able to delete the buckets
+// as they have objects in them. These `removed` blocks tell Terraform to ignore these resources
+// when deleting.
+removed {
+  from = module.file_upload_bucket_logs.aws_s3_bucket.this
 
-  extra_bucket_policies = flatten([
-    [data.aws_iam_policy_document.file_upload_bucket_logs.json],
-    var.send_logs_to_cyber ? [module.s3_log_shipping[0].s3_policy] : []
-  ])
-}
-
-resource "aws_s3_bucket_logging" "file_upload" {
-  bucket = module.file_upload_bucket.name
-
-  target_bucket = module.file_upload_bucket_logs.name
-  target_prefix = "s3-access-logs"
-
-  target_object_key_format {
-    partitioned_prefix {
-      partition_date_source = "DeliveryTime"
-    }
+  lifecycle {
+    destroy = false
   }
 }
+removed {
+  from = module.file_upload_bucket_logs.module.access_logs_bucket.aws_s3_bucket.access_logs
 
-data "aws_iam_policy_document" "file_upload_bucket_logs" {
-  statement {
-    sid    = "S3ServerAccessLogsPolicy"
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["logging.s3.amazonaws.com"]
-    }
-    actions = [
-      "s3:PutObject",
-    ]
-    resources = ["arn:aws:s3:::${module.file_upload_bucket_logs.name}/*"]
+  lifecycle {
+    destroy = false
   }
-}
-
-
-# this is for csls log shipping
-module "s3_log_shipping" {
-  count = var.send_logs_to_cyber ? 1 : 0
-
-  source                     = "../cyber_s3_log_shipping"
-  s3_name                    = module.file_upload_bucket_logs.name
-  enable_bucket_notification = false
 }
