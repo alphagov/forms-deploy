@@ -4,7 +4,6 @@ locals {
   ]
   #The AWS managed account for the ALB, see: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/enable-access-logging.html
   aws_lb_account_id = "652711504416"
-
 }
 
 data "aws_route53_zone" "tools_domain_zone" {
