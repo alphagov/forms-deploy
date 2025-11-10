@@ -43,11 +43,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "access_logs_owner" {
-  count  = !var.send_access_logs_to_cyber ? 1 : 0
+  #checkov:skip=CKV2_AWS_65:BucketOwnerPreferred is required for Cribl to access files via cross-account access
   bucket = aws_s3_bucket.access_logs.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = var.send_access_logs_to_cyber ? "BucketOwnerPreferred" : "BucketOwnerEnforced"
   }
 }
 
@@ -69,15 +69,16 @@ data "aws_iam_policy_document" "access_logs_policy" {
 module "cyber_s3_log_shipping" {
   count = var.send_access_logs_to_cyber ? 1 : 0
 
-  source  = "../cyber_s3_log_shipping"
-  s3_name = aws_s3_bucket.access_logs.id
+  source      = "../cyber_s3_log_shipping"
+  s3_name     = aws_s3_bucket.access_logs.id
+  destination = var.access_log_shipping_destination
 }
 
 data "aws_iam_policy_document" "access_logs_combined_policy" {
   source_policy_documents = flatten([
     [data.aws_iam_policy_document.access_logs_policy.json],
     var.extra_bucket_policies,
-    var.send_access_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
+    var.send_access_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : [],
   ])
 }
 
