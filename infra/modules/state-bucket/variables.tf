@@ -13,8 +13,19 @@ variable "access_logging_enabled" {
 variable "send_access_logs_to_cyber" {
   type        = bool
   description = "Whether access logs should be sent to cyber"
-  default     = false
+  default     = true
   nullable    = false
+}
+
+variable "access_log_shipping_destination" {
+  type        = string
+  description = "The destination for log shipping. Valid values are 'cribl' or 'csls'."
+  default     = "cribl"
+
+  validation {
+    condition     = contains(["cribl", "csls"], var.access_log_shipping_destination)
+    error_message = "Invalid destination. Valid values are 'cribl' or 'csls'."
+  }
 }
 
 output "bucket_name" {
