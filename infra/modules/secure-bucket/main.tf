@@ -76,9 +76,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "owner" {
-  count  = !var.send_access_logs_to_cyber ? 1 : 0
   bucket = aws_s3_bucket.this.id
-
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
@@ -90,13 +88,10 @@ module "access_logs_bucket" {
 
   source = "../access-logs-bucket"
 
-  bucket_name               = "${var.name}-access-logs"
-  send_access_logs_to_cyber = var.send_access_logs_to_cyber
-}
+  bucket_name = "${var.name}-access-logs"
 
-moved {
-  from = module.s3_log_shipping_access_logs[0]
-  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].module.s3_log_shipping
+  send_access_logs_to_cyber       = var.send_access_logs_to_cyber
+  access_log_shipping_destination = var.access_log_shipping_destination
 }
 
 resource "aws_s3_bucket_logging" "this" {
@@ -111,34 +106,4 @@ resource "aws_s3_bucket_logging" "this" {
       partition_date_source = "DeliveryTime"
     }
   }
-}
-
-moved {
-  from = aws_s3_bucket_notification.access_logs_bucket_notification[0]
-  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
-}
-
-moved {
-  from = aws_s3_bucket.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket.access_logs
-}
-moved {
-  from = aws_s3_bucket_policy.access_logs_bucket_policy[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_policy.access_logs_bucket_policy
-}
-moved {
-  from = aws_s3_bucket_public_access_block.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_public_access_block.access_logs
-}
-moved {
-  from = aws_s3_bucket_versioning.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_versioning.access_logs
-}
-moved {
-  from = aws_s3_bucket_ownership_controls.access_logs_owner[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_ownership_controls.access_logs_owner[0]
-}
-moved {
-  from = aws_s3_bucket_server_side_encryption_configuration.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_server_side_encryption_configuration.access_logs
 }
