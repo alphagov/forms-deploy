@@ -18,14 +18,11 @@ jobs:
           # very likely that two commits involved will be inside the last 75
           fetch-depth: 75
 
-      - name: Determine Terraform version
-        id: determine-terraform-version
-        run: |
-          echo "TERRAFORM_VERSION=$(cat .terraform-version)" >> "$GITHUB_OUTPUT"
-
-      - uses: hashicorp/setup-terraform@v3
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
         with:
-          terraform_version: ${{steps.determine-terraform-version.outputs.TERRAFORM_VERSION}}
+          github_token: ${{ secrets.MISE_PAT }} # As this is a private repo, we can get API rate limit issues. Use a PAT to avoid this. (The token needs no special permissions.)
+          install_args: checkov terraform go:github.com/hashicorp/terraform-config-inspect tflint
 
       - name: Check Terraform style
         id: tf_fmt
@@ -105,44 +102,11 @@ jobs:
             fi
           done;
 
-      - uses: actions/cache/restore@v4
-        id: restore-terraform-config-inspect
-        with:
-          key: terraform-config-inspect
-          path: /usr/local/bin/terraform-config-inspect
-
-      ## We do NOT use Golang for development
-      ## It is purely needed to install a tool in this pipeline
-      - name: "Install Go ${{env.GO_VERSION}}"
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v6
-        with:
-          go-version: "${{env.GO_VERSION}}"
-
-      - name: "Install terraform-config-inspect"
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        run: |
-          go install "github.com/hashicorp/terraform-config-inspect@latest"
-
-          # Copy the binary to a known place in the path so that we have
-          # a consistent path for it, for caching purposes
-          cp "$(which terraform-config-inspect)" /usr/local/bin/terraform-config-inspect
-
-      - uses: actions/cache/save@v4
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        with:
-          key: ${{ steps.restore-terraform-config-inspect.outputs.cache-primary-key }}
-          path: /usr/local/bin/terraform-config-inspect
-
       - uses: actions/cache@v4
         name: Cache tflint plugin dir
         with:
           path: ~/.tflint.d/plugins
           key: tflint-${{ hashFiles('.tflint.hcl') }}
-
-      - uses: terraform-linters/setup-tflint@v6
-        with:
-          tflint_version: v0.52.0
 
       - name: Init tflint
         run: tflint --init
@@ -155,7 +119,5 @@ jobs:
           make tflint
 
       - name: Run Checkov against Terraform
-        uses: "docker://ghcr.io/bridgecrewio/checkov:3.2.386"
-        with:
-          entrypoint: checkov
-          args: "-d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download"
+        run: |
+          checkov -d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download
