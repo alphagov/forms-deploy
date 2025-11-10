@@ -111,7 +111,7 @@ resource "aws_s3_bucket_logging" "this" {
   bucket = aws_s3_bucket.this.id
 
   target_bucket = module.access_logs_bucket[0].bucket_id
-  target_prefix = "s3-access-logs"
+  target_prefix = "s3-access-logs/"
 
   target_object_key_format {
     partitioned_prefix {
