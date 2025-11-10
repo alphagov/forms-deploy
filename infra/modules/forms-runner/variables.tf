@@ -174,10 +174,10 @@ variable "queue_worker_capacity" {
   description = "Sets the desired number of tasks for the SolidQueue worker"
 }
 
-variable "enable_builtin_solidqueue_worker" {
-  type        = bool
-  description = "Whether to enable the built-in SolidQueue worker"
-  default     = true
+variable "disable_builtin_solidqueue_worker" {
+  type        = string
+  description = "Ensure the built-in SolidQueue worker is disabled"
+  default     = "true"
 }
 
 variable "cloudfront_secret" {
