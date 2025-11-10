@@ -263,7 +263,7 @@ clear-plugin-cache() {
         exit 1
     fi
     # Use find to safely delete all contents
-    find "${TF_PLUGIN_CACHE_DIR}" -mindepth 1 -exec rm -rf -- {} +
+    find "${TF_PLUGIN_CACHE_DIR}" -mindepth 1 -not -name ".gitkeep" -exec rm -rf -- {} +
 }
 
 case "${action}" in
