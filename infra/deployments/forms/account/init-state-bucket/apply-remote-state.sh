@@ -2,6 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+GIT_ROOT=$(git rev-parse --show-toplevel)
 
 configured_environments=()
 for f in "${SCRIPT_DIR}"/../tfvars/backends/*.tfvars; do
@@ -36,16 +37,15 @@ fi
 BUCKET_NAME=$(hcl2json "${VAR_FILE}" | jq -r '.bucket')
 
 export TF_DATA_DIR="${SCRIPT_DIR}/.terraform"
+export TF_PLUGIN_CACHE_DIR="${GIT_ROOT}/.terraform-plugin-cache"
 
 function terraform_init() {
     local terraform_directory="${1}"
     shift
-    echo -n "Terraform init..."
-    if terraform -chdir="${terraform_directory}" init -upgrade "${@}" &>/dev/null; then
-        echo " done"
+    if terraform -chdir="${terraform_directory}" init -upgrade "${@}"; then
         return 0
     fi
-    echo " failed, removing TF_DATA_DIR and retrying..."
+    echo "Terraform init failed, removing TF_DATA_DIR and retrying..."
     rm -rf "${TF_DATA_DIR}"
     terraform -chdir="${terraform_directory}" init -upgrade "${@}"
 }

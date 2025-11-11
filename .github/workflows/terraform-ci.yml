@@ -7,9 +7,12 @@ on:
 env:
   GO_VERSION: "1.21"
 jobs:
-  terraform-ci:
+  setup:
+    name: "Setup and build matrix"
     runs-on: ubuntu-latest
-    name: Run tests
+    outputs:
+      validation-matrix: ${{ steps.build-matrix.outputs.validation-matrix }}
+      has-terraform-changes: ${{ steps.check-changes.outputs.has-changes }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5.0.0
@@ -18,38 +21,44 @@ jobs:
           # very likely that two commits involved will be inside the last 75
           fetch-depth: 75
 
-      - name: Determine Terraform version
-        id: determine-terraform-version
-        run: |
-          echo "TERRAFORM_VERSION=$(cat .terraform-version)" >> "$GITHUB_OUTPUT"
-
-      - uses: hashicorp/setup-terraform@v3
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
         with:
-          terraform_version: ${{steps.determine-terraform-version.outputs.TERRAFORM_VERSION}}
+          github_token: ${{ secrets.MISE_PAT }} # As this is a private repo, we can get API rate limit issues. Use a PAT to avoid this. (The token needs no special permissions.)
+          install_args: go:github.com/hashicorp/terraform-config-inspect
 
-      - name: Check Terraform style
-        id: tf_fmt
-        run: |
-          terraform fmt -write=false -diff=true -list=true -recursive -check
-
-      - name: Validate Terraform syntax
+      - name: Check for Terraform changes
+        id: check-changes
         env:
           GIT_FROM: ${{github.event.pull_request.base.sha}}
           GIT_TO: ${{github.event.pull_request.head.sha}}
-          TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
         run: |
           set -e -u -o pipefail
-          mkdir "$TF_PLUGIN_CACHE_DIR"
           if [[ $(git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json" | wc -l) -eq 0 ]]; then
-            echo "No Terraform files have changed. Stopping";
-            exit 0
+            echo "No Terraform files have changed."
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Terraform files have changed."
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Build validation matrix
+        id: build-matrix
+        if: steps.check-changes.outputs.has-changes == 'true'
+        env:
+          GIT_FROM: ${{github.event.pull_request.base.sha}}
+          GIT_TO: ${{github.event.pull_request.head.sha}}
+        run: |
+          set -e -u -o pipefail
+
+          # Get modified directories
           git diff "${GIT_FROM}"..."${GIT_TO}" --name-only -- "*.tf" "*.tf.json" \
           | xargs dirname \
           | sort \
           | uniq \
           > modified-tf-dirs.txt
 
+          # Find all roots
           all_roots=$(find infra/deployments -type d \
             -mindepth 1 -maxdepth 2 \
             -not -path "*/tfvars" \
@@ -58,6 +67,8 @@ jobs:
             -not -path "infra/deployments/integration"
           )
 
+          # Build dependency graph and determine which roots need validation
+          validation_dirs=()
           for start in ${all_roots}; do
             echo "Inspecting ${start}"
             stack=("${start}")
@@ -97,52 +108,87 @@ jobs:
             matching_lines="$(comm -1 -2 modified-tf-dirs.txt "${start}/directories.txt")"
 
             if [[ -n "$matching_lines" ]]; then
-              echo "Requires validation"
-              terraform -chdir="${start}" init -backend=false || exit
-              terraform -chdir="${start}" validate
+              echo "✓ ${start} requires validation"
+              validation_dirs+=("${start}")
             else
-              echo "Does not require validation"
+              echo "✗ ${start} does not require validation"
             fi
-          done;
+          done
 
-      - uses: actions/cache/restore@v4
-        id: restore-terraform-config-inspect
+          # Convert to JSON array for matrix
+          if [[ "${#validation_dirs[@]}" -gt 0 ]]; then
+            validation_matrix=$(printf '%s\n' "${validation_dirs[@]}" | jq -Rnc '[inputs]')
+            echo "validation-matrix=${validation_matrix}" >> "$GITHUB_OUTPUT"
+            echo "Matrix: ${validation_matrix}"
+          else
+            echo "validation-matrix=[]" >> "$GITHUB_OUTPUT"
+            echo "No directories require validation"
+          fi
+
+  terraform-fmt:
+    name: "Terraform format check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
         with:
-          key: terraform-config-inspect
-          path: /usr/local/bin/terraform-config-inspect
+          github_token: ${{ secrets.MISE_PAT }}
+          install_args: terraform
 
-      ## We do NOT use Golang for development
-      ## It is purely needed to install a tool in this pipeline
-      - name: "Install Go ${{env.GO_VERSION}}"
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v6
-        with:
-          go-version: "${{env.GO_VERSION}}"
-
-      - name: "Install terraform-config-inspect"
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+      - name: Check Terraform style
         run: |
-          go install "github.com/hashicorp/terraform-config-inspect@latest"
+          terraform fmt -write=false -diff=true -list=true -recursive -check
 
-          # Copy the binary to a known place in the path so that we have
-          # a consistent path for it, for caching purposes
-          cp "$(which terraform-config-inspect)" /usr/local/bin/terraform-config-inspect
+  terraform-validate:
+    name: "Terraform validate"
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.has-terraform-changes == 'true' && needs.setup.outputs.validation-matrix != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: ${{ fromJSON(needs.setup.outputs.validation-matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
 
-      - uses: actions/cache/save@v4
-        if: steps.restore-terraform-config-inspect.outputs.cache-hit != 'true'
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
         with:
-          key: ${{ steps.restore-terraform-config-inspect.outputs.cache-primary-key }}
-          path: /usr/local/bin/terraform-config-inspect
+          github_token: ${{ secrets.MISE_PAT }}
+          install_args: terraform
+
+      - name: Validate ${{ matrix.directory }}
+        env:
+          TF_PLUGIN_CACHE_DIR: "${{ runner.temp }}/terraform_cache"
+        run: |
+          set -e -u -o pipefail
+          mkdir -p "$TF_PLUGIN_CACHE_DIR"
+          echo "Validating ${{ matrix.directory }}"
+          terraform -chdir="${{ matrix.directory }}" init -backend=false
+          terraform -chdir="${{ matrix.directory }}" validate
+
+  tflint:
+    name: "tflint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
+        with:
+          github_token: ${{ secrets.MISE_PAT }}
+          install_args: tflint
 
       - uses: actions/cache@v4
         name: Cache tflint plugin dir
         with:
           path: ~/.tflint.d/plugins
           key: tflint-${{ hashFiles('.tflint.hcl') }}
-
-      - uses: terraform-linters/setup-tflint@v6
-        with:
-          tflint_version: v0.52.0
 
       - name: Init tflint
         run: tflint --init
@@ -154,8 +200,28 @@ jobs:
         run: |
           make tflint
 
-      - name: Run Checkov against Terraform
-        uses: "docker://ghcr.io/bridgecrewio/checkov:3.2.386"
+  checkov:
+    name: "Checkov"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
         with:
-          entrypoint: checkov
-          args: "-d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download"
+          github_token: ${{ secrets.MISE_PAT }}
+          install_args: checkov
+
+      - name: Run Checkov against Terraform
+        run: |
+          checkov -d infra/ --external-checks-dir infra/checkov/ --framework terraform --quiet --skip-download
+
+  report:
+    # Required, for 'required PR status checks' on GitHub.
+    name: "Run tests"
+    runs-on: ubuntu-latest
+    needs: [terraform-fmt, terraform-validate, tflint, checkov]
+    steps:
+      - name: All checks passed
+        run: echo "All Terraform checks passed successfully."

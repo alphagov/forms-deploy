@@ -48,11 +48,11 @@ projects:
   dependency_paths:
   - infra/deployments/deploy/tools/**
   - infra/deployments/deploy/tools/log_to_splunk/**
+  - infra/modules/access-logs-bucket/**
   - infra/modules/acm-cert-with-dns-validation/**
   - infra/modules/all-accounts/**
   - infra/modules/code-build-build/**
   - infra/modules/code-build-docker-build/**
-  - infra/modules/cyber_s3_log_shipping/**
   - infra/modules/secure-bucket/**
   - infra/modules/users/**
 - path: infra/deployments/forms/account

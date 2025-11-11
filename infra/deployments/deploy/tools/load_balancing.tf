@@ -24,31 +24,10 @@ resource "aws_lb" "alb" {
   security_groups = [aws_security_group.alb.id]
 
   access_logs {
-    bucket  = module.logs_bucket.name
+    bucket  = module.logs_bucket.bucket_id
     prefix  = "deploy"
     enabled = true
   }
-}
-
-module "cyber_s3_log_shipping" {
-  count = var.send_logs_to_cyber ? 1 : 0
-
-  source  = "../../../modules/cyber_s3_log_shipping"
-  s3_name = module.logs_bucket.name
-}
-moved {
-  from = module.s3_log_shipping[0]
-  to   = module.cyber_s3_log_shipping[0].module.s3_log_shipping
-}
-
-moved {
-  from = aws_s3_bucket_notification.bucket_notification[0]
-  to   = module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
-}
-
-moved {
-  from = aws_s3_bucket_notification.bucket_notification
-  to   = aws_s3_bucket_notification.bucket_notification[0]
 }
 
 resource "aws_security_group" "alb" {
@@ -102,15 +81,54 @@ module "acm_certicate_with_validation" {
   subject_alternative_names = local.alb_certificate_sans
 }
 
-module "logs_bucket" {
-  source = "../../../modules/secure-bucket"
+locals {
+  access_logs_bucket_name = "govuk-forms-alb-logs-deploy"
+}
 
-  name                   = "govuk-forms-alb-logs-deploy"
-  access_logging_enabled = true
-  extra_bucket_policies = flatten([
-    [data.aws_iam_policy_document.allow_logs.json],
-    var.send_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
-  ])
+module "logs_bucket" {
+  source = "../../../modules/access-logs-bucket"
+
+  bucket_name               = local.access_logs_bucket_name
+  extra_bucket_policies     = [data.aws_iam_policy_document.allow_logs.json]
+  send_access_logs_to_cyber = var.send_logs_to_cyber
+}
+
+moved {
+  from = module.logs_bucket.aws_s3_bucket.this
+  to   = module.logs_bucket.aws_s3_bucket.access_logs
+}
+moved {
+  from = module.cyber_s3_log_shipping[0]
+  to   = module.logs_bucket.module.cyber_s3_log_shipping[0]
+}
+moved {
+  from = module.logs_bucket.aws_s3_bucket_ownership_controls.owner
+  to   = module.logs_bucket.aws_s3_bucket_ownership_controls.access_logs_owner
+}
+moved {
+  from = module.logs_bucket.aws_s3_bucket_policy.bucket_policy
+  to   = module.logs_bucket.aws_s3_bucket_policy.access_logs_bucket_policy
+}
+moved {
+  from = module.logs_bucket.aws_s3_bucket_public_access_block.this
+  to   = module.logs_bucket.aws_s3_bucket_public_access_block.access_logs
+}
+moved {
+  from = module.logs_bucket.aws_s3_bucket_server_side_encryption_configuration.this[0]
+  to   = module.logs_bucket.aws_s3_bucket_server_side_encryption_configuration.access_logs
+}
+moved {
+  from = module.logs_bucket.aws_s3_bucket_versioning.this
+  to   = module.logs_bucket.aws_s3_bucket_versioning.access_logs
+}
+
+removed {
+  // We don't need access logs for an access logs bucket. we'll clean up the dangling bucket later
+  // Terraform will struggle, as there will be objects in the bucket
+  from = module.logs_bucket.module.access_logs_bucket.aws_s3_bucket.access_logs
+  lifecycle {
+    destroy = false
+  }
 }
 
 data "aws_iam_policy_document" "allow_logs" {
@@ -121,7 +139,7 @@ data "aws_iam_policy_document" "allow_logs" {
     }
     actions = ["s3:PutObject"]
     resources = [
-      "arn:aws:s3:::${module.logs_bucket.name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+      "arn:aws:s3:::${local.access_logs_bucket_name}/deploy/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
     ]
   }
 }

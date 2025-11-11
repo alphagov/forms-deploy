@@ -1,4 +1,7 @@
 module "log_to_splunk" {
+  #checkov:skip=CKV_AWS_111:KMS key policies use resources=["*"] as they are scoped to the specific key when attached
+  #checkov:skip=CKV_AWS_356:KMS key policies use resources=["*"] as they are scoped to the specific key when attached
+  #checkov:skip=CKV_AWS_109:KMS key policies use resources=["*"] as they are scoped to the specific key when attached
   source = "./log_to_splunk"
 
   providers = {

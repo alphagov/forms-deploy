@@ -1,27 +1,3 @@
-variable "name" {
-  type = string
-}
-
-variable "extra_bucket_policies" {
-  type        = list(string)
-  description = "extra bucket policies to apply to this bucket. List of json policies"
-  default     = []
-}
-
-variable "access_logging_enabled" {
-  type        = bool
-  description = "Whether S3 bucket access logging should be enabled"
-  default     = false
-  nullable    = false
-}
-
-variable "send_access_logs_to_cyber" {
-  type        = bool
-  description = "Whether access logs should be sent to cyber"
-  default     = false
-  nullable    = false
-}
-
 resource "aws_s3_bucket" "this" {
   #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
   #checkov:skip=CKV_AWS_21:Versioning is enabled via aws_s3_bucket_versioning below
@@ -95,9 +71,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "owner" {
-  count  = !var.send_access_logs_to_cyber ? 1 : 0
   bucket = aws_s3_bucket.this.id
-
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
@@ -132,51 +106,16 @@ module "access_logs_bucket" {
   send_access_logs_to_cyber = var.send_access_logs_to_cyber
 }
 
-moved {
-  from = module.s3_log_shipping_access_logs[0]
-  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].module.s3_log_shipping
-}
-
 resource "aws_s3_bucket_logging" "this" {
   count  = var.access_logging_enabled ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
   target_bucket = module.access_logs_bucket[0].bucket_id
-  target_prefix = "s3-access-logs"
+  target_prefix = "s3-access-logs/"
 
   target_object_key_format {
     partitioned_prefix {
       partition_date_source = "DeliveryTime"
     }
   }
-}
-
-moved {
-  from = aws_s3_bucket_notification.access_logs_bucket_notification[0]
-  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
-}
-
-moved {
-  from = aws_s3_bucket.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket.access_logs
-}
-moved {
-  from = aws_s3_bucket_policy.access_logs_bucket_policy[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_policy.access_logs_bucket_policy
-}
-moved {
-  from = aws_s3_bucket_public_access_block.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_public_access_block.access_logs
-}
-moved {
-  from = aws_s3_bucket_versioning.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_versioning.access_logs
-}
-moved {
-  from = aws_s3_bucket_ownership_controls.access_logs_owner[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_ownership_controls.access_logs_owner[0]
-}
-moved {
-  from = aws_s3_bucket_server_side_encryption_configuration.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_server_side_encryption_configuration.access_logs
 }
