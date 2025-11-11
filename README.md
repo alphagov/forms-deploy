@@ -34,6 +34,17 @@ where
 > [!TIP]
 > Our `make` commands have tab completion! Source the tab completion script for your shell under `support/` (e.g. `support/makefile_completion.bash`) as part of your shell profile.
 
+## Tooling
+
+[mise-en-place](https://mise.jdx.dev/) can be used in this repository for tool management, in the same way as `rbenv` / `nvm` / `pyenv` etc.
+
+Tool versions are all configured in [.mise.toml](.mise.toml). After installing & configuring `mise`, you can install all tools at their specified versions with `mise install`.
+
+`mise` is also used in [GitHub actions workflows](.github/workflows/) for fetching tool versions. This allows us to configure versions in one single place, rather than having to remember to update
+version numbers in multiple files. It also makes it very easy to extract version numbers without manually parsing files.
+
+If you would prefer not to use `mise` locally, and are experiencing errors or strange behaviour when running scripts in this repository, ensure that you have installed the tools with the specific versions specified in `.mise.toml`.
+
 ## Common tasks
 
 #### Testing infrastructure changes with the deployer role (dev only)
