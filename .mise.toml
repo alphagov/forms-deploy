@@ -3,6 +3,7 @@ _.path = "support/forms-cli/bin"
 
 [tools]
 hcl2json = "0.6.8"
+infracost = "0.10.42"
 
 [settings]
 idiomatic_version_file_enable_tools = ["terraform", "ruby"]

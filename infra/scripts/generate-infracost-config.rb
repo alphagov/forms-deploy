@@ -10,6 +10,7 @@ class InfracostConfigGenerator
   ENVIRONMENTS = %w[dev staging production user-research].freeze
 
   def initialize
+    check_infracost_installed!
     @auto_config = get_auto_config
   end
 
@@ -35,6 +36,13 @@ class InfracostConfigGenerator
   end
 
 private
+
+  def check_infracost_installed!
+    return if system("which infracost > /dev/null 2>&1")
+
+    raise "Error: 'infracost' command not found. Please install infracost first.\n" \
+          "See: https://www.infracost.io/docs/#quick-start"
+  end
 
   def sort_project_arrays!(project)
     # Sort terraform_var_files array if it exists

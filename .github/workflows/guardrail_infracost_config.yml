@@ -20,16 +20,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
 
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
+        with:
+          install: false
+      - name: Fetch tool versions from mise
+        id: tool-versions
+        run: |
+          echo "infracost=$(mise current infracost)" >> "$GITHUB_OUTPUT"
+          echo "ruby=$(mise current ruby)" >> "$GITHUB_OUTPUT"
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
         with:
-          ruby-version: "3.2"
-
+          ruby-version: ${{ steps.tool-versions.outputs.ruby }}
       - name: Setup Infracost
         uses: infracost/actions/setup@e9d6e6cd65e168e76b0de50ff9957d2fe8bb1832 # v3.0.1
         with:
-          api-key: ${{ secrets.INFRACOST_API_KEY }} # @whi-tw's CI/CD token
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
           currency: GBP
+          version: ${{ steps.tool-versions.outputs.infracost }}
 
       - name: Generate infracost config and check for changes
         run: |
@@ -44,6 +54,7 @@ jobs:
             diff infracost.yml infracost-generated.yml || true
             echo ""
             echo "To fix this, run: ./infra/scripts/generate-infracost-config.rb -o infracost.yml"
+            echo "If this script does not fix this issue, ensure you are using the infracost version specified in .mise.toml"
             exit 1
           else
             echo "infracost.yml is up to date"
@@ -75,6 +86,15 @@ jobs:
           > \`\`\`
           > ./infra/scripts/generate-infracost-config.rb -o infracost.yml
           > \`\`\`
+
+          <details>
+          <summary>Potential reasons why you're seeing this message</summary>
+
+          - You've added / renamed a terraform root
+          - You've added / renamed a module, or used a module within a root for the first time
+          - Someone else previously merged infra changes but forgot to update \`infracost.yml\`
+          - Potentially version skew between the \`infracost\` version you're using and the one specified in \`.mise.toml\` (super unlikely)
+          </details>
 
           ${COMMENT_MARKER}
           EOF

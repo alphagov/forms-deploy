@@ -23,14 +23,26 @@ jobs:
     permissions:
       contents: read
       pull-requests: write # Required to post comments
-    env:
-      INFRACOST_CONFIG_FILE: infracost.yml
     steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          fetch-depth: 1
+      - name: Initialise mise
+        uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
+        with:
+          install: false
+      - name: Fetch infracost version from mise
+        id: infracost-version
+        run: |
+          infracost_version=$(mise current infracost)
+          echo "infracost-version=$infracost_version" >> "$GITHUB_OUTPUT"
       - name: Setup Infracost
         uses: infracost/actions/setup@e9d6e6cd65e168e76b0de50ff9957d2fe8bb1832 # v3.0.1
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
           currency: GBP
+          version: ${{ steps.infracost-version.outputs.infracost-version }}
 
       # Checkout the base branch of the pull request (e.g. main/master).
       - name: Checkout base branch
@@ -41,7 +53,7 @@ jobs:
       # Generate Infracost JSON file as the baseline.
       - name: Generate Infracost cost estimate baseline
         run: |
-          infracost breakdown --config-file "${INFRACOST_CONFIG_FILE}" \
+          infracost breakdown --config-file "infracost.yml" \
                               --format=json \
                               --out-file=/tmp/infracost-base.json \
                               --usage-file=infracost-usage.yml
@@ -55,7 +67,7 @@ jobs:
       # Generate an Infracost diff and save it to a JSON file.
       - name: Generate Infracost diff
         run: |
-          infracost diff --config-file "${INFRACOST_CONFIG_FILE}" \
+          infracost diff --config-file "infracost.yml" \
                           --format=json \
                           --compare-to=/tmp/infracost-base.json \
                           --out-file=/tmp/infracost.json \
