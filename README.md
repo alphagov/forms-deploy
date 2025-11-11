@@ -2,12 +2,12 @@
 > This is a private repository due to some concerns raised by GDS IA, see [Assurance Report Use of Github Actions v1.0](https://docs.google.com/document/d/1f-0x5tamO7QjVGivsmFQ5RK9MKM84FRH/).
 
 # forms-deploy
+
 `forms-deploy` composes and deploys the different components of GOV.UK Forms to create a full environment. The major components of the repository are
 
 - [Infrastructure](https://github.com/alphagov/forms-deploy/blob/main/infra/README.md)
 - [Local development](https://github.com/alphagov/forms-deploy/blob/main/local/README.md)
 - [Supporting scripts](https://github.com/alphagov/forms-deploy/tree/main/support)
-
 
 ## Table of contents
 
@@ -27,9 +27,9 @@ make $ACCOUNT $ROOT $ACTION
 
 where
 
-* `$ACCOUNT` is the name of the account you have assumed a role in (one of `deploy`, `development`, `staging`, and `production`)
-* `$ROOT` is a Terraform root module folder under `infra/deployments`. For example `forms/rds` or `deploy/ecr`.
-* `$ACTION` is the Terraform action you want to take. One of `plan`, `apply,` and `validate`.
+- `$ACCOUNT` is the name of the account you have assumed a role in (one of `deploy`, `development`, `staging`, and `production`)
+- `$ROOT` is a Terraform root module folder under `infra/deployments`. For example `forms/rds` or `deploy/ecr`.
+- `$ACTION` is the Terraform action you want to take. One of `plan`, `apply,` and `validate`.
 
 > [!TIP]
 > Our `make` commands have tab completion! Source the tab completion script for your shell under `support/` (e.g. `support/makefile_completion.bash`) as part of your shell profile.
@@ -41,6 +41,7 @@ where
 For testing Terraform operations in the same context as CI pipelines, admin engineers can assume the deployer role directly from their local machines. This functionality is only available for the **dev environment**.
 
 Use the deployer role for dev environment Terraform operations:
+
 ```bash
 # Test a plan operation
 gds aws forms-dev-admin -- make dev deployer_role forms/forms-admin plan
@@ -50,6 +51,7 @@ gds aws forms-dev-admin -- make dev deployer_role forms/rds apply
 ```
 
 > [!IMPORTANT]
+>
 > - The deployer role functionality is **only available for the dev environment**
 > - The deployer role credentials are only active within the make command - they don't persist in your shell session
 > - You must include `deployer_role` in the same command as your Terraform action
@@ -82,15 +84,19 @@ This will find the latest version of Terraform and all of the Terraform provider
 - Production: https://submit.forms.service.gov.uk/
 
 ### Architecture decision records
+
 https://github.com/alphagov/forms/tree/main/ADR
 
 [^1]: This should not be confused with `forms-cli` at `support/forms-cli`. `forms-cli` is intended for working with a deployment of GOV.UK Forms, not deploying it.
 
 ### Path to production for apps
+
 https://github.com/alphagov/forms-team/wiki/Deploying-to-production%3a-applications
 
 ### Path to production for Terraform
+
 https://github.com/alphagov/forms-team/wiki/Deploying-to-production%3a-Terraform
 
 ### Pipeline Visualiser
+
 https://pipelines.tools.forms.service.gov.uk/
