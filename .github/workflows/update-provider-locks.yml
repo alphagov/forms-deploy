@@ -26,7 +26,7 @@ jobs:
           token: ${{ github.actor == 'dependabot[bot]' && secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
-        uses: actions/setup-go@c0137caad775660c0844396c52da96e560aba63d # v6.0.0
+        uses: actions/setup-go@faf52423ec0d44c58f68e83b614bfcd99dded66f # v6.0.0
 
       - name: Install tfupdate
         run: |
