@@ -3,6 +3,8 @@ module "error_page_bucket" {
 
   access_logging_enabled = true
   name                   = "govuk-forms-${var.env_name}-error-page"
+
+  send_access_logs_to_cyber = false
 }
 
 locals {
