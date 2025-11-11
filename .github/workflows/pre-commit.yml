@@ -31,7 +31,7 @@ jobs:
       pull-requests: write
     steps:
       - name: 📦 Check Out Repository Code
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e # v5.0.0
         with:
           fetch-depth: 0
 
