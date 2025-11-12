@@ -5,7 +5,5 @@ codestar_connection_arn = "arn:aws:codeconnections:eu-west-2:842676007477:connec
 deploy_account_id       = "711966560482"
 send_logs_to_cyber      = false
 
-pentester_email_addresses         = []
-pentester_cidr_ranges             = []
-kinesis_destination_arn           = "arn:aws:logs:eu-west-2:711966560482:destination:kinesis-log-destination"
-kinesis_destination_arn_us_east_1 = "arn:aws:logs:us-east-1:711966560482:destination:kinesis-log-destination-us-east-1"
+pentester_email_addresses = []
+pentester_cidr_ranges     = []

@@ -19,8 +19,8 @@ module "cloudfront" {
     aws_nat_gateway.nat_c.public_ip,
   ]
 
-  subject_alternative_names = local.subject_alternative_names[var.env_name]
-  log_to_splunk_settings    = var.log_to_splunk_settings
+  subject_alternative_names     = local.subject_alternative_names[var.env_name]
+  kinesis_subscription_role_arn = var.kinesis_subscription_role_arn
 
 }
 
