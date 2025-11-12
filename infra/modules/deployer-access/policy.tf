@@ -666,10 +666,6 @@ data "aws_iam_policy_document" "eventbridge" {
   }
 }
 
-module "csls_well_known" {
-  source = "../well-known/csls"
-}
-
 data "aws_iam_policy_document" "cloudwatch_logging" {
   statement {
     actions = [
@@ -683,15 +679,6 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
       "arn:aws:logs:us-east-1:${var.account_id}:log-group:*",
     ]
     effect = "Allow"
-  }
-
-  statement {
-    sid = "PutSubscriptionFilterForCSLS"
-    actions = [
-      "logs:PutSubscriptionFilter",
-    ]
-    resources = values(module.csls_well_known.cloudwatch_to_splunk_destination_arns)
-    effect    = "Allow"
   }
 
   statement {

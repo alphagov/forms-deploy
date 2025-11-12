@@ -90,8 +90,7 @@ module "access_logs_bucket" {
 
   bucket_name = "${var.name}-access-logs"
 
-  send_access_logs_to_cyber       = var.send_access_logs_to_cyber
-  access_log_shipping_destination = var.access_log_shipping_destination
+  send_access_logs_to_cyber = var.send_access_logs_to_cyber
 }
 
 resource "aws_s3_bucket_logging" "this" {

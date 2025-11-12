@@ -68,9 +68,8 @@ data "aws_iam_policy_document" "access_logs_policy" {
 module "cyber_s3_log_shipping" {
   count = var.send_access_logs_to_cyber ? 1 : 0
 
-  source      = "../cyber_s3_log_shipping"
-  s3_name     = aws_s3_bucket.access_logs.id
-  destination = var.access_log_shipping_destination
+  source  = "../cyber_s3_log_shipping"
+  s3_name = aws_s3_bucket.access_logs.id
 }
 
 data "aws_iam_policy_document" "access_logs_combined_policy" {
