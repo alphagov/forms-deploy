@@ -15,7 +15,7 @@ jobs:
       has-terraform-changes: ${{ steps.check-changes.outputs.has-changes }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e # v5.0.0
         with:
           # Grab the last 75 commits. Later on we need to a git diff, and it's
           # very likely that two commits involved will be inside the last 75
@@ -130,7 +130,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e # v5.0.0
 
       - name: Initialise mise
         uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
@@ -153,7 +153,7 @@ jobs:
         directory: ${{ fromJSON(needs.setup.outputs.validation-matrix) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e # v5.0.0
 
       - name: Initialise mise
         uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e # v5.0.0
 
       - name: Initialise mise
         uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
@@ -205,7 +205,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e # v5.0.0
 
       - name: Initialise mise
         uses: jdx/mise-action@be3be2260bc02bc3fbf94c5e2fed8b7964baf074 # v3.4.0
