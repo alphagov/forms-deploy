@@ -682,18 +682,6 @@ data "aws_iam_policy_document" "cloudwatch_logging" {
   }
 
   statement {
-    sid = "PutSubscriptionFilterForCSLS"
-    actions = [
-      "logs:PutSubscriptionFilter",
-    ]
-    resources = [
-      "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython",
-      "arn:aws:logs:us-east-1:885513274347:destination:csls_cw_logs_destination_prodpython",
-    ]
-    effect = "Allow"
-  }
-
-  statement {
     sid = "ManageSubscriptionFilterForCRIBL"
     actions = [
       "logs:*SubscriptionFilter"

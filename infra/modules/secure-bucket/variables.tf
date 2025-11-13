@@ -24,13 +24,13 @@ variable "versioning_enabled" {
 variable "access_logging_enabled" {
   type        = bool
   description = "Whether S3 bucket access logging should be enabled"
-  default     = false
+  default     = true
   nullable    = false
 }
 
 variable "send_access_logs_to_cyber" {
   type        = bool
   description = "Whether access logs should be sent to cyber"
-  default     = false
+  default     = true
   nullable    = false
 }

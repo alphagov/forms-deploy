@@ -7,8 +7,6 @@ module "file_upload_bucket" {
   name               = local.file_upload_bucket_name
   versioning_enabled = false
 
-  send_access_logs_to_cyber = false # TODO: Only required until we migrate to Cribl for log shipping. CSLS doesn't accept access logs from this bucket
-
   extra_bucket_policies = [data.aws_iam_policy_document.forms_runner_file_upload.json]
 
   # In order to use KMS for server side encryption we need to disable the defaul AES256 encyrption in the module

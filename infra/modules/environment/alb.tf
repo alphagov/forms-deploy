@@ -39,47 +39,6 @@ locals {
   aws_lb_account_id = "652711504416"
 }
 
-# Move resources from old secure-bucket structure to new access-logs-bucket structure
-moved {
-  from = module.logs_bucket.aws_s3_bucket.this
-  to   = module.logs_bucket.aws_s3_bucket.access_logs
-}
-
-moved {
-  from = module.logs_bucket.aws_s3_bucket_public_access_block.this
-  to   = module.logs_bucket.aws_s3_bucket_public_access_block.access_logs
-}
-
-moved {
-  from = module.logs_bucket.aws_s3_bucket_versioning.this
-  to   = module.logs_bucket.aws_s3_bucket_versioning.access_logs
-}
-
-moved {
-  from = module.logs_bucket.aws_s3_bucket_server_side_encryption_configuration.this[0]
-  to   = module.logs_bucket.aws_s3_bucket_server_side_encryption_configuration.access_logs
-}
-
-moved {
-  from = module.logs_bucket.aws_s3_bucket_ownership_controls.owner[0]
-  to   = module.logs_bucket.aws_s3_bucket_ownership_controls.access_logs_owner[0]
-}
-
-moved {
-  from = module.logs_bucket.aws_s3_bucket_policy.bucket_policy
-  to   = module.logs_bucket.aws_s3_bucket_policy.access_logs_bucket_policy
-}
-
-moved {
-  from = module.logs_bucket.aws_s3_bucket_lifecycle_configuration.access_logs[0]
-  to   = module.logs_bucket.aws_s3_bucket_lifecycle_configuration.access_logs
-}
-
-moved {
-  from = module.cyber_s3_log_shipping[0]
-  to   = module.logs_bucket.module.cyber_s3_log_shipping[0]
-}
-
 module "logs_bucket" {
   source = "../access-logs-bucket"
 
@@ -100,16 +59,6 @@ data "aws_iam_policy_document" "allow_logs" {
       "arn:aws:s3:::${module.logs_bucket.bucket_name}/forms-internal/AWSLogs/${local.account_id}/*"
     ]
   }
-}
-
-moved {
-  from = aws_s3_bucket_notification.bucket_notification[0]
-  to   = module.logs_bucket.module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
-}
-
-moved {
-  from = aws_s3_bucket_notification.bucket_notification
-  to   = aws_s3_bucket_notification.bucket_notification[0]
 }
 
 resource "aws_lb" "alb" {

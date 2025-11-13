@@ -1,7 +1,6 @@
 resource "aws_s3_bucket" "access_logs" {
   #checkov:skip=CKV_AWS_18:Access logs buckets themselves don't need access logging (infinite recursion)
   #checkov:skip=CKV_AWS_19:Bucket encrypted with AES256 using separate resource below
-  #checkov:skip=CKV_AWS_21:Versioning is disabled - not needed for access logs
   #checkov:skip=CKV_AWS_144:No need for cross-region replication for access logs
   #checkov:skip=CKV_AWS_145:S3-SSE mode using AES256 is sufficient for access logs.
   #checkov:skip=CKV2_AWS_6:Access logs buckets have public access blocked via separate resource
@@ -28,7 +27,7 @@ resource "aws_s3_bucket_versioning" "access_logs" {
   bucket = aws_s3_bucket.access_logs.id
 
   versioning_configuration {
-    status = "Suspended" # As we've migrated some existing buckets, we can't go from Enabled to Disabled. Instead, create with `Suspended`.
+    status = "Enabled"
   }
 }
 
@@ -43,11 +42,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "access_logs" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "access_logs_owner" {
-  count  = !var.send_access_logs_to_cyber ? 1 : 0
+  #checkov:skip=CKV2_AWS_65:BucketOwnerPreferred is required for Cribl to access files via cross-account access
   bucket = aws_s3_bucket.access_logs.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = var.send_access_logs_to_cyber ? "BucketOwnerPreferred" : "BucketOwnerEnforced"
   }
 }
 
@@ -77,7 +76,7 @@ data "aws_iam_policy_document" "access_logs_combined_policy" {
   source_policy_documents = flatten([
     [data.aws_iam_policy_document.access_logs_policy.json],
     var.extra_bucket_policies,
-    var.send_access_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : []
+    var.send_access_logs_to_cyber ? [module.cyber_s3_log_shipping[0].s3_policy] : [],
   ])
 }
 
@@ -90,7 +89,32 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
   bucket = aws_s3_bucket.access_logs.id
 
   rule {
-    id     = "access_logs_lifecycle"
+    id     = "access_logs_lifecycle_processed"
+    status = "Enabled"
+
+    filter {
+      tag {
+        key   = "ProcessedByCribl"
+        value = "Yes"
+      }
+    }
+
+    transition {
+      days          = 0
+      storage_class = "DEEP_ARCHIVE"
+    }
+
+    expiration {
+      days = 365
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 1
+    }
+  }
+
+  rule {
+    id     = "access_logs_lifecycle_default"
     status = "Enabled"
 
     filter {}
@@ -111,6 +135,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
 
     expiration {
       days = 365
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 14
     }
   }
 }

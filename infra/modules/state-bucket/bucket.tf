@@ -18,9 +18,7 @@ resource "aws_s3_bucket_public_access_block" "state" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "owner" {
-  count  = !var.send_access_logs_to_cyber ? 1 : 0
   bucket = aws_s3_bucket.state.id
-
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
@@ -81,11 +79,6 @@ module "access_logs_bucket" {
   send_access_logs_to_cyber = var.send_access_logs_to_cyber
 }
 
-moved {
-  from = module.s3_log_shipping_access_logs[0]
-  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].module.s3_log_shipping
-}
-
 resource "aws_s3_bucket_logging" "state" {
   count  = var.access_logging_enabled ? 1 : 0
   bucket = aws_s3_bucket.state.id
@@ -98,34 +91,4 @@ resource "aws_s3_bucket_logging" "state" {
       partition_date_source = "DeliveryTime"
     }
   }
-}
-
-moved {
-  from = aws_s3_bucket_notification.access_logs_bucket_notification[0]
-  to   = module.access_logs_bucket[0].module.cyber_s3_log_shipping[0].aws_s3_bucket_notification.s3_bucket_notification
-}
-
-moved {
-  from = aws_s3_bucket.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket.access_logs
-}
-moved {
-  from = aws_s3_bucket_policy.access_logs_bucket_policy[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_policy.access_logs_bucket_policy
-}
-moved {
-  from = aws_s3_bucket_public_access_block.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_public_access_block.access_logs
-}
-moved {
-  from = aws_s3_bucket_versioning.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_versioning.access_logs
-}
-moved {
-  from = aws_s3_bucket_ownership_controls.access_logs_owner[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_ownership_controls.access_logs_owner[0]
-}
-moved {
-  from = aws_s3_bucket_server_side_encryption_configuration.access_logs[0]
-  to   = module.access_logs_bucket[0].aws_s3_bucket_server_side_encryption_configuration.access_logs
 }
