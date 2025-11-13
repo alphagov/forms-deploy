@@ -18,15 +18,20 @@ locals {
   task_container_definition = {
     name                   = var.application,
     environment            = var.environment_variables,
+    mountPoints            = [],
     secrets                = var.secrets,
     image                  = local.image
     essential              = true,
     readonlyRootFilesystem = var.readonly_root_filesystem
     portMappings = [
       {
+        hostPort      = var.container_port,
+        protocol      = "tcp",
         containerPort = var.container_port,
       }
     ],
+    systemControls = [],
+    volumesFrom    = [],
     logConfiguration = {
       logDriver = "awslogs",
       options = {
@@ -69,6 +74,8 @@ resource "aws_ecs_task_definition" "task" {
   memory                   = var.memory
 
   network_mode = "awsvpc"
+
+  enable_fault_injection = false
 }
 
 resource "aws_ecs_service" "app_service" {
