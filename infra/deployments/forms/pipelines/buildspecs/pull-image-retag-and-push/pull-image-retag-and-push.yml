@@ -27,17 +27,13 @@ phases:
   build:
     commands:
       - |
-         if [ "${RETAG}" = false ]; then
-            echo "Retagging has been disabled"
-         else
-            docker pull "${CURRENT_IMAGE_URI}"
-            docker tag "${CURRENT_IMAGE_URI}" "${PROMOTED_IMAGE_URI}"
-            docker push "${PROMOTED_IMAGE_URI}"
+         docker pull "${CURRENT_IMAGE_URI}"
+         docker tag "${CURRENT_IMAGE_URI}" "${PROMOTED_IMAGE_URI}"
+         docker push "${PROMOTED_IMAGE_URI}"
 
-            if [ "${APPLY_LATEST_TAG}" = true ]; then
-               echo "Applying 'latest' tag to ${CURRENT_IMAGE_URI}"
-               LATEST_IMAGE_URI="${CONTAINER_REGISTRY}/${IMAGE_NAME}:latest"
-               docker tag "${CURRENT_IMAGE_URI}" "${LATEST_IMAGE_URI}"
-               docker push "${LATEST_IMAGE_URI}"
-            fi
+         if [ "${APPLY_LATEST_TAG}" = true ]; then
+            echo "Applying 'latest' tag to ${CURRENT_IMAGE_URI}"
+            LATEST_IMAGE_URI="${CONTAINER_REGISTRY}/${IMAGE_NAME}:latest"
+            docker tag "${CURRENT_IMAGE_URI}" "${LATEST_IMAGE_URI}"
+            docker push "${LATEST_IMAGE_URI}"
          fi

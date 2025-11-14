@@ -276,27 +276,30 @@ resource "aws_codepipeline" "deploy_admin_container" {
     }
   }
 
-  stage {
-    name = "promote-image"
+  dynamic "stage" {
+    for_each = var.deploy-forms-admin-container.retag_image_on_success ? [1] : []
+    content {
+      name = "promote-image"
 
-    action {
-      name            = "pull-image-retag-and-push"
-      category        = "Build"
-      run_order       = "1"
-      owner           = "AWS"
-      provider        = "CodeBuild"
-      version         = "1"
-      input_artifacts = ["buildspec_source"]
-      # we need an input according to AWS, even if we don't... so we'll use this one, but not use it.
-      configuration = {
-        ProjectName = module.pull_forms_admin_image_retag_and_push.name
-        EnvironmentVariables = jsonencode([
-          {
-            name  = "CONTAINER_IMAGE_URI"
-            value = "#{variables.container_image_uri}"
-            type  = "PLAINTEXT"
-          }
-        ])
+      action {
+        name            = "pull-image-retag-and-push"
+        category        = "Build"
+        run_order       = "1"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        input_artifacts = ["buildspec_source"]
+        # we need an input according to AWS, even if we don't... so we'll use this one, but not use it.
+        configuration = {
+          ProjectName = module.pull_forms_admin_image_retag_and_push[0].name
+          EnvironmentVariables = jsonencode([
+            {
+              name  = "CONTAINER_IMAGE_URI"
+              value = "#{variables.container_image_uri}"
+              type  = "PLAINTEXT"
+            }
+          ])
+        }
       }
     }
   }
@@ -363,6 +366,7 @@ module "deploy_admin_end_to_end_tests" {
 }
 
 module "pull_forms_admin_image_retag_and_push" {
+  count                      = var.deploy-forms-admin-container.retag_image_on_success ? 1 : 0
   source                     = "../../../modules/code-build-build"
   project_name               = "pull_forms_admin_image_retag_and_push_${var.environment_name}"
   project_description        = "Pull the latest image, retag it, and push it back up"
@@ -374,9 +378,12 @@ module "pull_forms_admin_image_retag_and_push" {
   environment_variables = {
     IMAGE_NAME           = "forms-admin-deploy"
     AWS_ACCOUNT_ID       = var.deploy_account_id
-    RETAG                = var.deploy-forms-admin-container.retag_image_on_success
     RETAG_SED_EXPRESSION = var.deploy-forms-admin-container.retagging_sed_expression
     APPLY_LATEST_TAG     = var.deploy-forms-admin-container.apply_latest_tag
     CONTAINER_REGISTRY   = var.container_registry
   }
+}
+moved {
+  from = module.pull_forms_admin_image_retag_and_push
+  to   = module.pull_forms_admin_image_retag_and_push[0]
 }
