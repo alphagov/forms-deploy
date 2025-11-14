@@ -202,7 +202,7 @@ module "ecs_service" {
     },
     {
       name  = "DISABLE_SOLID_QUEUE",
-      value = var.disable_builtin_solidqueue_worker
+      value = tostring(var.disable_builtin_solidqueue_worker)
     }
   ]
 
