@@ -190,7 +190,7 @@ resource "aws_codepipeline" "deploy_runner_container" {
       version          = "1"
       run_order        = 1
       input_artifacts  = ["buildspec_source"]
-      output_artifacts = ["image-defs-json"]
+      output_artifacts = ["forms-runner-image-defs-json"]
       configuration = {
         ProjectName = module.generate_forms_runner_container_image_defs.name
         EnvironmentVariables = jsonencode([
@@ -209,16 +209,59 @@ resource "aws_codepipeline" "deploy_runner_container" {
     }
 
     action {
-      name            = "deploy-new-task-definition"
+      name             = "generate-queue-worker-image-definitions"
+      namespace        = "QueueWorkerBuild"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["buildspec_source"]
+      output_artifacts = ["queue-worker-image-defs-json"]
+      configuration = {
+        ProjectName = module.generate_forms_runner_container_image_defs.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "IMAGE_URI"
+            value = "#{variables.container_image_uri}"
+            type  = "PLAINTEXT"
+          },
+          {
+            name  = "APP_NAME"
+            value = "forms-runner-queue-worker"
+            type  = "PLAINTEXT"
+          }
+        ])
+      }
+    }
+
+    action {
+      name            = "deploy-new-forms-runner-task-definition"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "ECS"
       version         = "1"
       run_order       = 2
-      input_artifacts = ["image-defs-json"]
+      input_artifacts = ["forms-runner-image-defs-json"]
       configuration = {
         ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
         ServiceName       = "forms-runner"
+        DeploymentTimeout = 15
+        FileName          = "image-defs.json"
+      }
+    }
+
+    action {
+      name            = "deploy-new-queue-worker-task-definition"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      version         = "1"
+      run_order       = 2
+      input_artifacts = ["queue-worker-image-defs-json"]
+      configuration = {
+        ClusterName       = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_name
+        ServiceName       = "forms-runner-queue-worker"
         DeploymentTimeout = 15
         FileName          = "image-defs.json"
       }
@@ -260,7 +303,7 @@ resource "aws_codepipeline" "deploy_runner_container" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["image-defs-json"]
+      input_artifacts = ["forms-runner-image-defs-json"]
       configuration = {
         ProjectName = module.pull_forms_runner_image_retag_and_push.name
       }
