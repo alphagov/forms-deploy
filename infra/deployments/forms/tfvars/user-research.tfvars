@@ -63,8 +63,8 @@ forms_runner_settings = {
   ses_submission_email_reply_to_email_address                     = "no-reply@research.forms.service.gov.uk"
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = false
   allow_human_readonly_roles_to_assume_submissions_to_runner_role = false
-  queue_worker_capacity                                           = 1
-  disable_builtin_solidqueue_worker                               = "true"
+  queue_worker_capacity                                           = 0
+  disable_builtin_solidqueue_worker                               = false
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = false

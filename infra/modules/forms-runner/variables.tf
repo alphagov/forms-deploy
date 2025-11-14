@@ -175,9 +175,9 @@ variable "queue_worker_capacity" {
 }
 
 variable "disable_builtin_solidqueue_worker" {
-  type        = string
+  type        = bool
   description = "Ensure the built-in SolidQueue worker is disabled"
-  default     = "true"
+  default     = true
 }
 
 variable "cloudfront_secret" {
