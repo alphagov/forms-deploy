@@ -10,6 +10,7 @@ locals {
     {
       name    = local.queue_worker_name,
       command = ["bin/jobs"]
+      image   = module.ecs_service.task_container_definition.image,
 
       healthCheck = {
         command     = ["CMD-SHELL", "test -f tmp/solidqueue_healthcheck || exit 1"]
