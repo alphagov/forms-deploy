@@ -1,5 +1,5 @@
 locals {
-  queue_worker_name = "forms-runner-queue-worker"
+  queue_worker_name = "${module.ecs_service.task_container_definition.name}-queue-worker"
 
   # Take the exported task container definition and override some parts of it
   # Note: the ENV variables aren't overridden because it's not possible to cherry pick them
@@ -10,6 +10,7 @@ locals {
     {
       name    = local.queue_worker_name,
       command = ["bin/jobs"]
+      image   = module.ecs_service.task_container_definition.image,
 
       healthCheck = {
         command     = ["CMD-SHELL", "test -f tmp/solidqueue_healthcheck || exit 1"]
