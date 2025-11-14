@@ -303,9 +303,17 @@ resource "aws_codepipeline" "deploy_runner_container" {
       owner           = "AWS"
       provider        = "CodeBuild"
       version         = "1"
-      input_artifacts = ["forms-runner-image-defs-json"]
+      input_artifacts = ["buildspec_source"]
+      # we need an input according to AWS, even if we don't... so we'll use this one, but not use it.
       configuration = {
         ProjectName = module.pull_forms_runner_image_retag_and_push.name
+        EnvironmentVariables = jsonencode([
+          {
+            name  = "CONTAINER_IMAGE_URI"
+            value = "#{variables.container_image_uri}"
+            type  = "PLAINTEXT"
+          }
+        ])
       }
     }
   }

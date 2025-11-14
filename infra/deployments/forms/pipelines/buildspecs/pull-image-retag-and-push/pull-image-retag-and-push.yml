@@ -5,12 +5,12 @@ env:
 phases:
   pre_build:
     commands:
-      - echo "Logging to Amazon ECR repository ${CONTAINER_REGISTRY}"
+      - echo "Log in to Amazon ECR repository ${CONTAINER_REGISTRY}"
       - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${CONTAINER_REGISTRY}"
 
       - |
-         CURRENT_IMAGE_URI="$(jq -r '.[0].imageUri' image-defs.json)"
-         CURRENT_IMAGE_TAG="$(jq -r '.[0].imageUri' image-defs.json | cut -d':' -f2)"
+         CURRENT_IMAGE_URI="${CONTAINER_IMAGE_URI}"
+         CURRENT_IMAGE_TAG="$(echo "${CONTAINER_IMAGE_URI}" | cut -d':' -f2)"
          echo "Current image uri is ${CURRENT_IMAGE_URI}"
          echo "Current image tag is ${CURRENT_IMAGE_TAG}"
          echo "Using sed expression ${RETAG_SED_EXPRESSION}"
