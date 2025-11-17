@@ -56,6 +56,9 @@ resource "aws_ecs_task_definition" "pipeline_visualiser_task" {
   cpu                      = "256"
   memory                   = "512"
 
+  // As we deploy the pipeline visualiser versions with codepipeline, terraform is not the source of truth for the task definition image. Therefore use `track_latest` to avoid drift.
+  track_latest = true
+
   network_mode = "awsvpc"
 }
 
@@ -64,7 +67,7 @@ resource "aws_ecs_service" "pipeline_visualiser_service" {
   #checkov:skip=CKV2_FORMS_AWS_2:We don't autoscale this service
   name                               = "pipeline-visualiser"
   cluster                            = aws_ecs_cluster.tools.arn
-  task_definition                    = aws_ecs_task_definition.pipeline_visualiser_task.id
+  task_definition                    = aws_ecs_task_definition.pipeline_visualiser_task.arn
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
   desired_count                      = 1

@@ -1,7 +1,5 @@
 locals {
-  rds_port            = 5432
-  timestamp           = timestamp()
-  timestamp_sanitized = replace(local.timestamp, "/[- TZ:]/", "")
+  rds_port = 5432
 }
 
 data "aws_ssm_parameter" "database_password" {
@@ -53,7 +51,7 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
   preferred_maintenance_window = var.rds_maintenance_window
 
   skip_final_snapshot       = false
-  final_snapshot_identifier = "forms-${var.identifier}-${local.timestamp_sanitized}"
+  final_snapshot_identifier = "forms-${var.identifier}-final-snapshot"
   copy_tags_to_snapshot     = true
   storage_encrypted         = true
   backup_retention_period   = var.backup_retention_period
