@@ -61,6 +61,12 @@ resource "aws_ecs_task_definition" "queue_worker" {
   memory                   = module.ecs_service.task_definition.memory
   network_mode             = "awsvpc"
 
+  // As this terraform module doesn't deal with updating app code, we see drift every time it's applied because the image is changed elsewhere.
+  // Enable tracking of the latest ACTIVE task definition revision rather than the one in terraform state, so that changes to the image / task revision outside of terraform are picked up and not considered drift.
+  // This is only necessary when terraform itself is not the source of truth for the task definition image.
+  // See: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition#track_latest-1
+  track_latest = true
+
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "ARM64"
