@@ -38,6 +38,9 @@ resource "aws_ecs_task_definition" "cron_job" {
     operating_system_family = "LINUX"
     cpu_architecture        = "ARM64"
   }
+
+  // As we deploy the forms-admin versions with codepipeline, terraform is not the source of truth for the task definition image. Therefore use `track_latest` to avoid drift.
+  track_latest = true
 }
 
 ##
@@ -59,7 +62,11 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
   role_arn = aws_iam_role.ecs_cron_scheduler[0].arn
 
   ecs_target {
-    task_definition_arn = aws_ecs_task_definition.cron_job[0].arn
+    # Construct ARN without revision number to always use the latest revision
+    # Format: arn:aws:ecs:region:account:task-definition/family
+    # This ensures the EventBridge rule always uses the latest revision
+    # which is updated by the forms-admin deployment pipeline
+    task_definition_arn = "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/${aws_ecs_task_definition.cron_job[0].family}"
     launch_type         = "FARGATE"
     platform_version    = "1.4.0"
 
