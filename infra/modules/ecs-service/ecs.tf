@@ -18,15 +18,20 @@ locals {
   task_container_definition = {
     name                   = var.application,
     environment            = var.environment_variables,
+    mountPoints            = [],
     secrets                = var.secrets,
     image                  = local.image
     essential              = true,
     readonlyRootFilesystem = var.readonly_root_filesystem
     portMappings = [
       {
+        hostPort      = var.container_port,
+        protocol      = "tcp",
         containerPort = var.container_port,
       }
     ],
+    systemControls = [],
+    volumesFrom    = [],
     logConfiguration = {
       logDriver = "awslogs",
       options = {
@@ -50,6 +55,12 @@ resource "aws_ecs_task_definition" "task" {
   family                = local.task_definition_family
   container_definitions = jsonencode([local.task_container_definition])
 
+  // As this terraform module doesn't deal with updating app code, we see drift every time it's applied because the image is changed elsewhere.
+  // Enable tracking of the latest ACTIVE task definition revision rather than the one in terraform state, so that changes to the image / task revision outside of terraform are picked up and not considered drift.
+  // This is only necessary when terraform itself is not the source of truth for the task definition image.
+  // See: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition#track_latest-1
+  track_latest = true
+
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "ARM64"
@@ -63,6 +74,8 @@ resource "aws_ecs_task_definition" "task" {
   memory                   = var.memory
 
   network_mode = "awsvpc"
+
+  enable_fault_injection = false
 }
 
 resource "aws_ecs_service" "app_service" {
