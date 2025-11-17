@@ -82,7 +82,7 @@ resource "aws_ecs_service" "app_service" {
   #checkov:skip=CKV_AWS_332:We don't want to target "LATEST" and get a surprise when a new version is released.
   name                               = var.application
   cluster                            = var.ecs_cluster_arn
-  task_definition                    = "${aws_ecs_task_definition.task.family}:${aws_ecs_task_definition.task.revision}"
+  task_definition                    = aws_ecs_task_definition.task.arn
   deployment_maximum_percent         = "200"
   deployment_minimum_healthy_percent = "100"
 
