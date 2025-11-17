@@ -25,7 +25,7 @@ locals {
         options = {
           awslogs-group         = module.ecs_service.application_log_group_name,
           awslogs-region        = "eu-west-2",
-          awslogs-stream-prefix = "forms-runner-${var.env_name}-queue-worker"
+          awslogs-stream-prefix = module.ecs_service.application_log_stream_prefix
         }
       }
 
