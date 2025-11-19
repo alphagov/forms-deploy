@@ -194,7 +194,7 @@ resource "aws_wafv2_rule_group" "public_form_body_size_limits" {
               uri_path {}
             }
             # /:mode/:form_id/:form_slug/:page_slug
-            regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+/\\d+$"
+            regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+/[a-zA-Z\\d]+$"
             text_transformation {
               priority = 1
               type     = "LOWERCASE"
@@ -243,7 +243,7 @@ resource "aws_wafv2_rule_group" "public_form_body_size_limits" {
               uri_path {}
             }
             # /:mode/:form_id/:form_slug/:page_slug(/:answer_index)
-            regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+/\\d+(?:/\\d+)?$"
+            regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+/[a-zA-Z\\d]+(?:/\\d+)?$"
             text_transformation {
               priority = 1
               type     = "LOWERCASE"
