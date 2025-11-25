@@ -3,6 +3,8 @@ phases:
   install:
     commands:
       - set -e
+      - id
+      - echo $HOME
       - ruby -v
       - bundle -v
       - bundle install
