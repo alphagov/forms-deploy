@@ -26,6 +26,10 @@ resource "aws_cloudwatch_event_target" "send_pipeline_failure_to_slack" {
         "textType": "client-markdown",
         "title": ":octagonal_sign: FAILURE: <pipeline>",
         "description": "Pipeline <pipeline> failed at <time> in the ${var.account_name} account",
+        "keywords": [
+          "${var.account_name}",
+          "<pipeline>"
+        ],
         "nextSteps": [
             "https://eu-west-2.console.aws.amazon.com/codesuite/codepipeline/pipelines/<pipeline>/view?region=eu-west-2"
         ]
