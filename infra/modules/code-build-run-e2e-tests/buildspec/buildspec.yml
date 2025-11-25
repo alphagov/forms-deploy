@@ -8,4 +8,38 @@ phases:
       - bundle install
   build:
     commands:
-      - bundle exec rspec spec/end_to_end
+      - bundle exec rspec --format documentation --format documentation --out rspec.out spec/end_to_end
+  post_build:
+    commands:
+      # send logs to EventBridge
+      - set -e
+      - if [ "${CODEBUILD_BUILD_SUCCEEDING}" = "1" ]; then exit; fi # don't send event if tests passed
+      - |
+        ruby -rjson <<- 'RUBY'
+        build_arn = ENV["CODEBUILD_BUILD_ARN"]
+        # arn looks like arn:aws:codebuild:<region>:<account>:build/<project_name>:<uuid>
+        project_name = build_arn.split("/")[1].split(":")[0]
+
+        initiator = ENV["CODEBUILD_INITIATOR"]
+        pipeline = initiator.delete_prefix("codepipeline/")
+
+        events = JSON.generate([{
+          DetailType: "CodeBuild run-e2e-tests RSpec output",
+          Source: "custom",
+          Resources: [
+            build_arn,
+          ],
+          Detail: JSON.generate({
+            "build-status" => ENV["CODEBUILD_BUILD_SUCCEEDING"] == "1" ? "SUCCEEDED" : "FAILED",
+            "project-name" => project_name,
+            "build-id" => build_arn,
+            "additional-information" => {
+              "pipeline" => pipeline,
+              "rspec-output" => File.read("rspec.out"),
+            },
+          }),
+        }])
+
+        File.write("events.json", events)
+        RUBY
+      - aws events put-events --entries "$(cat events.json)"
