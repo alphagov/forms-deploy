@@ -99,13 +99,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
       }
     }
 
-    transition {
-      days          = 0
-      storage_class = "DEEP_ARCHIVE"
-    }
-
     expiration {
-      days = 365
+      days = 30
     }
 
     noncurrent_version_expiration {
@@ -123,18 +118,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
       days_after_initiation = 7
     }
 
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
-    }
-
-    transition {
-      days          = 90
-      storage_class = "GLACIER_IR"
-    }
-
     expiration {
-      days = 365
+      days = 180
     }
 
     noncurrent_version_expiration {
