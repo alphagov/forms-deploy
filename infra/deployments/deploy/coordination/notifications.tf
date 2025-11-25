@@ -157,9 +157,10 @@ module "slack_notifications" {
   source   = "./slack-notifications"
 
 
-  account_id                    = each.value
-  account_name                  = each.key
-  dead_letter_queue_arn         = aws_sqs_queue.event_bridge_dlq.arn
-  pipeline_completion_topic_arn = local.chatbot_deployments_channel_sns_topic
-  pipeline_failure_topic_arn    = each.key == "development" ? local.chatbot_deployments_channel_sns_topic : local.chatbot_alerts_channel_sns_topic
+  account_id                      = each.value
+  account_name                    = each.key
+  dead_letter_queue_arn           = aws_sqs_queue.event_bridge_dlq.arn
+  pipeline_completion_topic_arn   = local.chatbot_deployments_channel_sns_topic
+  pipeline_failure_topic_arn      = each.key == "development" ? local.chatbot_deployments_channel_sns_topic : local.chatbot_alerts_channel_sns_topic
+  run_e2e_tests_failure_topic_arn = each.key == "development" ? local.chatbot_deployments_channel_sns_topic : local.chatbot_alerts_channel_sns_topic
 }
