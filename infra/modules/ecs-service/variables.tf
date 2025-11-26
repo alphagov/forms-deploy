@@ -178,10 +178,7 @@ variable "cloudfront_secret" {
   sensitive   = true
 }
 
-variable "log_to_splunk_settings" {
-  description = "The arns for cloudwatch log destination for kinesis and role that is allowed to subscribe to to the kinesis stream. We create the destination in the `deploy` account"
-  type = object({
-    kinesis_destination_arn       = string
-    kinesis_subscription_role_arn = string
-  })
+variable "kinesis_subscription_role_arn" {
+  description = "The arn of the role that is allowed to subscribe to the kinesis stream"
+  type        = string
 }

@@ -13,14 +13,6 @@ output "codeconnection_arn" {
   value       = "arn:aws:codeconnections:eu-west-2:842676007477:connection/ccaca0a3-ee66-45dc-89ab-aa3f3339020a"
 }
 
-output "kinesis_destination_arn" {
-  value = var.kinesis_destination_arn
-}
-
-output "kinesis_destination_arn_us_east_1" {
-  value = var.kinesis_destination_arn_us_east_1
-}
-
 output "kinesis_subscription_role_arn" {
-  value = aws_iam_role.kinesis_subscription_role[0].arn
+  value = aws_iam_role.kinesis_subscription_role.arn
 }

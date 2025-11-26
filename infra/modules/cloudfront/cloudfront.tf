@@ -33,14 +33,14 @@ data "aws_cloudfront_origin_request_policy" "all_viewer" {
 }
 
 module "cloudfront_waf_protection" {
-  source                  = "../cloudfront_waf_protection"
-  environment_name        = var.env_name
-  ips_to_block            = var.ips_to_block
-  ip_rate_limit           = var.ip_rate_limit
-  nat_gateway_egress_ips  = var.nat_gateway_egress_ips
-  send_logs_to_cyber      = var.send_logs_to_cyber
-  rate_limit_bypass_cidrs = var.rate_limit_bypass_cidrs
-  log_to_splunk_settings  = var.log_to_splunk_settings
+  source                        = "../cloudfront_waf_protection"
+  environment_name              = var.env_name
+  ips_to_block                  = var.ips_to_block
+  ip_rate_limit                 = var.ip_rate_limit
+  nat_gateway_egress_ips        = var.nat_gateway_egress_ips
+  send_logs_to_cyber            = var.send_logs_to_cyber
+  rate_limit_bypass_cidrs       = var.rate_limit_bypass_cidrs
+  kinesis_subscription_role_arn = var.kinesis_subscription_role_arn
 
   providers = {
     aws           = aws

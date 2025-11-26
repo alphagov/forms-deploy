@@ -1,6 +1,8 @@
-resource "aws_iam_role" "kinesis_subscription_role" {
-  count = var.kinesis_destination_arn != "" ? 1 : 0
+module "cribl_well_known" {
+  source = "../../../modules/well-known/cribl"
+}
 
+resource "aws_iam_role" "kinesis_subscription_role" {
   name = "cloudwatch-kinesis-subscription-role"
   assume_role_policy = jsonencode({
     "Version" : "2008-10-17",
@@ -16,9 +18,12 @@ resource "aws_iam_role" "kinesis_subscription_role" {
   })
 }
 
-resource "aws_iam_policy" "kinesis_subscription_policy" {
-  count = var.kinesis_destination_arn != "" ? 1 : 0
+moved {
+  from = aws_iam_role.kinesis_subscription_role[0]
+  to   = aws_iam_role.kinesis_subscription_role
+}
 
+resource "aws_iam_policy" "kinesis_subscription_policy" {
   name        = "cloudwatch-kinesis-subscription-policy"
   path        = "/"
   description = "IAM policy for CloudWatch Logs to put records to Kinesis on another account."
@@ -33,7 +38,7 @@ resource "aws_iam_policy" "kinesis_subscription_policy" {
           "logs:PutLogEvents",
           "logs:PutSubscriptionFilter"
         ],
-        "Resource" : var.kinesis_destination_arn
+        "Resource" : module.cribl_well_known.kinesis_destination_arns["eu-west-2"]
       },
       {
         "Effect" : "Allow",
@@ -41,15 +46,21 @@ resource "aws_iam_policy" "kinesis_subscription_policy" {
           "logs:PutLogEvents",
           "logs:PutSubscriptionFilter"
         ],
-        "Resource" : var.kinesis_destination_arn_us_east_1
+        "Resource" : module.cribl_well_known.kinesis_destination_arns["us-east-1"]
       }
     ]
   })
 }
+moved {
+  from = aws_iam_policy.kinesis_subscription_policy[0]
+  to   = aws_iam_policy.kinesis_subscription_policy
+}
 
 resource "aws_iam_role_policy_attachment" "kinesis_subscription_role_policy_attachment" {
-  count = var.kinesis_destination_arn != "" ? 1 : 0
-
-  role       = aws_iam_role.kinesis_subscription_role[count.index].name
-  policy_arn = aws_iam_policy.kinesis_subscription_policy[count.index].arn
+  role       = aws_iam_role.kinesis_subscription_role.name
+  policy_arn = aws_iam_policy.kinesis_subscription_policy.arn
+}
+moved {
+  from = aws_iam_role_policy_attachment.kinesis_subscription_role_policy_attachment[0]
+  to   = aws_iam_role_policy_attachment.kinesis_subscription_role_policy_attachment
 }

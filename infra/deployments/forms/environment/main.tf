@@ -9,12 +9,8 @@ module "environment" {
     aws.us-east-1 = aws.us-east-1
   }
 
-  send_logs_to_cyber = var.send_logs_to_cyber
-  log_to_splunk_settings = {
-    kinesis_destination_arn           = data.terraform_remote_state.account.outputs.kinesis_destination_arn
-    kinesis_destination_arn_us_east_1 = data.terraform_remote_state.account.outputs.kinesis_destination_arn_us_east_1
-    kinesis_subscription_role_arn     = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
-  }
+  send_logs_to_cyber            = var.send_logs_to_cyber
+  kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
 
   ips_to_block            = var.environmental_settings.ips_to_block
   rate_limit_bypass_cidrs = var.environmental_settings.rate_limit_bypass_cidrs

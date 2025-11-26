@@ -69,6 +69,7 @@ projects:
   - infra/modules/deployer-access/**
   - infra/modules/engineer-access/**
   - infra/modules/users/**
+  - infra/modules/well-known/cribl/**
 - path: infra/deployments/forms/account
   name: forms-account-production
   skip_autodetect: true
@@ -83,6 +84,7 @@ projects:
   - infra/modules/deployer-access/**
   - infra/modules/engineer-access/**
   - infra/modules/users/**
+  - infra/modules/well-known/cribl/**
 - path: infra/deployments/forms/account
   name: forms-account-staging
   skip_autodetect: true
@@ -97,6 +99,7 @@ projects:
   - infra/modules/deployer-access/**
   - infra/modules/engineer-access/**
   - infra/modules/users/**
+  - infra/modules/well-known/cribl/**
 - path: infra/deployments/forms/account
   name: forms-account-user-research
   skip_autodetect: true
@@ -111,6 +114,7 @@ projects:
   - infra/modules/deployer-access/**
   - infra/modules/engineer-access/**
   - infra/modules/users/**
+  - infra/modules/well-known/cribl/**
 - path: infra/deployments/forms/auth0
   name: forms-auth0-dev
   skip_autodetect: true
@@ -636,6 +640,7 @@ projects:
   - infra/modules/common-values/**
   - infra/modules/gds-user-role/**
   - infra/modules/users/**
+  - infra/modules/well-known/cribl/**
 - path: infra/deployments/integration/review
   name: integration-review
   skip_autodetect: true
@@ -652,3 +657,4 @@ projects:
   - infra/deployments/integration/tfvars/backend/integration.tfvars
   - infra/deployments/integration/tfvars/integration.tfvars
   - infra/modules/cloudfront/**
+  - infra/modules/well-known/cribl/**

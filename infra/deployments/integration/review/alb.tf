@@ -11,8 +11,5 @@ module "alb" {
     aws.us-east-1 = aws.us-east-1
   }
 
-  log_to_splunk_settings = {
-    kinesis_destination_arn       = data.terraform_remote_state.account.outputs.kinesis_destination_arn
-    kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
-  }
+  kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
 }
