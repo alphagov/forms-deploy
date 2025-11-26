@@ -24,6 +24,7 @@ module "support_role" {
   role_suffix = "support"
   iam_policy_arns = flatten([
     "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    aws_iam_policy.access_aws_support_centre.arn,
     aws_iam_policy.manage_parameter_store.arn,
     aws_iam_policy.manage_dashboards.arn,
     aws_iam_policy.manage_deployments.arn,

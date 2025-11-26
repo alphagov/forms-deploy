@@ -4,6 +4,22 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
+resource "aws_iam_policy" "access_aws_support_centre" {
+  name        = "manage-aws-support-cases"
+  path        = "/"
+  description = "Permission to create, manage and resolve cases in the AWS Support Center"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["support:*"]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_policy" "manage_deployments" {
   #checkov:skip=CKV_AWS_111: allow write access without constraint when needed
   #checkov:skip=CKV_AWS_290: allow write access without constraint when needed
