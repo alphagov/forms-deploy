@@ -89,8 +89,8 @@ resource "aws_cloudwatch_event_rule" "codepipeline_events" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "forward_codepipeline_events_to_deploy_defualt_bus" {
-  target_id = "${var.environment_name}-codepipeline-events-to-deploy-defualt-bus"
+resource "aws_cloudwatch_event_target" "forward_codepipeline_events_to_deploy_default_bus" {
+  target_id = "${var.environment_name}-codepipeline-events-to-deploy-default-bus"
   rule      = aws_cloudwatch_event_rule.codepipeline_events.name
   role_arn  = aws_iam_role.eventbridge_actor.arn
   arn       = "arn:aws:events:eu-west-2:${var.deploy_account_id}:event-bus/default"
