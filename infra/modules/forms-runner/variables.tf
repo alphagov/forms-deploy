@@ -31,6 +31,11 @@ variable "admin_base_url" {
   description = "The url for redirecting to forms-admin"
 }
 
+variable "product_page_base_url" {
+  type        = string
+  description = "The url for redirecting to forms-product-page"
+}
+
 variable "api_base_url" {
   type        = string
   description = "The url for connecting to forms-admin"

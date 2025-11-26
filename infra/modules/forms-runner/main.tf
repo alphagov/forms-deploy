@@ -137,6 +137,10 @@ module "ecs_service" {
       value = var.admin_base_url
     },
     {
+      name  = "SETTINGS__FORMS_PRODUCT_PAGE__BASE_URL",
+      value = var.product_page_base_url
+    },
+    {
       name  = "RACK_ENV",
       value = "production"
     },
