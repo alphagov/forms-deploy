@@ -125,7 +125,7 @@ tf_init() {
     fi
 
     if [ "${deployment}" == "integration" ]; then
-        extra_args="${extra_args} -backend-config ${deployments_dir}/integration/tfvars/backend/integration.tfvars"
+        extra_args="${extra_args} -backend-config ${deployments_dir}/integration/tfvars/backends/integration.tfvars"
     fi
 
     # shellcheck disable=SC2086
@@ -168,7 +168,7 @@ _build_terraform_vars_file_args() {
     "integration")
         tfvars_files+=(
             "${integration_tfvars_dir}/integration.tfvars"
-            "${integration_tfvars_dir}/backend/integration.tfvars"
+            "${integration_tfvars_dir}/backends/integration.tfvars"
         )
         ;;
     esac
