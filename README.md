@@ -1,6 +1,3 @@
-> [!NOTE]
-> This is a private repository due to some concerns raised by GDS IA, see [Assurance Report Use of Github Actions v1.0](https://docs.google.com/document/d/1f-0x5tamO7QjVGivsmFQ5RK9MKM84FRH/).
-
 # forms-deploy
 
 `forms-deploy` composes and deploys the different components of GOV.UK Forms to create a full environment. The major components of the repository are
