@@ -45,7 +45,7 @@ variable "codestar_connection_arn" {
 variable "service_role_arn" {
   type        = string
   description = "The arn of the service role to use"
-  default     = null
+  nullable    = false
 }
 
 variable "auth0_user_name_parameter_name" {
