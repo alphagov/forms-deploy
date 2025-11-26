@@ -118,11 +118,11 @@ resource "aws_iam_policy" "query_rds_with_data_api" {
   })
 }
 
-resource "aws_iam_policy" "run_task" {
+resource "aws_iam_policy" "manage_ecs_task" {
   count       = var.allow_ecs_task_usage ? 1 : 0
-  name        = "run-task"
+  name        = "manage-ecs-task"
   path        = "/"
-  description = "Permission to run task on ECS"
+  description = "Permission to run/stop task on ECS"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -151,19 +151,6 @@ resource "aws_iam_policy" "run_task" {
           "arn:aws:iam::${local.account_id}:role/*-forms-runner-ecs-task-execution",
         ]
       },
-    ]
-  })
-}
-
-resource "aws_iam_policy" "stop_task" {
-  count       = var.allow_ecs_task_usage ? 1 : 0
-  name        = "stop-task"
-  path        = "/"
-  description = "Permission to stop task on ECS"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
       {
         Action = [
           "ecs:StopTask",
