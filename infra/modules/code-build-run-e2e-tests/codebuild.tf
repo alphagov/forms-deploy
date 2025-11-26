@@ -9,7 +9,7 @@ resource "aws_codebuild_project" "e2e" {
   #checkov:skip=CKV_AWS_147:Amazon Managed SSE is sufficient.
   name         = local.project_name
   description  = "Run end to end tests for ${var.app_name} in ${var.environment_name}"
-  service_role = coalesce(var.service_role_arn, try(aws_iam_role.codebuild[0].arn, null))
+  service_role = var.service_role_arn
 
   logs_config {
     cloudwatch_logs {
