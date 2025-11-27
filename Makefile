@@ -285,7 +285,7 @@ tflint_integration:
 		$(eval _FILTERS := $(patsubst infra/deployments/$(root)/%,--filter=%,$(_CHANGED))) \
 		tflint --chdir="infra/deployments/$(root)" --config "$$(pwd)/.tflint.hcl" $(TFLINT_ARGS) \
 			--var-file="$$(pwd)/infra/deployments/integration/tfvars/integration.tfvars" \
-			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backend/integration.tfvars" \
+			--var-file="$$(pwd)/infra/deployments/integration/tfvars/backends/integration.tfvars" \
 			$(_FILTERS) ; \
 	)
 

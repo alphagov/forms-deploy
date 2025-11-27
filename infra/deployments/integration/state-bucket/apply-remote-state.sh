@@ -1,0 +1,1 @@
+../../forms/account/init-state-bucket/apply-remote-state.sh
