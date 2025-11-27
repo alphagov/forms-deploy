@@ -1,5 +1,6 @@
 locals {
-  queue_worker_name = "${module.ecs_service.task_container_definition.name}-queue-worker"
+  queue_worker_name           = "${module.ecs_service.task_container_definition.name}-queue-worker"
+  queue_worker_log_group_name = "/aws/ecs/${local.queue_worker_name}-${var.env_name}"
 
   # Take the exported task container definition and override some parts of it
   # Note: the ENV variables aren't overridden because it's not possible to cherry pick them
@@ -23,9 +24,9 @@ locals {
       logConfiguration = {
         logDriver = "awslogs",
         options = {
-          awslogs-group         = module.ecs_service.application_log_group_name,
+          awslogs-group         = local.queue_worker_log_group_name,
           awslogs-region        = "eu-west-2",
-          awslogs-stream-prefix = module.ecs_service.application_log_stream_prefix
+          awslogs-stream-prefix = local.queue_worker_log_group_name
         }
       }
 
