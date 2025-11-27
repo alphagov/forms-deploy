@@ -24,7 +24,3 @@ output "task_definition_family" {
 output "target_group_arn" {
   value = aws_lb_target_group.tg.arn
 }
-
-output "application_log_stream_prefix" {
-  value = local.log_group_name
-}
