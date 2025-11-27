@@ -1,12 +1,8 @@
 locals {
-  cache_engine = var.environment_name == "dev" ? {
+  cache_engine = {
     name            = "valkey"
     version         = "8.2"
     parameter_group = "valkey8"
-    } : {
-    name            = "redis"
-    version         = "7.0"
-    parameter_group = "redis7"
   }
 }
 
