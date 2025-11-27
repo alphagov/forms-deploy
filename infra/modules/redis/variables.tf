@@ -19,10 +19,18 @@ variable "availability_zones" {
   default     = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
 }
 
-variable "engine_version" {
-  description = "The version of Redis to use"
-  default     = "7.0"
-  type        = string
+variable "engine" {
+  description = "The cache engine configuration including name, version, and parameter group"
+  default = {
+    name            = "redis"
+    version         = "7.0"
+    parameter_group = "redis7"
+  }
+  type = object({
+    name            = string
+    version         = string
+    parameter_group = string
+  })
 }
 
 variable "number_cache_clusters" {
@@ -41,8 +49,9 @@ variable "parameter_group_families" {
   description = "Parameter group families and the redis engine version they are compatible with"
   type        = map(string)
   default = {
-    "redis6" = "redis6.x"
-    "redis7" = "redis7"
+    "redis6"  = "redis6.x"
+    "redis7"  = "redis7"
+    "valkey8" = "valkey8"
   }
 }
 
