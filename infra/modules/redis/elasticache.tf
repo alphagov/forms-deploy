@@ -13,12 +13,12 @@ resource "aws_elasticache_replication_group" "forms_runner" {
   node_type                  = var.redis_node_type
   automatic_failover_enabled = var.automatic_failover_enabled
   multi_az_enabled           = var.multi_az_enabled
-  engine                     = "redis"
+  engine                     = var.engine.name
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
-  engine_version             = var.engine_version
+  engine_version             = var.engine.version
   port                       = local.redis_port
-  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group["redis7"].id
+  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group[var.engine.parameter_group].id
   subnet_group_name          = aws_elasticache_subnet_group.redis.id
   security_group_ids         = [aws_security_group.forms_runner_redis.id]
   apply_immediately          = var.apply_immediately
