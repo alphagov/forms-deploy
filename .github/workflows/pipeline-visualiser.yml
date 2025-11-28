@@ -9,7 +9,7 @@ on:
     types: [checks_requested]
 jobs:
   build_container:
-    runs-on: ubuntu-24.04-arm-alphagov # The container will ultimately be built for arm64 and run on arm64, so we should test it on arm64.
+    runs-on: ubuntu-24.04-arm # The container will ultimately be built for arm64 and run on arm64, so we should test it on arm64.
     name: "Build container"
     defaults:
       run:
