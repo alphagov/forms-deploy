@@ -280,9 +280,10 @@ data "aws_iam_policy_document" "logs" {
       "logs:*LogGroup"
     ]
     resources = [
-      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-admin-${var.environment_name}:*",
-      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-runner-${var.environment_name}:*",
-      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:forms-product-page-${var.environment_name}:*"
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-admin-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-runner-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-runner-queue-worker-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-product-page-${var.environment_name}:*",
     ]
     effect = "Allow"
   }
