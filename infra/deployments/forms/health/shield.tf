@@ -151,62 +151,80 @@ resource "aws_shield_proactive_engagement" "escalation_contacts" {
   depends_on = [aws_shield_drt_access_role_arn_association.shield_response_team]
 }
 
+resource "aws_cloudwatch_metric_alarm" "alb_target_5xx" {
+  #checkov:skip=CKV2_FORMS_AWS_1:This alarm feeds Route 53 health checks only, no direct alerting needed
+  for_each = {
+    admin        = data.aws_lb_target_group.target_groups["forms-admin"]
+    runner       = data.aws_lb_target_group.target_groups["forms-runner"]
+    product_page = data.aws_lb_target_group.target_groups["forms-product-page"]
+  }
 
-resource "aws_route53_health_check" "admin" {
-  count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
+  alarm_name          = "${var.environment_name}_alb_target_5xx_${each.key}"
+  alarm_description   = "5xx error rate for ${each.key} target group"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  threshold           = 5
+  treat_missing_data  = "notBreaching"
 
-  failure_threshold = "3"
-  fqdn              = "admin.${var.root_domain}"
-  port              = 443
-  request_interval  = "30"
-  resource_path     = "/up"
-  type              = "HTTPS"
+  metric_query {
+    id          = "error_rate"
+    expression  = "(m1 / m2) * 100"
+    label       = "5xx Error Rate (%)"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+    metric {
+      namespace   = "AWS/ApplicationELB"
+      metric_name = "HTTPCode_Target_5XX_Count"
+      period      = 60
+      stat        = "Sum"
+      dimensions = {
+        LoadBalancer = data.aws_lb.alb.arn_suffix
+        TargetGroup  = each.value.arn_suffix
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+    metric {
+      namespace   = "AWS/ApplicationELB"
+      metric_name = "RequestCount"
+      period      = 60
+      stat        = "Sum"
+      dimensions = {
+        LoadBalancer = data.aws_lb.alb.arn_suffix
+        TargetGroup  = each.value.arn_suffix
+      }
+    }
+  }
+}
+
+resource "aws_route53_health_check" "alb_5xx" {
+  for_each = var.environmental_settings.enable_shield_advanced_healthchecks ? toset(["admin", "runner", "product_page"]) : toset([])
+
+  type                            = "CLOUDWATCH_METRIC"
+  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.alb_target_5xx[each.key].alarm_name
+  cloudwatch_alarm_region         = "eu-west-2"
+  insufficient_data_health_status = "Healthy"
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_route53_health_check" "product_page" {
-  count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
-
-  failure_threshold = "3"
-  fqdn              = "product-page.${var.root_domain}"
-  port              = 443
-  request_interval  = "30"
-  resource_path     = "/up"
-  type              = "HTTPS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_health_check" "runner" {
-  count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
-
-  failure_threshold = "3"
-  fqdn              = "submit.${var.root_domain}"
-  port              = 443
-  request_interval  = "30"
-  resource_path     = "/up"
-  type              = "HTTPS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
+resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_error_rate" {
   provider            = aws.us-east-1
-  alarm_name          = "${var.environment_name}_cloudfront_total_error_rate"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 1
-  metric_name         = "TotalErrorRate"
-  namespace           = "AWS/Cloudfront"
+  alarm_name          = "${var.environment_name}_cloudfront_5xx_error_rate"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "5xxErrorRate"
+  namespace           = "AWS/CloudFront"
   period              = 60
   statistic           = "Average"
-  threshold           = 100
+  threshold           = 5
   treat_missing_data  = "notBreaching"
   actions_enabled     = true
   alarm_actions       = [data.terraform_remote_state.forms_environment.outputs.zendesk_alert_us_east_1_topic_arn]
@@ -217,11 +235,11 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_total_error_rate" {
   }
 }
 
-resource "aws_route53_health_check" "cloudfront_total_error_rate" {
+resource "aws_route53_health_check" "cloudfront_5xx" {
   count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
 
   type                            = "CLOUDWATCH_METRIC"
-  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_total_error_rate.alarm_name
+  cloudwatch_alarm_name           = aws_cloudwatch_metric_alarm.cloudfront_5xx_error_rate.alarm_name
   cloudwatch_alarm_region         = "us-east-1"
   insufficient_data_health_status = "Healthy"
 
@@ -282,13 +300,12 @@ resource "aws_route53_health_check" "aggregated" {
 
   type                   = "CALCULATED"
   child_health_threshold = 1
-  child_healthchecks = concat([
-    aws_route53_health_check.admin[0].id,
-    aws_route53_health_check.product_page[0].id,
-    aws_route53_health_check.runner[0].id,
-    aws_route53_health_check.cloudfront_total_error_rate[0].id,
-    aws_route53_health_check.ddos_detection[0].id
-  ], [for _, alarm in aws_route53_health_check.healthy_hosts : alarm.id])
+  child_healthchecks = concat(
+    [for key in ["admin", "runner", "product_page"] : aws_route53_health_check.alb_5xx[key].id],
+    [aws_route53_health_check.cloudfront_5xx[0].id],
+    [aws_route53_health_check.ddos_detection[0].id],
+    [for _, alarm in aws_route53_health_check.healthy_hosts : alarm.id]
+  )
 }
 
 resource "aws_shield_protection_health_check_association" "system_health" {
