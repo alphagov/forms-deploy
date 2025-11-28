@@ -3,6 +3,7 @@ run-as: ruby
 phases:
   install:
     commands:
+      - export HOME=/home/ruby # CodeBuild ignores env.variables.HOME
       - set -e
       - id
       - echo $HOME
@@ -14,6 +15,7 @@ phases:
       - bundle exec rspec --format documentation --format documentation --out rspec.out spec/end_to_end
   post_build:
     commands:
+      - export HOME=/home/ruby # CodeBuild ignores env.variables.HOME
       # send logs to EventBridge
       - set -e
       - if [ "${CODEBUILD_BUILD_SUCCEEDING}" = "1" ]; then exit; fi # don't send event if tests passed
