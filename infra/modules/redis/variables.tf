@@ -2,11 +2,6 @@ variable "env_name" {
   type = string
 }
 
-variable "redis_version" {
-  type    = string
-  default = "3.2.6"
-}
-
 variable "apply_immediately" {
   type        = bool
   description = "If false then changes are applied during the maintenance window"
@@ -22,9 +17,9 @@ variable "availability_zones" {
 variable "engine" {
   description = "The cache engine configuration including name, version, and parameter group"
   default = {
-    name            = "redis"
-    version         = "7.0"
-    parameter_group = "redis7"
+    name            = "valkey"
+    version         = "8.2"
+    parameter_group = "valkey8"
   }
   type = object({
     name            = string
