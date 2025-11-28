@@ -221,6 +221,7 @@ jobs:
     name: "Run tests"
     runs-on: ubuntu-24.04-arm
     needs: [terraform-fmt, terraform-validate, tflint, checkov]
+    if: ${{ always() && !failure() && !cancelled() }}
     steps:
       - name: All checks passed
         run: echo "All Terraform checks passed successfully."
