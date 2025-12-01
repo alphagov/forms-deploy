@@ -96,12 +96,6 @@ variable "repeatable_page_enabled" {
   default     = false
 }
 
-variable "json_submission_enabled" {
-  type        = bool
-  description = "Enables the json submissions feature"
-  default     = false
-}
-
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
