@@ -42,6 +42,7 @@ services:
     volumes:
       - ../../forms-admin:/app:cached
       - admin-bundle:/usr/local/bundle
+      - admin-bundle-user-home:/home/ruby/.bundle
       - admin-node-modules:/app/node_modules
       - admin-tmp:/app/tmp
       - admin-npm:/home/ruby/.npm
@@ -77,6 +78,7 @@ services:
     volumes:
       - ../../forms-product-page:/app:cached
       - product-page-bundle:/usr/local/bundle
+      - product-page-bundle-user-home:/home/ruby/.bundle
       - product-page-node-modules:/app/node_modules
       - product-page-tmp:/app/tmp
       - product-page-npm:/home/ruby/.npm
@@ -120,6 +122,7 @@ services:
     volumes:
       - ../../forms-runner:/app:cached
       - runner-bundle:/usr/local/bundle
+      - runner-bundle-user-home:/home/ruby/.bundle
       - runner-node-modules:/app/node_modules
       - runner-tmp:/app/tmp
       - runner-npm:/home/ruby/.npm
@@ -143,14 +146,17 @@ services:
 
 volumes:
   admin-bundle:
+  admin-bundle-user-home:
   admin-node-modules:
   admin-tmp:
   admin-npm:
   product-page-bundle:
+  product-page-bundle-user-home:
   product-page-node-modules:
   product-page-tmp:
   product-page-npm:
   runner-bundle:
+  runner-bundle-user-home:
   runner-node-modules:
   runner-tmp:
   runner-npm:
