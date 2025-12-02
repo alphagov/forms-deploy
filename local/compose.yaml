@@ -26,9 +26,6 @@ services:
     environment:
       - BINDING=0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@postgres
-      - GDS_SSO_OAUTH_ID=example.org
-      - GDS_SSO_OAUTH_SECRET=secret
-      - GDS_SSO_STRATEGY=mock
       - GOVUK_APP_DOMAIN=example.org
       - NODE_ENV=development
       - RACK_ENV=development
