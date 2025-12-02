@@ -31,7 +31,7 @@ services:
       - RACK_ENV=development
       - RAILS_ENV=development
       - RAILS_DEVELOPMENT_HOSTS=admin:3000
-      - SECRET_KEY_BASE=assets
+      - SECRET_KEY_BASE=dummyvalue
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     extra_hosts:
       - host.docker.internal:host-gateway
