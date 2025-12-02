@@ -24,13 +24,14 @@ component's code locally is immediately apparent in the locally running
 services.
 
 ### Setting up the databases
+
 There is a single postgres container defined within the docker-compose setup
-which is configured with two databases named `forms-admin` and `forms-runner`. The two
-databases are initially created using the `local/postgres/initdb.d` which is
-mounted into the postgres container's 'docker-entrypoint-initdb.d' directory.
-The start command for `forms-admin` is modified by the Docker Compose file
-to include running `rails db:setup` and `rails db:seed` which will run
-migrations and prepare a local dev user respectively.
+which is used by all apps.
+
+The command for each app in the Docker Compose file includes running
+`bin/setup` in the app repo. For forms-admin and forms-runner this will create
+the database and prepare test forms and local dev users on the first run. On
+subsequent runs it will apply any outstanding database migrations.
 
 If you need to connect to the postgres instance directly you can use `psql -h
 localhost -p 5432 -U postgres` and enter `postgres` for the password when

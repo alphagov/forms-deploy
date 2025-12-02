@@ -14,10 +14,7 @@ services:
       target: build
     command: >
       sh -c "
-        bundle install &&
-        rails db:prepare &&
-        npm install &&
-        bin/vite build &&
+        bin/setup &&
         exec rails s --restart
       "
     depends_on:
@@ -60,9 +57,7 @@ services:
       target: build
     command: >
       sh -c "
-        bundle install &&
-        npm install &&
-        bin/vite build &&
+        bin/setup &&
         exec rails s --restart -p 3002
       "
     environment:
@@ -96,10 +91,7 @@ services:
       target: build
     command: >
       sh -c "
-        bundle install &&
-        rails db:prepare &&
-        npm install &&
-        bin/vite build &&
+        bin/setup &&
         exec rails s --restart -p 3001
       "
     depends_on:
