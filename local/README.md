@@ -13,7 +13,7 @@ The components which make up the service are:
 
 ## How it works
 Each of the components above has a Dockerfile in its repo which is used to build
-a docker image. The `docker-compose.yml` defines the configuration for using
+a docker image. The file `compose.yaml` defines the configuration for using
 those images to run GOVUK Forms locally including a Postgres and Redis
 container.
 
@@ -28,7 +28,7 @@ There is a single postgres container defined within the docker-compose setup
 which is configured with two databases named `forms-admin` and `forms-runner`. The two
 databases are initially created using the `local/postgres/initdb.d` which is
 mounted into the postgres container's 'docker-entrypoint-initdb.d' directory.
-The start command for `forms-admin` is modified by the docker-compose.yml file
+The start command for `forms-admin` is modified by the Docker Compose file
 to include running `rails db:setup` and `rails db:seed` which will run
 migrations and prepare a local dev user respectively.
 
@@ -50,7 +50,7 @@ top-level/
 └── forms-deploy
     └── local
         ├── README.md
-        └── docker-compose.yml
+        └── compose.yaml
 ```
 
 Then run:
