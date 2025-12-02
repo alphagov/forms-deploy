@@ -7,14 +7,13 @@ services:
       - /tmp
     build:
       args:
-        - BUNDLE_WITHOUT=test
+        - BUNDLE_WITHOUT=
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-admin
       target: build
     command: >
       sh -c "
-        bundle config unset --local without &&
         bundle install &&
         rails db:prepare &&
         npm install &&
@@ -56,14 +55,13 @@ services:
       - /tmp
     build:
       args:
-        - BUNDLE_WITHOUT=test
+        - BUNDLE_WITHOUT=
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-product-page
       target: build
     command: >
       sh -c "
-        bundle config unset --local without &&
         bundle install &&
         npm install &&
         bin/vite build &&
@@ -92,14 +90,13 @@ services:
       - /tmp
     build:
       args:
-        - BUNDLE_WITHOUT=test
+        - BUNDLE_WITHOUT=
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-runner
       target: build
     command: >
       sh -c "
-        bundle config unset --local without &&
         bundle install &&
         rails db:prepare &&
         npm install &&
