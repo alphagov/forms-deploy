@@ -55,7 +55,7 @@ top-level/
 
 Then run:
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Note that you might need to disconnect from the GDS VPN when running this script as otherwise npm might fail to install packages.
@@ -69,11 +69,11 @@ the runner on http://localhost:3001
 
 To stop the services from running, press `Ctrl-c` and then enter:
 ```bash
-docker-compose stop
+docker compose stop
 ```
 
 If you make changes to the docker file:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
