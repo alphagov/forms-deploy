@@ -13,7 +13,7 @@ The components which make up the service are:
 
 ## How it works
 Each of the components above has a Dockerfile in its repo which is used to build
-a docker image. The `docker-compose.yml` defines the configuration for using
+a docker image. The file `compose.yaml` defines the configuration for using
 those images to run GOVUK Forms locally including a Postgres and Redis
 container.
 
@@ -24,13 +24,14 @@ component's code locally is immediately apparent in the locally running
 services.
 
 ### Setting up the databases
+
 There is a single postgres container defined within the docker-compose setup
-which is configured with two databases named `forms-admin` and `forms-runner`. The two
-databases are initially created using the `local/postgres/initdb.d` which is
-mounted into the postgres container's 'docker-entrypoint-initdb.d' directory.
-The start command for `forms-admin` is modified by the docker-compose.yml file
-to include running `rails db:setup` and `rails db:seed` which will run
-migrations and prepare a local dev user respectively.
+which is used by all apps.
+
+The command for each app in the Docker Compose file includes running
+`bin/setup` in the app repo. For forms-admin and forms-runner this will create
+the database and prepare test forms and local dev users on the first run. On
+subsequent runs it will apply any outstanding database migrations.
 
 If you need to connect to the postgres instance directly you can use `psql -h
 localhost -p 5432 -U postgres` and enter `postgres` for the password when
@@ -50,12 +51,12 @@ top-level/
 └── forms-deploy
     └── local
         ├── README.md
-        └── docker-compose.yml
+        └── compose.yaml
 ```
 
 Then run:
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Note that you might need to disconnect from the GDS VPN when running this script as otherwise npm might fail to install packages.
@@ -69,11 +70,11 @@ the runner on http://localhost:3001
 
 To stop the services from running, press `Ctrl-c` and then enter:
 ```bash
-docker-compose stop
+docker compose stop
 ```
 
 If you make changes to the docker file:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```

@@ -1,22 +1,20 @@
+name: forms
+
 services:
-  forms-admin:
+  admin:
     read_only: true
     tmpfs:
       - /tmp
     build:
       args:
-        - BUNDLE_WITHOUT=test
+        - BUNDLE_WITHOUT=
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-admin
       target: build
     command: >
       sh -c "
-        bundle config unset --local without &&
-        bundle install &&
-        rails db:prepare &&
-        npm install &&
-        bin/vite build &&
+        bin/setup &&
         exec rails s --restart
       "
     depends_on:
@@ -25,43 +23,41 @@ services:
     environment:
       - BINDING=0.0.0.0
       - DATABASE_URL=postgres://postgres:postgres@postgres
-      - GDS_SSO_OAUTH_ID=example.org
-      - GDS_SSO_OAUTH_SECRET=secret
-      - GDS_SSO_STRATEGY=mock
       - GOVUK_APP_DOMAIN=example.org
       - NODE_ENV=development
       - RACK_ENV=development
       - RAILS_ENV=development
-      - RAILS_DEVELOPMENT_HOSTS=forms-admin:3000
-      - SECRET_KEY_BASE=assets
+      - RAILS_DEVELOPMENT_HOSTS=admin:3000
+      - SECRET_KEY_BASE=dummyvalue
       - SETTINGS__FORMS_RUNNER__URL=http://localhost:3001
     extra_hosts:
       - host.docker.internal:host-gateway
     ports:
       - "127.0.0.1:3000:3000"
+    stdin_open: true
+    tty: true
     volumes:
       - ../../forms-admin:/app:cached
-      - forms-admin-bundle:/usr/local/bundle
-      - forms-admin-node-modules:/app/node_modules
-      - forms-admin-tmp:/app/tmp
-      - forms-admin-npm:/home/ruby/.npm
+      - admin-bundle:/usr/local/bundle
+      - admin-bundle-user-home:/home/ruby/.bundle
+      - admin-node-modules:/app/node_modules
+      - admin-tmp:/app/tmp
+      - admin-npm:/home/ruby/.npm
 
-  forms-product-page:
+  product-page:
     read_only: true
     tmpfs:
       - /tmp
     build:
       args:
-        - BUNDLE_WITHOUT=test
+        - BUNDLE_WITHOUT=
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-product-page
       target: build
     command: >
       sh -c "
-        bundle install &&
-        npm install &&
-        bin/vite build &&
+        bin/setup &&
         exec rails s --restart -p 3002
       "
     environment:
@@ -72,30 +68,30 @@ services:
       - SECRET_KEY_BASE=dummyvalue
     ports:
       - "127.0.0.1:3002:3002"
+    stdin_open: true
+    tty: true
     volumes:
       - ../../forms-product-page:/app:cached
-      - forms-product-page-bundle:/usr/local/bundle
-      - forms-product-page-node-modules:/app/node_modules
-      - forms-product-page-tmp:/app/tmp
-      - forms-product-page-npm:/home/ruby/.npm
+      - product-page-bundle:/usr/local/bundle
+      - product-page-bundle-user-home:/home/ruby/.bundle
+      - product-page-node-modules:/app/node_modules
+      - product-page-tmp:/app/tmp
+      - product-page-npm:/home/ruby/.npm
 
-  forms-runner:
+  runner:
     read_only: true
     tmpfs:
       - /tmp
     build:
       args:
-        - BUNDLE_WITHOUT=test
+        - BUNDLE_WITHOUT=
         - NODE_ENV=development
         - RAILS_ENV=development
       context: ../../forms-runner
       target: build
     command: >
       sh -c "
-        bundle install &&
-        rails db:prepare &&
-        npm install &&
-        bin/vite build &&
+        bin/setup &&
         exec rails s --restart -p 3001
       "
     depends_on:
@@ -110,15 +106,18 @@ services:
       - RAILS_ENV=development
       - REDIS_URL=redis://redis/
       - SECRET_KEY_BASE=dummyvalue
-      - SETTINGS__FORMS_API__BASE_URL=http://forms-admin:3000
+      - SETTINGS__FORMS_API__BASE_URL=http://admin:3000
     ports:
       - "127.0.0.1:3001:3001"
+    stdin_open: true
+    tty: true
     volumes:
       - ../../forms-runner:/app:cached
-      - forms-runner-bundle:/usr/local/bundle
-      - forms-runner-node-modules:/app/node_modules
-      - forms-runner-tmp:/app/tmp
-      - forms-runner-npm:/home/ruby/.npm
+      - runner-bundle:/usr/local/bundle
+      - runner-bundle-user-home:/home/ruby/.bundle
+      - runner-node-modules:/app/node_modules
+      - runner-tmp:/app/tmp
+      - runner-npm:/home/ruby/.npm
 
   postgres:
     environment:
@@ -138,17 +137,20 @@ services:
       - redis-data:/data
 
 volumes:
-  forms-admin-bundle:
-  forms-admin-node-modules:
-  forms-admin-tmp:
-  forms-admin-npm:
-  forms-product-page-bundle:
-  forms-product-page-node-modules:
-  forms-product-page-tmp:
-  forms-product-page-npm:
-  forms-runner-bundle:
-  forms-runner-node-modules:
-  forms-runner-tmp:
-  forms-runner-npm:
+  admin-bundle:
+  admin-bundle-user-home:
+  admin-node-modules:
+  admin-tmp:
+  admin-npm:
+  product-page-bundle:
+  product-page-bundle-user-home:
+  product-page-node-modules:
+  product-page-tmp:
+  product-page-npm:
+  runner-bundle:
+  runner-bundle-user-home:
+  runner-node-modules:
+  runner-tmp:
+  runner-npm:
   postgres:
   redis-data:
