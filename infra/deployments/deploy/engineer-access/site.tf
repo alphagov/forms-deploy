@@ -9,10 +9,19 @@ terraform {
   }
 }
 
-provider "aws" {
-  allowed_account_ids = [var.deploy_account_id]
+locals {
+  deployment = "deploy/engineer-access"
 }
 
+provider "aws" {
+  allowed_account_ids = [var.deploy_account_id]
+  default_tags {
+    tags = {
+      Environment = "deploy"
+      Deployment  = local.deployment
+    }
+  }
+}
 module "state_bucket" {
   source = "../../../modules/state-bucket"
 

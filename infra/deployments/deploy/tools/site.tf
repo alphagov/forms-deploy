@@ -9,13 +9,17 @@ terraform {
   }
 }
 
+locals {
+  deployment = "deploy/pipeline-visualiser"
+}
+
 provider "aws" {
   allowed_account_ids = [var.deploy_account_id]
 
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/pipeline-visualiser"
+      Deployment  = local.deployment
     }
   }
 }
@@ -29,7 +33,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/pipeline-visualiser"
+      Deployment  = local.deployment
     }
   }
 }

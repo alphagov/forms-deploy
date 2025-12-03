@@ -9,12 +9,16 @@ terraform {
   }
 }
 
+locals {
+  deployment = "deploy/coordination"
+}
+
 provider "aws" {
   allowed_account_ids = [var.deploy_account_id]
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/coordination"
+      Deployment  = local.deployment
     }
   }
 }
