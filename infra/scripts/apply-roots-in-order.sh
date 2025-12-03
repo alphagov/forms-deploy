@@ -2,13 +2,18 @@
 
 set -euo pipefail
 
-ORDER=$(yq '.running-order.forms.layers[] | .phases[].roots[]' "./infra/deployments/running-order.yml")
+if [[ -z "${TARGET_DEPLOYMENT:-}" ]]; then
+  echo "Error: TARGET_DEPLOYMENT is not set"
+  exit 1
+fi
+
+ORDER=$(yq ".running-order.${TARGET_DEPLOYMENT}.layers[] | .phases[].roots[]" "./infra/deployments/running-order.yml")
 
 TIMESTAMP=$(date "+%Y%m%d%H%M%S")
 LOG_PATH="./logs/${TIMESTAMP}"
 mkdir -p "${LOG_PATH}"
 
-CHECKPOINT_FILE="./logs/checkpoint"
+CHECKPOINT_FILE="./logs/checkpoint-${TARGET_DEPLOYMENT}"
 touch "${CHECKPOINT_FILE}"
 
 RESUME_FROM_CHECKPOINT=${RESUME_FROM_CHECKPOINT:-false}
@@ -19,8 +24,9 @@ if [[ -z "${CHECKPOINT}" ]]; then
   CHECKPOINT_DEFAULTED=true
 fi
 
-echo "========[Applying Forms Terraform]"
+echo "========[Applying ${TARGET_DEPLOYMENT} Terraform]"
 echo "=> Target environment:     ${TARGET_ENVIRONMENT}"
+echo "=> Target deployment:      ${TARGET_DEPLOYMENT}"
 echo "=> Log file path:          ${LOG_PATH}"
 
 if [[ -n "${CHECKPOINT}" ]] && [[ "${RESUME_FROM_CHECKPOINT}" == true ]]; then
