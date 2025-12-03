@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-ORDER=$(yq '.running-order.layers[] | .phases[].roots[]' "./infra/deployments/running-order.yml");
+ORDER=$(yq '.running-order.forms.layers[] | .phases[].roots[]' "./infra/deployments/running-order.yml")
 
 TIMESTAMP=$(date "+%Y%m%d%H%M%S")
 LOG_PATH="./logs/${TIMESTAMP}"
@@ -48,19 +48,19 @@ for root in ${ORDER}; do
   I=$((I + 1))
 
   if [[ "${RESUME_FROM_CHECKPOINT}" == true ]] && [[ "${HAS_RESUMED}" == false ]]; then
-      if [[ "${root}" == "${CHECKPOINT}" ]]; then
-        HAS_RESUMED=true
-      else
-        echo "Skipping ${root} because it comes before the checkpoint (${CHECKPOINT})"
-        continue
-      fi
+    if [[ "${root}" == "${CHECKPOINT}" ]]; then
+      HAS_RESUMED=true
+    else
+      echo "Skipping ${root} because it comes before the checkpoint (${CHECKPOINT})"
+      continue
+    fi
   fi
 
   LOG_FILE="${LOG_PATH}/$(printf "%02d" "${I}")-$(echo "${root}" | tr "/" "_")"
   touch "${LOG_FILE}"
-  echo "${root}" > "${CHECKPOINT_FILE}"
-  make "${TARGET_ENVIRONMENT}" "${root}" apply 2>&1 | tee >(sed -e 's/\x1b\[[0-9;]*[mGKHF]//g' > "${LOG_FILE}")
-done;
+  echo "${root}" >"${CHECKPOINT_FILE}"
+  make "${TARGET_ENVIRONMENT}" "${root}" apply 2>&1 | tee >(sed -e 's/\x1b\[[0-9;]*[mGKHF]//g' >"${LOG_FILE}")
+done
 
 # we should removed the checkpoint if everything ran successfully
 # so that future runs don't skip everything
