@@ -62,3 +62,9 @@ variable "pentester_cidr_ranges" {
     error_message = "Each entry in the list must be a valid IPv4 CIDR range"
   }
 }
+
+variable "drift_detection_schedule" {
+  description = "EventBridge schedule expression for drift detection"
+  type        = string
+  default     = "cron(0 9 ? * MON *)"
+}
