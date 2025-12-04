@@ -1,6 +1,6 @@
 locals {
   running_order = yamldecode(file("../../running-order.yml"))
-  layers        = [for layer in local.running_order.running-order.layers : layer if !layer.manual]
+  layers        = [for layer in local.running_order.running-order.forms.layers : layer if !layer.manual]
   all_roots = toset(flatten([
     for layer in local.layers : [
       for phase in layer.phases : [

@@ -3,43 +3,79 @@
   "properties": {
     "running-order": {
       "type": "object",
+      "description": "Contains deployment configurations organized by deployment type",
+      "properties": {
+        "forms": {
+          "$ref": "#/$defs/deployment"
+        },
+        "deploy": {
+          "$ref": "#/$defs/deployment"
+        },
+        "integration": {
+          "$ref": "#/$defs/deployment"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    }
+  },
+  "required": ["running-order"],
+  "$defs": {
+    "deployment": {
+      "type": "object",
+      "description": "A deployment configuration containing layers of Terraform roots",
       "properties": {
         "layers": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "pattern": "^[A-Za-z0-9.@\\-_]+$"
-              },
-              "manual": {
-                "type": "boolean"
-              },
-              "phases": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "roots": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "required": [
-                    "roots"
-                  ]
-                }
-              }
-            },
-            "required": ["name", "manual", "phases"]
-          }
+            "$ref": "#/$defs/layer"
+          },
+          "minItems": 1
         }
       },
       "required": ["layers"]
+    },
+    "layer": {
+      "type": "object",
+      "description": "A logical grouping of Terraform roots that fulfil a responsibility",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9.@\\-_\\s]+$",
+          "description": "Human-readable name for this layer"
+        },
+        "manual": {
+          "type": "boolean",
+          "description": "Whether this layer requires manual intervention"
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/phase"
+          },
+          "minItems": 1,
+          "description": "Phases within this layer, executed sequentially"
+        }
+      },
+      "required": ["name", "manual", "phases"],
+      "additionalProperties": false
+    },
+    "phase": {
+      "type": "object",
+      "description": "A set of Terraform roots that can run in parallel",
+      "properties": {
+        "roots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9\\-_/]+$"
+          },
+          "minItems": 1,
+          "description": "Terraform root paths relative to infra/deployments"
+        }
+      },
+      "required": ["roots"],
+      "additionalProperties": false
     }
-  },
-  "required": ["running-order"]
+  }
 }

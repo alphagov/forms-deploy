@@ -2,37 +2,46 @@ require "yaml"
 require "json-schema"
 
 describe "running-order.yml" do
-  schema = File.read("#{__dir__}/running_order_schema.json")
-  running_order = YAML.load_file("#{__dir__}/../../deployments/running-order.yml")
+  let(:schema) { File.read("#{__dir__}/running_order_schema.json") }
+  let(:running_order) { YAML.load_file("#{__dir__}/../../deployments/running-order.yml") }
+  let(:deployments_dir) { File.expand_path("#{__dir__}/../../deployments") }
+
+  let(:deployment_types) { %w[forms deploy integration] }
+
+  let(:all_roots) do
+    deployment_types.flat_map do |deployment_type|
+      Dir.glob("#{deployments_dir}/#{deployment_type}/*")
+         .select { |f| File.directory?(f) }
+         .map { |f| f.delete_prefix("#{deployments_dir}/") }
+         .reject { |f| f.end_with?("/tfvars") }
+    end
+  end
+
+  let(:used_roots) do
+    roots = []
+    running_order["running-order"].each_value do |deployment_config|
+      deployment_config["layers"].each do |layer|
+        layer["phases"].each do |phase|
+          roots.concat(phase["roots"])
+        end
+      end
+    end
+    roots
+  end
 
   it "is valid" do
     expect(JSON::Validator.validate!(schema, running_order)).to be true
   end
 
   it "does not contain any unknown roots" do
-    deployments_dir = File.expand_path("#{__dir__}/../../deployments")
-
-    forms_roots = Dir.glob("#{deployments_dir}/forms/*")
-                     .select { |f| File.directory?(f) }
-                     .map { |f| f.delete_prefix("#{deployments_dir}/") }
-                     .reject { |f| f == "forms/tfvars" }
-
-    deploy_roots = Dir.glob("#{deployments_dir}/deploy/*")
-                      .select { |f| File.directory?(f) }
-                      .map { |f| f.delete_prefix("#{deployments_dir}/") }
-
-    valid_roots =
-      %w[account] + forms_roots + deploy_roots
-
-    used_roots =
-      running_order["running-order"]["layers"].map { |layer|
-        layer["phases"].map do |phase|
-          phase["roots"]
-        end
-      }.flatten
-
     used_roots.each do |root|
-      expect(valid_roots).to(include(root), "#{root} is not a known Terraform root")
+      expect(all_roots).to(include(root), "#{root} is not a known Terraform root")
+    end
+  end
+
+  it "contains all known roots" do
+    all_roots.each do |root|
+      expect(used_roots).to(include(root), "#{root} exists but is not in running-order.yml")
     end
   end
 end

@@ -138,7 +138,20 @@ tf_shell: init
 
 .PHONY: forms_apply_all
 forms_apply_all: target_environment_set not_ci aws_credentials_available
-	@./infra/scripts/apply-forms-roots-in-order.sh
+	$(eval export TARGET_DEPLOYMENT = forms)
+	@./infra/scripts/apply-roots-in-order.sh
+
+.PHONY: deploy_apply_all
+deploy_apply_all: not_ci aws_credentials_available
+	$(eval export TARGET_DEPLOYMENT = deploy)
+	$(eval export TARGET_ENVIRONMENT = deploy)
+	@./infra/scripts/apply-roots-in-order.sh
+
+.PHONY: integration_apply_all
+integration_apply_all: not_ci aws_credentials_available
+	$(eval export TARGET_DEPLOYMENT = integration)
+	$(eval export TARGET_ENVIRONMENT = integration)
+	@./infra/scripts/apply-roots-in-order.sh
 
 .PHONY: deployer_role
 deployer_role: only_dev not_ci aws_credentials_available
@@ -366,6 +379,13 @@ ACTIONS
 	forms_apply_all		Apply all of the Terraform for a GOV.UK Forms
 				environment in the correct order.
 
+	deploy_apply_all	Apply all of the Terraform for the deploy
+				deployment in the correct order.
+
+	integration_apply_all	Apply all of the Terraform for the integration
+				deployment in the correct order.
+
+				For all *_apply_all targets:
 				Set RESUME_FROM_CHECKPOINT=true to start the run
 				from where the last run ended. Useful when iterating.
 

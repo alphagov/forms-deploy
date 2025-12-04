@@ -1,1 +1,0 @@
-../../forms/account/init-state-bucket/README.md

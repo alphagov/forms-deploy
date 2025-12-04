@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../spec/deployments/running_order_schema.json
 ##
 # This file serves two purposes
 #
@@ -28,30 +29,52 @@
 ##
 ---
 running-order:
-  layers:
-    - name: Account
-      manual: true
-      phases:
-        - roots:
-            - forms/account
+  deploy:
+    layers:
+      - name: Deploy Account
+        manual: true
+        phases:
+          - roots:
+              - deploy/account
+              - deploy/engineer-access
+              - deploy/coordination
+              - deploy/ecr
+              - deploy/tools
+              - deploy/e2e-tests-image-builder
+              - deploy/image-builders
+  forms:
+    layers:
+      - name: Account
+        manual: true
+        phases:
+          - roots:
+              - forms/account
 
-    - name: GOV.UKForms
-      manual: false
-      phases:
-        - roots:
-            - forms/environment
-            - forms/ses
-        - roots:
-            - forms/auth0
-        - roots:
-            - forms/redis
-            - forms/rds
-        - roots:
-            - forms/forms-product-page
-            - forms/forms-admin
-            - forms/forms-runner
-        - roots:
-            - forms/health
-        - roots:
-            - forms/pipelines
-            - forms/dns
+      - name: GOV.UKForms
+        manual: false
+        phases:
+          - roots:
+              - forms/environment
+              - forms/ses
+          - roots:
+              - forms/auth0
+          - roots:
+              - forms/redis
+              - forms/rds
+          - roots:
+              - forms/forms-product-page
+              - forms/forms-admin
+              - forms/forms-runner
+          - roots:
+              - forms/health
+          - roots:
+              - forms/pipelines
+              - forms/dns
+  integration:
+    layers:
+      - name: Integration Account
+        manual: true
+        phases:
+          - roots:
+              - integration/account
+              - integration/review
