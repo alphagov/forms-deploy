@@ -59,6 +59,6 @@ variable "pentester_cidr_ranges" {
 
   validation {
     condition     = can([for cidr in var.pentester_cidr_ranges : cidrhost(cidr, 32)])
-    error_message = "Each entry in the last must be a valid IPv4 CIDR range"
+    error_message = "Each entry in the list must be a valid IPv4 CIDR range"
   }
 }
