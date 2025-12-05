@@ -39,9 +39,10 @@ running-order:
               - deploy/engineer-access
               - deploy/coordination
               - deploy/ecr
-              - deploy/tools
               - deploy/e2e-tests-image-builder
               - deploy/image-builders
+          - roots:
+              - deploy/tools
   forms:
     layers:
       - name: Account

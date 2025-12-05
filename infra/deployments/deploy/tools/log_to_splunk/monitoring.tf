@@ -1,3 +1,14 @@
+data "aws_secretsmanager_secret_version" "chatbot_alerts_sns_topic_arn" {
+  # Reference the secret in the same account (deploy account)
+  secret_id = "arn:aws:secretsmanager:eu-west-2:${data.aws_caller_identity.current.account_id}:secret:govuk-forms/chatbot/alerts-sns-topic-arn"
+}
+
+locals {
+  # AWS ChatBot SNS topic - managed in the deploy account (deploy/coordination/chatbot.tf)
+  # Retrieved from Secrets Manager for consistency with cross-account access pattern
+  chatbot_alerts_channel_sns_topic = data.aws_secretsmanager_secret_version.chatbot_alerts_sns_topic_arn.secret_string
+}
+
 resource "aws_cloudwatch_metric_alarm" "cribl_dlq_messages" {
   alarm_name          = "cribl-s3-events-dlq-has-messages"
   alarm_description   = <<EOF
@@ -72,8 +83,4 @@ EOF
   }
 
   alarm_actions = [local.chatbot_alerts_channel_sns_topic]
-}
-
-locals {
-  chatbot_alerts_channel_sns_topic = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
 }
