@@ -135,3 +135,24 @@ resource "aws_chatbot_slack_channel_configuration" "deployments" {
 
   user_authorization_required = false
 }
+
+# ChatBot Slack Channel Configuration - Infra Notifications Channel
+resource "aws_chatbot_slack_channel_configuration" "infra_notifications" {
+  configuration_name = "govuk-forms-infra-notifications"
+  iam_role_arn       = aws_iam_role.chatbot.arn
+
+  slack_channel_id = "C0A1B2E1WJ3"
+  slack_team_id    = data.aws_chatbot_slack_workspace.gds.slack_team_id
+
+  sns_topic_arns = [
+    aws_sns_topic.infra_notifications_topic.arn
+  ]
+
+  guardrail_policy_arns = [
+    "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  ]
+
+  logging_level = "INFO"
+
+  user_authorization_required = false
+}

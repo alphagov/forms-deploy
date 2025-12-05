@@ -19,3 +19,9 @@ variable "git_branch" {
   type        = string
   default     = "main"
 }
+
+variable "drift_detected_topic_arn" {
+  description = "ARN of SNS topic to notify when drift is detected"
+  type        = string
+  default     = null
+}
