@@ -19,6 +19,10 @@ resource "aws_rds_cluster_parameter_group" "aurora_postgres_v16" {
   description = "RDS cluster parameter group for Aurora Serverless for PostgreSQL 16"
 }
 
+locals {
+  # This must be a multiple of 31. 465 is the minimum for advanced database insights (15 months).
+  performance_insights_retention_period = var.enable_advanced_database_insights ? 465 : null
+}
 
 resource "aws_rds_cluster" "cluster_aurora_v2" {
   #checkov:skip=CKV2_AWS_8:AWS RDS inbuilt backup process is sufficient
@@ -62,7 +66,7 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
   # performance insights with 15 month retention is required for advanced database insights
   # https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_DatabaseInsights.TurningOnAdvanced.html
   performance_insights_enabled          = var.enable_advanced_database_insights
-  performance_insights_retention_period = var.enable_advanced_database_insights ? 15 * 31 : null
+  performance_insights_retention_period = local.performance_insights_retention_period
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_capacity
@@ -99,12 +103,16 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
 resource "aws_rds_cluster_instance" "member" {
   #checkov:skip=CKV_AWS_118:We don't currently have enhanced monitoring
   #checkov:skip=CKV_AWS_354:We can use the default kms key for encryption
-  #checkov:skip=CKV_AWS_353:Performance insights are enabled on the cluster level
 
   cluster_identifier = aws_rds_cluster.cluster_aurora_v2.id
   engine             = "aurora-postgresql"
   instance_class     = "db.serverless"
   identifier         = var.database_identifier
+
+  force_destroy = false
+
+  performance_insights_enabled          = var.enable_advanced_database_insights
+  performance_insights_retention_period = local.performance_insights_retention_period
 
   auto_minor_version_upgrade = true
 }
