@@ -81,3 +81,9 @@ variable "database_identifier" {
   type        = string
   description = "The name of the database in the cluster"
 }
+
+variable "enable_advanced_database_insights" {
+  type        = bool
+  description = "Whether to enable Advanced Database Insights for the RDS instance"
+  default     = false
+}
