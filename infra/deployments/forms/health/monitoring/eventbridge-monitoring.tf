@@ -1,8 +1,11 @@
+module "chatbot_well_known" {
+  source = "../../../../modules/well-known/chatbot"
+}
+
 locals {
-  # We have configured AWS ChatBot for sending messages to Slack.
-  # AWS ChatBot does not have an API we can use in Terraform, so we
-  # configured it by hand in the one place and hardcoded the SNS topic here.
-  chatbot_alerts_channel_sns_topic = "arn:aws:sns:eu-west-2:${var.deploy_account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
+  # AWS ChatBot SNS topic - managed in the deploy account (deploy/coordination/chatbot.tf)
+  # Referenced via well-known module for cross-account access
+  chatbot_alerts_channel_sns_topic = module.chatbot_well_known.alerts_topic_arn
 }
 
 data "aws_caller_identity" "current" {}
