@@ -22,6 +22,7 @@ environmental_settings = {
   enable_shield_advanced_healthchecks      = false
   allow_pagerduty_alerts                   = false
   redis_multi_az_enabled                   = false
+  enable_advanced_database_insights        = false
 }
 root_domain             = "research.forms.service.gov.uk"
 additional_dns_records  = []
