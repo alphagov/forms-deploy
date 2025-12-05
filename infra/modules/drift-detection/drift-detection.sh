@@ -262,7 +262,7 @@ if [ ${DRIFT_DETECTED_COUNT} -gt 0 ] || [ ${MISSING_SHA_COUNT} -gt 0 ]; then
     done
     echo ""
     echo "These roots may need to be reapplied to match the current codebase."
-    exit 0
+    exit 1
 else
     echo "✅ All roots are up to date!"
     exit 0
