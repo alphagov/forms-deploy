@@ -31,5 +31,5 @@ EOF
 
   treat_missing_data = "notBreaching"
 
-  alarm_actions = [local.chatbot_alerts_channel_sns_topic]
+  alarm_actions = [aws_sns_topic.alerts_topic.arn]
 }
