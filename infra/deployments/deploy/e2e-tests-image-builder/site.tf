@@ -9,13 +9,17 @@ terraform {
   }
 }
 
+locals {
+  deployment = "deploy/e2e-tests-image-builder"
+}
+
 provider "aws" {
   allowed_account_ids = [var.deploy_account_id]
 
   default_tags {
     tags = {
       Environment = "deploy"
-      Deployment  = "deploy/e2e-tests-image-builder"
+      Deployment  = local.deployment
     }
   }
 }

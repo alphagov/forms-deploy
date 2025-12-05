@@ -9,12 +9,16 @@ terraform {
   }
 }
 
+locals {
+  deployment = "integration/review"
+}
+
 provider "aws" {
   allowed_account_ids = [var.aws_account_id]
   default_tags {
     tags = {
       Environment = "review"
-      Deployment  = "integration/review"
+      Deployment  = local.deployment
     }
   }
 }
@@ -28,7 +32,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "review"
-      Deployment  = "integration/review"
+      Deployment  = local.deployment
     }
   }
 }

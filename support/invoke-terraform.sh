@@ -236,6 +236,14 @@ post_apply() {
         ;;
     esac
 
+    # Record SHA + branch metadata to SSM for deploy and integration deployments
+    case "${deployment}" in
+    "deploy" | "integration")
+        echo "POST-APPLY: Recording deployment metadata"
+        "${script_dir}"/../infra/scripts/record-deployment-metadata.sh -e "${environment}" -d "${deployment}" -r "${tf_root}"
+        ;;
+    esac
+
     run_hook_script "post-apply"
 }
 

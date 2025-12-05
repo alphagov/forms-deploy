@@ -8,11 +8,15 @@ terraform {
   }
 }
 
+locals {
+  deployment = "integration/account"
+}
+
 provider "aws" {
   allowed_account_ids = [var.aws_account_id]
   default_tags {
     tags = {
-      Deployment = "integration/account"
+      Deployment = local.deployment
     }
   }
 }
