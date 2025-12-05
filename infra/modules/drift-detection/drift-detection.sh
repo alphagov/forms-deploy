@@ -260,6 +260,54 @@ if [ ${DRIFT_DETECTED_COUNT} -gt 0 ] || [ ${MISSING_SHA_COUNT} -gt 0 ]; then
     done
     echo ""
     echo "These roots may need to be reapplied to match the current codebase."
+
+    # Send custom EventBridge event with drift details
+    echo ""
+    echo "Sending drift notification to EventBridge..."
+
+    # Build drifted roots list as formatted string for Slack message
+    DRIFTED_ROOTS_LIST=""
+    for ROOT in "${DRIFTED_ROOTS[@]}"; do
+        DRIFTED_ROOTS_LIST="${DRIFTED_ROOTS_LIST}- ${ROOT}"$'\n'
+    done
+    # Remove trailing newline
+    DRIFTED_ROOTS_LIST="${DRIFTED_ROOTS_LIST%$'\n'}"
+
+    # Create EventBridge event
+    DETAIL_JSON=$(jq -n \
+        --arg deployment "${DEPLOYMENT_NAME}" \
+        --arg buildArn "${CODEBUILD_BUILD_ARN}" \
+        --arg driftedRoots "$DRIFTED_ROOTS_LIST" \
+        --argjson driftCount "${DRIFT_DETECTED_COUNT}" \
+        --argjson missingCount "${MISSING_SHA_COUNT}" \
+        --argjson totalCount "${TOTAL_ROOTS}" \
+        '{
+        "deployment-name": $deployment,
+        "build-arn": $buildArn,
+        "drift-status": "FAILED",
+        "drifted-roots": $driftedRoots,
+        "drift-count": $driftCount,
+        "missing-sha-count": $missingCount,
+        "total-roots": $totalCount
+      }')
+
+    cat >/tmp/drift-event.json <<EOF
+[
+  {
+    "DetailType": "Terraform Drift Detection Result",
+    "Source": "custom",
+    "Resources": [
+      "${CODEBUILD_BUILD_ARN}"
+    ],
+    "Detail": $(echo "$DETAIL_JSON" | jq -c @json)
+  }
+]
+EOF
+
+    # Send event to EventBridge
+    aws events put-events --entries "$(cat /tmp/drift-event.json)"
+    echo "Drift notification sent."
+
     exit 2
 else
     echo "✅ All roots are up to date!"

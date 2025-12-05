@@ -102,6 +102,72 @@ resource "aws_sns_topic" "deployments_topic" {
 JSON
 }
 
+resource "aws_sns_topic" "infra_notifications_topic" {
+  # checkov:skip=CKV_AWS_26:AWS ChatBot doesn't configure it with encryption
+  name            = module.chatbot_well_known.infra_notifications_topic_name
+  delivery_policy = <<JSON
+{
+  "http": {
+    "defaultHealthyRetryPolicy": {
+      "minDelayTarget": 20,
+      "maxDelayTarget": 20,
+      "numRetries": 3,
+      "numMaxDelayRetries": 0,
+      "numNoDelayRetries": 0,
+      "numMinDelayRetries": 0,
+      "backoffFunction": "linear"
+    },
+    "disableSubscriptionOverrides": false,
+    "defaultRequestPolicy": {
+      "headerContentType": "text/plain; charset=UTF-8"
+    }
+  }
+}
+JSON
+}
+
+resource "aws_sns_topic_policy" "infra_notifications_topic_access_policy" {
+  arn = aws_sns_topic.infra_notifications_topic.arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "AllowPublishFromServices",
+        Action   = "sns:Publish"
+        Effect   = "Allow"
+        Resource = aws_sns_topic.infra_notifications_topic.arn
+        Principal = {
+          Service = [
+            "cloudwatch.amazonaws.com",
+            "events.amazonaws.com",
+            "codestar-notifications.amazonaws.com"
+          ]
+        }
+        Condition = {
+          StringEquals = {
+            "AWS:SourceAccount" = [
+              module.other_accounts.deploy_account_id,
+              module.other_accounts.integration_account_id
+            ]
+          }
+        }
+      },
+      {
+        Sid      = "AllowPublishFromDeployAndIntegrationAccounts"
+        Action   = "sns:Publish"
+        Effect   = "Allow"
+        Resource = aws_sns_topic.infra_notifications_topic.arn
+        Principal = {
+          AWS = [
+            "arn:aws:iam::${module.other_accounts.deploy_account_id}:root",
+            "arn:aws:iam::${module.other_accounts.integration_account_id}:root"
+          ]
+        }
+      }
+    ]
+  })
+}
+
 resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
   arn = aws_sns_topic.deployments_topic.arn
   policy = jsonencode({
