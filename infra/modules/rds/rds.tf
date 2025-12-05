@@ -57,6 +57,13 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
   backup_retention_period   = var.backup_retention_period
   deletion_protection       = true
 
+  database_insights_mode    = "advanced"
+
+  # performance insights with 15 months retention are required for advance database insights
+  # https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_DatabaseInsights.TurningOnAdvanced.html
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 465
+
   serverlessv2_scaling_configuration {
     max_capacity = var.max_capacity
     min_capacity = var.min_capacity
@@ -91,8 +98,8 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
 
 resource "aws_rds_cluster_instance" "member" {
   #checkov:skip=CKV_AWS_118:We don't currently have enhanced monitoring
-  #checkov:skip=CKV_AWS_353:We don't currently use performance insights
-  #checkov:skip=CKV_AWS_354:We don't currently use performance insights
+  #checkov:skip=CKV_AWS_353:Performance insights are enabled on the cluster
+  #checkov:skip=CKV_AWS_354:Performance insights are enabled on the cluster
 
   cluster_identifier = aws_rds_cluster.cluster_aurora_v2.id
   engine             = "aurora-postgresql"
