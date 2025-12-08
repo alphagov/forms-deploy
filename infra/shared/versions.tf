@@ -7,15 +7,15 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "6.20.0"
+      version = "6.23.0"
     }
     awscc = {
       source  = "hashicorp/awscc"
-      version = "1.63.0"
+      version = "1.65.0"
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "1.34.0"
+      version = "1.36.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -27,7 +27,7 @@ terraform {
     }
     local = {
       source  = "hashicorp/local"
-      version = "2.5.3"
+      version = "2.6.1"
     }
   }
 }
