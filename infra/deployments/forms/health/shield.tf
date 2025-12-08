@@ -18,11 +18,6 @@ resource "aws_shield_protection" "cloudfront" {
   resource_arn = local.cloudfront_arn
 }
 
-resource "aws_shield_protection" "alb" {
-  name         = "${data.aws_lb.alb.name}-alb"
-  resource_arn = data.aws_lb.alb.arn
-}
-
 resource "aws_shield_application_layer_automatic_response" "cloudfront" {
   resource_arn = local.cloudfront_arn
   action       = "BLOCK"
@@ -88,7 +83,7 @@ resource "aws_iam_role_policy" "alb_log_access" {
 }
 
 resource "aws_shield_protection_group" "protected_resources" {
-  depends_on = [aws_shield_protection.alb, aws_shield_protection.cloudfront]
+  depends_on = [aws_shield_protection.cloudfront]
 
   protection_group_id = "Incoming-Traffic-Resources"
   aggregation         = "MAX"
