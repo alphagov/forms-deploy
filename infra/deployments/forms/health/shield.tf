@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 data "aws_lb" "alb" {
   name = "forms-${var.environment_name}"
 }
@@ -9,7 +7,6 @@ data "aws_s3_bucket" "logs_bucket" {
 }
 
 locals {
-  account_id     = data.aws_caller_identity.current.account_id
   cloudfront_arn = data.terraform_remote_state.forms_environment.outputs.cloudfront_arn
 }
 
@@ -252,15 +249,6 @@ resource "aws_route53_health_check" "ddos_detection" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-locals {
-  apps = ["forms-admin", "forms-runner", "forms-product-page"]
-}
-
-data "aws_lb_target_group" "target_groups" {
-  for_each = toset(local.apps)
-  name     = "${each.key}-${var.environment_name}"
 }
 
 resource "aws_route53_health_check" "healthy_hosts" {
