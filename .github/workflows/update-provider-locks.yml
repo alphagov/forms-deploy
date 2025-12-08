@@ -25,12 +25,10 @@ jobs:
           # We need to update it if they move on from the team, or if it expires.
           token: ${{ github.actor == 'dependabot[bot]' && secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}
 
-      - name: Set up Go
-        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
-
-      - name: Install tfupdate
-        run: |
-          go install github.com/minamijoyo/tfupdate@latest
+      - name: Install `tfupdate` with mise
+        uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
+        with:
+          install_args: tfupdate
 
       - name: Run lock update script
         run: |
