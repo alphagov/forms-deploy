@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 data "aws_lb" "alb" {
   name = "forms-${var.environment_name}"
 }
@@ -9,18 +7,12 @@ data "aws_s3_bucket" "logs_bucket" {
 }
 
 locals {
-  account_id     = data.aws_caller_identity.current.account_id
   cloudfront_arn = data.terraform_remote_state.forms_environment.outputs.cloudfront_arn
 }
 
 resource "aws_shield_protection" "cloudfront" {
   name         = "cloudfront"
   resource_arn = local.cloudfront_arn
-}
-
-resource "aws_shield_protection" "alb" {
-  name         = "${data.aws_lb.alb.name}-alb"
-  resource_arn = data.aws_lb.alb.arn
 }
 
 resource "aws_shield_application_layer_automatic_response" "cloudfront" {
@@ -88,7 +80,7 @@ resource "aws_iam_role_policy" "alb_log_access" {
 }
 
 resource "aws_shield_protection_group" "protected_resources" {
-  depends_on = [aws_shield_protection.alb, aws_shield_protection.cloudfront]
+  depends_on = [aws_shield_protection.cloudfront]
 
   protection_group_id = "Incoming-Traffic-Resources"
   aggregation         = "MAX"
@@ -257,15 +249,6 @@ resource "aws_route53_health_check" "ddos_detection" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-locals {
-  apps = ["forms-admin", "forms-runner", "forms-product-page"]
-}
-
-data "aws_lb_target_group" "target_groups" {
-  for_each = toset(local.apps)
-  name     = "${each.key}-${var.environment_name}"
 }
 
 resource "aws_route53_health_check" "healthy_hosts" {
