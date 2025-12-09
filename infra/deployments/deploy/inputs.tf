@@ -15,3 +15,9 @@ variable "send_logs_to_cyber" {
   type        = bool
   default     = true
 }
+
+variable "drift_detection_schedule" {
+  description = "EventBridge schedule expression for drift detection"
+  type        = string
+  default     = "cron(0 9 ? * MON *)"
+}
