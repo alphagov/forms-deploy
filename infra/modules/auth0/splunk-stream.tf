@@ -1,17 +1,3 @@
-resource "auth0_log_stream" "splunk_log_stream" {
-  count = var.enable_splunk_log_stream ? 1 : 0
-
-  name = "Splunk log stream"
-  type = "splunk"
-
-  sink {
-    splunk_domain = "http-inputs.gds.splunkcloud.com"
-    splunk_port   = "443"
-    splunk_secure = true
-    splunk_token  = data.aws_ssm_parameter.splunk_hec_token.value
-  }
-}
-
 resource "auth0_log_stream" "to_splunk" {
   # Note that the splunk_domain is actually for CRIBL, which pre-processes the logs
   count = var.enable_splunk_log_stream ? 1 : 0
