@@ -224,7 +224,7 @@ jobs:
 
   report:
     # Required, for 'required PR status checks' on GitHub.
-    name: "Run tests"
+    name: "Run terraform tests"
     runs-on: ubuntu-24.04-arm
     needs: [terraform-fmt, terraform-validate, tflint, checkov]
     if: ${{ always() && !failure() && !cancelled() }}
