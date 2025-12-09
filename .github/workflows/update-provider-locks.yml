@@ -20,10 +20,6 @@ jobs:
         with:
           # Use the pull request head ref to ensure we're on the PR branch
           ref: ${{ github.head_ref }}
-          # Use PAT for Dependabot PRs, regular token for others
-          # The current PAT is whi-tw's, it needs repo:write permissions
-          # We need to update it if they move on from the team, or if it expires.
-          token: ${{ github.actor == 'dependabot[bot]' && secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Install `tfupdate` with mise
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
