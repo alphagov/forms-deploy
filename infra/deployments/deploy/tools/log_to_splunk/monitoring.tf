@@ -1,3 +1,13 @@
+module "chatbot_well_known" {
+  source = "../../../../modules/well-known/chatbot"
+}
+
+locals {
+  # AWS ChatBot SNS topic - managed in the deploy account (deploy/coordination/chatbot.tf)
+  # Referenced via well-known module
+  chatbot_alerts_channel_sns_topic = module.chatbot_well_known.alerts_topic_arn
+}
+
 resource "aws_cloudwatch_metric_alarm" "cribl_dlq_messages" {
   alarm_name          = "cribl-s3-events-dlq-has-messages"
   alarm_description   = <<EOF
@@ -72,8 +82,4 @@ EOF
   }
 
   alarm_actions = [local.chatbot_alerts_channel_sns_topic]
-}
-
-locals {
-  chatbot_alerts_channel_sns_topic = "arn:aws:sns:eu-west-2:${data.aws_caller_identity.current.account_id}:CodeStarNotifications-govuk-forms-alert-b7410628fe547543676d5dc062cf342caba48bcd"
 }
