@@ -7,20 +7,12 @@ on:
   merge_group:
 
 jobs:
-  noop-on-merge-group:
-    if: github.event_name == 'merge_group'
-    runs-on: ubuntu-latest
-    name: Run pre-commit # Replace with '&job_name Run pre-commit' once actionlint supports anchors
-    steps:
-      - name: 🛑 Skip Pre-commit Checks for Merge Group
-        run: echo "This is a merge group event. Skipping pre-commit checks."; true
-        shell: bash
   pre-commit:
-    # This job will run on all pull requests and pushes to main, but not on merge groups
+    # This job will run on all pull requests and pushes to main
     # We run it on merge to main to ensure that pre-commit's cache is up to date
     if: github.event_name != 'merge_group'
     runs-on: ubuntu-latest
-    name: Run pre-commit # Replace with '*job_name' once actionlint supports anchors
+    name: run checks
     permissions:
       contents: read
       pull-requests: write
@@ -191,3 +183,12 @@ jobs:
         if: always() # always run to ensure cache is cleaned up even if previous steps fail
         run: pre-commit gc
         shell: bash
+  report:
+    # Required, for 'required PR status checks' on GitHub.
+    name: Run pre-commit
+    runs-on: ubuntu-latest
+    needs: [pre-commit]
+    if: ${{ always() && !failure() && !cancelled() }}
+    steps:
+      - name: No checks failed
+        run: echo "No pre-commit issues found."
