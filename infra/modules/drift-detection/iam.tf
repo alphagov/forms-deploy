@@ -46,6 +46,15 @@ data "aws_iam_policy_document" "codebuild" {
     ]
     effect = "Allow"
   }
+
+  # EventBridge permissions to send custom events
+  statement {
+    actions = [
+      "events:PutEvents"
+    ]
+    resources = ["arn:aws:events:${local.aws_region}:${local.aws_account_id}:event-bus/default"]
+    effect    = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "codebuild" {
@@ -86,6 +95,19 @@ data "aws_iam_policy_document" "eventbridge" {
       aws_codebuild_project.drift_check.arn
     ]
     effect = "Allow"
+  }
+
+  dynamic "statement" {
+    for_each = var.drift_detected_topic_arn != null ? [1] : []
+    content {
+      actions = [
+        "sns:Publish",
+      ]
+      resources = [
+        var.drift_detected_topic_arn
+      ]
+      effect = "Allow"
+    }
   }
 }
 
