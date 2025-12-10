@@ -61,7 +61,10 @@ resource "aws_sns_topic_policy" "alerts_topic_access_policy" {
         }
         Condition = {
           StringEquals = {
-            "AWS:SourceAccount" = [for _, id in module.other_accounts.environment_accounts_id : id]
+            "AWS:SourceAccount" = concat(
+              [module.other_accounts.deploy_account_id],
+              [for _, id in module.other_accounts.environment_accounts_id : id]
+            )
           }
         }
       },
@@ -71,7 +74,10 @@ resource "aws_sns_topic_policy" "alerts_topic_access_policy" {
         Effect   = "Allow"
         Resource = aws_sns_topic.alerts_topic.arn
         Principal = {
-          AWS = [for _, id in module.other_accounts.environment_accounts_id : "arn:aws:iam::${id}:root"]
+          AWS = concat(
+            ["arn:aws:iam::${module.other_accounts.deploy_account_id}:root"],
+            [for _, id in module.other_accounts.environment_accounts_id : "arn:aws:iam::${id}:root"]
+          )
         }
       }
     ]
@@ -187,7 +193,10 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
         }
         Condition = {
           StringEquals = {
-            "AWS:SourceAccount" = [for _, id in module.other_accounts.environment_accounts_id : id]
+            "AWS:SourceAccount" = concat(
+              [module.other_accounts.deploy_account_id],
+              [for _, id in module.other_accounts.environment_accounts_id : id]
+            )
           }
         }
       },
@@ -197,7 +206,10 @@ resource "aws_sns_topic_policy" "deployments_topic_access_policy" {
         Effect   = "Allow"
         Resource = aws_sns_topic.deployments_topic.arn
         Principal = {
-          AWS = [for _, id in module.other_accounts.environment_accounts_id : "arn:aws:iam::${id}:root"]
+          AWS = concat(
+            ["arn:aws:iam::${module.other_accounts.deploy_account_id}:root"],
+            [for _, id in module.other_accounts.environment_accounts_id : "arn:aws:iam::${id}:root"]
+          )
         }
       }
     ]
