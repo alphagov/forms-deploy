@@ -9,7 +9,7 @@ on:
 
 jobs:
   update-locks:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       pull-requests: write
@@ -20,10 +20,6 @@ jobs:
         with:
           # Use the pull request head ref to ensure we're on the PR branch
           ref: ${{ github.head_ref }}
-          # Use PAT for Dependabot PRs, regular token for others
-          # The current PAT is whi-tw's, it needs repo:write permissions
-          # We need to update it if they move on from the team, or if it expires.
-          token: ${{ github.actor == 'dependabot[bot]' && secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Install `tfupdate` with mise
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
@@ -139,6 +135,7 @@ jobs:
         env:
           COMMENT_MARKER: "<!-- provider-locks: dependabot updated -->"
           GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           # Leave a comment on the PR
           cat <<EOF > "${{runner.temp}}/pr-comment.md"
@@ -149,6 +146,19 @@ jobs:
           > \`.terraform.lock.hcl\` files have been automatically updated and committed.
           >
           > The changes are ready for review and merge.
+
+          > [!IMPORTANT]
+          > The actions have not been run on this PR since the lock files were updated, because GHA won't run \`push\` actions when the commit has been made by a bot.
+          > To get the CI checks to run, you will need to amend the PR:
+          > 1. Check out the PR branch locally: \`git checkout ${HEAD_REF}\`
+          > 2. Pull the latest changes: \`git pull\`
+          > 3. Make a no-op amendment: \`git commit --amend --no-edit\`
+          > 4. Push the amended commit: \`git push --force-with-lease\`
+          >
+          > This will trigger the CI checks to run with the updated lock files.
+
+          > [!WARNING]
+          > If dependabot has attempted to modify the PR (i.e. if there are new dependency updates available), comment \`@dependabot recreate\` and it'll recreate the PR from scratch (allowing the lock files to be updated correctly).
 
           ${COMMENT_MARKER}
           EOF

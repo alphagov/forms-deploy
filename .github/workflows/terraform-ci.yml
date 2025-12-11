@@ -126,6 +126,8 @@ jobs:
 
   terraform-fmt:
     name: "Terraform format check"
+    needs: setup
+    if: needs.setup.outputs.has-terraform-changes == 'true'
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout code
@@ -172,6 +174,8 @@ jobs:
 
   tflint:
     name: "tflint"
+    needs: setup
+    if: needs.setup.outputs.has-terraform-changes == 'true'
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout code
@@ -201,6 +205,8 @@ jobs:
 
   checkov:
     name: "Checkov"
+    needs: setup
+    if: needs.setup.outputs.has-terraform-changes == 'true'
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout code
@@ -218,10 +224,10 @@ jobs:
 
   report:
     # Required, for 'required PR status checks' on GitHub.
-    name: "Run tests"
+    name: "Run terraform tests"
     runs-on: ubuntu-24.04-arm
     needs: [terraform-fmt, terraform-validate, tflint, checkov]
     if: ${{ always() && !failure() && !cancelled() }}
     steps:
-      - name: All checks passed
-        run: echo "All Terraform checks passed successfully."
+      - name: No checks failed
+        run: echo "No terraform issues found."
