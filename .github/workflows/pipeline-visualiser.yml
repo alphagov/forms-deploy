@@ -40,5 +40,5 @@ jobs:
           bundler-cache: true
           ruby-version: ${{steps.determine-ruby-version.outputs.RUBY_VERSION}}
           working-directory: support/pipeline-visualiser
-      - name: Run tests
+      - name: Run pipeline visualiser tests
         run: bundle exec rspec
