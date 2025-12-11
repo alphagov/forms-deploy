@@ -264,7 +264,7 @@ resource "aws_route53_health_check" "aggregated" {
   count = var.environmental_settings.enable_shield_advanced_healthchecks ? 1 : 0
 
   type                   = "CALCULATED"
-  child_health_threshold = 1
+  child_health_threshold = 4
   child_healthchecks = concat([
     aws_route53_health_check.admin[0].id,
     aws_route53_health_check.product_page[0].id,
