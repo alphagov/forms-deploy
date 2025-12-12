@@ -141,7 +141,6 @@ variable "forms_admin_settings" {
     act_as_user_enabled                = bool
     govuk_app_domain                   = string
     synchronize_to_mailchimp           = bool
-    repeatable_page_enabled            = bool
     describe_none_of_the_above_enabled = bool
   })
   nullable = false

@@ -80,7 +80,6 @@ forms_admin_settings = {
   act_as_user_enabled                = true
   govuk_app_domain                   = "integration.publishing.service.gov.uk"
   synchronize_to_mailchimp           = false
-  repeatable_page_enabled            = true
   describe_none_of_the_above_enabled = true
 }
 forms_product_page_settings = {

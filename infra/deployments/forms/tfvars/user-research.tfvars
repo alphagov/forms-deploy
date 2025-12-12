@@ -43,7 +43,6 @@ forms_admin_settings = {
   act_as_user_enabled                = false
   govuk_app_domain                   = ""
   synchronize_to_mailchimp           = false
-  repeatable_page_enabled            = true
   describe_none_of_the_above_enabled = false
 }
 forms_product_page_settings = {
