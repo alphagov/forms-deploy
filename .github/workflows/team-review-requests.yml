@@ -1,0 +1,43 @@
+name: Auto-request team PR reviews
+
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+
+jobs:
+  request-team-reviews:
+    name: Request team PR reviews
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      TEAM_NAME: forms-infrastructure
+    steps:
+      - name: Request reviews from team
+        if: ${{ !github.event.pull_request.draft }}
+        env:
+          GH_TOKEN_ORG: ${{ secrets.READ_ORG_MEMBERS_PAT }} # PAT with members:read scope on the org. Expires on Sun, Dec 13 2026
+          GH_TOKEN: ${{ github.token }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_FULL_NAME: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_CREATOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          # Get team members
+          TEAM_MEMBERS=$(GH_TOKEN="$GH_TOKEN_ORG" gh api "orgs/${REPO_OWNER}/teams/${TEAM_NAME}/members")
+
+          # Filter out the PR creator
+          REVIEWERS=$(echo "$TEAM_MEMBERS" | jq -cr \
+            --arg PR_CREATOR "$PR_CREATOR" \
+            '[.[] | select(.login != $PR_CREATOR) | .login]')
+
+          # Check if there are any reviewers to request
+          if jq -e 'length > 0' <<< "$REVIEWERS" >/dev/null; then
+            # Request reviews from all team members except the PR creator
+            jq -nr --argjson reviewers "$REVIEWERS" '{reviewers: $reviewers}' | gh api -X POST "/repos/${REPO_FULL_NAME}/pulls/${PR_NUMBER}/requested_reviewers" --input - > /dev/null
+            echo "Review requests sent to: $(echo "$REVIEWERS" | jq -r 'join(", ")')"
+          else
+            echo "No reviewers to request - PR creator is the only team member."
+          fi
