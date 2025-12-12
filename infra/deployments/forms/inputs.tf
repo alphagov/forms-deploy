@@ -129,19 +129,20 @@ EOF
 variable "forms_admin_settings" {
   description = "Forms Admin configuration values"
   type = object({
-    cpu                        = number
-    memory                     = number
-    min_capacity               = number
-    max_capacity               = number
-    enable_maintenance_mode    = bool
-    auth_provider              = string
-    previous_auth_provider     = string
-    cloudwatch_metrics_enabled = bool
-    analytics_enabled          = bool
-    act_as_user_enabled        = bool
-    govuk_app_domain           = string
-    synchronize_to_mailchimp   = bool
-    repeatable_page_enabled    = bool
+    cpu                                = number
+    memory                             = number
+    min_capacity                       = number
+    max_capacity                       = number
+    enable_maintenance_mode            = bool
+    auth_provider                      = string
+    previous_auth_provider             = string
+    cloudwatch_metrics_enabled         = bool
+    analytics_enabled                  = bool
+    act_as_user_enabled                = bool
+    govuk_app_domain                   = string
+    synchronize_to_mailchimp           = bool
+    repeatable_page_enabled            = bool
+    describe_none_of_the_above_enabled = bool
   })
   nullable = false
 }
