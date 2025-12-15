@@ -1,6 +1,10 @@
 version: 0.2
 artifacts:
   enable-symlinks: yes
+cache:
+  key: terraform-providers-$(codebuild-hash-files infra/deployments/${ROOT_NAME}/.terraform.lock.hcl)
+  paths:
+    - "${TF_PLUGIN_CACHE_DIR}/**/*"
 phases:
   install:
     commands:
@@ -8,6 +12,7 @@ phases:
       - "# shellcheck disable=SC2155"
       - set -e
       - uname -a
+      - mkdir -p "${TF_PLUGIN_CACHE_DIR}"
       - curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o "terraform-${TERRAFORM_VERSION}.zip"
       - unzip "terraform-${TERRAFORM_VERSION}.zip"
       - mv terraform /usr/local/bin/terraform
@@ -17,5 +22,5 @@ phases:
     commands:
       - aws sts get-caller-identity
       - |
-         cd "${CODEBUILD_SRC_DIR}"
-         FORMS_TF_AUTO_APPROVE=true make "${ENVIRONMENT}" "${ROOT_NAME}" apply
+        cd "${CODEBUILD_SRC_DIR}"
+        FORMS_TF_AUTO_APPROVE=true make "${ENVIRONMENT}" "${ROOT_NAME}" apply
