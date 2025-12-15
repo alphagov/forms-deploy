@@ -8,7 +8,7 @@ env:
 jobs:
   setup:
     name: "Setup and build matrix"
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     outputs:
       validation-matrix: ${{ steps.build-matrix.outputs.validation-matrix }}
       has-terraform-changes: ${{ steps.check-changes.outputs.has-changes }}
@@ -128,7 +128,7 @@ jobs:
     name: "Terraform format check"
     needs: setup
     if: needs.setup.outputs.has-terraform-changes == 'true'
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -145,7 +145,7 @@ jobs:
 
   terraform-validate:
     name: "Terraform validate"
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     needs: setup
     if: needs.setup.outputs.has-terraform-changes == 'true' && needs.setup.outputs.validation-matrix != '[]'
     strategy:
@@ -176,7 +176,7 @@ jobs:
     name: "tflint"
     needs: setup
     if: needs.setup.outputs.has-terraform-changes == 'true'
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -207,7 +207,7 @@ jobs:
     name: "Checkov"
     needs: setup
     if: needs.setup.outputs.has-terraform-changes == 'true'
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -225,7 +225,7 @@ jobs:
   report:
     # Required, for 'required PR status checks' on GitHub.
     name: "Run terraform tests"
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     needs: [terraform-fmt, terraform-validate, tflint, checkov]
     if: ${{ always() && !failure() && !cancelled() }}
     steps:
