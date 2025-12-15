@@ -191,7 +191,9 @@ jobs:
         name: Cache tflint plugin dir
         with:
           path: ~/.tflint.d/plugins
-          key: tflint-${{ hashFiles('.tflint.hcl') }}
+          key: tflint-${{ runner.arch }}-${{ runner.os }}-${{ hashFiles('.tflint.hcl') }}
+          restore-keys: |
+            tflint-${{ runner.arch }}-${{ runner.os }}-
 
       - name: Init tflint
         run: tflint --init
