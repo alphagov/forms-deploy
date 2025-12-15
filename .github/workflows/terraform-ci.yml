@@ -3,6 +3,8 @@ on:
   pull_request:
   merge_group:
     types: [checks_requested]
+  push:
+    branches: [main]
 env:
   GO_VERSION: "1.21"
 jobs:
