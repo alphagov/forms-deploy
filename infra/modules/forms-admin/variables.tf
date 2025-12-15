@@ -90,9 +90,9 @@ variable "act_as_user_enabled" {
   default     = false
 }
 
-variable "repeatable_page_enabled" {
+variable "describe_none_of_the_above_enabled" {
   type        = bool
-  description = "Enables editing pages to add another answer to them"
+  description = "Enables asking users to provide an answer when they select 'None of the above' for selection questions"
   default     = false
 }
 
