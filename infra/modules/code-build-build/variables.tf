@@ -47,3 +47,9 @@ variable "log_group_name" {
     error_message = "Log group names must start with 'codebuild/'"
   }
 }
+
+variable "cache_bucket" {
+  type        = string
+  default     = null
+  description = "The S3 bucket to use for CodeBuild caching"
+}

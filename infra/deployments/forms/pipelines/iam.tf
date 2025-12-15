@@ -52,3 +52,21 @@ resource "aws_iam_role_policy" "allow_actor_to_send_events_to_deploy" {
   role   = aws_iam_role.eventbridge_actor.name
   policy = data.aws_iam_policy_document.allow_sending_events_to_deploy.json
 }
+
+data "aws_iam_policy_document" "allow_use_of_codebuild_cache_bucket" {
+  statement {
+    sid    = "AllowUseOfCodeBuildCacheBucket"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+    resources = ["arn:aws:s3:::${module.provider_cache_bucket.name}/*"]
+  }
+}
+
+resource "aws_iam_role_policy" "allow_actor_to_use_codebuild_cache_bucket" {
+  name   = "allow-actor-to-use-codebuild-cache-bucket"
+  role   = data.aws_iam_role.deployer_role.name
+  policy = data.aws_iam_policy_document.allow_use_of_codebuild_cache_bucket.json
+}

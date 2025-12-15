@@ -256,6 +256,25 @@ resource "aws_codepipeline" "apply_terroform" {
   }
 }
 
+module "provider_cache_bucket" {
+  source = "../../../modules/secure-bucket"
+
+  name = "${var.environment_name}-codebuild-terraform-provider-cache"
+}
+
+output "provider_cache_bucket_name" {
+  value = module.provider_cache_bucket.name
+}
+
+locals {
+  provider_cache_namespace = "apply-terraform-${var.environment_name}"
+}
+
+output "provider_cache_namespace" {
+  # This is applied by the post-apply script to each CodeBuild project until the provider
+  # supports setting it in Terraform directly. https://github.com/hashicorp/terraform-provider-aws/issues/45582
+  value = local.provider_cache_namespace
+}
 
 module "terraform_apply" {
   # All roots under `infra/deployments/forms/`, excluding the roots which
@@ -265,13 +284,19 @@ module "terraform_apply" {
   project_name        = "${var.environment_name}-apply-${each.value}"
   project_description = "Terraform apply ${each.value} in ${var.environment_name}"
   environment_variables = {
-    "ROOT_NAME" = replace(each.value, "_", "/") # Undo the replacement we've had to do for the name
+    "ROOT_NAME"           = replace(each.value, "_", "/") # Undo the replacement we've had to do for the name
+    "TF_PLUGIN_CACHE_DIR" = "/tmp/terraform-provider-cache"
   }
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/apply-terraform/apply-terraform.yml")
   log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
+  cache_bucket               = module.provider_cache_bucket.name
+}
+
+output "terraform_apply_projects" {
+  value = [for _, m in module.terraform_apply : m.name]
 }
 
 module "await_ecs_deployments" {

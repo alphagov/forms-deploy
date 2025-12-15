@@ -10,7 +10,7 @@ deployments_dir="$(realpath "${script_dir}/../infra/deployments/")"
 readonly deployments_dir
 
 # Plugin cache setup
-TF_PLUGIN_CACHE_DIR="${root_dir}/.terraform-plugin-cache"
+TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-${root_dir}/.terraform-plugin-cache}"
 mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 export TF_PLUGIN_CACHE_DIR
 
