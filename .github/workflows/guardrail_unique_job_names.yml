@@ -1,0 +1,76 @@
+name: "Guardrail: Unique GHA workflow job names"
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  guardrail_unique_job_names:
+    name: "Guardrail: Ensure unique workflow job names"
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Ensure unique job names
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+          GHA_INTEGRATION_ID: 15368
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # fetch legacy branch protection required checks
+          branch_protection_checks=$(gh api "repos/${GITHUB_REPOSITORY}/branches/${TARGET_BRANCH}/protection/required_status_checks" 2>/dev/null | \
+            jq --argjson INTEGRATION_ID "$GHA_INTEGRATION_ID" '[.checks[] | select(.integration_id==$INTEGRATION_ID)]? // []')
+          # fetch ruleset required checks
+          ruleset_checks=$(gh api "repos/${GITHUB_REPOSITORY}/rules/branches/${TARGET_BRANCH}" 2>/dev/null | \
+            jq --argjson INTEGRATION_ID "$GHA_INTEGRATION_ID" '[.[] | select(.type=="required_status_checks") | .parameters.required_status_checks[] | select(.integration_id==$INTEGRATION_ID)]? // []')
+
+          # Combine and deduplicate both sources of required checks
+          required_checks="$(jq -n --argjson bp "$branch_protection_checks" --argjson rs "$ruleset_checks" \
+            '$bp + $rs | map(.context) | unique')"
+
+          # Ensure that at least one required check exists
+          if jq -e 'length == 0' <<< "$required_checks" >/dev/null; then
+            echo "⚠️ Warning: No required status checks found for branch '${TARGET_BRANCH}'."
+            echo "This guardrail workflow expects to find at least one required status check (ideally including itself: 'Guardrail: Ensure unique workflow job names')."
+            echo "Please configure required status checks in branch protection rules or rulesets."
+            echo ""
+            echo "It's also possible that the integration ID for GitHub Actions status checks has changed from ${GHA_INTEGRATION_ID}."
+            echo "Legacy branch protection checks:"
+            gh api "repos/${GITHUB_REPOSITORY}/branches/${TARGET_BRANCH}/protection/required_status_checks" | jq '.checks[]? // []'
+            echo ""
+            echo "Ruleset checks:"
+            gh api "repos/${GITHUB_REPOSITORY}/rules/branches/${TARGET_BRANCH}" | jq '[.[] | select(.type=="required_status_checks") | .parameters.required_status_checks[]]? // []'
+            echo ""
+            echo "If you see checks above but they are not being picked up, please update the GHA_INTEGRATION_ID in this workflow file."
+            exit 2
+          fi
+
+          # Build a map of job names to their source files
+          job_files="$(find .github/workflows -type f \( -name "*.yml" -o -name "*.yaml" \) -print0 | while IFS= read -r -d '' file; do
+            filename="$(basename "$file")"
+            yq eval --output-format=json '.jobs | to_entries | .[] | (.value.name // .key)' "$file" | \
+              jq --arg file "$filename" '{name: ., file: $file}'
+          done | jq -s '.')"
+
+          # Group by job name and find duplicates (with their files)
+          duplicates="$(echo "$job_files" | \
+            jq 'group_by(.name) | map(select(length > 1)) | map({name: .[0].name, files: [.[].file] | unique})')"
+
+          # Find conflicts - required checks that are duplicated
+          conflicts="$(jq -n \
+            --argjson required "$required_checks" \
+            --argjson duplicates "$duplicates" \
+            '$duplicates | map(select(.name as $name | $required | index($name)))')"
+
+          # Check if any conflicts exist
+          if jq -e 'length > 0' <<< "$conflicts" >/dev/null; then
+            echo "❌ Error: The following required status check names are duplicated in workflow files:"
+            echo "$conflicts" | jq -r '.[] | "  - \"\(.name)\" (found in: \(.files | join(", ")))"'
+            exit 1
+          fi
+
+          echo "✅ All required status checks have unique names"
