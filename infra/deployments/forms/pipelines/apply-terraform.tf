@@ -259,7 +259,7 @@ resource "aws_codepipeline" "apply_terroform" {
 module "provider_cache_bucket" {
   source = "../../../modules/secure-bucket"
 
-  name = "${var.environment_name}-codebuild-terraform-provider-cache"
+  name = "pipeline-govuk-forms-codebuild-cache-${var.environment_name}"
 }
 
 output "provider_cache_bucket_name" {
