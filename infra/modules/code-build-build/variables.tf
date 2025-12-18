@@ -53,3 +53,14 @@ variable "cache_bucket" {
   default     = null
   description = "The S3 bucket to use for CodeBuild caching"
 }
+
+variable "cache_namespace" {
+  type        = string
+  default     = null
+  description = "The namespace to use for CodeBuild caching. This determines the scope in which a cache is shared across multiple projects."
+
+  validation {
+    condition     = var.cache_namespace == null || var.cache_bucket != null
+    error_message = "cache_bucket must be set when cache_namespace is provided"
+  }
+}

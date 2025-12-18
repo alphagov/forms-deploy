@@ -262,18 +262,8 @@ module "provider_cache_bucket" {
   name = "pipeline-govuk-forms-codebuild-cache-${var.environment_name}"
 }
 
-output "provider_cache_bucket_name" {
-  value = module.provider_cache_bucket.name
-}
-
 locals {
   provider_cache_namespace = "apply-terraform-${var.environment_name}"
-}
-
-output "provider_cache_namespace" {
-  # This is applied by the post-apply script to each CodeBuild project until the provider
-  # supports setting it in Terraform directly. https://github.com/hashicorp/terraform-provider-aws/issues/45582
-  value = local.provider_cache_namespace
 }
 
 module "terraform_apply" {
@@ -293,12 +283,8 @@ module "terraform_apply" {
   log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
   cache_bucket               = module.provider_cache_bucket.name
+  cache_namespace            = local.provider_cache_namespace
 }
-
-output "terraform_apply_projects" {
-  value = [for _, m in module.terraform_apply : m.name]
-}
-
 module "await_ecs_deployments" {
   source                     = "../../../modules/code-build-build"
   project_name               = "${var.environment_name}-await-ecs-deployments-finished"

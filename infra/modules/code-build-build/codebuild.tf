@@ -33,8 +33,9 @@ resource "aws_codebuild_project" "this" {
     for_each = var.cache_bucket != null ? [1] : []
 
     content {
-      type     = "S3"
-      location = var.cache_bucket
+      type            = "S3"
+      location        = var.cache_bucket
+      cache_namespace = var.cache_namespace
     }
   }
 
