@@ -15,6 +15,10 @@ locals {
       name        = "apply-terraform-${var.environment_name}"
       keep_newest = 10
     }
+    e2e_tests = {
+      name        = "e2e-tests-${var.environment_name}"
+      keep_newest = 10
+    }
   }
 }
 

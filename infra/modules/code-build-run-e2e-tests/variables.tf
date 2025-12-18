@@ -83,3 +83,20 @@ variable "s3_form_id" {
   type        = string
   description = "The id of the form that you want to run the s3 submission type end to end tests against"
 }
+
+variable "cache_bucket" {
+  type        = string
+  default     = null
+  description = "The S3 bucket to use for CodeBuild caching"
+}
+
+variable "cache_namespace" {
+  type        = string
+  default     = null
+  description = "The namespace to use for CodeBuild caching. This determines the scope in which a cache is shared across multiple projects."
+
+  validation {
+    condition     = var.cache_namespace == null || var.cache_bucket != null
+    error_message = "cache_bucket must be set when cache_namespace is provided"
+  }
+}

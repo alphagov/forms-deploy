@@ -22,6 +22,16 @@ resource "aws_codebuild_project" "e2e" {
     type = "CODEPIPELINE"
   }
 
+  dynamic "cache" {
+    for_each = var.cache_bucket != null ? [1] : []
+
+    content {
+      type            = "S3"
+      location        = var.cache_bucket
+      cache_namespace = var.cache_namespace
+    }
+  }
+
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "${var.container_registry}/end-to-end-tests:latest"

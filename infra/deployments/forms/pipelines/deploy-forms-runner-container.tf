@@ -363,6 +363,8 @@ module "deploy_runner_end_to_end_tests" {
   aws_s3_role_arn         = var.end_to_end_test_settings.aws_s3_role_arn
   aws_s3_bucket           = var.end_to_end_test_settings.aws_s3_bucket
   s3_form_id              = var.end_to_end_test_settings.s3_form_id
+  cache_bucket            = module.codebuild_cache_bucket.name
+  cache_namespace         = local.cache_namespaces.e2e_tests.name
 
   auth0_user_name_parameter_name     = module.automated_test_parameters[0].auth0_user_name_parameter_name
   auth0_user_password_parameter_name = module.automated_test_parameters[0].auth0_user_password_parameter_name
