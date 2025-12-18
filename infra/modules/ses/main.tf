@@ -18,6 +18,10 @@ resource "aws_sesv2_configuration_set" "auth0" {
   reputation_options {
     reputation_metrics_enabled = true
   }
+
+  delivery_options {
+    tls_policy = "REQUIRE"
+  }
 }
 
 resource "aws_sesv2_configuration_set_event_destination" "auth0" {
