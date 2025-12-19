@@ -18,7 +18,7 @@ resource "aws_lambda_function" "paused_pipeline_detection" {
   description   = "Searches for, and alerts us about, pipelines that have been paused for too long"
   role          = aws_iam_role.lambda_paused_pipeline_invoker.arn
 
-  runtime                        = "ruby3.3"
+  runtime                        = "ruby3.4"
   handler                        = "index.main"
   reserved_concurrent_executions = 50
   timeout                        = 10
