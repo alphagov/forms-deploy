@@ -256,16 +256,6 @@ resource "aws_codepipeline" "apply_terroform" {
   }
 }
 
-module "provider_cache_bucket" {
-  source = "../../../modules/secure-bucket"
-
-  name = "pipeline-govuk-forms-codebuild-cache-${var.environment_name}"
-}
-
-locals {
-  provider_cache_namespace = "apply-terraform-${var.environment_name}"
-}
-
 module "terraform_apply" {
   # All roots under `infra/deployments/forms/`, excluding the roots which
   # deploy one of the apps. They have their own pipelines.
@@ -282,8 +272,8 @@ module "terraform_apply" {
   buildspec                  = file("${path.root}/buildspecs/apply-terraform/apply-terraform.yml")
   log_group_name             = "codebuild/${each.value}-deploy-${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
-  cache_bucket               = module.provider_cache_bucket.name
-  cache_namespace            = local.provider_cache_namespace
+  cache_bucket               = module.codebuild_cache_bucket.name
+  cache_namespace            = local.cache_namespaces.terraform_providers.name
 }
 module "await_ecs_deployments" {
   source                     = "../../../modules/code-build-build"
