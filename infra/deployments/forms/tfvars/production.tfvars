@@ -136,6 +136,7 @@ forms_admin_settings = {
   act_as_user_enabled                = false
   govuk_app_domain                   = "publishing.service.gov.uk"
   synchronize_to_mailchimp           = true
+  synchronize_orgs_from_govuk        = true
   describe_none_of_the_above_enabled = false
 }
 forms_product_page_settings = {

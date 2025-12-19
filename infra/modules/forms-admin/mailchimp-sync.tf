@@ -21,7 +21,7 @@ locals {
   )
 }
 
-resource "aws_ecs_task_definition" "cron_job" {
+resource "aws_ecs_task_definition" "mailchimp_cron_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
   family                = "${var.env_name}_forms-admin_mailchimp_sync"
@@ -46,27 +46,27 @@ resource "aws_ecs_task_definition" "cron_job" {
 ##
 # EventBridge
 ##
-resource "aws_cloudwatch_event_rule" "sync_cron_job" {
+resource "aws_cloudwatch_event_rule" "sync_mailchimp_cron_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
-  name                = "${var.env_name}-forms-admin-sync-cron"
+  name                = "${var.env_name}-forms-admin-mailchimp-sync-cron"
   description         = "Trigger the forms-admin MailChimp synchronisation on a schedule"
   schedule_expression = "cron(30 10 * * ? *)" # 10:30AM daily. In office hours so that we can respond to failures
 }
 
-resource "aws_cloudwatch_event_target" "ecs_sync_job" {
+resource "aws_cloudwatch_event_target" "ecs_mailchimp_sync_job" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
   arn      = var.ecs_cluster_arn
-  rule     = aws_cloudwatch_event_rule.sync_cron_job[0].name
-  role_arn = aws_iam_role.ecs_cron_scheduler[0].arn
+  rule     = aws_cloudwatch_event_rule.sync_mailchimp_cron_job[0].name
+  role_arn = aws_iam_role.ecs_mailchimp_cron_scheduler[0].arn
 
   ecs_target {
     # Construct ARN without revision number to always use the latest revision
     # Format: arn:aws:ecs:region:account:task-definition/family
     # This ensures the EventBridge rule always uses the latest revision
     # which is updated by the forms-admin deployment pipeline
-    task_definition_arn = "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/${aws_ecs_task_definition.cron_job[0].family}"
+    task_definition_arn = "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/${aws_ecs_task_definition.mailchimp_cron_job[0].family}"
     launch_type         = "FARGATE"
     platform_version    = "1.4.0"
 
@@ -83,8 +83,8 @@ resource "aws_cloudwatch_event_target" "ecs_sync_job" {
 }
 
 ## Monitor for failure
-resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
-  name        = "${var.env_name}-forms-admin-sync-failed"
+resource "aws_cloudwatch_event_rule" "sync_mailchimp_cron_job_failed" {
+  name        = "${var.env_name}-forms-admin-mailchimp-sync-failed"
   description = "Trigger when the MailChimp sync job has exited with a non-zero exit code"
 
   event_pattern = jsonencode({
@@ -106,8 +106,8 @@ resource "aws_cloudwatch_event_rule" "sync_cron_job_failed" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
-  rule = aws_cloudwatch_event_rule.sync_cron_job_failed.name
+resource "aws_cloudwatch_event_target" "sync_mailchimp_cron_job_alert_message" {
+  rule = aws_cloudwatch_event_rule.sync_mailchimp_cron_job_failed.name
 
   # defined in 'environment' module. Sends alarms/errors via ZenDesk
   arn = var.zendesk_sns_topic_arn
@@ -134,10 +134,10 @@ resource "aws_cloudwatch_event_target" "sync_cron_job_alert_message" {
 ##
 # IAM
 ##
-resource "aws_iam_role" "ecs_cron_scheduler" {
+resource "aws_iam_role" "ecs_mailchimp_cron_scheduler" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
-  name = "${var.env_name}-forms-admin-ecs-cron-scheduler"
+  name = "${var.env_name}-forms-admin-mailchimp-ecs-cron-scheduler"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -153,9 +153,19 @@ resource "aws_iam_role" "ecs_cron_scheduler" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_events_policy" {
+resource "aws_iam_role_policy_attachment" "ecs_mailchimp_events_policy" {
   count = var.enable_mailchimp_sync ? 1 : 0
 
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole"
-  role       = aws_iam_role.ecs_cron_scheduler[0].name
+  role       = aws_iam_role.ecs_mailchimp_cron_scheduler[0].name
+}
+
+moved {
+  from = aws_cloudwatch_event_rule.sync_cron_job_failed
+  to   = aws_cloudwatch_event_rule.sync_mailchimp_cron_job_failed
+}
+
+moved {
+  from = aws_cloudwatch_event_target.sync_cron_job_alert_message
+  to   = aws_cloudwatch_event_target.sync_mailchimp_cron_job_alert_message
 }
