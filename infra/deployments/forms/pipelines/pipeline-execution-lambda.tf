@@ -27,7 +27,7 @@ resource "aws_lambda_function" "pipeline_invoker" {
   description   = "Receives events from AWS EventBridge and invokes AWS CodePipeline in turn. A replacement for missing functionality in AWS EventBridge"
   role          = aws_iam_role.lambda_pipeline_invoker.arn
 
-  runtime                        = "ruby3.3"
+  runtime                        = "ruby3.4"
   handler                        = "pipeline_invoker.process"
   reserved_concurrent_executions = 50
   timeout                        = 10
