@@ -11,7 +11,7 @@ terraform {
     }
     awscc = {
       source  = "hashicorp/awscc"
-      version = "1.65.0"
+      version = "1.66.0"
     }
     auth0 = {
       source  = "auth0/auth0"
