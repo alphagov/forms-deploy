@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  aws_account_id = data.aws_caller_identity.current.account_id
+}
+
 resource "aws_sesv2_email_identity" "from_address" {
   email_identity = var.from_address
 
@@ -12,6 +18,10 @@ resource "aws_sesv2_email_identity" "from_address" {
 ##
 # SES v2 configuration
 ##
+resource "aws_sesv2_account_suppression_attributes" "account_suppression_list" {
+  suppressed_reasons = ["COMPLAINT", "BOUNCE"]
+}
+
 resource "aws_sesv2_configuration_set" "auth0" {
   configuration_set_name = "${var.environment_name}_auth0"
 
