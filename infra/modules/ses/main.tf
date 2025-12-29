@@ -54,6 +54,10 @@ resource "aws_sesv2_configuration_set" "form_submissions" {
   reputation_options {
     reputation_metrics_enabled = true
   }
+
+  suppression_options {
+    suppressed_reasons = [] # We don't want to use the suppression list for form submission emails
+  }
 }
 
 resource "aws_sesv2_configuration_set_event_destination" "form_submissions_bounces_and_complaints" {
