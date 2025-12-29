@@ -1,3 +1,14 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  aws_account_id = data.aws_caller_identity.current.account_id
+}
+
+import {
+  to = module.ses.aws_sesv2_account_suppression_attributes.account_suppression_list
+  id = local.aws_account_id
+}
+
 module "ses" {
   source = "../../../modules/ses"
 
