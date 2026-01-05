@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "json-schema", "~> 6.0"
+gem "json-schema", "~> 6.1"
 
 group :development, :test do
   gem "rspec", "~> 3.13"
