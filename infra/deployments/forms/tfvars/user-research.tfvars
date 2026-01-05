@@ -42,7 +42,6 @@ forms_admin_settings = {
   analytics_enabled                  = false
   act_as_user_enabled                = false
   govuk_app_domain                   = ""
-  synchronize_orgs_from_govuk        = false
   synchronize_to_mailchimp           = false
   describe_none_of_the_above_enabled = false
 }
