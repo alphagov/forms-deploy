@@ -251,35 +251,6 @@ resource "aws_codepipeline" "deploy_admin_container" {
       }
     }
 
-    dynamic "action" {
-      for_each = var.forms_admin_settings.synchronize_orgs_from_govuk ? [1] : []
-      content {
-        name            = "update-orgs-sync-task-definition"
-        category        = "Build"
-        owner           = "AWS"
-        provider        = "CodeBuild"
-        version         = "1"
-        run_order       = 2
-        input_artifacts = ["buildspec_source"]
-        # AWS requires an input artifact; using buildspec_source as a relevant default.
-        configuration = {
-          ProjectName = module.update_orgs_sync_task_definition[0].name
-          EnvironmentVariables = jsonencode([
-            {
-              name  = "TASK_DEFINITION_NAME"
-              value = "${var.environment_name}_forms-admin_organisations_sync"
-              type  = "PLAINTEXT"
-            },
-            {
-              name  = "IMAGE_URI"
-              value = "#{variables.container_image_uri}"
-              type  = "PLAINTEXT"
-            }
-          ])
-        }
-      }
-    }
-
     # It isn't possible to conditionally skip or disable an action in CodePipeline
     # but we need to be able to do so because we can't run the end-to-end tests in the user-research
     # environment. We don't want to make the end-to-end tests module responsible for skipping itself
@@ -355,19 +326,6 @@ module "update_mailchimp_sync_task_definition" {
   artifact_store_arn         = module.artifact_bucket.arn
   buildspec                  = file("${path.root}/buildspecs/update-mailchimp-sync-task/update-mailchimp-sync-task.yml")
   log_group_name             = "codebuild/update_mailchimp_sync_task_definition_${var.environment_name}"
-  codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
-}
-
-module "update_orgs_sync_task_definition" {
-  count = var.forms_admin_settings.synchronize_orgs_from_govuk ? 1 : 0
-
-  source                     = "../../../modules/code-build-build"
-  project_name               = "update_orgs_sync_task_definition_${var.environment_name}"
-  project_description        = "Update orgs-sync task definition with new container image"
-  environment                = var.environment_name
-  artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buildspecs/update-orgs-sync-task/update-orgs-sync-task.yml")
-  log_group_name             = "codebuild/update_orgs_sync_task_definition_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }
 
