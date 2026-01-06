@@ -30,6 +30,9 @@ locals {
         }
       }
 
+      # Queue worker doesn't have ADOT sidecar, so remove container dependency
+      dependsOn = []
+
       secrets = [
         {
           name      = "SETTINGS__SENTRY__DSN",

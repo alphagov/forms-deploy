@@ -49,6 +49,7 @@ module "forms_runner" {
   enable_maintenance_mode                     = var.forms_runner_settings.enable_maintenance_mode
   cloudwatch_metrics_enabled                  = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled                           = var.forms_runner_settings.analytics_enabled
+  enable_adot_tracing                         = var.forms_runner_settings.enable_adot_tracing
   deploy_account_id                           = var.deploy_account_id
   ses_submission_email_from_email_address     = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address = var.forms_runner_settings.ses_submission_email_reply_to_email_address

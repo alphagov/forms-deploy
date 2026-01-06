@@ -182,3 +182,33 @@ variable "kinesis_subscription_role_arn" {
   description = "The arn of the role that is allowed to subscribe to the kinesis stream"
   type        = string
 }
+
+variable "enable_adot_sidecar" {
+  type        = bool
+  description = "Enable AWS Distro for OpenTelemetry (ADOT) collector sidecar for trace collection to X-Ray and CloudWatch"
+  default     = false
+}
+
+variable "adot_sidecar_cpu" {
+  type        = number
+  description = "CPU units to allocate to ADOT sidecar (default: 256 = 0.25 vCPU)"
+  default     = 256
+}
+
+variable "adot_sidecar_memory" {
+  type        = number
+  description = "Memory in MB to allocate to ADOT sidecar"
+  default     = 512
+}
+
+variable "adot_collector_config" {
+  type        = string
+  description = "ADOT collector configuration file path"
+  default     = "/etc/ecs/ecs-default-config.yaml"
+}
+
+variable "adot_image" {
+  type        = string
+  description = "ADOT collector container image URI"
+  default     = "public.ecr.aws/aws-observability/aws-otel-collector:latest"
+}

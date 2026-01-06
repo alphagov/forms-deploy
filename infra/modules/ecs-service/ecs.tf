@@ -11,6 +11,7 @@ data "aws_ecs_container_definition" "active_container" {
 
 locals {
   log_group_name         = "/aws/ecs/${var.application}-${var.env_name}"
+  adot_log_group_name    = "/aws/ecs/${var.application}-${var.env_name}/adot-collector"
   task_definition_family = "${var.env_name}_${var.application}"
 
   image = var.image == null ? data.aws_ecs_container_definition.active_container[0].image : var.image
@@ -23,6 +24,9 @@ locals {
     image                  = local.image
     essential              = true,
     readonlyRootFilesystem = var.readonly_root_filesystem
+    command                = null,
+    cpu                    = null,
+    memory                 = null,
     portMappings = [
       {
         hostPort      = var.container_port,
@@ -40,7 +44,53 @@ locals {
         awslogs-stream-prefix = local.log_group_name
       }
     },
+    healthCheck = null,
+    dependsOn = var.enable_adot_sidecar ? [
+      {
+        containerName = "aws-otel-collector",
+        condition     = "START"
+      }
+    ] : []
   }
+
+  # ADOT collector sidecar container
+  adot_container_definition = {
+    name                   = "aws-otel-collector",
+    image                  = var.adot_image,
+    essential              = true,
+    readonlyRootFilesystem = false,
+    command = [
+      "--config=${var.adot_collector_config}"
+    ],
+    cpu    = var.adot_sidecar_cpu,
+    memory = var.adot_sidecar_memory,
+    logConfiguration = {
+      logDriver = "awslogs",
+      options = {
+        awslogs-group         = local.adot_log_group_name,
+        awslogs-region        = "eu-west-2",
+        awslogs-stream-prefix = "adot"
+      }
+    },
+    healthCheck = {
+      command = [
+        "CMD-SHELL",
+        "/healthcheck"
+      ],
+      interval    = 5,
+      timeout     = 6,
+      retries     = 5,
+      startPeriod = 1
+    },
+  }
+
+  # Conditional container array composition
+  container_definitions = var.enable_adot_sidecar ? jsonencode([
+    local.task_container_definition,
+    local.adot_container_definition
+    ]) : jsonencode([
+    local.task_container_definition
+  ])
 
   # Extract the values needed for the ECS service network configuration
   # to local variable so we can ensure the same configuration is used
@@ -53,7 +103,7 @@ locals {
 }
 resource "aws_ecs_task_definition" "task" {
   family                = local.task_definition_family
-  container_definitions = jsonencode([local.task_container_definition])
+  container_definitions = local.container_definitions
 
   // As this terraform module doesn't deal with updating app code, we see drift every time it's applied because the image is changed elsewhere.
   // Enable tracking of the latest ACTIVE task definition revision rather than the one in terraform state, so that changes to the image / task revision outside of terraform are picked up and not considered drift.
@@ -70,8 +120,11 @@ resource "aws_ecs_task_definition" "task" {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
 
   requires_compatibilities = ["FARGATE"]
-  cpu                      = var.cpu
-  memory                   = var.memory
+  # When ADOT sidecar is enabled, round up to next valid Fargate CPU/memory configuration
+  # Valid Fargate configs: 256/.5-2GB, 512/1-4GB, 1024/2-8GB, 2048/4-16GB, 4096/8-30GB
+  # For forms-runner: 512 CPU + 1024 MB + ADOT (256 CPU + 512 MB) = needs 1024 CPU / 2048 MB minimum
+  cpu    = var.enable_adot_sidecar ? (var.cpu + var.adot_sidecar_cpu <= 512 ? 512 : 1024) : var.cpu
+  memory = var.enable_adot_sidecar ? (var.memory + var.adot_sidecar_memory <= 1024 ? 1024 : 2048) : var.memory
 
   network_mode = "awsvpc"
 
