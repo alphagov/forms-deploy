@@ -83,3 +83,9 @@ variable "s3_form_id" {
   type        = string
   description = "The id of the form that you want to run the s3 submission type end to end tests against"
 }
+
+variable "describe_none_of_the_above_enabled" {
+  type        = bool
+  description = "Test feature asking users to provide an answer when they select 'None of the above' for selection questions"
+  default     = false
+}

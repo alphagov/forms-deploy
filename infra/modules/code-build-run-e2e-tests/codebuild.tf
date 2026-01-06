@@ -92,6 +92,11 @@ resource "aws_codebuild_project" "e2e" {
       type  = "PARAMETER_STORE"
       value = "/forms-runner-${var.environment_name}/submission_status_api_shared_secret"
     }
+
+    environment_variable {
+      name  = "SETTINGS__FEATURES__DESCRIBE_NONE_OF_THE_ABOVE_ENABLED"
+      value = var.describe_none_of_the_above_enabled
+    }
   }
 
   source {
