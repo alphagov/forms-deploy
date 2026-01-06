@@ -104,7 +104,10 @@ data "aws_iam_policy_document" "ecs" {
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution",
-      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-execution"
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-execution",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-cron-scheduler",           #TODO: remove after deployment
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-mailchimp-ecs-cron-scheduler", #TODO: remove after deployment
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-orgs-ecs-cron-scheduler",      #TODO: remove after deployment
     ]
     effect = "Allow"
   }

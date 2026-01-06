@@ -26,6 +26,7 @@ module "forms_admin" {
   act_as_user_enabled               = var.forms_admin_settings.act_as_user_enabled
   welsh_enabled                     = var.forms_admin_settings.welsh_enabled
   enable_mailchimp_sync             = var.forms_admin_settings.synchronize_to_mailchimp
+  enable_organisations_sync         = var.forms_admin_settings.synchronize_orgs_from_govuk
   deploy_account_id                 = var.deploy_account_id
   vpc_id                            = data.terraform_remote_state.forms_environment.outputs.vpc_id
   vpc_cidr_block                    = data.terraform_remote_state.forms_environment.outputs.vpc_cidr_block
