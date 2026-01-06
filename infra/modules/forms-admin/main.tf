@@ -26,26 +26,6 @@ locals {
         valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/auth/password"
       }
     ],
-    gds_sso = [
-      {
-        name      = "GDS_SSO_OAUTH_ID",
-        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-id"
-      },
-      {
-        name      = "GDS_SSO_OAUTH_SECRET",
-        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/gds-sso-oauth-secret"
-      }
-    ],
-    cddo_sso = [
-      {
-        name      = "SETTINGS__CDDO_SSO__IDENTIFIER",
-        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/identifier"
-      },
-      {
-        name      = "SETTINGS__CDDO_SSO__SECRET",
-        valueFrom = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/forms-admin-${var.env_name}/cddo-sso/secret"
-      }
-    ],
     auth0 = [
       {
         name      = "SETTINGS__AUTH0__CLIENT_ID",
