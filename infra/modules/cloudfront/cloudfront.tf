@@ -103,6 +103,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   is_ipv6_enabled     = true
+  http_version        = "http2and3"
   enabled             = true
   default_root_object = "/"
 
