@@ -75,6 +75,11 @@ module "docker_build" {
 
   extra_env_vars = [
     {
+      name  = "SETTINGS__FORMS_ENV"
+      value = "dev"
+      type  = "PLAINTEXT"
+    },
+    {
       name  = "FORMS_ADMIN_URL"
       value = "https://admin.dev.forms.service.gov.uk"
       type  = "PLAINTEXT"

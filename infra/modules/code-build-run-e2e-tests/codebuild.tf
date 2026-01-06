@@ -30,6 +30,11 @@ resource "aws_codebuild_project" "e2e" {
     image_pull_credentials_type = "SERVICE_ROLE"
 
     environment_variable {
+      name  = "SETTINGS__FORMS_ENV"
+      value = var.environment_name
+    }
+
+    environment_variable {
       name  = "AUTH0_EMAIL_USERNAME"
       value = var.auth0_user_name_parameter_name
       type  = "PARAMETER_STORE"
