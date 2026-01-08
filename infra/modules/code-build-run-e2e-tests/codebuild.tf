@@ -35,36 +35,35 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
-      name  = "AUTH0_EMAIL_USERNAME"
+      name  = "SETTINGS__FORM_IDS__S3"
+      value = var.s3_form_id
+    }
+
+    environment_variable {
+      name  = "SETTINGS__FORMS_ADMIN__URL"
+      value = var.forms_admin_url
+    }
+
+    environment_variable {
+      name  = "SETTINGS__FORMS_ADMIN__AUTH__USERNAME"
       value = var.auth0_user_name_parameter_name
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
-      name  = "AUTH0_USER_PASSWORD"
+      name  = "SETTINGS__FORMS_ADMIN__AUTH__PASSWORD"
       value = var.auth0_user_password_parameter_name
       type  = "PARAMETER_STORE"
     }
 
     environment_variable {
-      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
-      value = var.notify_api_key_parameter_name
-      type  = "PARAMETER_STORE"
-    }
-
-    environment_variable {
-      name  = "FORMS_ADMIN_URL"
-      value = var.forms_admin_url
-    }
-
-    environment_variable {
-      name  = "FORMS_RUNNER_URL"
-      value = var.forms_runner_url
-    }
-
-    environment_variable {
-      name  = "PRODUCT_PAGES_URL"
+      name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
       value = var.product_pages_url
+    }
+
+    environment_variable {
+      name  = "SETTINGS__FORMS_RUNNER__URL"
+      value = var.forms_runner_url
     }
 
     environment_variable {
@@ -73,13 +72,14 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
-      name  = "AWS_S3_BUCKET"
+      name  = "SETTINGS__AWS__FILE_UPLOAD_S3_BUCKET_NAME"
       value = var.aws_s3_bucket
     }
 
     environment_variable {
-      name  = "S3_FORM_ID"
-      value = var.s3_form_id
+      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
+      value = var.notify_api_key_parameter_name
+      type  = "PARAMETER_STORE"
     }
 
     environment_variable {

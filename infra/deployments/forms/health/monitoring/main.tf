@@ -43,6 +43,6 @@ module "runner_scheduled_smoke_tests" {
     https://github.com/alphagov/forms-team/wiki/Incident-Response.
     EOF
   codebuild_environment_variables = {
-    SMOKE_TEST_FORM_URL = var.scheduled_smoke_tests_settings.form_url
+    SETTINGS__FORM_IDS__SMOKE_TEST = var.scheduled_smoke_tests_settings.form_url
   }
 }
