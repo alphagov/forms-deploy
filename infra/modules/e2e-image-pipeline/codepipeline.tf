@@ -80,32 +80,32 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
-      name  = "FORMS_ADMIN_URL"
+      name  = "SETTINGS__FORMS_ADMIN__URL"
       value = "https://admin.dev.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
-      name  = "PRODUCT_PAGES_URL"
+      name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
       value = "https://dev.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
-      name  = "FORMS_RUNNER_URL"
+      name  = "SETTINGS__FORMS_RUNNER__URL"
       value = "https://submit.dev.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
-      name  = "SMOKE_TEST_FORM_URL"
-      value = "https://submit.forms.service.gov.uk/form/2570/scheduled-smoke-test"
+      name  = "SETTINGS__FORM_IDS__SMOKE_TEST"
+      value = "2570"
       type  = "PLAINTEXT"
     },
     {
-      name  = "AUTH0_EMAIL_USERNAME"
+      name  = "SETTINGS__FORMS_ADMIN__AUTH__USERNAME"
       value = "/dev/automated-tests/e2e/auth0/email-username"
       type  = "PARAMETER_STORE"
     },
     {
-      name  = "AUTH0_USER_PASSWORD"
+      name  = "SETTINGS__FORMS_ADMIN__AUTH__PASSWORD"
       value = "/dev/automated-tests/e2e/auth0/auth0-user-password"
       type  = "PARAMETER_STORE"
     },
@@ -125,12 +125,12 @@ module "docker_build" {
       type  = "PARAMETER_STORE"
     },
     {
-      name  = "AWS_S3_BUCKET"
+      name  = "SETTINGS__AWS__FILE_UPLOAD_S3_BUCKET_NAME"
       value = "govuk-forms-submissions-to-s3-test"
       type  = "PLAINTEXT"
     },
     {
-      name  = "S3_FORM_ID"
+      name  = "SETTINGS__FORM_IDS__S3"
       value = "12457"
       type  = "PLAINTEXT"
     },
