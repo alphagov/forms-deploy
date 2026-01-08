@@ -35,6 +35,16 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
+      name  = "SETTINGS__FORM_IDS__S3"
+      value = var.s3_form_id
+    }
+
+    environment_variable {
+      name  = "SETTINGS__FORMS_ADMIN__URL"
+      value = var.forms_admin_url
+    }
+
+    environment_variable {
       name  = "SETTINGS__FORMS_ADMIN__AUTH__USERNAME"
       value = var.auth0_user_name_parameter_name
       type  = "PARAMETER_STORE"
@@ -47,24 +57,13 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
-      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
-      value = var.notify_api_key_parameter_name
-      type  = "PARAMETER_STORE"
-    }
-
-    environment_variable {
-      name  = "SETTINGS__FORMS_ADMIN__URL"
-      value = var.forms_admin_url
+      name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
+      value = var.product_pages_url
     }
 
     environment_variable {
       name  = "SETTINGS__FORMS_RUNNER__URL"
       value = var.forms_runner_url
-    }
-
-    environment_variable {
-      name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
-      value = var.product_pages_url
     }
 
     environment_variable {
@@ -78,8 +77,9 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
-      name  = "SETTINGS__FORM_IDS__S3"
-      value = var.s3_form_id
+      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
+      value = var.notify_api_key_parameter_name
+      type  = "PARAMETER_STORE"
     }
 
     environment_variable {

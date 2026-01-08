@@ -80,23 +80,18 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
-      name  = "SETTINGS__FORMS_ADMIN__URL"
-      value = "https://admin.dev.forms.service.gov.uk"
-      type  = "PLAINTEXT"
-    },
-    {
-      name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
-      value = "https://dev.forms.service.gov.uk"
-      type  = "PLAINTEXT"
-    },
-    {
-      name  = "SETTINGS__FORMS_RUNNER__URL"
-      value = "https://submit.dev.forms.service.gov.uk"
-      type  = "PLAINTEXT"
-    },
-    {
       name  = "SETTINGS__FORM_IDS__SMOKE_TEST"
       value = "2570"
+      type  = "PLAINTEXT"
+    },
+    {
+      name  = "SETTINGS__FORM_IDS__S3"
+      value = "12457"
+      type  = "PLAINTEXT"
+    },
+    {
+      name  = "SETTINGS__FORMS_ADMIN__URL"
+      value = "https://admin.dev.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
@@ -110,19 +105,14 @@ module "docker_build" {
       type  = "PARAMETER_STORE"
     },
     {
-      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
-      value = "/dev/automated-tests/e2e/notify/api-key"
-      type  = "PARAMETER_STORE"
-    },
-    {
-      name  = "SETTINGS__AWS__S3_SUBMISSION_IAM_ROLE_ARN"
-      value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
+      name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
+      value = "https://dev.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
-      name  = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
-      value = "/dev/automated-tests/e2e/runner/submission_status_api_shared_secret"
-      type  = "PARAMETER_STORE"
+      name  = "SETTINGS__FORMS_RUNNER__URL"
+      value = "https://submit.dev.forms.service.gov.uk"
+      type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__AWS__FILE_UPLOAD_S3_BUCKET_NAME"
@@ -130,9 +120,19 @@ module "docker_build" {
       type  = "PLAINTEXT"
     },
     {
-      name  = "SETTINGS__FORM_IDS__S3"
-      value = "12457"
+      name  = "SETTINGS__AWS__S3_SUBMISSION_IAM_ROLE_ARN"
+      value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
       type  = "PLAINTEXT"
+    },
+    {
+      name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
+      value = "/dev/automated-tests/e2e/notify/api-key"
+      type  = "PARAMETER_STORE"
+    },
+    {
+      name  = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
+      value = "/dev/automated-tests/e2e/runner/submission_status_api_shared_secret"
+      type  = "PARAMETER_STORE"
     },
   ]
 }
