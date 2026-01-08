@@ -80,3 +80,29 @@ resource "aws_iam_account_alias" "alias" {
 
   account_alias = local.account_alias
 }
+
+# AWS Cost Optimization and Compute Optimizer Enrollment
+#
+# These services SHOULD be managed by the following Terraform resources:
+#   - aws_costoptimizationhub_enrollment_status (for Cost Optimization Hub)
+#   - aws_computeoptimizer_enrollment_status (for Compute Optimizer)
+#
+# However, the Cost Optimization Hub resource has drift issues that cause Terraform to
+# always show changes. See: https://github.com/hashicorp/terraform-provider-aws/issues/39520
+#
+# For consistency, both Cost Optimization Hub and Compute Optimizer enrollment are
+# managed together via post-apply hook scripts in the account deployment roots:
+#   - infra/deployments/forms/account/post-apply.sh
+#   - infra/deployments/deploy/account/post-apply.sh (symlinked to forms)
+#
+# When the Cost Optimization Hub drift issue is resolved, both resources can be
+# uncommented below and the enrollment logic removed from the post-apply scripts.
+
+# resource "aws_costoptimizationhub_enrollment_status" "enroll_coh" {
+#   include_member_accounts = false
+# }
+
+# resource "aws_computeoptimizer_enrollment_status" "enroll_co" {
+#   status                  = "Active"
+#   include_member_accounts = false
+# }
