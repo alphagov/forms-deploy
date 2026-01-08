@@ -45,6 +45,7 @@ forms_admin_settings = {
   act_as_user_enabled                = true
   govuk_app_domain                   = "staging.publishing.service.gov.uk"
   synchronize_to_mailchimp           = false
+  synchronize_orgs_from_govuk        = false
   describe_none_of_the_above_enabled = false
 }
 forms_product_page_settings = {
