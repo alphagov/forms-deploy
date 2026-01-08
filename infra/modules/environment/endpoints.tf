@@ -102,3 +102,20 @@ resource "aws_vpc_endpoint" "ssm" {
     Name = "ssm-endpoint-${var.env_name}"
   }
 }
+
+resource "aws_vpc_endpoint" "ses" {
+  vpc_id              = aws_vpc.forms.id
+  service_name        = "com.amazonaws.eu-west-2.email"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "ses-endpoint-${var.env_name}"
+  }
+}
