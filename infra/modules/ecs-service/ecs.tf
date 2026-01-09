@@ -17,8 +17,25 @@ locals {
   image = var.image == null ? data.aws_ecs_container_definition.active_container[0].image : var.image
 
   task_container_definition = {
-    name                   = var.application,
-    environment            = var.environment_variables,
+    name = var.application,
+    environment = var.enable_adot_sidecar ? concat(var.environment_variables, [
+      {
+        name  = "ENABLE_OTEL"
+        value = "true"
+      },
+      {
+        name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
+        value = "http://localhost:4318"
+      },
+      {
+        name  = "OTEL_SERVICE_NAME"
+        value = var.application
+      },
+      {
+        name  = "OTEL_PROPAGATORS"
+        value = "xray"
+      }
+    ]) : var.environment_variables,
     mountPoints            = [],
     secrets                = var.secrets,
     image                  = local.image
