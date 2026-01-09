@@ -328,7 +328,7 @@ module "db_migrate_runner" {
   project_description        = "Run database migrations"
   environment                = var.environment_name
   artifact_store_arn         = module.artifact_bucket.arn
-  buildspec                  = file("${path.root}/buildspecs/db-migrate/db-migrate.yml")
+  buildspec                  = file("${path.root}/buildspecs/db-migrate/db-migrate-adot.yml")
   log_group_name             = "codebuild/db_migrate_runner_${var.environment_name}"
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 }

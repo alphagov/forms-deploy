@@ -1,0 +1,75 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      # Check Image URI is not the default pipeline value
+      - |
+        if [[ "${IMAGE_URI}" = "MUST_BE_SET" ]]; then
+          echo "The IMAGE_URI has not been set by the caller. The value of IMAGE_URI is \"${IMAGE_URI}\""
+          exit 1
+        fi
+
+      # Get task definition
+      - echo "Existing ECS task definition name is ${TASK_DEFINITION_NAME}"
+      - ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "${TASK_DEFINITION_NAME}")
+
+      # Delete any reference to the old image from the task definition and add the new image uri
+      - NEW_ECS_TASK_DEFINITION=$(echo "${ECS_TASK_DEFINITION}" | jq --arg "INPUT_IMAGE_URI" "${IMAGE_URI}" --arg "APP_NAME" "${APP_NAME}" '.taskDefinition | .containerDefinitions |= map(if .name == $APP_NAME then .image = $INPUT_IMAGE_URI else . end) | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) |  del(.registeredAt)  | del(.registeredBy)')
+      - echo "Replaced image uri with ${IMAGE_URI} for container ${APP_NAME}"
+
+      # Register a new task definition
+      - |
+        NEW_ECS_TASK_DEFINITION_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_ECS_TASK_DEFINITION" | jq -r '.taskDefinition.taskDefinitionArn' )
+        echo "New ECS task definition ARN ${NEW_ECS_TASK_DEFINITION_ARN}"
+
+      # Get the existing configuration
+      - ECS_CLUSTER_ARN=$(aws ecs describe-clusters --cluster "${CLUSTER_NAME}" | jq -r '.clusters[].clusterArn')
+      - ECS_TASK_CONTAINER_DEFINITION_NAME=$(aws ecs describe-task-definition --task-definition "${TASK_DEFINITION_NAME}" | jq --arg "APP_NAME" "${APP_NAME}" -r '.taskDefinition.containerDefinitions[] | select(.name == $APP_NAME) | .name')
+      - ECS_TASK_NETWORK_CONFIGURATION=$(aws ecs describe-services --cluster "${CLUSTER_NAME}" --services "${APP_NAME}" | jq '.services[].networkConfiguration[]')
+
+      # Write new task definition overriding the command the container runs
+      - |
+        jq -nrM \
+        --arg "ECS_CLUSTER_ARN" "${ECS_CLUSTER_ARN}" \
+        --arg "CONTAINER_DEFINITION_NAME" "${ECS_TASK_CONTAINER_DEFINITION_NAME}" \
+        --arg "ECS_TASK_DEFINITION_ARN" "${NEW_ECS_TASK_DEFINITION_ARN}" \
+        --argjson "ECS_TASK_NETWORK_CONFIGURATION" "${ECS_TASK_NETWORK_CONFIGURATION}" \
+        '{
+          "cluster": $ECS_CLUSTER_ARN,
+          "taskDefinition": $ECS_TASK_DEFINITION_ARN,
+          "count": 1,
+          "launchType": "FARGATE",
+          "overrides": {
+              "containerOverrides": [
+                  {
+                      "name": $CONTAINER_DEFINITION_NAME,
+                      "command": ["rake", "db:migrate"],
+                      "environment": [
+                          { "name": "VERBOSE", "value": "true" }
+                      ]
+                  }
+              ]
+          },
+          "networkConfiguration": {
+              "awsvpcConfiguration": $ECS_TASK_NETWORK_CONFIGURATION
+          }
+        }' > db_migrate_task_definition.json
+
+      - echo -e "New task definition \n $(<db_migrate_task_definition.json )"
+  build:
+    commands:
+      - echo "Running database migration for ${APP_NAME}"
+      - RUNNING_TASK_ARN=$(aws ecs run-task --cli-input-json "file://db_migrate_task_definition.json" | jq -r '.tasks[].taskArn')
+      - echo "Running task ARN ${RUNNING_TASK_ARN}"
+      - echo "Waiting for the task to finish"
+      - aws ecs wait tasks-stopped --tasks "${RUNNING_TASK_ARN}" --cluster "${ECS_CLUSTER_ARN}"
+      # Determine the exit code for the running task
+      # Determine if the running task or the CodeBuild build failed
+      # No failures: 0
+      # Any failures: 1
+      - |
+        RUNNING_TASK_EXIT_CODE=$(\
+          aws ecs describe-tasks --tasks "${RUNNING_TASK_ARN}" --cluster "${ECS_CLUSTER_ARN}" \
+          | jq --arg "CONTAINER_NAME" "${ECS_TASK_CONTAINER_DEFINITION_NAME}" -r '.tasks[0].containers[] | select(.name == $CONTAINER_NAME) | .exitCode'
+          )
+      - exit "${RUNNING_TASK_EXIT_CODE}"

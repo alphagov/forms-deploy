@@ -74,7 +74,7 @@ locals {
     },
     healthCheck = {
       command = [
-        "CMD-SHELL",
+        "CMD",
         "/healthcheck"
       ],
       interval    = 5,
