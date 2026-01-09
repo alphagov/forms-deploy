@@ -76,42 +76,42 @@ module "docker_build" {
   extra_env_vars = [
     {
       name  = "SETTINGS__FORMS_ENV"
-      value = "dev"
+      value = "staging"
       type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__FORM_IDS__SMOKE_TEST"
-      value = "2570"
+      value = "12148"
       type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__FORM_IDS__S3"
-      value = "12457"
+      value = "13657"
       type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__FORMS_ADMIN__URL"
-      value = "https://admin.dev.forms.service.gov.uk"
+      value = "https://admin.staging.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__FORMS_ADMIN__AUTH__USERNAME"
-      value = "/dev/automated-tests/e2e/auth0/email-username"
+      value = "/staging/automated-tests/e2e/auth0/email-username"
       type  = "PARAMETER_STORE"
     },
     {
       name  = "SETTINGS__FORMS_ADMIN__AUTH__PASSWORD"
-      value = "/dev/automated-tests/e2e/auth0/auth0-user-password"
+      value = "/staging/automated-tests/e2e/auth0/auth0-user-password"
       type  = "PARAMETER_STORE"
     },
     {
       name  = "SETTINGS__FORMS_PRODUCT_PAGE__URL"
-      value = "https://dev.forms.service.gov.uk"
+      value = "https://staging.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__FORMS_RUNNER__URL"
-      value = "https://submit.dev.forms.service.gov.uk"
+      value = "https://submit.staging.forms.service.gov.uk"
       type  = "PLAINTEXT"
     },
     {
@@ -121,17 +121,17 @@ module "docker_build" {
     },
     {
       name  = "SETTINGS__AWS__S3_SUBMISSION_IAM_ROLE_ARN"
-      value = "arn:aws:iam::498160065950:role/govuk-s3-end-to-end-test-dev"
+      value = "arn:aws:iam::972536609845:role/govuk-s3-end-to-end-test-staging"
       type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
-      value = "/dev/automated-tests/e2e/notify/api-key"
+      value = "/staging/automated-tests/e2e/notify/api-key"
       type  = "PARAMETER_STORE"
     },
     {
       name  = "SETTINGS__SUBMISSION_STATUS_API__SECRET"
-      value = "/dev/automated-tests/e2e/runner/submission_status_api_shared_secret"
+      value = "/staging/automated-tests/e2e/runner/submission_status_api_shared_secret"
       type  = "PARAMETER_STORE"
     },
   ]
