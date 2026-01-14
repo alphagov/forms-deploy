@@ -4,7 +4,7 @@
 #
 # However, the end-to-end tests container building CodeBuild job has an extra
 # step within the buildspec which runs the tests in the container against the
-# dev environment, for which it needs credentials from the
+# staging environment, for which it needs credentials from the
 # 'automated-test-parameters' module.
 #
 # https://github.com/alphagov/forms-e2e-tests/blob/main/bin/dockerfile_test.sh
