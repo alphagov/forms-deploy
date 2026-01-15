@@ -75,7 +75,8 @@ data "aws_iam_policy_document" "codebuild" {
       "sts:AssumeRole",
     ]
     resources = [
-      # this doesn't allow this role to assume all roles in dev, only the roles specified in their trust policies
+      # this doesn't allow this role to assume all roles in these environments, only the roles specified in their trust policies
+      "arn:aws:iam::${module.other_accounts.environment_accounts_id["staging"]}:role/*",
       "arn:aws:iam::${module.other_accounts.environment_accounts_id["development"]}:role/*",
     ]
     effect = "Allow"
