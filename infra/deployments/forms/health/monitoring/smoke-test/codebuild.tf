@@ -46,6 +46,11 @@ resource "aws_codebuild_project" "run_test" {
     }
 
     environment_variable {
+      name  = "SETTINGS__FORMS_ENV"
+      value = var.environment
+    }
+
+    environment_variable {
       name  = "RSPEC_PATH"
       value = var.rspec_path
     }
