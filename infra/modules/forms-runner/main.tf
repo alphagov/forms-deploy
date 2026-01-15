@@ -89,6 +89,7 @@ module "ecs_service" {
   source                       = "../ecs-service"
   env_name                     = var.env_name
   application                  = "forms-runner"
+  enable_opentelemetry         = var.enable_opentelemetry
   root_domain                  = var.root_domain
   sub_domain                   = "submit.${var.root_domain}"
   internal_sub_domain          = "submit.internal.${var.root_domain}"
