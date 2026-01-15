@@ -14,8 +14,8 @@ phases:
       - ECS_TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "${TASK_DEFINITION_NAME}")
 
       # Delete any reference to the old image from the task definition and add the new image uri
-      - NEW_ECS_TASK_DEFINITION=$(echo "${ECS_TASK_DEFINITION}" | jq --arg "INPUT_IMAGE_URI" "${IMAGE_URI}" '.taskDefinition | .containerDefinitions[0].image = $INPUT_IMAGE_URI | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) |  del(.registeredAt)  | del(.registeredBy)')
-      - echo "Replaced image uri with ${IMAGE_URI}"
+      - NEW_ECS_TASK_DEFINITION=$(echo "${ECS_TASK_DEFINITION}" | jq --arg "INPUT_IMAGE_URI" "${IMAGE_URI}" --arg "APP_NAME" "${APP_NAME}" '.taskDefinition | .containerDefinitions |= map(if .name == $APP_NAME then .image = $INPUT_IMAGE_URI else . end) | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) |  del(.registeredAt)  | del(.registeredBy)')
+      - echo "Replaced image uri with ${IMAGE_URI} for container ${APP_NAME}"
 
       # Register a new task definition
       - |
@@ -24,7 +24,7 @@ phases:
 
       # Get the existing configuration
       - ECS_CLUSTER_ARN=$(aws ecs describe-clusters --cluster "${CLUSTER_NAME}" | jq -r '.clusters[].clusterArn')
-      - ECS_TASK_CONTAINER_DEFINITION_NAME=$(aws ecs describe-task-definition --task-definition "${TASK_DEFINITION_NAME}" | jq -r '.taskDefinition.containerDefinitions[].name')
+      - ECS_TASK_CONTAINER_DEFINITION_NAME=$(aws ecs describe-task-definition --task-definition "${TASK_DEFINITION_NAME}" | jq --arg "APP_NAME" "${APP_NAME}" -r '.taskDefinition.containerDefinitions[] | select(.name == $APP_NAME) | .name')
       - ECS_TASK_NETWORK_CONFIGURATION=$(aws ecs describe-services --cluster "${CLUSTER_NAME}" --services "${APP_NAME}" | jq '.services[].networkConfiguration[]')
 
       # Write new task definition overriding the command the container runs
@@ -70,6 +70,6 @@ phases:
       - |
         RUNNING_TASK_EXIT_CODE=$(\
           aws ecs describe-tasks --tasks "${RUNNING_TASK_ARN}" --cluster "${ECS_CLUSTER_ARN}" \
-          | jq -r '.tasks[0].containers[0].exitCode'
+          | jq --arg "CONTAINER_NAME" "${ECS_TASK_CONTAINER_DEFINITION_NAME}" -r '.tasks[0].containers[] | select(.name == $CONTAINER_NAME) | .exitCode'
           )
       - exit "${RUNNING_TASK_EXIT_CODE}"
