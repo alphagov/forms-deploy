@@ -138,8 +138,11 @@ data "aws_iam_policy_document" "ecs" {
     ]
     resources = [
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-admin-adot-collector",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy"
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-adot-collector",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-adot-collector"
     ]
     effect = "Allow"
   }
@@ -281,9 +284,13 @@ data "aws_iam_policy_document" "logs" {
     ]
     resources = [
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-admin-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-admin-${var.environment_name}/adot-collector:*",
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-runner-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-runner-${var.environment_name}/adot-collector:*",
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-runner-queue-worker-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-runner-queue-worker-${var.environment_name}/adot-collector:*",
       "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-product-page-${var.environment_name}:*",
+      "arn:aws:logs:eu-west-2:${var.account_id}:log-group:/aws/ecs/forms-product-page-${var.environment_name}/adot-collector:*",
     ]
     effect = "Allow"
   }
