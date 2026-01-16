@@ -1,5 +1,6 @@
 name: Trello Poster
 on:
+  workflow_call:
   pull_request:
     types: [opened, edited]
 jobs:
