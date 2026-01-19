@@ -155,10 +155,6 @@ module "ecs_service" {
     {
       name  = "SETTINGS__ACT_AS_USER_ENABLED",
       value = var.act_as_user_enabled
-    },
-    {
-      name  = "SETTINGS__FEATURES__DESCRIBE_NONE_OF_THE_ABOVE_ENABLED",
-      value = var.describe_none_of_the_above_enabled
     }
   ]
 
