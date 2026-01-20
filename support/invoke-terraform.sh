@@ -233,6 +233,8 @@ post_apply() {
     "forms+account" | "deploy+account" | "integration+account")
         echo "POST-APPLY: Checking AWS Shield subscription"
         "${script_dir}"/../infra/scripts/subscribe-to-aws-shield-advanced.sh
+        echo "POST-APPLY: Enabling Cost Optimization Hub and Compute Optimizer"
+        "${script_dir}"/../infra/scripts/enroll-cost-optimization-services.sh
         ;;
     esac
 
