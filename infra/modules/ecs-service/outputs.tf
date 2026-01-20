@@ -24,3 +24,19 @@ output "task_definition_family" {
 output "target_group_arn" {
   value = aws_lb_target_group.tg.arn
 }
+
+output "adot_image" {
+  value = var.adot_image
+}
+
+output "adot_collector_config" {
+  value = var.adot_collector_config
+}
+
+output "adot_sidecar_cpu" {
+  value = var.adot_sidecar_cpu
+}
+
+output "adot_sidecar_memory" {
+  value = var.adot_sidecar_memory
+}
