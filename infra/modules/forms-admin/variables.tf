@@ -90,12 +90,6 @@ variable "act_as_user_enabled" {
   default     = false
 }
 
-variable "describe_none_of_the_above_enabled" {
-  type        = bool
-  description = "Enables asking users to provide an answer when they select 'None of the above' for selection questions"
-  default     = false
-}
-
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
