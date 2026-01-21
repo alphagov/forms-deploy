@@ -37,6 +37,25 @@ else
     fi
 fi
 
+echo "Checking Cost Optimization Hub savings estimation mode..."
+
+# Check current savings estimation mode preference
+SAVINGS_MODE=$(aws cost-optimization-hub get-preferences --region us-east-1 --query 'savingsEstimationMode' --output text 2>/dev/null || echo "Unknown")
+
+if [ "${SAVINGS_MODE}" = "AfterDiscounts" ]; then
+    echo "✓ Savings estimation mode already set to AfterDiscounts"
+else
+    echo "Setting savings estimation mode to AfterDiscounts..."
+    if aws cost-optimization-hub update-preferences \
+        --savings-estimation-mode AfterDiscounts \
+        --region us-east-1; then
+        echo "✓ Successfully set savings estimation mode to AfterDiscounts"
+    else
+        echo "⚠ Failed to set savings estimation mode"
+        exit 1
+    fi
+fi
+
 echo "Checking Compute Optimizer enrollment status..."
 
 # Check current enrollment status
