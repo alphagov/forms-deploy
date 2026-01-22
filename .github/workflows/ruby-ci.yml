@@ -22,7 +22,7 @@ jobs:
       spec-matrix: ${{ steps.build-matrix.outputs.spec-matrix }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Initialise mise and cache `hcl2json`
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
@@ -46,7 +46,7 @@ jobs:
     needs: setup
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby and gems at root
         uses: ruby/setup-ruby@f8d7259c7a66155a7c4a157a1a10ca601f186594 # v1.271.0
         with:
@@ -65,7 +65,7 @@ jobs:
         spec_target: ${{ fromJSON(needs.setup.outputs.spec-matrix) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Set up hcl2json
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
