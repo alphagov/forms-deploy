@@ -3,6 +3,19 @@ locals {
   queue_worker_log_group_name      = "/aws/ecs/${local.queue_worker_name}-${var.env_name}"
   queue_worker_adot_log_group_name = "/aws/ecs/${local.queue_worker_name}-${var.env_name}/adot-collector"
 
+  queue_worker_environment = var.enable_opentelemetry ? concat(
+    [
+      for env in module.ecs_service.task_container_definition.environment : env
+      if env.name != "OTEL_SERVICE_NAME"
+    ],
+    [
+      {
+        name  = "OTEL_SERVICE_NAME"
+        value = local.queue_worker_name
+      }
+    ]
+  ) : module.ecs_service.task_container_definition.environment
+
   # Take the exported task container definition and override some parts of it
   # Note: the ENV variables aren't overridden because it's not possible to cherry pick them
   # This means DISABLE_SOLID_QUEUE is always set to true, but that instruction is overridden
@@ -10,7 +23,9 @@ locals {
   queue_worker_container_definitions = merge(
     module.ecs_service.task_container_definition,
     {
-      name    = local.queue_worker_name,
+      name        = local.queue_worker_name,
+      environment = local.queue_worker_environment,
+
       command = ["bin/jobs"]
       image   = module.ecs_service.task_container_definition.image,
 
