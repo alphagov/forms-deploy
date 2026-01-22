@@ -1,6 +1,11 @@
 name: Trello Poster
 on:
   workflow_call:
+    secrets:
+      TRELLO_API_TOKEN:
+        required: true
+      TRELLO_API_KEY:
+        required: true
   pull_request:
     types: [opened, edited]
 jobs:
