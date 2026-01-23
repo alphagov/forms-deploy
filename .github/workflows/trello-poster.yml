@@ -10,7 +10,7 @@ on:
     types: [opened, edited]
 jobs:
   trello-poster:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-slim
     steps:
       - uses: lfdebrux/trello-poster-action@736f8f21f0cacf6f4142d5c9e09ebd4439e83318 # v1.2.0
         with:
