@@ -41,6 +41,10 @@ resource "aws_wafv2_regex_pattern_set" "admin_extended_post_pages" {
   regular_expression {
     regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/guidance-preview$"
   }
+
+  regular_expression {
+    regex_string = "^/forms/\\d+/welsh-translation$"
+  }
 }
 
 resource "aws_wafv2_rule_group" "admin_body_size_limits" {
