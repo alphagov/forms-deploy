@@ -16,3 +16,8 @@ output "codeconnection_arn" {
 output "kinesis_subscription_role_arn" {
   value = aws_iam_role.kinesis_subscription_role.arn
 }
+
+output "github_oidc_provider_arn" {
+  description = "The ARN of the GitHub OIDC provider"
+  value       = aws_iam_openid_connect_provider.github.arn
+}
