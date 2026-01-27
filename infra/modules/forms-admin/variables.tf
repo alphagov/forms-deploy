@@ -156,3 +156,9 @@ variable "kinesis_subscription_role_arn" {
   description = "The arn of the role that is allowed to subscribe to the kinesis stream"
   type        = string
 }
+
+variable "enable_opentelemetry" {
+  type        = bool
+  description = "Enable AWS Distro for OpenTelemetry (ADOT) sidecar for distributed tracing to X-Ray"
+  default     = false
+}
