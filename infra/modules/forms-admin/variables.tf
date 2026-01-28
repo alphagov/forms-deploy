@@ -90,6 +90,12 @@ variable "act_as_user_enabled" {
   default     = false
 }
 
+variable "welsh_enabled" {
+  type        = bool
+  description = "Enables the Welsh forms feature for all groups"
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"

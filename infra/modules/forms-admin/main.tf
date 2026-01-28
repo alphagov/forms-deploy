@@ -155,6 +155,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__ACT_AS_USER_ENABLED",
       value = var.act_as_user_enabled
+    },
+    {
+      name  = "SETTINGS__FEATURES__WELSH",
+      value = var.welsh_enabled
     }
   ]
 
