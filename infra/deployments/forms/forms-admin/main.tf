@@ -24,6 +24,7 @@ module "forms_admin" {
   cloudwatch_metrics_enabled        = var.forms_admin_settings.cloudwatch_metrics_enabled
   analytics_enabled                 = var.forms_admin_settings.analytics_enabled
   act_as_user_enabled               = var.forms_admin_settings.act_as_user_enabled
+  welsh_enabled                     = var.forms_admin_settings.welsh_enabled
   enable_mailchimp_sync             = var.forms_admin_settings.synchronize_to_mailchimp
   deploy_account_id                 = var.deploy_account_id
   vpc_id                            = data.terraform_remote_state.forms_environment.outputs.vpc_id
