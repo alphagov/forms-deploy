@@ -134,6 +134,7 @@ forms_admin_settings = {
   cloudwatch_metrics_enabled = true
   analytics_enabled          = true
   act_as_user_enabled        = false
+  welsh_enabled              = false
   govuk_app_domain           = "publishing.service.gov.uk"
   synchronize_to_mailchimp   = true
 }
