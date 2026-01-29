@@ -77,6 +77,7 @@ forms_admin_settings = {
   previous_auth_provider     = null
   cloudwatch_metrics_enabled = true
   analytics_enabled          = true
+  enable_opentelemetry       = true
   act_as_user_enabled        = true
   welsh_enabled              = true
   govuk_app_domain           = "integration.publishing.service.gov.uk"

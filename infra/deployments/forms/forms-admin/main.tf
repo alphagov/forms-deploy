@@ -23,6 +23,7 @@ module "forms_admin" {
   previous_auth_provider            = var.forms_admin_settings.previous_auth_provider
   cloudwatch_metrics_enabled        = var.forms_admin_settings.cloudwatch_metrics_enabled
   analytics_enabled                 = var.forms_admin_settings.analytics_enabled
+  enable_opentelemetry              = var.forms_admin_settings.enable_opentelemetry
   act_as_user_enabled               = var.forms_admin_settings.act_as_user_enabled
   welsh_enabled                     = var.forms_admin_settings.welsh_enabled
   enable_mailchimp_sync             = var.forms_admin_settings.synchronize_to_mailchimp
