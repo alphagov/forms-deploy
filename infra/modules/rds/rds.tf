@@ -24,6 +24,27 @@ locals {
   performance_insights_retention_period = var.enable_advanced_database_insights ? 465 : null
 }
 
+locals {
+  serverlessv2_scaling_profiles = {
+    user-research = {
+      min_capacity             = 0
+      max_capacity             = 1
+      seconds_until_auto_pause = 300
+    }
+
+    default = {
+      min_capacity = var.min_capacity
+      max_capacity = var.max_capacity
+    }
+  }
+
+  serverlessv2_scaling = lookup(
+    local.serverlessv2_scaling_profiles,
+    var.env_name,
+    local.serverlessv2_scaling_profiles["default"]
+  )
+}
+
 resource "aws_rds_cluster" "cluster_aurora_v2" {
   #checkov:skip=CKV2_AWS_8:AWS RDS inbuilt backup process is sufficient
   #checkov:skip=CKV2_AWS_27:Query logging is not required at this time
@@ -68,9 +89,16 @@ resource "aws_rds_cluster" "cluster_aurora_v2" {
   performance_insights_enabled          = var.enable_advanced_database_insights
   performance_insights_retention_period = local.performance_insights_retention_period
 
-  serverlessv2_scaling_configuration {
-    max_capacity = var.max_capacity
-    min_capacity = var.min_capacity
+  dynamic "serverlessv2_scaling_configuration" {
+    for_each = [local.serverlessv2_scaling]
+
+    content {
+      min_capacity = serverlessv2_scaling_configuration.value.min_capacity
+      max_capacity = serverlessv2_scaling_configuration.value.max_capacity
+
+      # Only present for user-research omitted for all others
+      seconds_until_auto_pause = try(serverlessv2_scaling_configuration.value.seconds_until_auto_pause, null)
+    }
   }
 
   lifecycle {
