@@ -212,3 +212,9 @@ variable "adot_image" {
   description = "ADOT collector container image URI"
   default     = "public.ecr.aws/aws-observability/aws-otel-collector:v0.46.0" # Latest as-of 2026-01-19
 }
+
+variable "opentelemetry_head_sampler_ratio" {
+  type        = string
+  description = "Sampling ratio configuration in OpenTelemetry. This tells the Ruby SDK to sample spans such that only this ratio of traces gets exported. This assumes we are using a `TraceIdRatioBased` sampler. By default all spans are sampled"
+  default     = "1"
+}

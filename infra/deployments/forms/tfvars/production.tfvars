@@ -154,6 +154,7 @@ forms_runner_settings = {
   cloudwatch_metrics_enabled                                      = true
   analytics_enabled                                               = true
   enable_opentelemetry                                            = false
+  opentelemetry_head_sampler_ratio                                = "0.1"
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = false
   allow_human_readonly_roles_to_assume_submissions_to_runner_role = false
   ses_submission_email_from_email_address                         = "no-reply@forms.service.gov.uk"

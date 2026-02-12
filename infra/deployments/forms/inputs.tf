@@ -168,6 +168,7 @@ variable "forms_runner_settings" {
     cloudwatch_metrics_enabled                                      = bool
     analytics_enabled                                               = bool
     enable_opentelemetry                                            = optional(bool, false)
+    opentelemetry_head_sampler_ratio                                = string
     allow_human_readonly_roles_to_assume_submissions_to_s3_role     = bool
     allow_human_readonly_roles_to_assume_submissions_to_runner_role = bool
     ses_submission_email_from_email_address                         = string
