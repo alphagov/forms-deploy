@@ -6,5 +6,5 @@ gem "aws-sdk-codepipeline", "~> 1.112"
 
 group :development, :test do
   gem "rspec", "~> 3.13"
-  gem "rubocop-govuk", "~> 5.1"
+  gem "rubocop-govuk", "~> 5.2"
 end

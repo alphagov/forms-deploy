@@ -19,12 +19,12 @@ def main(event:, context:)
   PausedPipelineDetector
     .find_paused_pipelines(codepipeline, paused_duration_threshold_hours)
     .each do |paused_pipeline|
-    longest_paused_stage = PausedPipelineDetector.longest_paused_stage(paused_pipeline.stage_states)
+      longest_paused_stage = PausedPipelineDetector.longest_paused_stage(paused_pipeline.stage_states)
 
-    notifier.notify_about_paused_pipeline(
-      paused_pipeline.pipeline_name,
-      longest_paused_stage.inbound_transition_state.last_changed_at,
-      longest_paused_stage.inbound_transition_state.disabled_reason,
-    )
+      notifier.notify_about_paused_pipeline(
+        paused_pipeline.pipeline_name,
+        longest_paused_stage.inbound_transition_state.last_changed_at,
+        longest_paused_stage.inbound_transition_state.disabled_reason,
+      )
   end
 end
