@@ -50,6 +50,7 @@ module "forms_runner" {
   cloudwatch_metrics_enabled                  = var.forms_runner_settings.cloudwatch_metrics_enabled
   analytics_enabled                           = var.forms_runner_settings.analytics_enabled
   enable_opentelemetry                        = var.forms_runner_settings.enable_opentelemetry
+  opentelemetry_head_sampler_ratio            = var.forms_runner_settings.opentelemetry_head_sampler_ratio
   deploy_account_id                           = var.deploy_account_id
   ses_submission_email_from_email_address     = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address = var.forms_runner_settings.ses_submission_email_reply_to_email_address

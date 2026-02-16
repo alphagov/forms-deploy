@@ -69,12 +69,20 @@ locals {
         value = "http://localhost:4318" # ADOT sidecar listens on this endpoint
       },
       {
+        name  = "OTEL_PROPAGATORS"
+        value = "xray"
+      },
+      {
         name  = "OTEL_SERVICE_NAME"
         value = var.application
       },
       {
-        name  = "OTEL_PROPAGATORS"
-        value = "xray"
+        name  = "OTEL_TRACES_SAMPLER"
+        value = "parentbased_traceidratio"
+      },
+      {
+        name  = "OTEL_TRACES_SAMPLER_ARG"
+        value = var.opentelemetry_head_sampler_ratio
       }
     ]) : var.environment_variables,
     mountPoints            = [],

@@ -201,3 +201,10 @@ variable "enable_opentelemetry" {
   description = "Enable AWS Distro for OpenTelemetry (ADOT) sidecar for distributed tracing to X-Ray"
   default     = false
 }
+
+
+variable "opentelemetry_head_sampler_ratio" {
+  type        = string
+  description = "Sampling ratio configuration in OpenTelemetry. This tells the Ruby SDK to sample spans such that only this ratio of traces gets exported. This assumes we are using a `TraceIdRatioBased` sampler. By default all spans are sampled"
+  default     = "1"
+}
