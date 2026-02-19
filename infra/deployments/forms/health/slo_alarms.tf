@@ -95,9 +95,13 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_fast_alarms" {
   }
 
   alarm_name        = each.value.alarm_name
-  alarm_description = "Fast burn rate detection for ${each.value.slo_name} (1-hour and 5-minute windows)"
+  alarm_description = <<EOF
+    Fast burn rate detection for ${each.value.slo_name} (1-hour and 5-minute windows)
+
+    NEXT STEP: Begin incident process immediately.
+EOF
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-fast-1hour) AND ALARM(slo-burn-rate-${each.value.slo_name}-fast-5min)"
-  alarm_actions     = [data.terraform_remote_state.forms_environment.outputs.slo_alerts_topic_arn]
+  alarm_actions     = [module.alerts.alert_severity.eu_west_2.high]
   actions_enabled   = true
   depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
@@ -118,9 +122,13 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_medium_alarms" {
   }
 
   alarm_name        = each.value.alarm_name
-  alarm_description = "Medium burn rate detection for ${each.value.slo_name} (6-hour and 30-minute windows)"
+  alarm_description = <<EOF
+    Medium burn rate detection for ${each.value.slo_name} (6-hour and 30-minute windows)
+
+    NEXT STEP: Begin incident process upon picking up ticket.
+EOF
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-medium-6hour) AND ALARM(slo-burn-rate-${each.value.slo_name}-medium-30min)"
-  alarm_actions     = [data.terraform_remote_state.forms_environment.outputs.slo_alerts_topic_arn]
+  alarm_actions     = [module.alerts.alert_severity.eu_west_2.info]
   actions_enabled   = true
   depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
@@ -141,9 +149,13 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_slow_alarms" {
   }
 
   alarm_name        = each.value.alarm_name
-  alarm_description = "Slow burn rate detection for ${each.value.slo_name} (3-day and 6-hour windows)"
+  alarm_description = <<EOF
+    Slow burn rate detection for ${each.value.slo_name} (3-day and 6-hour windows)"
+
+    NEXT STEP: Investigate as support ticket or create Trello card to investigate during next sprint.
+ EOF
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-slow-3day) AND ALARM(slo-burn-rate-${each.value.slo_name}-slow-6hour)"
-  alarm_actions     = [data.terraform_remote_state.forms_environment.outputs.slo_alerts_topic_arn]
+  alarm_actions     = [module.alerts.alert_severity.eu_west_2.info]
   actions_enabled   = true
   depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
