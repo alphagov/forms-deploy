@@ -106,3 +106,7 @@ output "ecs_cluster_arn" {
 output "ecs_cluster_name" {
   value = aws_ecs_cluster.forms.name
 }
+
+output "ecs_events_role_arn" {
+  value = aws_iam_role.ecs_events.arn
+}
