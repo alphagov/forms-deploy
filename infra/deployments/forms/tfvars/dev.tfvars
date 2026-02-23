@@ -105,6 +105,7 @@ forms_runner_settings = {
   ses_submission_email_reply_to_email_address                     = "no-reply@dev.forms.service.gov.uk"
   queue_worker_capacity                                           = 1
   disable_builtin_solidqueue_worker                               = true
+  filler_answer_email_enabled                                     = true
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true

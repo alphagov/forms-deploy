@@ -68,6 +68,7 @@ forms_runner_settings = {
   allow_human_readonly_roles_to_assume_submissions_to_runner_role = false
   queue_worker_capacity                                           = 0
   disable_builtin_solidqueue_worker                               = true
+  filler_answer_email_enabled                                     = false
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = false
