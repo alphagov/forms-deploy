@@ -71,33 +71,6 @@ resource "aws_ssm_parameter" "pagerduty_integration_url" {
   }
 }
 
-## SLO alarms
-module "slo_alerts" {
-  source = "./alert_sns_topic"
-
-  topic_name = "slo-alerts"
-  kms_key_id = "alias/aws/sns"
-}
-
-resource "aws_sns_topic_subscription" "slo_alerts_subscription" {
-  topic_arn = module.slo_alerts.topic_arn
-  protocol  = "email"
-  endpoint  = aws_ssm_parameter.slo_alerts_email.value
-}
-
-resource "aws_ssm_parameter" "slo_alerts_email" {
-  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
-
-  description = "Email address to receive SLO alert notifications"
-  name        = "/alerting/slo-alerts-email"
-  type        = "SecureString"
-  value       = "dummy-value"
-
-  lifecycle {
-    ignore_changes = [value]
-  }
-}
-
 ## KMS keys
 resource "aws_kms_key" "topic_sse_us_east_1" {
   provider = aws.us-east-1

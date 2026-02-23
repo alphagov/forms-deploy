@@ -95,10 +95,6 @@ output "pagerduty_eu_west_2_topic_arn" {
   value = module.pagerduty_eu_west_2.topic_arn
 }
 
-output "slo_alerts_topic_arn" {
-  value = module.slo_alerts.topic_arn
-}
-
 output "ecs_cluster_arn" {
   value = aws_ecs_cluster.forms.arn
 }
