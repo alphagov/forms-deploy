@@ -14,7 +14,7 @@ services:
       target: build
     command: >
       sh -c "
-        bin/setup &&
+        bin/rails db:prepare &&
         exec rails s --restart
       "
     depends_on:
@@ -55,11 +55,7 @@ services:
         - RAILS_ENV=development
       context: ../../forms-product-page
       target: build
-    command: >
-      sh -c "
-        bin/setup &&
-        exec rails s --restart -p 3002
-      "
+    command: rails s --restart -p 3002
     environment:
       - BINDING=0.0.0.0
       - NODE_ENV=development
@@ -91,7 +87,7 @@ services:
       target: build
     command: >
       sh -c "
-        bin/setup &&
+        bin/rails db:prepare &&
         exec rails s --restart -p 3001
       "
     depends_on:
