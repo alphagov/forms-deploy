@@ -25,6 +25,7 @@ module "forms_admin" {
   analytics_enabled                 = var.forms_admin_settings.analytics_enabled
   act_as_user_enabled               = var.forms_admin_settings.act_as_user_enabled
   welsh_enabled                     = var.forms_admin_settings.welsh_enabled
+  daily_submission_emails_enabled   = var.forms_admin_settings.daily_submission_emails_enabled
   enable_mailchimp_sync             = var.forms_admin_settings.synchronize_to_mailchimp
   enable_organisations_sync         = var.forms_admin_settings.synchronize_orgs_from_govuk
   deploy_account_id                 = var.deploy_account_id
