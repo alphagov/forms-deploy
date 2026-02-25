@@ -96,6 +96,12 @@ variable "welsh_enabled" {
   default     = false
 }
 
+variable "daily_submission_emails_enabled" {
+  type        = bool
+  description = "Enables the ability to configure sending daily emails with a CSV of all submissions for the previous day"
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
