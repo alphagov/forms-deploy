@@ -15,7 +15,7 @@ EOF
   metric_name         = "Started"
   namespace           = "Forms/Jobs"
   period              = 30 * 60
-  statistic           = "Average"
+  statistic           = "SampleCount"
   threshold           = 0
 
   dimensions = {
