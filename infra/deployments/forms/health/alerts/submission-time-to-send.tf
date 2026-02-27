@@ -4,7 +4,7 @@ resource "aws_cloudwatch_metric_alarm" "submission_time_to_send" {
     The average time to send a submission from the time it was scheduled to be sent is greater than 1 minute in
     the ${var.environment} environment. This suggests that we are unable to keep up with demand for the number of
     submissions we need to process. The job to send submission emails is run by Solid Queue, which is started in the
-    forms-runner ECS task.
+    forms-runner-queue-worker ECS task.
 
     NEXT STEPS:
     1. Search in Splunk for "event=form_submission_email_sent" to see the rate of submission emails being sent and the
