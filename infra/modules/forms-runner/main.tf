@@ -215,6 +215,10 @@ module "ecs_service" {
       name  = "SETTINGS__FEATURES__FILLER_ANSWER_EMAIL_ENABLED",
       value = var.filler_answer_email_enabled
     },
+    {
+      name  = "SETTINGS__FEATURES__CSV_ADD_ANOTHER_ANSWER_SINGLE_COLUMN",
+      value = var.csv_add_another_answer_single_column
+    },
 
   ]
 

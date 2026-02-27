@@ -214,3 +214,9 @@ variable "filler_answer_email_enabled" {
   description = "Enables the flag to send offer fillers an email containing the answers from a form submission"
   default     = false
 }
+
+variable "csv_add_another_answer_single_column" {
+  type        = bool
+  description = "When enabled, in submission CSVs questions with add another answer will include all answers in the same column separated by newlines"
+  default     = false
+}
