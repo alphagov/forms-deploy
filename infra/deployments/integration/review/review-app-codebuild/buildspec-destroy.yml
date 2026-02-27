@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - set -e
+      - export TERRAFORM_VERSION=$(< .review_apps/.terraform-version)
+      - curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip" -o "terraform-${TERRAFORM_VERSION}.zip"
+      - unzip "terraform-${TERRAFORM_VERSION}.zip"
+      - mv terraform /usr/local/bin/terraform
+    finally:
+      - terraform --version
+
+  pre_build:
+    commands:
+      - cd .review_apps
+      - terraform init -backend-config="key=review-apps/${APPLICATION_NAME}/pr-${PR_NUMBER}.tfstate"
+
+  build:
+    commands:
+      - |
+        terraform destroy \
+          -var "pull_request_number=${PR_NUMBER}" \
+          -var "${APPLICATION_NAME//-/_}_container_image=placeholder" \
+          -no-color \
+          -auto-approve
