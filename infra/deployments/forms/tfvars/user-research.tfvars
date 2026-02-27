@@ -70,6 +70,7 @@ forms_runner_settings = {
   queue_worker_capacity                                           = 0
   disable_builtin_solidqueue_worker                               = true
   filler_answer_email_enabled                                     = false
+  csv_add_another_answer_single_column                            = false
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = false

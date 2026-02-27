@@ -75,4 +75,5 @@ module "forms_runner" {
   disable_builtin_solidqueue_worker           = var.forms_runner_settings.disable_builtin_solidqueue_worker
   kinesis_subscription_role_arn               = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
   filler_answer_email_enabled                 = var.forms_runner_settings.filler_answer_email_enabled
+  csv_add_another_answer_single_column        = var.forms_runner_settings.csv_add_another_answer_single_column
 }
