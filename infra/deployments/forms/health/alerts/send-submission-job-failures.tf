@@ -2,10 +2,11 @@ resource "aws_cloudwatch_metric_alarm" "send_submission_job_failures" {
   alarm_name          = "${var.environment}-send-submission-job-failures"
   alarm_description   = <<EOF
     The forms-runner job to send submissions has failed more than 10 times in the last 15 minutes in the
-    ${var.environment} environment. This job is run by Solid Queue, which is started in the forms-runner ECS task.
+    ${var.environment} environment. This job is run by Solid Queue, which is started in the forms-runner-queue-worker
+    ECS task.
 
     NEXT STEPS:
-    1. Check whether there are any forms-runner errors in Sentry related to the SendSubmissionJob. We retry to job
+    1. Check whether there are any forms-runner errors in Sentry related to the SendSubmissionJob. We retry the job
     automatically if there are errors calling AWS, but for all other errors we immediately send the error to Sentry and
     the job is not scheduled for retry.
 

@@ -1,13 +1,13 @@
 resource "aws_cloudwatch_metric_alarm" "receive_submission_deliveries_job_not_run" {
   alarm_name          = "${var.environment}-receive-submission-deliveries-job-not-run"
   alarm_description   = <<EOF
-    The forms-runner job to receive SQS notifications about submission deliveries has not in the ${var.environment}
+    The forms-runner job to receive SQS notifications about submission deliveries has not run in the ${var.environment}
     environment in the past 30 minutes. It is expected that the job is run every 10 minutes. This job is run by Solid
-    Queue, which is started in the forms-runner ECS task.
+    Queue, which is started in the forms-runner-queue-worker ECS task.
 
     NEXT STEPS:
     1. Check the Splunk logs and Sentry for any errors running the job.
-    2. Restart the forms-runner ECS tasks and check whether the job starts running.
+    2. Restart the forms-runner-queue-worker ECS tasks and check whether the job starts running.
 
 EOF
   comparison_operator = "LessThanOrEqualToThreshold"
