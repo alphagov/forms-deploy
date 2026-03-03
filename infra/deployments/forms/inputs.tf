@@ -141,6 +141,7 @@ variable "forms_admin_settings" {
     act_as_user_enabled             = bool
     welsh_enabled                   = bool
     daily_submission_emails_enabled = bool
+    org_admin_alerts_enabled        = bool
     govuk_app_domain                = string
     synchronize_to_mailchimp        = bool
     synchronize_orgs_from_govuk     = bool

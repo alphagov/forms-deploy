@@ -80,6 +80,7 @@ forms_admin_settings = {
   act_as_user_enabled             = true
   welsh_enabled                   = true
   daily_submission_emails_enabled = true
+  org_admin_alerts_enabled        = true
   govuk_app_domain                = "integration.publishing.service.gov.uk"
   synchronize_to_mailchimp        = false
   synchronize_orgs_from_govuk     = false
