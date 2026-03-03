@@ -102,6 +102,12 @@ variable "daily_submission_emails_enabled" {
   default     = false
 }
 
+variable "org_admin_alerts_enabled" {
+  type        = bool
+  description = "Enables sending alerts to Org Admins about forms they control"
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
