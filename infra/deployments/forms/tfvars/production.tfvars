@@ -135,7 +135,7 @@ forms_admin_settings = {
   analytics_enabled               = true
   act_as_user_enabled             = false
   welsh_enabled                   = true
-  daily_submission_emails_enabled = false
+  daily_submission_emails_enabled = true
   org_admin_alerts_enabled        = false
   govuk_app_domain                = "publishing.service.gov.uk"
   synchronize_to_mailchimp        = true
@@ -164,7 +164,7 @@ forms_runner_settings = {
   queue_worker_capacity                                           = 6
   disable_builtin_solidqueue_worker                               = true
   filler_answer_email_enabled                                     = false
-  csv_add_another_answer_single_column                            = false
+  csv_add_another_answer_single_column                            = true
 }
 scheduled_smoke_tests_settings = {
   enable_scheduled_smoke_tests = true
