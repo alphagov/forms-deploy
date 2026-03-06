@@ -48,3 +48,10 @@ output "traefik_basic_auth_credentials" {
   value       = data.aws_ssm_parameter.traefik_basic_auth_credentials.value
   sensitive   = true
 }
+
+output "github_actions_role_arns" {
+  description = "IAM role ARNs for GitHub Actions review app deployments"
+  value = {
+    for app, role in aws_iam_role.github_actions : app => role.arn
+  }
+}
