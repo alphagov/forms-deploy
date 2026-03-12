@@ -67,30 +67,31 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
 }
 
 module "ecs_service" {
-  source                       = "../ecs-service"
-  env_name                     = var.env_name
-  application                  = "forms-admin"
-  enable_opentelemetry         = var.enable_opentelemetry
-  root_domain                  = var.root_domain
-  sub_domain                   = local.sub_domain
-  internal_sub_domain          = local.internal_sub_domain
-  listener_priority            = 301
-  include_domain_root_listener = false
-  image                        = local.image
-  cpu                          = var.cpu
-  memory                       = var.memory
-  readonly_root_filesystem     = true
-  container_port               = 3000
-  permit_internet_egress       = true
-  permit_postgres_egress       = true
-  vpc_id                       = var.vpc_id
-  vpc_cidr_block               = var.vpc_cidr_block
-  private_subnet_ids           = var.private_subnet_ids
-  alb_arn_suffix               = var.alb_arn_suffix
-  alb_listener_arn             = var.alb_listener_arn
-  internal_alb_listener_arn    = var.internal_alb_listener_arn
-  ecs_cluster_arn              = var.ecs_cluster_arn
-  cloudfront_secret            = var.cloudfront_secret
+  source                           = "../ecs-service"
+  env_name                         = var.env_name
+  application                      = "forms-admin"
+  enable_opentelemetry             = var.enable_opentelemetry
+  opentelemetry_head_sampler_ratio = var.opentelemetry_head_sampler_ratio
+  root_domain                      = var.root_domain
+  sub_domain                       = local.sub_domain
+  internal_sub_domain              = local.internal_sub_domain
+  listener_priority                = 301
+  include_domain_root_listener     = false
+  image                            = local.image
+  cpu                              = var.cpu
+  memory                           = var.memory
+  readonly_root_filesystem         = true
+  container_port                   = 3000
+  permit_internet_egress           = true
+  permit_postgres_egress           = true
+  vpc_id                           = var.vpc_id
+  vpc_cidr_block                   = var.vpc_cidr_block
+  private_subnet_ids               = var.private_subnet_ids
+  alb_arn_suffix                   = var.alb_arn_suffix
+  alb_listener_arn                 = var.alb_listener_arn
+  internal_alb_listener_arn        = var.internal_alb_listener_arn
+  ecs_cluster_arn                  = var.ecs_cluster_arn
+  cloudfront_secret                = var.cloudfront_secret
 
   kinesis_subscription_role_arn = var.kinesis_subscription_role_arn
 
