@@ -96,12 +96,6 @@ variable "welsh_enabled" {
   default     = false
 }
 
-variable "daily_submission_emails_enabled" {
-  type        = bool
-  description = "Enables the ability to configure sending daily emails with a CSV of all submissions for the previous day"
-  default     = false
-}
-
 variable "org_admin_alerts_enabled" {
   type        = bool
   description = "Enables sending alerts to Org Admins about forms they control"
