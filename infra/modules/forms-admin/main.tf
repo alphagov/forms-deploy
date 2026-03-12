@@ -161,10 +161,6 @@ module "ecs_service" {
       value = var.welsh_enabled
     },
     {
-      name  = "SETTINGS__FEATURES__DAILY_SUBMISSION_EMAILS_ENABLED",
-      value = var.daily_submission_emails_enabled
-    },
-    {
       name  = "SETTINGS__FEATURES__ORG_ADMIN_ALERTS_ENABLED",
       value = var.org_admin_alerts_enabled
     }
