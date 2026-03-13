@@ -136,7 +136,6 @@ forms_admin_settings = {
   enable_opentelemetry             = true
   opentelemetry_head_sampler_ratio = "0.1"
   act_as_user_enabled              = false
-  welsh_enabled                    = true
   org_admin_alerts_enabled         = true
   govuk_app_domain                 = "publishing.service.gov.uk"
   synchronize_to_mailchimp         = true
