@@ -17,6 +17,9 @@ locals {
           awslogs-stream-prefix = "forms-admin-${var.env_name}-organisations-sync"
         }
       },
+      # Don't require the otel collector to be running for organisations sync.
+      # This overrides the `dependsOn` set in the main task container definition.
+      dependsOn = []
     }
   )
 }
