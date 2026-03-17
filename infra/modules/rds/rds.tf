@@ -32,6 +32,13 @@ locals {
       seconds_until_auto_pause = 300
     }
 
+    dev = {
+      # 0.5 is the lowest value that keeps the cluster warm (no cold start on first connection).
+      # Setting min_capacity = 0 would enable auto-pause but cause ~20-30s wake-up delays.
+      min_capacity = 0.5
+      max_capacity = 2
+    }
+
     default = {
       min_capacity = var.min_capacity
       max_capacity = var.max_capacity
