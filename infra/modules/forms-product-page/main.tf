@@ -1,7 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  image = var.image_tag == null ? null : "${var.container_repository}:${var.image_tag}"
+  image          = var.image_tag == null ? null : "${var.container_repository}:${var.image_tag}"
+  container_port = 3000
 }
 
 module "ecs_service" {
@@ -16,7 +17,7 @@ module "ecs_service" {
   cpu                          = var.cpu
   memory                       = var.memory
   readonly_root_filesystem     = true
-  container_port               = 3000
+  container_port               = local.container_port
   permit_internet_egress       = true # Required for Sentry.io and AWS SSM
   permit_postgres_egress       = true
   vpc_id                       = var.vpc_id
@@ -35,6 +36,13 @@ module "ecs_service" {
     p95_response_time_scaling_threshold_seconds = 1
     scale_in_cooldown                           = 180
     scale_out_cooldown                          = 60
+  }
+
+  healthcheck = {
+    command     = ["CMD-SHELL", "wget -O - 'http://localhost:${local.container_port}/up' || exit 1"]
+    interval    = 30
+    retries     = 5
+    startPeriod = 180
   }
 
   environment_variables = [

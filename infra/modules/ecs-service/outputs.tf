@@ -6,7 +6,10 @@ output "task_definition" {
 }
 
 output "task_container_definition" {
-  value = local.task_container_definition
+  value = merge(local.task_container_definition, {
+    healthCheck = null
+  })
+  description = "The computed container definition for the task, after applying any overrides. Container healthcheck is not included as things that use this output should set their own healthcheck."
 }
 
 output "task_role_arn" {

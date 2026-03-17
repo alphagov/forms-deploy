@@ -107,6 +107,7 @@ locals {
         awslogs-stream-prefix = local.log_group_name
       }
     },
+    healthCheck = var.healthcheck,
     dependsOn = var.enable_opentelemetry ? [
       {
         containerName = "aws-otel-collector",
