@@ -159,10 +159,6 @@ module "ecs_service" {
       value = var.act_as_user_enabled
     },
     {
-      name  = "SETTINGS__FEATURES__WELSH",
-      value = var.welsh_enabled
-    },
-    {
       name  = "SETTINGS__FEATURES__ORG_ADMIN_ALERTS_ENABLED",
       value = var.org_admin_alerts_enabled
     }

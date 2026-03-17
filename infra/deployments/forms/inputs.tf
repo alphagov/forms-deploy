@@ -141,7 +141,6 @@ variable "forms_admin_settings" {
     enable_opentelemetry             = optional(bool, false)
     opentelemetry_head_sampler_ratio = string
     act_as_user_enabled              = bool
-    welsh_enabled                    = bool
     org_admin_alerts_enabled         = bool
     govuk_app_domain                 = string
     synchronize_to_mailchimp         = bool

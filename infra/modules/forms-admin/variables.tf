@@ -90,12 +90,6 @@ variable "act_as_user_enabled" {
   default     = false
 }
 
-variable "welsh_enabled" {
-  type        = bool
-  description = "Enables the Welsh forms feature for all groups"
-  default     = false
-}
-
 variable "org_admin_alerts_enabled" {
   type        = bool
   description = "Enables sending alerts to Org Admins about forms they control"
