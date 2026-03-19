@@ -30,7 +30,7 @@ root_domain            = "staging.forms.service.gov.uk"
 additional_dns_records = []
 codestar_connection_arn = {
   alphagov    = "arn:aws:codestar-connections:eu-west-2:972536609845:connection/de05d028-2cbd-4d06-8946-0e4aca60f4ca"
-  govuk-forms = ""
+  govuk-forms = "arn:aws:codeconnections:eu-west-2:972536609845:connection/065d6101-9c43-4336-8fd4-777f3d6fc791"
 }
 container_registry = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 dlq_arn            = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"

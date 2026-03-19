@@ -65,7 +65,7 @@ additional_dns_records = [
 ]
 codestar_connection_arn = {
   alphagov    = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
-  govuk-forms = ""
+  govuk-forms = "arn:aws:codeconnections:eu-west-2:498160065950:connection/42243c20-40e2-467d-b135-999f91c37b55"
 }
 container_registry = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 dlq_arn            = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"

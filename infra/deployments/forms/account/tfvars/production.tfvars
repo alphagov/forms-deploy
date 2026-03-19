@@ -40,7 +40,7 @@ dns_delegation_records = {
 }
 codestar_connection_arn = {
   alphagov    = "arn:aws:codestar-connections:eu-west-2:443944947292:connection/c253c931-651d-4d48-950a-c1ac2dfd7ca8"
-  govuk-forms = ""
+  govuk-forms = "arn:aws:codeconnections:eu-west-2:443944947292:connection/a2c94a66-2c03-45db-bb18-5c37f8b44531"
 }
 deploy_account_id         = "711966560482"
 pentester_email_addresses = []
