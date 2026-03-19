@@ -9,7 +9,7 @@ The components which make up the service are:
 
 - https://github.com/alphagov/forms-runner
 - https://github.com/alphagov/forms-admin
-- https://github.com/alphagov/forms-product-page
+- https://github.com/govuk-forms/forms-product-page
 
 ## How it works
 Each of the components above has a Dockerfile in its repo which is used to build
