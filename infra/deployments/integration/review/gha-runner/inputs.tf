@@ -25,7 +25,6 @@ variable "aws_ecr_repository_arn" {
 
 variable "codestar_connection_arn" {
   description = "The ARN of the AWS CodeStar connection to use for getting GitHub access credentials"
-  type        = string
 }
 
 variable "task_execution_role_arn" {

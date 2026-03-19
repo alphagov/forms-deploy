@@ -27,7 +27,7 @@ resource "aws_codepipeline" "deploy_pipeline_visualiser" {
       output_artifacts = ["forms_deploy"]
 
       configuration = {
-        ConnectionArn        = var.codestar_connection_arn
+        ConnectionArn        = var.codestar_connection_arn.alphagov
         FullRepositoryId     = "alphagov/forms-deploy"
         BranchName           = var.pipeline_source_branch
         DetectChanges        = true
@@ -109,7 +109,7 @@ module "pipeline_visualiser_docker_build" {
   docker_username_parameter_path = "/docker/username"
   docker_password_parameter_path = "/docker/password"
   artifact_store_arn             = module.pipeline_visualiser_artifact_bucket.arn
-  codestar_connection_arn        = var.codestar_connection_arn
+  codestar_connection_arn        = var.codestar_connection_arn.alphagov
   ecr_repository_url             = data.terraform_remote_state.deploy_ecr.outputs.pipeline_visualiser_ecr_repository_url
 }
 
@@ -174,12 +174,12 @@ data "aws_iam_policy_document" "pipeline_visualiser_deployer" {
       "codestar-connections:GetConnection",
       "codestar-connections:ListConnections"
     ]
-    resources = [var.codestar_connection_arn]
+    resources = [var.codestar_connection_arn.alphagov, var.codestar_connection_arn.govuk-forms]
     effect    = "Allow"
   }
   statement {
     actions   = ["codecommit:Get*", "codecommit:Describe*", "codecommit:GitPull"]
-    resources = [var.codestar_connection_arn]
+    resources = [var.codestar_connection_arn.alphagov, var.codestar_connection_arn.govuk-forms]
     effect    = "Allow"
   }
 
