@@ -63,10 +63,13 @@ additional_dns_records = [
     records = ["asvdns_6a94c72d-68ad-40b3-a79c-fd4451c6f4d7"]
   },
 ]
-codestar_connection_arn = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
-container_registry      = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
-dlq_arn                 = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
-send_logs_to_cyber      = true
+codestar_connection_arn = {
+  alphagov    = "arn:aws:codestar-connections:eu-west-2:498160065950:connection/9dcd616c-3f7d-4f20-8a6b-8fca788e674b"
+  govuk-forms = ""
+}
+container_registry = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
+dlq_arn            = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
+send_logs_to_cyber = true
 forms_admin_settings = {
   cpu                              = 256
   memory                           = 512

@@ -33,8 +33,10 @@ variable "require_vpn_to_access" {
 
 variable "codestar_connection_arn" {
   description = "It isn't possible to automate the creation of a CodeStar connection, so we must create it by hand once in each account and hardcode its ARN."
-  type        = string
-  nullable    = false
+  type = object({
+    alphagov    = string
+    govuk-forms = string
+  })
 }
 
 variable "deploy_account_id" {
