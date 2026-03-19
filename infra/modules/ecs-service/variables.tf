@@ -218,3 +218,15 @@ variable "opentelemetry_head_sampler_ratio" {
   description = "Sampling ratio configuration in OpenTelemetry. This tells the Ruby SDK to sample spans such that only this ratio of traces gets exported. This assumes we are using a `TraceIdRatioBased` sampler. By default all spans are sampled"
   default     = "1"
 }
+
+variable "healthcheck" {
+  type = object({
+    command     = list(string)
+    interval    = number
+    timeout     = optional(number)
+    retries     = number
+    startPeriod = number
+  })
+  description = "The health check configuration for the ECS task. If not provided, the task will not have a health check configured."
+  default     = null
+}

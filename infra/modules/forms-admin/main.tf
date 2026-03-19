@@ -49,6 +49,7 @@ locals {
       }
     ]
   }
+  container_port = 3000
 
 }
 
@@ -81,7 +82,7 @@ module "ecs_service" {
   cpu                              = var.cpu
   memory                           = var.memory
   readonly_root_filesystem         = true
-  container_port                   = 3000
+  container_port                   = local.container_port
   permit_internet_egress           = true
   permit_postgres_egress           = true
   vpc_id                           = var.vpc_id
@@ -101,6 +102,13 @@ module "ecs_service" {
     p95_response_time_scaling_threshold_seconds = 1
     scale_in_cooldown                           = 180
     scale_out_cooldown                          = 60
+  }
+
+  healthcheck = {
+    command     = ["CMD-SHELL", "wget -O - 'http://localhost:${local.container_port}/up' || exit 1"]
+    interval    = 30
+    retries     = 5
+    startPeriod = 180
   }
 
   ecs_task_role_policy_json = data.aws_iam_policy_document.ecs_task_role_permissions.json
