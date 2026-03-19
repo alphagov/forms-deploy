@@ -53,7 +53,7 @@ module "forms_product_page" {
   source = "./gha-runner"
 
   application_name              = "forms-product-page"
-  application_source_repository = "https://github.com/alphagov/forms-product-page"
+  application_source_repository = "https://github.com/govuk-forms/forms-product-page"
 
   autoscaling_role_arn              = aws_iam_service_linked_role.app_autoscaling.arn
   aws_ecr_repository_arn            = module.forms_product_page_container_repo.arn

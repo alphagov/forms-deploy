@@ -2,7 +2,7 @@ module "build_product_page_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-product-page"
   container_repository    = "forms-product-page-deploy"
-  source_repository       = "alphagov/forms-product-page"
+  source_repository       = "govuk-forms/forms-product-page"
   codestar_connection_arn = var.codestar_connection_arn
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_product_page_ecr_repository_url
 
