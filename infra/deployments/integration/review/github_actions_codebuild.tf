@@ -156,7 +156,8 @@ data "aws_iam_policy_document" "github_actions" {
       "ecr:CompleteLayerUpload",
       "ecr:InitiateLayerUpload",
       "ecr:PutImage",
-      "ecr:UploadLayerPart"
+      "ecr:UploadLayerPart",
+      "ecr:BatchGetImage"
     ]
     resources = [each.value.ecr_repository_arn]
   }
