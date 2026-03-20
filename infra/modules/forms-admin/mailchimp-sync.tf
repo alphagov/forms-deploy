@@ -17,9 +17,15 @@ locals {
           awslogs-stream-prefix = "forms-admin-${var.env_name}-mailchimp-sync"
         }
       },
-      # Don't require the otel collector to be running for mailchimp sync.
-      # This overrides the `dependsOn` set in the main task container definition.
-      dependsOn = []
+      # Explicitly disable opentelemetry for mailchimp sync, as we only want to trace user interactions in the main app, and not background jobs.
+      # Override the `dependsOn` set in the main task container definition, as we don't provision the collector here.
+      dependsOn = [],
+      # Also, strip out any OTEL_ or _OTEL envars, to disable opentelemetry for this container, even if it's enabled for the main app.
+      environment = [
+        for env in module.ecs_service.task_container_definition.environment :
+        env
+        if !startswith(env.name, "OTEL_") && !endswith(env.name, "_OTEL")
+      ]
     }
   )
 }
@@ -33,9 +39,10 @@ resource "aws_ecs_task_definition" "mailchimp_cron_job" {
   execution_role_arn       = module.ecs_service.task_definition.execution_role_arn
   task_role_arn            = module.ecs_service.task_definition.task_role_arn
   requires_compatibilities = module.ecs_service.task_definition.requires_compatibilities
-  cpu                      = module.ecs_service.task_definition.cpu
-  memory                   = module.ecs_service.task_definition.memory
-  network_mode             = "awsvpc"
+  # Don't inherit these from the main task, as they may be inflated for the otel collector
+  cpu          = var.cpu
+  memory       = var.memory
+  network_mode = "awsvpc"
 
   runtime_platform {
     operating_system_family = "LINUX"
