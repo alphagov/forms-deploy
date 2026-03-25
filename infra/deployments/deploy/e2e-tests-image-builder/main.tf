@@ -7,7 +7,7 @@
 # staging environment, for which it needs credentials from the
 # 'automated-test-parameters' module.
 #
-# https://github.com/alphagov/forms-e2e-tests/blob/main/bin/dockerfile_test.sh
+# https://github.com/govuk-forms/forms-e2e-tests/blob/main/bin/dockerfile_test.sh
 #
 # This exists because it currently isn't possible for us to test the code before
 # it gets packaged.
@@ -18,7 +18,7 @@ locals {
 
 module "forms_e2e_tests" {
   source                  = "../../../modules/e2e-image-pipeline"
-  codestar_connection_arn = var.codestar_connection_arn.alphagov
+  codestar_connection_arn = var.codestar_connection_arn.govuk-forms
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.e2e_tests_ecr_repository_url
 }
 

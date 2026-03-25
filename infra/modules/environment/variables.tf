@@ -46,7 +46,7 @@ variable "enable_shield_advanced_healthchecks" {
 variable "scheduled_smoke_tests_settings" {
   type = object({
     enable_scheduled_smoke_tests = bool
-    # This form is created specifically for the runner smoke tests. See https://github.com/alphagov/forms-e2e-tests/blob/main/spec/smoke_tests/smoke_test_runner_spec.rb
+    # This form is created specifically for the runner smoke tests. See https://github.com/govuk-forms/forms-e2e-tests/blob/main/spec/smoke_tests/smoke_test_runner_spec.rb
     form_url          = string
     frequency_minutes = number
     enable_alerting   = bool # Whether to send notification to govuk-forms-alerts channel
