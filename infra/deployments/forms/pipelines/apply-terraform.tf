@@ -99,8 +99,8 @@ resource "aws_codepipeline" "apply_terroform" {
       output_artifacts = ["forms_e2e_tests"]
 
       configuration = {
-        ConnectionArn    = var.codestar_connection_arn.alphagov
-        FullRepositoryId = "alphagov/forms-e2e-tests"
+        ConnectionArn    = var.codestar_connection_arn.govuk-forms
+        FullRepositoryId = "govuk-forms/forms-e2e-tests"
         BranchName       = "main"
         # TODO: we should version this repository appropriately, so we can pick specific versions
         DetectChanges        = false

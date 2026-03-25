@@ -30,7 +30,7 @@ resource "aws_codepipeline" "main" {
 
       configuration = {
         ConnectionArn    = var.codestar_connection_arn
-        FullRepositoryId = "alphagov/forms-e2e-tests"
+        FullRepositoryId = "govuk-forms/forms-e2e-tests"
         BranchName       = var.forms_e2e_tests_branch
         DetectChanges    = true
       }
