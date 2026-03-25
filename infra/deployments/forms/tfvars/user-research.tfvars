@@ -47,6 +47,7 @@ forms_admin_settings = {
   opentelemetry_head_sampler_ratio = "0.1"
   act_as_user_enabled              = false
   org_admin_alerts_enabled         = true
+  weekly_submission_emails_enabled = false
   govuk_app_domain                 = ""
   synchronize_to_mailchimp         = false
   synchronize_orgs_from_govuk      = false

@@ -145,6 +145,7 @@ variable "forms_admin_settings" {
     opentelemetry_head_sampler_ratio = string
     act_as_user_enabled              = bool
     org_admin_alerts_enabled         = bool
+    weekly_submission_emails_enabled = bool
     govuk_app_domain                 = string
     synchronize_to_mailchimp         = bool
     synchronize_orgs_from_govuk      = bool
