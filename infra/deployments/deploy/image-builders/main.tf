@@ -22,7 +22,7 @@ module "build_forms_admin_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-admin"
   container_repository    = "forms-admin-deploy"
-  source_repository       = "alphagov/forms-admin"
-  codestar_connection_arn = var.codestar_connection_arn.alphagov
+  source_repository       = "govuk-forms/forms-admin"
+  codestar_connection_arn = var.codestar_connection_arn.govuk-forms
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_admin_ecr_repository_url
 }
