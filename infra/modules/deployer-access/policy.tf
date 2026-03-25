@@ -433,13 +433,13 @@ data "aws_iam_policy_document" "pipelines" {
       "codestar-connections:UseConnection",
       "codestar-connections:PassConnection"
     ]
-    resources = [var.codestar_connection_arn]
+    resources = [var.codestar_connection_arn.alphagov, var.codestar_connection_arn.govuk-forms]
     effect    = "Allow"
   }
 
   statement {
     actions   = ["codecommit:GitPull"]
-    resources = [var.codestar_connection_arn]
+    resources = [var.codestar_connection_arn.alphagov, var.codestar_connection_arn.govuk-forms]
     effect    = "Allow"
   }
 
