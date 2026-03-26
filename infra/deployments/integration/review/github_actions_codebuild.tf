@@ -4,7 +4,7 @@ locals {
   github_actions_apps = {
     "forms-admin" = {
       ecr_repository_arn = module.forms_admin_container_repo.arn
-      github_repository  = "alphagov/forms-admin"
+      github_repository  = "govuk-forms/forms-admin"
     }
     "forms-runner" = {
       ecr_repository_arn = module.forms_runner_container_repo.arn
