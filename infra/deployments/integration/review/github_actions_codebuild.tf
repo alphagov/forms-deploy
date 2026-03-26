@@ -8,7 +8,7 @@ locals {
     }
     "forms-runner" = {
       ecr_repository_arn = module.forms_runner_container_repo.arn
-      github_repository  = "alphagov/forms-runner"
+      github_repository  = "govuk-forms/forms-runner"
     }
     "forms-product-page" = {
       ecr_repository_arn = module.forms_product_page_container_repo.arn

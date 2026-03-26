@@ -12,8 +12,8 @@ module "build_forms_runner_container" {
   source                  = "../../../modules/image-builder-pipeline"
   application_name        = "forms-runner"
   container_repository    = "forms-runner-deploy"
-  source_repository       = "alphagov/forms-runner"
-  codestar_connection_arn = var.codestar_connection_arn.alphagov
+  source_repository       = "govuk-forms/forms-runner"
+  codestar_connection_arn = var.codestar_connection_arn.govuk-forms
   ecr_repository_url      = data.terraform_remote_state.deploy_ecr.outputs.forms_runner_ecr_repository_url
 }
 

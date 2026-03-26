@@ -7,7 +7,7 @@ https://github.com/alphagov/forms-deploy
 
 The components which make up the service are:
 
-- https://github.com/alphagov/forms-runner
+- https://github.com/govuk-forms/forms-runner
 - https://github.com/govuk-forms/forms-admin
 - https://github.com/govuk-forms/forms-product-page
 
