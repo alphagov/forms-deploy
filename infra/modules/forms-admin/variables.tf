@@ -96,6 +96,12 @@ variable "org_admin_alerts_enabled" {
   default     = false
 }
 
+variable "weekly_submission_emails_enabled" {
+  type        = bool
+  description = "Enables turning on weekly submission batch emails for forms"
+  default     = false
+}
+
 variable "enable_mailchimp_sync" {
   type        = bool
   description = "Whether to synchronise the MailChimp mailing lists from the forms-admin user data"
