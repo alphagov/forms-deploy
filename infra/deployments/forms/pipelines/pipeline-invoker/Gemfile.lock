@@ -16,11 +16,11 @@ GEM
       uri (>= 0.13.1)
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1210.0)
-    aws-sdk-codepipeline (1.112.0)
-      aws-sdk-core (~> 3, >= 3.241.4)
+    aws-partitions (1.1231.0)
+    aws-sdk-codepipeline (1.113.0)
+      aws-sdk-core (~> 3, >= 3.244.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.241.4)
+    aws-sdk-core (3.244.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -119,7 +119,7 @@ PLATFORMS
   x86_64-linux-gnu
 
 DEPENDENCIES
-  aws-sdk-codepipeline (~> 1.112)
+  aws-sdk-codepipeline (~> 1.113)
   rspec (~> 3.13)
   rubocop-govuk (~> 5.2)
 
@@ -127,9 +127,9 @@ CHECKSUMS
   activesupport (8.1.2.1) sha256=beec20ced12ad569194554399449a6372fdab03061b8f48a9ed6ef9b7dc251b2
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
-  aws-partitions (1.1210.0) sha256=04143b868f8b3fc481f68552df6a430f1083a56e2afec5a6bc5c89532ab423fe
-  aws-sdk-codepipeline (1.112.0) sha256=5c02dddb8371559c69364ad60ddd7783a09f1b19484c40e9e6228cd2adb61ee4
-  aws-sdk-core (3.241.4) sha256=a42ccba8c24ea9800e7b6c40aa201c967458f7c460044a6eebf64fbf1226e4fd
+  aws-partitions (1.1231.0) sha256=5142ba78d5226deb5dff6c8d17dfc52b0bcec3451d47fcb70fbe8b744b85d004
+  aws-sdk-codepipeline (1.113.0) sha256=99b92d90508673b4421e3bb7b320f76dcc46a2259d998c9dd5be4238d09363ef
+  aws-sdk-core (3.244.0) sha256=3e458c078b0c5bdee95bc370c3a483374b3224cf730c1f9f0faf849a5d9a18ea
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bigdecimal (4.0.1) sha256=8b07d3d065a9f921c80ceaea7c9d4ae596697295b584c296fe599dd0ad01c4a7
