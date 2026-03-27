@@ -1,20 +1,6 @@
 locals {
-  queue_worker_name                = "${module.ecs_service.task_container_definition.name}-queue-worker"
-  queue_worker_log_group_name      = "/aws/ecs/${local.queue_worker_name}-${var.env_name}"
-  queue_worker_adot_log_group_name = "/aws/ecs/${local.queue_worker_name}-${var.env_name}/adot-collector"
-
-  queue_worker_environment = var.enable_opentelemetry ? concat(
-    [
-      for env in module.ecs_service.task_container_definition.environment : env
-      if env.name != "OTEL_SERVICE_NAME"
-    ],
-    [
-      {
-        name  = "OTEL_SERVICE_NAME"
-        value = local.queue_worker_name
-      }
-    ]
-  ) : module.ecs_service.task_container_definition.environment
+  queue_worker_name           = "${module.ecs_service.task_container_definition.name}-queue-worker"
+  queue_worker_log_group_name = "/aws/ecs/${local.queue_worker_name}-${var.env_name}"
 
   # Take the exported task container definition and override some parts of it
   # Note: the ENV variables aren't overridden because it's not possible to cherry pick them
@@ -23,8 +9,7 @@ locals {
   queue_worker_container_definitions = merge(
     module.ecs_service.task_container_definition,
     {
-      name        = local.queue_worker_name,
-      environment = local.queue_worker_environment,
+      name = local.queue_worker_name,
 
       command = ["bin/jobs"]
       image   = module.ecs_service.task_container_definition.image,
@@ -45,14 +30,15 @@ locals {
           awslogs-stream-prefix = local.queue_worker_log_group_name
         }
       }
-
-      # Queue worker has ADOT sidecar when enabled
-      dependsOn = var.enable_opentelemetry ? [
-        {
-          containerName = "aws-otel-collector",
-          condition     = "START"
-        }
-      ] : []
+      # Explicitly disable opentelemetry for the queue worker, as we only want to trace user interactions in the main app, and not background jobs.
+      # Override the `dependsOn` set in the main task container definition, as we don't provision the collector here.
+      dependsOn = [],
+      # Also, strip out any OTEL_ or _OTEL envars, to disable opentelemetry for this container, even if it's enabled for the main app.
+      environment = [
+        for env in module.ecs_service.task_container_definition.environment :
+        env
+        if !startswith(env.name, "OTEL_") && !endswith(env.name, "_OTEL")
+      ]
 
       secrets = [
         {
@@ -78,58 +64,17 @@ locals {
       ]
     }
   )
-
-  # ADOT collector sidecar container for queue worker
-  queue_worker_adot_container_definition = {
-    name                   = "aws-otel-collector",
-    image                  = module.ecs_service.adot_image,
-    essential              = false,
-    readonlyRootFilesystem = true,
-    command = [
-      "--config=${module.ecs_service.adot_collector_config}"
-    ],
-    cpu    = module.ecs_service.adot_sidecar_cpu,
-    memory = module.ecs_service.adot_sidecar_memory,
-    logConfiguration = {
-      logDriver = "awslogs",
-      options = {
-        awslogs-group         = local.queue_worker_adot_log_group_name,
-        awslogs-region        = "eu-west-2",
-        awslogs-stream-prefix = "adot"
-      }
-    },
-    healthCheck = {
-      command = [
-        "CMD",
-        "/healthcheck"
-      ],
-      interval    = 30,
-      timeout     = 5,
-      retries     = 5,
-      startPeriod = 10
-    },
-  }
-
-  # Conditional container array composition - jsonencode in the local to avoid Terraform type issues
-  queue_worker_all_container_definitions = var.enable_opentelemetry ? jsonencode([
-    local.queue_worker_container_definitions,
-    local.queue_worker_adot_container_definition
-    ]) : jsonencode([
-    local.queue_worker_container_definitions
-  ])
 }
 
 resource "aws_ecs_task_definition" "queue_worker" {
   family                   = "${var.env_name}-${local.queue_worker_name}"
-  container_definitions    = local.queue_worker_all_container_definitions
+  container_definitions    = jsonencode([local.queue_worker_container_definitions])
   execution_role_arn       = aws_iam_role.ecs_task_exec_role.arn
   task_role_arn            = module.ecs_service.task_definition.task_role_arn
   requires_compatibilities = module.ecs_service.task_definition.requires_compatibilities
-  # When ADOT sidecar is enabled, use the same CPU/memory as the main task
-  # (which already accounts for ADOT overhead)
-  cpu          = module.ecs_service.task_definition.cpu
-  memory       = module.ecs_service.task_definition.memory
-  network_mode = "awsvpc"
+  cpu                      = var.cpu
+  memory                   = var.memory
+  network_mode             = "awsvpc"
 
   // As this terraform module doesn't deal with updating app code, we see drift every time it's applied because the image is changed elsewhere.
   // Enable tracking of the latest ACTIVE task definition revision rather than the one in terraform state, so that changes to the image / task revision outside of terraform are picked up and not considered drift.
@@ -272,15 +217,6 @@ resource "aws_cloudwatch_log_group" "queue_worker" {
   retention_in_days = 30
 }
 
-# Separate log group for ADOT collector in queue worker
-resource "aws_cloudwatch_log_group" "queue_worker_adot_log" {
-  count = var.enable_opentelemetry ? 1 : 0
-  #checkov:skip=CKV_AWS_338:We're happy with 30 days retention for now
-  #checkov:skip=CKV_AWS_158:Default AWS SSE is sufficient, no need for CM KMS.
-  name              = local.queue_worker_adot_log_group_name
-  retention_in_days = 30
-}
-
 module "cribl_well_known" {
   source = "../well-known/cribl"
 }
@@ -291,20 +227,6 @@ resource "aws_cloudwatch_log_subscription_filter" "via_cribl_to_splunk" {
   name = "via-cribl-to-splunk"
 
   log_group_name = aws_cloudwatch_log_group.queue_worker.name
-
-  filter_pattern  = ""
-  destination_arn = module.cribl_well_known.kinesis_destination_arns["eu-west-2"]
-  distribution    = "ByLogStream"
-  role_arn        = var.kinesis_subscription_role_arn
-}
-
-# Subscribe ADOT logs to Cribl/Splunk
-resource "aws_cloudwatch_log_subscription_filter" "adot_via_cribl_to_splunk" {
-  count = var.enable_opentelemetry && var.kinesis_subscription_role_arn != "" ? 1 : 0
-
-  name = "adot-via-cribl-to-splunk"
-
-  log_group_name = aws_cloudwatch_log_group.queue_worker_adot_log[0].name
 
   filter_pattern  = ""
   destination_arn = module.cribl_well_known.kinesis_destination_arns["eu-west-2"]
