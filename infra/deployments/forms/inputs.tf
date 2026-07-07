@@ -206,7 +206,7 @@ variable "environmental_settings" {
     redis_multi_az_enabled                   = bool
     enable_advanced_database_insights        = bool
     rds_enhanced_monitoring_interval_seconds = number # Enables RDS enhanced monitoring if value is 1, 5, 10, 15, 30 or 60. Disabled if 0
-
+    serve_assets_from_s3                     = optional(bool, false)
   })
   validation {
     condition     = contains([0, 1, 5, 10, 15, 30, 60], var.environmental_settings.rds_enhanced_monitoring_interval_seconds)
