@@ -196,14 +196,23 @@ while IFS= read -r PARAM_NAME; do
         done <<<"$DEPENDENT_MODULES"
     fi
 
-    if git diff --exit-code "${STORED_SHA}..HEAD" -- "${PATHSPEC_ARRAY[@]}" >/dev/null 2>&1; then
+    # Ignore changes to .terraform.lock.hcl files - provider version bumps
+    # don't change the shape of our infra, so they shouldn't trigger drift.
+    ROOT_CHANGES=$(git diff --name-only "${STORED_SHA}..HEAD" -- "${ROOT_DIR}" | grep -v '\.terraform\.lock\.hcl$' || true)
+
+    MODULE_CHANGES=""
+    if [ ${#PATHSPEC_ARRAY[@]} -gt 1 ]; then
+        # Get changes from module paths only (skip first element which is ROOT_DIR)
+        MODULE_PATHS=("${PATHSPEC_ARRAY[@]:1}")
+        MODULE_CHANGES=$(git diff --name-only "${STORED_SHA}..HEAD" -- "${MODULE_PATHS[@]}" 2>/dev/null | grep -v '\.terraform\.lock\.hcl$' || true)
+    fi
+
+    if [ -z "$ROOT_CHANGES" ] && [ -z "$MODULE_CHANGES" ]; then
         echo "  ✅ UP TO DATE: No changes detected"
         UP_TO_DATE_COUNT=$((UP_TO_DATE_COUNT + 1))
     else
         echo "  ⚠️  DRIFT DETECTED: Changes found since last apply"
 
-        # Show changed files in root
-        ROOT_CHANGES=$(git diff --name-only "${STORED_SHA}..HEAD" -- "${ROOT_DIR}")
         if [ -n "$ROOT_CHANGES" ]; then
             echo "  Changed files in root:"
             while IFS= read -r file; do
@@ -211,17 +220,11 @@ while IFS= read -r PARAM_NAME; do
             done <<<"$ROOT_CHANGES"
         fi
 
-        # Show changed files in dependent modules
-        if [ ${#PATHSPEC_ARRAY[@]} -gt 1 ]; then
-            # Get changes from module paths only (skip first element which is ROOT_DIR)
-            MODULE_PATHS=("${PATHSPEC_ARRAY[@]:1}")
-            MODULE_CHANGES=$(git diff --name-only "${STORED_SHA}..HEAD" -- "${MODULE_PATHS[@]}" 2>/dev/null || true)
-            if [ -n "$MODULE_CHANGES" ]; then
-                echo "  Changed files in dependent modules:"
-                while IFS= read -r file; do
-                    echo "    - ${file}"
-                done <<<"$MODULE_CHANGES"
-            fi
+        if [ -n "$MODULE_CHANGES" ]; then
+            echo "  Changed files in dependent modules:"
+            while IFS= read -r file; do
+                echo "    - ${file}"
+            done <<<"$MODULE_CHANGES"
         fi
 
         DRIFT_DETECTED_COUNT=$((DRIFT_DETECTED_COUNT + 1))
