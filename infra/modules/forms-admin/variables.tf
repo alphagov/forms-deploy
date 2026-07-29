@@ -186,3 +186,9 @@ variable "send_filler_answers" {
   description = "enables the feature to send a filler's answers"
   default     = false
 }
+
+variable "show_relevant_organisations" {
+  type        = bool
+  description = "Enables the feature to allow users to only select an organisation that matches their email domain"
+  default     = false
+}

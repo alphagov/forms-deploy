@@ -160,6 +160,10 @@ module "ecs_service" {
       name  = "SETTINGS__FEATURES__SEND_FILLER_ANSWERS",
       value = var.send_filler_answers
     },
+    {
+      name  = "SETTINGS__FEATURES__SHOW_RELEVANT_ORGANISATIONS",
+      value = var.show_relevant_organisations
+    },
   ]
 
   secrets = flatten([
