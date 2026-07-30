@@ -181,12 +181,6 @@ variable "opentelemetry_head_sampler_ratio" {
   default     = "1"
 }
 
-variable "send_filler_answers" {
-  type        = bool
-  description = "enables the feature to send a filler's answers"
-  default     = false
-}
-
 variable "show_relevant_organisations" {
   type        = bool
   description = "Enables the feature to allow users to only select an organisation that matches their email domain"
