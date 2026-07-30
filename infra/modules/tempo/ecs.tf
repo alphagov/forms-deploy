@@ -61,6 +61,31 @@ locals {
           name  = "GF_FEATURE_TOGGLES_ENABLE"
           value = "traceqlEditor"
         },
+        {
+          # This task has no internet egress (see security-groups.tf) - by
+          # default Grafana tries to download a few "Explore" app plugins
+          # from grafana.com on startup, which would otherwise just fail
+          # repeatedly with a timeout.
+          name  = "GF_PLUGINS_PREINSTALL_DISABLED"
+          value = "true"
+        },
+        {
+          # Same reason: disables the background job that periodically
+          # fetches angular-detection patterns from grafana.com.
+          name  = "GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES"
+          value = "false"
+        },
+        {
+          # Same reason: disables the grafana.com version-check call.
+          name  = "GF_ANALYTICS_CHECK_FOR_UPDATES"
+          value = "false"
+        },
+        {
+          # Same reason: disables anonymous usage reporting to
+          # stats.grafana.org.
+          name  = "GF_ANALYTICS_REPORTING_ENABLED"
+          value = "false"
+        },
       ],
       secrets = [
         {

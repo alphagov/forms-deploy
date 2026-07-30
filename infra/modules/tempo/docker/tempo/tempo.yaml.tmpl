@@ -19,6 +19,11 @@ storage:
   trace:
     backend: s3
     s3:
+      # Tempo's S3 client (minio-go) has no default endpoint of its own -
+      # unlike the AWS SDK, it errors ("does not follow ip address or
+      # domain name standards") if this is left blank, so it must be set
+      # explicitly to the real AWS regional endpoint.
+      endpoint: "s3.{{ .Env.AWS_REGION }}.amazonaws.com"
       bucket: "{{ .Env.TEMPO_S3_BUCKET }}"
       region: "{{ .Env.AWS_REGION }}"
     wal:
