@@ -207,6 +207,18 @@ variable "adot_image" {
   default     = "public.ecr.aws/aws-observability/aws-otel-collector:v0.48.0" # Latest as-of 2026-05-21
 }
 
+variable "otel_exporter_otlp_endpoint" {
+  type        = string
+  description = "Where the application should send OTLP traces to. Defaults to the ADOT sidecar, which forwards to X-Ray; can be overridden to send traces elsewhere instead (e.g. a Tempo POC), bypassing ADOT/X-Ray."
+  default     = "http://localhost:4318"
+}
+
+variable "otel_propagators" {
+  type        = string
+  description = "OTEL_PROPAGATORS value. Defaults to 'xray', matching the ADOT/X-Ray destination's X-Amzn-Trace-Id header format; override to 'tracecontext,baggage' (the OTel default) when sending traces to a non-X-Ray backend such as Tempo, which expects the standard W3C traceparent header."
+  default     = "xray"
+}
+
 variable "opentelemetry_head_sampler_ratio" {
   type        = string
   description = "Sampling ratio configuration in OpenTelemetry. This tells the Ruby SDK to sample spans such that only this ratio of traces gets exported. This assumes we are using a `TraceIdRatioBased` sampler. By default all spans are sampled"

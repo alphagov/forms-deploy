@@ -1,0 +1,28 @@
+# Rendered at container startup by gomplate - see Dockerfile. Only the S3
+# bucket/region are templated from env vars; everything else is static, so
+# this same image works in any environment.
+stream_over_http_enabled: true
+
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: "{{ .Env.TEMPO_S3_BUCKET }}"
+      region: "{{ .Env.AWS_REGION }}"
+    wal:
+      path: /var/tempo/wal
+
+usage_report:
+  reporting_enabled: false

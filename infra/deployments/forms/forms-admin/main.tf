@@ -25,6 +25,8 @@ module "forms_admin" {
   analytics_enabled                 = var.forms_admin_settings.analytics_enabled
   enable_opentelemetry              = var.forms_admin_settings.enable_opentelemetry
   opentelemetry_head_sampler_ratio  = var.forms_runner_settings.opentelemetry_head_sampler_ratio
+  otel_exporter_otlp_endpoint       = var.forms_admin_settings.otel_exporter_otlp_endpoint
+  otel_propagators                  = var.forms_admin_settings.otel_propagators
   act_as_user_enabled               = var.forms_admin_settings.act_as_user_enabled
   enable_mailchimp_sync             = var.forms_admin_settings.synchronize_to_mailchimp
   enable_organisations_sync         = var.forms_admin_settings.synchronize_orgs_from_govuk

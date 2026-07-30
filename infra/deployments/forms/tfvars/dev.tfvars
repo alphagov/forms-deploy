@@ -73,22 +73,28 @@ container_registry      = "711966560482.dkr.ecr.eu-west-2.amazonaws.com"
 dlq_arn                 = "arn:aws:sqs:eu-west-2:711966560482:eventbridge-dead-letter-queue"
 send_logs_to_cyber      = true
 forms_admin_settings = {
-  cpu                              = 256
-  memory                           = 512
-  min_capacity                     = 3
-  max_capacity                     = 3
-  enable_maintenance_mode          = false
-  auth_provider                    = "auth0"
-  previous_auth_provider           = null
-  cloudwatch_metrics_enabled       = true
-  analytics_enabled                = true
+  cpu                         = 256
+  memory                      = 512
+  min_capacity                = 3
+  max_capacity                = 3
+  enable_maintenance_mode     = false
+  auth_provider               = "auth0"
+  previous_auth_provider      = null
+  cloudwatch_metrics_enabled  = true
+  analytics_enabled           = true
+  act_as_user_enabled         = true
+  govuk_app_domain            = "integration.publishing.service.gov.uk"
+  synchronize_to_mailchimp    = false
+  synchronize_orgs_from_govuk = false
+  show_relevant_organisations = true
+
   enable_opentelemetry             = true
   opentelemetry_head_sampler_ratio = "0.1"
-  act_as_user_enabled              = true
-  govuk_app_domain                 = "integration.publishing.service.gov.uk"
-  synchronize_to_mailchimp         = false
-  synchronize_orgs_from_govuk      = false
-  show_relevant_organisations      = true
+  # Tempo POC (infra/modules/tempo) - sends forms-admin's traces there
+  # instead of the ADOT sidecar/X-Ray, dev only. Revert both to their
+  # defaults ("http://localhost:4318" / "xray") to go back to X-Ray.
+  otel_exporter_otlp_endpoint = "http://tempo-otlp.internal.dev.forms.service.gov.uk"
+  otel_propagators            = "tracecontext,baggage"
 }
 forms_product_page_settings = {
   cpu          = 256
@@ -127,4 +133,7 @@ end_to_end_test_settings = {
   aws_s3_bucket                 = "govuk-forms-submissions-to-s3-test"
   s3_form_id                    = "12457"
   email_receiver_s3_bucket_name = "govuk-forms-dev-test-emails"
+}
+tempo_settings = {
+  enabled = true
 }

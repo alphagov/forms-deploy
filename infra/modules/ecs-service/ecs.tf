@@ -66,11 +66,11 @@ locals {
       },
       {
         name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
-        value = "http://localhost:4318" # ADOT sidecar listens on this endpoint
+        value = var.otel_exporter_otlp_endpoint
       },
       {
         name  = "OTEL_PROPAGATORS"
-        value = "xray"
+        value = var.otel_propagators
       },
       {
         name  = "OTEL_SERVICE_NAME"

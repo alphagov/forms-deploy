@@ -140,6 +140,8 @@ variable "forms_admin_settings" {
     analytics_enabled                = bool
     enable_opentelemetry             = optional(bool, false)
     opentelemetry_head_sampler_ratio = string
+    otel_exporter_otlp_endpoint      = optional(string, "http://localhost:4318")
+    otel_propagators                 = optional(string, "xray")
     act_as_user_enabled              = bool
     govuk_app_domain                 = string
     synchronize_to_mailchimp         = bool
@@ -233,4 +235,14 @@ variable "end_to_end_test_settings" {
     s3_form_id                    = string
     email_receiver_s3_bucket_name = string
   })
+}
+
+variable "tempo_settings" {
+  description = "Configuration for the Grafana Tempo POC (infra/modules/tempo). Disabled by default so this is a no-op outside of dev."
+  type = object({
+    enabled = optional(bool, false)
+    cpu     = optional(number, 1024)
+    memory  = optional(number, 2048)
+  })
+  default = {}
 }

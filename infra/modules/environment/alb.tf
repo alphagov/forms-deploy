@@ -14,6 +14,7 @@ locals {
       "admin.dev.forms.service.gov.uk",
       "submit.dev.forms.service.gov.uk",
       "www.dev.forms.service.gov.uk",
+      "tempo.dev.forms.service.gov.uk", # Grafana Tempo POC - infra/modules/tempo
     ],
     staging = [
       "admin.staging.forms.service.gov.uk",
