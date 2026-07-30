@@ -29,5 +29,25 @@ storage:
     wal:
       path: /var/tempo/wal
 
+# Derives service-graph and span-metrics from ingested spans and writes them
+# to prometheus (same task, over localhost - see ecs.tf) so Grafana's
+# service graph view has something to query. Metrics aren't S3-backed like
+# traces are - losing them on a task restart just means the graph rebuilds
+# itself as new spans come in.
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://localhost:9090/api/v1/write
+        send_exemplars: true
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: ["service-graphs", "span-metrics"]
+
 usage_report:
   reporting_enabled: false

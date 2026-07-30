@@ -6,9 +6,11 @@ tracing. Deployed only via `infra/deployments/forms/tempo`, dev environment
 only. Not intended to be productionised as-is.
 
 This module does not build or push its own images through a pipeline - the
-two custom images (`docker/tempo`, `docker/grafana`) are built and pushed by
-hand. This is deliberate: it's a POC, and setting up a CodeBuild/CodePipeline
-for it isn't worth the extra infrastructure.
+two custom images (`docker/tempo`, `docker/grafana`), plus a straight mirror
+of the public `prom/prometheus` image (used for service-graph metrics), are
+built/mirrored and pushed by hand. This is deliberate: it's a POC, and
+setting up a CodeBuild/CodePipeline for it isn't worth the extra
+infrastructure.
 
 ## One-time setup
 
@@ -26,7 +28,7 @@ make dev forms/tempo apply
 (the ECS service's tasks will fail to pull an image until step 2 - that's
 expected).
 
-### 2. Build and push both images
+### 2. Build/mirror and push all three images
 
 Requires Docker with `buildx` and to be authenticated to ECR in the dev
 account (`aws ecr get-login-password ...`, shown below).
@@ -48,8 +50,19 @@ docker buildx build --platform linux/arm64 \
   docker/grafana
 ```
 
-Re-run this whenever `docker/tempo` or `docker/grafana` change (e.g. a new
-Tempo/Grafana version, a config template change). Bucket name/region are
+Prometheus needs no Dockerfile - the stock image is used unmodified (its
+config comes entirely from the `command` override in `ecs.tf`), so it's
+just pulled, tagged and pushed as-is, matching the arm64 Fargate tasks:
+
+```
+docker pull --platform linux/arm64 prom/prometheus:latest
+docker tag prom/prometheus:latest "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/tempo-poc-prometheus:latest"
+docker push "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/tempo-poc-prometheus:latest"
+```
+
+Re-run the relevant part of this whenever `docker/tempo` or `docker/grafana`
+change (e.g. a new Tempo/Grafana version, a config template change), or
+periodically to pick up newer prometheus/prom images. Bucket name/region are
 supplied at runtime via ECS environment variables (see `ecs.tf`), so
 day-to-day config values don't require a rebuild.
 
@@ -75,14 +88,21 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
 
 ## Architecture notes
 
-- Tempo + Grafana run as two containers in a single ECS task (`ecs.tf`),
-  sharing the task's network namespace - Grafana reaches Tempo over
-  `localhost:3200`.
+- Tempo + Grafana + Prometheus run as three containers in a single ECS task
+  (`ecs.tf`), sharing the task's network namespace - Grafana reaches Tempo
+  over `localhost:3200`, and Tempo's metrics-generator writes to Prometheus
+  over `localhost:9090`.
 - Trace storage is S3 (`s3.tf`, via the `secure-bucket` module), so traces
   survive task restarts, unlike the upstream docker-compose example's local
   disk. The Tempo task role has the minimal IAM permissions Tempo's docs
   recommend; no static credentials are used - Tempo picks up the task role
   via the default AWS SDK credential chain.
+- Service-graph/span-metrics are derived by Tempo's `metrics_generator` and
+  written to the Prometheus container (`docker/tempo/tempo.yaml.tmpl`),
+  which Grafana's Tempo datasource links to via `serviceMap.datasourceUid`
+  (`docker/grafana/datasources.yaml`). Unlike traces, these metrics are not
+  S3-backed - losing them on a task restart just means the graph rebuilds
+  itself as new spans arrive, which is an acceptable tradeoff for a POC.
 - Grafana's UI is exposed publicly via the existing CloudFront distribution
   and public ALB (`alb.tf`), behind basic auth. OTLP trace ingestion
   (`tempo-otlp.internal.<root_domain>`) is internal-ALB-only, using OTLP/HTTP
@@ -90,3 +110,8 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   listener, the same as every other internal app-to-app route in this repo -
   a gRPC target group would need the internal HTTPS listener plus SNI
   certificate coverage, which isn't worth it here.
+- This task has no internet egress (see `security-groups.tf`), so all three
+  images are pulled from our own ECR rather than Docker Hub directly - see
+  the one-time setup above. This is also why several Grafana update-check /
+  telemetry background jobs are explicitly disabled in `ecs.tf` (they'd
+  otherwise just time out repeatedly against grafana.com).

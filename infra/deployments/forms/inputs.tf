@@ -241,8 +241,8 @@ variable "tempo_settings" {
   description = "Configuration for the Grafana Tempo POC (infra/modules/tempo). Disabled by default so this is a no-op outside of dev."
   type = object({
     enabled = optional(bool, false)
-    cpu     = optional(number, 1024)
-    memory  = optional(number, 2048)
+    cpu     = optional(number, 2048)
+    memory  = optional(number, 4096)
   })
   default = {}
 }
