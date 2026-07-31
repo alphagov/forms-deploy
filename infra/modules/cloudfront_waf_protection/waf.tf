@@ -1,3 +1,12 @@
+locals {
+  # Only exists for dev - the Tempo POC (infra/modules/tempo) isn't deployed
+  # anywhere else. Mirrors the same hostname hardcoded into
+  # infra/modules/environment/alb.tf's subject_alternative_names.
+  tempo_grafana_hostnames = {
+    dev = "tempo.dev.forms.service.gov.uk"
+  }
+}
+
 resource "aws_wafv2_ip_set" "system_egress_ips" {
   provider = aws.us-east-1
 
@@ -288,6 +297,77 @@ resource "aws_wafv2_rule_group" "public_form_body_size_limits" {
   }
 }
 
+resource "aws_wafv2_rule_group" "tempo_grafana_body_size_limits" {
+  count = contains(keys(local.tempo_grafana_hostnames), var.environment_name) ? 1 : 0
+
+  provider = aws.us-east-1
+
+  name        = "${var.environment_name}-tempo-grafana-body-size-limits"
+  description = "Rule group allowing larger request bodies for the Tempo POC Grafana dashboard-editing API"
+  scope       = "CLOUDFRONT"
+  capacity    = 30
+
+  rule {
+    # Grafana's dashboard-save API sends JSON bodies that can exceed
+    # AWSManagedRulesCommonRuleSet's default 8KB body-size limit
+    # (SizeRestrictions_BODY) - allow more headroom, scoped to this one
+    # hostname only so forms-admin/forms-runner's own limits are untouched.
+    name     = "allow_tempo_grafana_larger_bodies"
+    priority = 1
+
+    action {
+      allow {}
+      # Stop processing
+    }
+
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            field_to_match {
+              single_header {
+                name = "host"
+              }
+            }
+            positional_constraint = "EXACTLY"
+            search_string         = local.tempo_grafana_hostnames[var.environment_name]
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+
+        statement {
+          size_constraint_statement {
+            field_to_match {
+              body {}
+            }
+            comparison_operator = "LE"
+            size                = 32768
+            text_transformation {
+              priority = 1
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "TempoGrafanaBodySizeLimits"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "TempoGrafanaBodySizeLimitsRuleGroup"
+    sampled_requests_enabled   = false
+  }
+}
+
 resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -329,6 +409,30 @@ resource "aws_wafv2_web_acl" "this" {
       cloudwatch_metrics_enabled = true
       metric_name                = "${var.environment_name}_env_system_ips_allowed"
       sampled_requests_enabled   = false
+    }
+  }
+
+  dynamic "rule" {
+    for_each = aws_wafv2_rule_group.tempo_grafana_body_size_limits
+    content {
+      name     = "TempoGrafanaBodySizeLimitsRuleGroup"
+      priority = 1
+
+      override_action {
+        none {}
+      }
+
+      statement {
+        rule_group_reference_statement {
+          arn = rule.value.arn
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "TempoGrafanaBodySizeLimitsRuleGroup"
+        sampled_requests_enabled   = false
+      }
     }
   }
 
