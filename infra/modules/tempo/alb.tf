@@ -92,13 +92,13 @@ resource "aws_lb_listener_rule" "tempo_otlp" {
   }
 }
 
-# Internal: prometheus is reached over the internal ALB only, by tempo's
+# Internal: mimir is reached over the internal ALB only, by tempo's
 # metrics_generator (remote_write) and grafana's datasource (query) - see
-# prometheus.tf/efs.tf for why prometheus is its own EFS-backed ECS service.
-resource "aws_lb_target_group" "prometheus" {
+# mimir.tf for why mimir is its own S3-backed ECS service.
+resource "aws_lb_target_group" "mimir" {
   #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
-  name        = "tempo-prometheus-${var.env_name}"
-  port        = 9090
+  name        = "tempo-mimir-${var.env_name}"
+  port        = 9009
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
@@ -106,7 +106,7 @@ resource "aws_lb_target_group" "prometheus" {
   deregistration_delay = "60"
 
   health_check {
-    path     = "/-/healthy"
+    path     = "/ready"
     matcher  = "200"
     protocol = "HTTP"
 
@@ -117,7 +117,7 @@ resource "aws_lb_target_group" "prometheus" {
   }
 }
 
-resource "aws_lb_listener_rule" "prometheus" {
+resource "aws_lb_listener_rule" "mimir" {
   listener_arn = var.internal_alb_listener_arn
   # +1 offset from var.internal_listener_priority: this rule shares the same
   # internal listener as tempo_otlp above, which already uses
@@ -128,12 +128,12 @@ resource "aws_lb_listener_rule" "prometheus" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.prometheus.arn
+    target_group_arn = aws_lb_target_group.mimir.arn
   }
 
   condition {
     host_header {
-      values = ["prometheus.internal.${var.root_domain}"]
+      values = ["mimir.internal.${var.root_domain}"]
     }
   }
 }

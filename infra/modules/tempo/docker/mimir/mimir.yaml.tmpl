@@ -1,0 +1,47 @@
+# Rendered at container startup by gomplate - see Dockerfile. Only the S3
+# bucket/region are templated from env vars; everything else is static, so
+# this same image works in any environment. Based on Mimir's own minimal
+# single-process example - see https://grafana.com/docs/mimir/latest/ -
+# with only the storage backend changed from filesystem to S3.
+target: all
+multitenancy_enabled: false
+
+blocks_storage:
+  backend: s3
+  s3:
+    # No access_key_id/secret_access_key - Mimir picks up the task role via
+    # the default AWS SDK credential chain, same as Tempo's own S3 config.
+    bucket_name: "{{ .Env.MIMIR_S3_BUCKET }}"
+    region: "{{ .Env.AWS_REGION }}"
+    endpoint: "s3.{{ .Env.AWS_REGION }}.amazonaws.com"
+  bucket_store:
+    sync_dir: /data/tsdb-sync
+  tsdb:
+    dir: /data/tsdb
+
+compactor:
+  data_dir: /data/compactor
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+distributor:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+
+ingester:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9095
+  log_level: "{{ .Env.MIMIR_LOG_LEVEL }}"
+
+usage_stats:
+  enabled: false

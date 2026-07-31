@@ -25,11 +25,11 @@ resource "aws_route53_record" "tempo_otlp_internal" {
   }
 }
 
-resource "aws_route53_record" "tempo_prometheus_internal" {
+resource "aws_route53_record" "tempo_mimir_internal" {
   #checkov:skip=CKV2_AWS_23:Not applicable to alias records
   count   = var.tempo_settings.enabled ? 1 : 0
   zone_id = data.terraform_remote_state.forms_environment.outputs.private_internal_zone_id
-  name    = "prometheus.internal.${var.root_domain}"
+  name    = "mimir.internal.${var.root_domain}"
   type    = "A"
 
   alias {

@@ -30,9 +30,9 @@ storage:
       path: /var/tempo/wal
 
 # Derives service-graph and span-metrics from ingested spans and writes them
-# to prometheus (its own EFS-backed ECS service, reached over the internal
-# ALB - see prometheus.tf/ecs.tf) so Grafana's service graph view has
-# something to query.
+# to mimir (its own S3-backed ECS service, reached over the internal ALB -
+# see mimir.tf/ecs.tf) so Grafana's service graph view has something to
+# query.
 metrics_generator:
   registry:
     external_labels:
@@ -40,7 +40,7 @@ metrics_generator:
   storage:
     path: /var/tempo/generator/wal
     remote_write:
-      - url: "{{ .Env.PROMETHEUS_URL }}/api/v1/write"
+      - url: "{{ .Env.MIMIR_URL }}/api/v1/push"
         send_exemplars: true
 
 overrides:

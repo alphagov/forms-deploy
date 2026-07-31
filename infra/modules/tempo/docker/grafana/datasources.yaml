@@ -1,12 +1,12 @@
 apiVersion: 1
 
 datasources:
-  - name: Prometheus
+  - name: Mimir
     type: prometheus
     access: proxy
     orgId: 1
     uid: prometheus
-    url: ${PROMETHEUS_URL}
+    url: ${MIMIR_URL}/prometheus
     isDefault: false
     version: 1
     editable: false

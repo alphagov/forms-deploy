@@ -18,8 +18,8 @@ locals {
           value = data.aws_region.current.region
         },
         {
-          name  = "PROMETHEUS_URL"
-          value = local.prometheus_internal_url
+          name  = "MIMIR_URL"
+          value = local.mimir_internal_url
         },
       ],
       portMappings = [
@@ -91,8 +91,8 @@ locals {
           value = "false"
         },
         {
-          name  = "PROMETHEUS_URL"
-          value = local.prometheus_internal_url
+          name  = "MIMIR_URL"
+          value = local.mimir_internal_url
         },
       ],
       secrets = [

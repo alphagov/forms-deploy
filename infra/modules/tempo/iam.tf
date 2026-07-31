@@ -61,48 +61,21 @@ resource "aws_iam_role_policy_attachment" "tempo_task_exec_additional" {
   policy_arn = aws_iam_policy.tempo_task_exec_additional.arn
 }
 
-resource "aws_iam_role" "prometheus_task" {
-  name               = "${var.env_name}-tempo-prometheus-ecs-task"
-  description        = "Used by the prometheus task when running"
+resource "aws_iam_role" "mimir_task" {
+  name               = "${var.env_name}-tempo-mimir-ecs-task"
+  description        = "Used by the mimir task when running"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_role.json
 }
 
-resource "aws_iam_role" "prometheus_task_exec" {
-  name               = "${var.env_name}-tempo-prometheus-ecs-task-execution"
-  description        = "Used by ECS to create the prometheus task"
+resource "aws_iam_role" "mimir_task_exec" {
+  name               = "${var.env_name}-tempo-mimir-ecs-task-execution"
+  description        = "Used by ECS to create the mimir task"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "prometheus_task_exec_standard_policy" {
-  role       = aws_iam_role.prometheus_task_exec.name
+resource "aws_iam_role_policy_attachment" "mimir_task_exec_standard_policy" {
+  role       = aws_iam_role.mimir_task_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
-# No additional execution-role policy needed - unlike grafana, prometheus
-# reads no SSM secrets.
-
-data "aws_iam_policy_document" "prometheus_task_efs_access" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientWrite",
-    ]
-    resources = [aws_efs_file_system.prometheus.arn]
-
-    condition {
-      test     = "StringEquals"
-      variable = "elasticfilesystem:AccessPointArn"
-      values   = [aws_efs_access_point.prometheus.arn]
-    }
-  }
-}
-
-resource "aws_iam_policy" "prometheus_task_efs_access" {
-  name   = "${var.env_name}-tempo-prometheus-efs-access"
-  policy = data.aws_iam_policy_document.prometheus_task_efs_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "prometheus_task_efs_access" {
-  role       = aws_iam_role.prometheus_task.name
-  policy_arn = aws_iam_policy.prometheus_task_efs_access.arn
-}
+# No additional execution-role policy needed - unlike grafana, mimir reads
+# no SSM secrets. mimir_task's S3 access policy is attached in s3.tf.
