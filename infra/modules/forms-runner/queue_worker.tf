@@ -30,11 +30,17 @@ locals {
           awslogs-stream-prefix = local.queue_worker_log_group_name
         }
       }
-      # Explicitly disable opentelemetry for the queue worker, as we only want to trace user interactions in the main app, and not background jobs.
       # Override the `dependsOn` set in the main task container definition, as we don't provision the collector here.
+      # This is needed regardless of whether tracing is enabled below, since we never add an ADOT sidecar container to this task.
       dependsOn = [],
-      # Also, strip out any OTEL_ or _OTEL envars, to disable opentelemetry for this container, even if it's enabled for the main app.
-      environment = [
+      # By default, strip out any OTEL_ or _OTEL envars, to disable opentelemetry for this container, even if it's enabled for the main app -
+      # background job traces have historically displayed poorly in X-Ray. When enable_opentelemetry_for_queue_worker is true, keep them
+      # instead, overriding OTEL_SERVICE_NAME so queue-worker traces appear under their own service name rather than merging into
+      # forms-runner's web-request traces.
+      environment = var.enable_opentelemetry_for_queue_worker ? [
+        for env in module.ecs_service.task_container_definition.environment :
+        env.name == "OTEL_SERVICE_NAME" ? { name = "OTEL_SERVICE_NAME", value = local.queue_worker_name } : env
+        ] : [
         for env in module.ecs_service.task_container_definition.environment :
         env
         if !startswith(env.name, "OTEL_") && !endswith(env.name, "_OTEL")

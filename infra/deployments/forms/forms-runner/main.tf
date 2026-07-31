@@ -54,6 +54,7 @@ module "forms_runner" {
   opentelemetry_head_sampler_ratio                   = var.forms_runner_settings.opentelemetry_head_sampler_ratio
   otel_exporter_otlp_endpoint                        = var.forms_runner_settings.otel_exporter_otlp_endpoint
   otel_propagators                                   = var.forms_runner_settings.otel_propagators
+  enable_opentelemetry_for_queue_worker              = var.forms_runner_settings.enable_opentelemetry_for_queue_worker
   deploy_account_id                                  = var.deploy_account_id
   ses_submission_email_from_email_address            = var.forms_runner_settings.ses_submission_email_from_email_address
   ses_submission_email_reply_to_email_address        = var.forms_runner_settings.ses_submission_email_reply_to_email_address

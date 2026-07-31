@@ -116,8 +116,11 @@ forms_runner_settings = {
   # Tempo POC (infra/modules/tempo) - sends forms-runner's traces there
   # instead of the ADOT sidecar/X-Ray, dev only. Revert both to their
   # defaults ("http://localhost:4318" / "xray") to go back to X-Ray.
-  otel_exporter_otlp_endpoint                                     = "http://tempo-otlp.internal.dev.forms.service.gov.uk"
-  otel_propagators                                                = "tracecontext,baggage"
+  otel_exporter_otlp_endpoint = "http://tempo-otlp.internal.dev.forms.service.gov.uk"
+  otel_propagators            = "tracecontext,baggage"
+  # Tempo POC only - re-enabled to compare how job traces look in Grafana vs. X-Ray (where they displayed poorly).
+  # Traces appear under service name "forms-runner-queue-worker", separate from forms-runner's web traces.
+  enable_opentelemetry_for_queue_worker                           = true
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = true
   allow_human_readonly_roles_to_assume_submissions_to_runner_role = true
   ses_submission_email_from_email_address                         = "no-reply@dev.forms.service.gov.uk"

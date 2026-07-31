@@ -176,6 +176,7 @@ variable "forms_runner_settings" {
     opentelemetry_head_sampler_ratio                                = string
     otel_exporter_otlp_endpoint                                     = optional(string, "http://localhost:4318")
     otel_propagators                                                = optional(string, "xray")
+    enable_opentelemetry_for_queue_worker                           = optional(bool, false)
     allow_human_readonly_roles_to_assume_submissions_to_s3_role     = bool
     allow_human_readonly_roles_to_assume_submissions_to_runner_role = bool
     ses_submission_email_from_email_address                         = string
