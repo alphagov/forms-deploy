@@ -1,0 +1,179 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=\"$service\", span_kind=\"SPAN_KIND_SERVER\", span_name=~\"$span_name\"}[5m])) by (span_name)",
+          "legendFormat": "{{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Request rate by route",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{service=\"$service\", span_kind=\"SPAN_KIND_SERVER\", span_name=~\"$span_name\"}[15m])) by (le, span_name))",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p90 latency by route (current)",
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "Value": "p90" } } }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{service=\"$service\", span_kind=\"SPAN_KIND_SERVER\", span_name=~\"$span_name\"}[15m])) by (le, span_name))",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p99 latency by route (current)",
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "Value": "p99" } } }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "SLO reference: forms-admin p90<400ms/p99<1000ms, forms-runner p90<200ms/p99<1000ms (ALB TargetResponseTime-based, not directly comparable — shape/spike indicator only).",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 16 },
+      "id": 4,
+      "options": { "calculate": false },
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_latency_bucket{service=\"$service\", span_kind=\"SPAN_KIND_SERVER\", span_name=~\"$span_name\"}[5m])) by (le)",
+          "format": "heatmap",
+          "refId": "A"
+        }
+      ],
+      "title": "SERVER-span latency heatmap",
+      "type": "heatmap"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "App-observed span latency, not ALB TargetResponseTime. Dashed lines show all three SLO thresholds (runner p90 200ms, admin p90 400ms, p99 1000ms) regardless of which service is selected — disregard the one(s) not applicable to $service.",
+      "fieldConfig": {
+        "defaults": { "unit": "s" },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "/^SLO:.*/" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } },
+              { "id": "custom.fillOpacity", "value": 0 }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 25 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{service=\"$service\", span_kind=\"SPAN_KIND_SERVER\", span_name=~\"$span_name\"}[5m])) by (le, span_name))",
+          "legendFormat": "p90 {{span_name}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{service=\"$service\", span_kind=\"SPAN_KIND_SERVER\", span_name=~\"$span_name\"}[5m])) by (le, span_name))",
+          "legendFormat": "p99 {{span_name}}",
+          "refId": "B"
+        },
+        { "expr": "vector(0.2)", "legendFormat": "SLO: runner p90 (200ms)", "refId": "C" },
+        { "expr": "vector(0.4)", "legendFormat": "SLO: admin p90 (400ms)", "refId": "D" },
+        { "expr": "vector(1)", "legendFormat": "SLO: p99 (1000ms)", "refId": "E" }
+      ],
+      "title": "p90/p99 latency by route vs SLO thresholds",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "description": "forms-runner slow traces are typically dominated by an ECS metadata/credentials call in the submit flow; forms-admin by single ActiveRecord/PG EXECUTE outliers.",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 34 },
+      "id": 6,
+      "targets": [
+        { "query": "{resource.service.name=\"$service\" && duration > 500ms}", "queryType": "traceql", "refId": "A" }
+      ],
+      "title": "Slow traces (>500ms)",
+      "type": "traces"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": ["forms", "tracing-poc", "latency"],
+  "templating": {
+    "list": [
+      {
+        "current": { "text": "forms-runner", "value": "forms-runner" },
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "includeAll": false,
+        "label": "Service",
+        "multi": false,
+        "name": "service",
+        "options": [],
+        "query": { "query": "label_values(traces_spanmetrics_calls_total, service)", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": { "text": "All", "value": "$__all" },
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "includeAll": true,
+        "label": "Route",
+        "multi": true,
+        "name": "span_name",
+        "options": [],
+        "query": {
+          "query": "label_values(traces_spanmetrics_calls_total{service=\"$service\"}, span_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Forms - Latency by Route",
+  "uid": "forms-latency-routes",
+  "weekStart": ""
+}

@@ -115,3 +115,28 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   the one-time setup above. This is also why several Grafana update-check /
   telemetry background jobs are explicitly disabled in `ecs.tf` (they'd
   otherwise just time out repeatedly against grafana.com).
+- `docker/grafana/datasources.yaml` pins the Tempo datasource to `uid: tempo`
+  (matching Prometheus's `uid: prometheus`) rather than letting Grafana
+  auto-generate one, so dashboard JSON can reference a stable datasource uid
+  instead of an opaque generated string. **This is an image-level change** -
+  it only takes effect after the Grafana image is rebuilt, pushed, and the
+  ECS service redeployed (see one-time setup above); it won't apply to an
+  already-running task. The currently-live instance was provisioned before
+  this change, so its Tempo datasource still has an auto-generated uid - the
+  dashboard JSON files below already reference `tempo`, so after redeploying,
+  check (`list_datasources`/the Grafana UI) whether Grafana updated the
+  existing "Tempo" datasource in place or left the old one orphaned
+  alongside a new one; delete the orphan and re-push the dashboards if so.
+- `docker/grafana/dashboards/*.json` are a manual snapshot export (via the
+  Grafana API) of the POC dashboards built in the running instance, taken
+  because Grafana's own state (`grafana.db`, where dashboards created
+  through the API/UI actually live) is on the same ephemeral container
+  filesystem as everything else here - it is **not** persisted, so it's lost
+  on every task restart just like the Prometheus data above. These files are
+  not yet wired into Grafana's dashboard provisioning (no
+  `provisioning/dashboards/*.yaml` pointing at this directory, and it isn't
+  `COPY`'d into the image) - re-importing after a restart currently means
+  re-uploading each JSON file via `mcp__grafana__update_dashboard` or the
+  `/api/dashboards/db` endpoint by hand. Wiring this directory into file-based
+  provisioning (matching how `datasources.yaml` already works) is a natural
+  next step once the dashboards stabilise.

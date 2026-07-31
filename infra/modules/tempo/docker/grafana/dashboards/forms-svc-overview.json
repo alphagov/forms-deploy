@@ -1,0 +1,167 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "SERVER-span call rate from Tempo span-metrics (traces_spanmetrics_calls_total).",
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\"}[5m])) by (service)",
+          "legendFormat": "{{service}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Request rate by service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Non-OK SERVER-span status from span-metrics. No STATUS_CODE_ERROR seen in the POC yet (0 error traces at design time) — expect this panel to be flat at zero until a real error occurs.",
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\", status_code=\"STATUS_CODE_ERROR\"}[5m])) by (service, status_code)",
+          "legendFormat": "{{service}} - {{status_code}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Error rate by service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "App-observed span latency from Tempo span-metrics — NOT the same measurement as the ALB TargetResponseTime used by the real AWS Application Signals SLOs in infra/deployments/forms/health/slos.tf (excludes LB/network time). Dashed reference lines show those SLO thresholds (forms-admin p90<400ms/p99<1000ms, forms-runner p90<200ms/p99<1000ms) as an indicative overlay only, not a compliance measurement. POC/dev traffic is low-volume; expect noise at low sample counts.",
+      "fieldConfig": {
+        "defaults": { "unit": "s" },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "/^SLO:.*/" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } },
+              { "id": "custom.fillOpacity", "value": 0 }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 8 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(traces_spanmetrics_latency_bucket{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\"}[5m])) by (le, service))",
+          "legendFormat": "p50 {{service}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\"}[5m])) by (le, service))",
+          "legendFormat": "p90 {{service}}",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\"}[5m])) by (le, service))",
+          "legendFormat": "p99 {{service}}",
+          "refId": "C"
+        },
+        { "expr": "vector(0.2)", "legendFormat": "SLO: runner p90 (200ms)", "refId": "D" },
+        { "expr": "vector(0.4)", "legendFormat": "SLO: admin p90 (400ms)", "refId": "E" },
+        { "expr": "vector(1)", "legendFormat": "SLO: p99 (1000ms, both)", "refId": "F" }
+      ],
+      "title": "SERVER-span latency (p50/p90/p99) vs SLO thresholds",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "description": "Derived from traces_service_graph_request_total/_client_seconds/_server_seconds. Known edges: user→forms-runner, forms-runner→forms-admin, forms-runner→redis, forms-runner→forms-runner (own DB), forms-runner→forms-runner-queue (SolidQueue DB), forms-admin→forms-admin (own DB).",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 17 },
+      "id": 4,
+      "targets": [{ "queryType": "serviceMap", "refId": "A" }],
+      "title": "Service map",
+      "type": "nodeGraph"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 27 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum(increase(traces_spanmetrics_calls_total{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\"}[1h]))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total calls (1h)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green" }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 }]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 27 },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "100 * (sum(rate(traces_spanmetrics_calls_total{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\", status_code=\"STATUS_CODE_ERROR\"}[1h])) or vector(0)) / sum(rate(traces_spanmetrics_calls_total{service=~\"$service\", span_kind=\"SPAN_KIND_SERVER\"}[1h]))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Overall error % (1h)",
+      "type": "stat"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": ["forms", "tracing-poc", "overview"],
+  "templating": {
+    "list": [
+      {
+        "current": { "text": "All", "value": "$__all" },
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "includeAll": true,
+        "label": "Service",
+        "multi": true,
+        "name": "service",
+        "options": [],
+        "query": { "query": "label_values(traces_spanmetrics_calls_total, service)", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Forms - Service Overview",
+  "uid": "forms-svc-overview",
+  "weekStart": ""
+}
