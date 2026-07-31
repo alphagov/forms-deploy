@@ -7,12 +7,17 @@ providers:
     folderUid: forms-tracing-poc
     type: file
     disableDeletion: false
-    updateIntervalSeconds: 30
-    # Live edits in the Grafana UI are allowed for now, since the dashboard
-    # set is still being iterated on - but they only last until the next
-    # reconcile/restart, which resets to whatever's in the dashboards/
-    # directory. Re-export and commit anything worth keeping. Set to false
-    # once the dashboards stabilise (or before any production use), to make
+    updateIntervalSeconds: 43200
+    # allowUiUpdates only controls whether Grafana's UI *lets you* edit a
+    # provisioned dashboard - it does NOT stop the periodic reconcile below
+    # from reverting any such edit back to the committed JSON on its next
+    # tick (confirmed in practice: at the previous 30s interval, edits got
+    # silently wiped within ~30s regardless of this setting). Bumped to
+    # 43200s (12h) so a live edit actually has a usable window to test in
+    # before it's reverted - still not permanent, just long enough to
+    # iterate in a session. Re-export (`get_dashboard_by_uid`) and commit
+    # anything worth keeping before the next reconcile or redeploy. Set to
+    # false (and drop this back down) before any production use, to make
     # the committed JSON the sole source of truth.
     allowUiUpdates: true
     options:

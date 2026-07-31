@@ -91,7 +91,7 @@
     },
     {
       "datasource": { "type": "tempo", "uid": "tempo" },
-      "description": "Derived from traces_service_graph_request_total/_client_seconds/_server_seconds. Known edges: user→forms-runner, forms-runner→forms-admin, forms-runner→redis, forms-runner→forms-runner (own DB), forms-runner→forms-runner-queue (SolidQueue DB), forms-admin→forms-admin (own DB).",
+      "description": "Derived from traces_service_graph_request_total/_client_seconds/_server_seconds. Known edges: user→forms-runner, forms-runner→forms-admin, forms-runner→redis, forms-runner→forms-runner (own DB), forms-runner→forms-runner-queue (SolidQueue DB), forms-admin→forms-admin (own DB), forms-runner-queue-worker→forms-runner-queue (SolidQueue polling/dispatch), forms-runner-queue-worker→forms-runner (cross-DB reads during job execution), user→forms-runner-queue-worker (job-triggered traces with no incoming parent context).",
       "gridPos": { "h": 10, "w": 24, "x": 0, "y": 17 },
       "id": 4,
       "targets": [{ "queryType": "serviceMap", "refId": "A" }],
@@ -151,7 +151,7 @@
         "multi": true,
         "name": "service",
         "options": [],
-        "query": { "query": "label_values(traces_spanmetrics_calls_total, service)", "refId": "StandardVariableQuery" },
+        "query": { "query": "label_values(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\"}, service)", "refId": "StandardVariableQuery" },
         "refresh": 2,
         "sort": 1,
         "type": "query"

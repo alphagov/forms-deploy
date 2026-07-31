@@ -21,7 +21,7 @@
       "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
       "id": 1,
       "options": {
-        "content": "**Producer/enqueue side only.** forms-runner's SolidQueue worker ECS service explicitly disables OpenTelemetry (\"only want to trace user interactions, not background jobs\"), so there is **no trace visibility into actual job processing/consumption** — only the `submissions publish` PRODUCER span (enqueue). Real job-processing health (`TimeToSendSubmission`, `Failure`, `Started`, `QueueLength`) lives in the `Forms/Jobs` CloudWatch namespace, which is not available in this Grafana instance (no CloudWatch datasource configured — flagged as a follow-up, not built here).",
+        "content": "**Producer/enqueue side only.** This dashboard covers forms-runner's *enqueue* step (`submissions publish` PRODUCER span). Job **processing** now has full trace visibility too - see the **Forms - Queue Worker** dashboard (OpenTelemetry was re-enabled for the queue-worker ECS service, which previously displayed poorly in X-Ray). Note there is still no direct trace link between enqueue and processing: SolidQueue hands jobs off by polling a shared database table (`forms-runner-queue`), not by propagating trace context, so the two sides can only be correlated by job name and rough timing, not a single connected trace.",
         "mode": "markdown"
       },
       "type": "text"
@@ -77,7 +77,7 @@
         }
       ],
       "title": "Recent submission-publish traces",
-      "type": "traces"
+      "type": "table"
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },

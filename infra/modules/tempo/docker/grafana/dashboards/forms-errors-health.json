@@ -40,22 +40,22 @@
       "id": 2,
       "targets": [{ "query": "{status=error}", "queryType": "traceql", "refId": "A" }],
       "title": "Error trace search",
-      "type": "traces"
+      "type": "table"
     },
     {
       "datasource": { "type": "tempo", "uid": "tempo" },
-      "description": "Span-attribute filter (http.response.status_code is not a span-metrics label, so this must be a TraceQL panel against Tempo, not a Prometheus table).",
+      "description": "Span-attribute filter (http.response.status_code is not a span-metrics label, so this must be a TraceQL panel against Tempo, not a Prometheus table). Includes forms-runner-queue-worker's outbound calls now that it has trace coverage too.",
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
       "id": 3,
       "targets": [
         {
-          "query": "{resource.service.name=~\"forms-runner|forms-admin\" && span.http.response.status_code >= 500}",
+          "query": "{resource.service.name=~\"forms-runner|forms-admin|forms-runner-queue-worker\" && span.http.response.status_code >= 500}",
           "queryType": "traceql",
           "refId": "A"
         }
       ],
       "title": "HTTP 5xx traces by route",
-      "type": "traces"
+      "type": "table"
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },

@@ -131,7 +131,7 @@
         { "query": "{resource.service.name=\"$service\" && duration > 500ms}", "queryType": "traceql", "refId": "A" }
       ],
       "title": "Slow traces (>500ms)",
-      "type": "traces"
+      "type": "table"
     }
   ],
   "refresh": "1m",
@@ -147,7 +147,7 @@
         "multi": false,
         "name": "service",
         "options": [],
-        "query": { "query": "label_values(traces_spanmetrics_calls_total, service)", "refId": "StandardVariableQuery" },
+        "query": { "query": "label_values(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\"}, service)", "refId": "StandardVariableQuery" },
         "refresh": 2,
         "sort": 1,
         "type": "query"

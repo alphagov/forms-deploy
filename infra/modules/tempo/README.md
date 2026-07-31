@@ -139,9 +139,16 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   targets the existing `forms-tracing-poc` folder by uid, and each JSON's own
   `uid` matches what's already live, so redeploying updates these dashboards
   in place rather than duplicating them.
-  - `allowUiUpdates: true` for now, since the dashboard set is still being
-    iterated on - you can still tweak panels live in Grafana, but those edits
-    only last until the next reconcile/restart, which resets to whatever's
-    committed here. Re-export (`get_dashboard_by_uid`) and commit anything
-    worth keeping. Switch to `false` once the set stabilises, or before any
-    production use, to make the committed JSON the sole source of truth.
+  - `allowUiUpdates: true`, though it doesn't do what its name suggests:
+    Grafana's periodic reconcile reverts any UI/API edit back to the
+    committed JSON on its next tick regardless of this setting - confirmed
+    directly (a dashboard patched via the API showed the change, then
+    reverted to the file's content moments later at the previous default
+    `updateIntervalSeconds: 30`). `updateIntervalSeconds` is now `43200`
+    (12h), so a live edit has a real window to test in before it reverts -
+    still not a permanent fix, just long enough to iterate in a session.
+    Re-export (`get_dashboard_by_uid`) and commit anything worth keeping
+    before the next reconcile or redeploy. New dashboards not yet present in
+    this directory aren't affected at all (nothing to revert to), so those
+    can be iterated on live indefinitely before being exported here for the
+    first time.

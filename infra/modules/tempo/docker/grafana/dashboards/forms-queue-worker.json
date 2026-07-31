@@ -1,0 +1,159 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "content": "**Job processing (consumer) side.** OpenTelemetry was re-enabled for forms-runner's SolidQueue queue-worker ECS service - it previously displayed poorly in X-Ray. Most traces from this service are SolidQueue's own internal dispatch/polling loop (querying its `forms-runner-queue` database continuously, whether or not there's a job to run), not real work - the panels below separate that polling overhead from actual job execution (`SPAN_KIND_CONSUMER` spans, e.g. `confirmation_emails process`). There is no direct trace link back to the enqueue side (see **Forms - Submission Job Producer**) - SolidQueue hands jobs off by polling a shared DB table, not propagated trace context.",
+        "mode": "markdown"
+      },
+      "type": "text"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Demonstrates the polling-noise-vs-signal ratio directly - this is the shape that made X-Ray hard to read for this service.",
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_INTERNAL\"}[5m]))",
+          "legendFormat": "SolidQueue polling (internal)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\"}[5m]))",
+          "legendFormat": "Real job execution (consumer)",
+          "refId": "B"
+        }
+      ],
+      "title": "Polling overhead vs real job execution",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\"}[5m])) by (span_name)",
+          "legendFormat": "{{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Job processing rate by job",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(traces_spanmetrics_latency_bucket{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\"}[15m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\"}[15m])) by (le))",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\"}[15m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "title": "Job processing latency (p50/p90/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Filters on status_code=\"STATUS_CODE_ERROR\" specifically (not !=OK - most spans sit at the OTel-default UNSET status, which is not an error). No errors seen as of 2026-07-31 - flat/no-data is expected until a real job failure occurs.",
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\", status_code=\"STATUS_CODE_ERROR\"}[5m])) by (span_name)",
+          "legendFormat": "{{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Job processing error rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "description": "Filtered to real job executions only (kind=consumer) - excludes SolidQueue's internal polling traces, which would otherwise dominate the list.",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 28 },
+      "id": 6,
+      "targets": [
+        { "query": "{resource.service.name=\"forms-runner-queue-worker\" && kind=consumer}", "queryType": "traceql", "refId": "A" }
+      ],
+      "title": "Recent job traces",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "forms-runner-queue-worker→forms-runner-queue is SolidQueue's own polling/dispatch DB (dominant, expected); →forms-runner is cross-DB reads during job execution (e.g. looking up the Submission being emailed).",
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 37 },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_service_graph_request_total{client=\"forms-runner-queue-worker\"}[5m])) by (server)",
+          "legendFormat": "{{server}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Dependency call volume",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 45 },
+      "id": 8,
+      "targets": [
+        {
+          "expr": "sum(increase(traces_spanmetrics_calls_total{service=\"forms-runner-queue-worker\", span_kind=\"SPAN_KIND_CONSUMER\"}[1h]))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Jobs processed (1h)",
+      "type": "stat"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 42,
+  "tags": ["forms", "tracing-poc", "jobs", "queue-worker"],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Forms - Queue Worker",
+  "uid": "forms-queue-worker",
+  "weekStart": ""
+}
