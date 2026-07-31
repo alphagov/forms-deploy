@@ -88,8 +88,12 @@ forms_admin_settings = {
   synchronize_orgs_from_govuk = false
   show_relevant_organisations = true
 
-  enable_opentelemetry             = true
-  opentelemetry_head_sampler_ratio = "0.1"
+  enable_opentelemetry = true
+  # 100% in dev only (production/staging stay at 0.1 - see there for the
+  # cost-driven rationale) - dev traffic volume is trivial and the whole
+  # point of the tracing POC is being able to inspect a specific request,
+  # which a 10% head sampler otherwise makes unreliable.
+  opentelemetry_head_sampler_ratio = "1.0"
   # Tempo POC (infra/modules/tempo) - sends forms-admin's traces there
   # instead of the ADOT sidecar/X-Ray, dev only. Routed via alloy (drops
   # SolidQueue polling noise for forms-runner's queue worker; passes
@@ -106,16 +110,17 @@ forms_product_page_settings = {
   max_capacity = 3
 }
 forms_runner_settings = {
-  cpu                              = 512
-  memory                           = 1024
-  min_capacity                     = 3
-  max_capacity                     = 3
-  enable_maintenance_mode          = false
-  cloudwatch_metrics_enabled       = true
-  analytics_enabled                = true
-  copy_of_answers_enabled          = true
-  enable_opentelemetry             = true
-  opentelemetry_head_sampler_ratio = "0.1"
+  cpu                        = 512
+  memory                     = 1024
+  min_capacity               = 3
+  max_capacity               = 3
+  enable_maintenance_mode    = false
+  cloudwatch_metrics_enabled = true
+  analytics_enabled          = true
+  copy_of_answers_enabled    = true
+  enable_opentelemetry       = true
+  # 100% in dev only - see forms_admin_settings above for the rationale.
+  opentelemetry_head_sampler_ratio = "1.0"
   # Tempo POC (infra/modules/tempo) - sends forms-runner's traces there
   # instead of the ADOT sidecar/X-Ray, dev only. Routed via alloy, which
   # drops SolidQueue polling noise for the queue worker below and passes
