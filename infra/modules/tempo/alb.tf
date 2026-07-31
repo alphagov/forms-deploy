@@ -91,3 +91,49 @@ resource "aws_lb_listener_rule" "tempo_otlp" {
     }
   }
 }
+
+# Internal: prometheus is reached over the internal ALB only, by tempo's
+# metrics_generator (remote_write) and grafana's datasource (query) - see
+# prometheus.tf/efs.tf for why prometheus is its own EFS-backed ECS service.
+resource "aws_lb_target_group" "prometheus" {
+  #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
+  name        = "tempo-prometheus-${var.env_name}"
+  port        = 9090
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  deregistration_delay = "60"
+
+  health_check {
+    path     = "/-/healthy"
+    matcher  = "200"
+    protocol = "HTTP"
+
+    interval            = 11
+    timeout             = 10
+    unhealthy_threshold = 3
+    healthy_threshold   = 2
+  }
+}
+
+resource "aws_lb_listener_rule" "prometheus" {
+  listener_arn = var.internal_alb_listener_arn
+  # +1 offset from var.internal_listener_priority: this rule shares the same
+  # internal listener as tempo_otlp above, which already uses
+  # var.internal_listener_priority directly - priorities must be unique per
+  # listener. Mirrors the same pattern used by
+  # infra/modules/ecs-service/alb.tf's apex_rule.
+  priority = var.internal_listener_priority + 1
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.prometheus.arn
+  }
+
+  condition {
+    host_header {
+      values = ["prometheus.internal.${var.root_domain}"]
+    }
+  }
+}

@@ -8,6 +8,11 @@ output "otlp_http_endpoint" {
   description = "The internal OTLP/HTTP endpoint other services should send traces to"
 }
 
+output "prometheus_internal_url" {
+  value       = local.prometheus_internal_url
+  description = "The internal URL for Prometheus - used by tempo's metrics_generator remote_write and grafana's datasource"
+}
+
 output "trace_bucket_name" {
   value = module.trace_storage.name
 }

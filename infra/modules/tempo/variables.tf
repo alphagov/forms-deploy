@@ -62,12 +62,12 @@ variable "image_tag" {
 
 variable "cpu" {
   type        = number
-  description = "Total CPU units for the task (tempo + grafana + prometheus share this, no per-container limits). Must be a valid Fargate CPU tier."
+  description = "Total CPU units for the task (tempo + grafana share this, no per-container limits; prometheus runs as its own service - see prometheus.tf). Must be a valid Fargate CPU tier."
   default     = 2048
 }
 
 variable "memory" {
   type        = number
-  description = "Total memory (MB) for the task (tempo + grafana + prometheus share this, no per-container limits). Must be a valid Fargate value for the chosen cpu tier."
+  description = "Total memory (MB) for the task (tempo + grafana share this, no per-container limits; prometheus runs as its own service - see prometheus.tf). Must be a valid Fargate value for the chosen cpu tier."
   default     = 4096
 }

@@ -24,3 +24,17 @@ resource "aws_route53_record" "tempo_otlp_internal" {
     evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "tempo_prometheus_internal" {
+  #checkov:skip=CKV2_AWS_23:Not applicable to alias records
+  count   = var.tempo_settings.enabled ? 1 : 0
+  zone_id = data.terraform_remote_state.forms_environment.outputs.private_internal_zone_id
+  name    = "prometheus.internal.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = data.terraform_remote_state.forms_environment.outputs.internal_alb_dns_name
+    zone_id                = data.terraform_remote_state.forms_environment.outputs.internal_alb_zone_id
+    evaluate_target_health = true
+  }
+}

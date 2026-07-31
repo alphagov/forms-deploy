@@ -17,6 +17,10 @@ locals {
           name  = "AWS_REGION"
           value = data.aws_region.current.region
         },
+        {
+          name  = "PROMETHEUS_URL"
+          value = local.prometheus_internal_url
+        },
       ],
       portMappings = [
         {
@@ -45,38 +49,6 @@ locals {
           awslogs-group         = aws_cloudwatch_log_group.tempo.name,
           awslogs-region        = "eu-west-2",
           awslogs-stream-prefix = "tempo"
-        }
-      },
-    },
-    {
-      name      = "prometheus",
-      image     = "${aws_ecr_repository.prometheus.repository_url}:${var.image_tag}",
-      essential = true,
-      # Default CMD plus --web.enable-remote-write-receiver, so it can
-      # receive tempo's service-graph/span-metrics remote_write. Everything
-      # else (config file, scrape self-check, storage path) is upstream's
-      # own default - see https://github.com/prometheus/prometheus/blob/main/Dockerfile.
-      command = [
-        "--config.file=/etc/prometheus/prometheus.yml",
-        "--storage.tsdb.path=/prometheus",
-        "--web.enable-remote-write-receiver",
-      ],
-      portMappings = [
-        {
-          containerPort = 9090,
-          hostPort      = 9090,
-          protocol      = "tcp",
-        }
-      ],
-      linuxParameters = {
-        initProcessEnabled = true
-      },
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.prometheus.name,
-          awslogs-region        = "eu-west-2",
-          awslogs-stream-prefix = "prometheus"
         }
       },
     },
@@ -118,6 +90,10 @@ locals {
           name  = "GF_ANALYTICS_REPORTING_ENABLED"
           value = "false"
         },
+        {
+          name  = "PROMETHEUS_URL"
+          value = local.prometheus_internal_url
+        },
       ],
       secrets = [
         {
@@ -142,10 +118,6 @@ locals {
       dependsOn = [
         {
           containerName = "tempo",
-          condition     = "START"
-        },
-        {
-          containerName = "prometheus",
           condition     = "START"
         }
       ],

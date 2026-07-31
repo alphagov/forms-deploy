@@ -63,3 +63,60 @@ resource "aws_security_group_rule" "egress_to_vpc_https" {
   cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.tempo.id
 }
+
+resource "aws_security_group_rule" "egress_to_prometheus_alb" {
+  description       = "permit outbound to the VPC CIDR on 80 (grafana querying + tempo remote-writing to prometheus via the internal ALB)"
+  type              = "egress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.tempo.id
+}
+
+resource "aws_security_group" "prometheus" {
+  #checkov:skip=CKV2_AWS_5:The security group is attached in prometheus.tf
+  name        = "tempo-${var.env_name}-prometheus"
+  description = "Ingress from VPC to Prometheus, egress to EFS and VPC"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_security_group_rule" "prometheus_ingress" {
+  description       = "permit inbound from the VPC to the Prometheus port, used by the internal ALB (routing + health check) and tempo remote-write"
+  type              = "ingress"
+  from_port         = 9090
+  to_port           = 9090
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.prometheus.id
+}
+
+resource "aws_security_group_rule" "prometheus_egress_efs" {
+  description              = "permit outbound NFS to the EFS mount targets backing prometheus TSDB"
+  type                     = "egress"
+  from_port                = 2049
+  to_port                  = 2049
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.efs_prometheus.id
+  security_group_id        = aws_security_group.prometheus.id
+}
+
+resource "aws_security_group_rule" "prometheus_egress_to_s3_endpoint" {
+  description       = "permit outbound to the AWS S3 ip addresses (ECR image layers)"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = flatten(data.aws_prefix_list.private_s3.cidr_blocks)
+  security_group_id = aws_security_group.prometheus.id
+}
+
+resource "aws_security_group_rule" "prometheus_egress_to_vpc_https" {
+  description       = "permit outbound to the VPC CIDR on 443 (ECR, CloudWatch logs and SSM interface endpoints)"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.prometheus.id
+}

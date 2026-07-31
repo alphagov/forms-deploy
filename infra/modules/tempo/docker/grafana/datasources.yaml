@@ -6,7 +6,7 @@ datasources:
     access: proxy
     orgId: 1
     uid: prometheus
-    url: http://localhost:9090
+    url: ${PROMETHEUS_URL}
     isDefault: false
     version: 1
     editable: false
