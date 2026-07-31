@@ -29,6 +29,10 @@ resource "aws_ecs_task_definition" "alloy" {
           value = local.tempo_otlp_url
         },
         {
+          name  = "TEMPO_METRICS_HOST"
+          value = "tempo-metrics.internal.${var.root_domain}"
+        },
+        {
           name  = "MIMIR_URL"
           value = local.mimir_internal_url
         },

@@ -176,6 +176,12 @@ resource "aws_ecs_service" "tempo" {
     container_port   = 4318
   }
 
+  load_balancer {
+    target_group_arn = aws_lb_target_group.tempo_metrics.arn
+    container_name   = "tempo"
+    container_port   = 3200
+  }
+
   network_configuration {
     subnets          = var.private_subnet_ids
     security_groups  = [aws_security_group.tempo.id]

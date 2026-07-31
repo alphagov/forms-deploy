@@ -184,3 +184,49 @@ resource "aws_lb_listener_rule" "alloy" {
     }
   }
 }
+
+# Internal: exposes tempo's own server port (query API, self-metrics,
+# /ready) for alloy to scrape - see docker/alloy/config.alloy. This is a
+# separate target group/route from tempo_otlp above because that one
+# forwards to tempo's OTLP port (4318), not its server port (3200); this
+# is the same port tempo_otlp's own health check already reaches directly
+# against the target IP, just now given a stable host-header route too.
+resource "aws_lb_target_group" "tempo_metrics" {
+  #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
+  name        = "tempo-metrics-${var.env_name}"
+  port        = 3200
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  deregistration_delay = "60"
+
+  health_check {
+    path     = "/ready"
+    matcher  = "200"
+    protocol = "HTTP"
+
+    interval            = 11
+    timeout             = 10
+    unhealthy_threshold = 3
+    healthy_threshold   = 2
+  }
+}
+
+resource "aws_lb_listener_rule" "tempo_metrics" {
+  listener_arn = var.internal_alb_listener_arn
+  # +3 offset from var.internal_listener_priority, continuing the same
+  # sequence as tempo_otlp (base), mimir (+1) and alloy (+2) above.
+  priority = var.internal_listener_priority + 3
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tempo_metrics.arn
+  }
+
+  condition {
+    host_header {
+      values = ["tempo-metrics.internal.${var.root_domain}"]
+    }
+  }
+}

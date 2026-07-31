@@ -101,13 +101,15 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   200/100 convention) is likely fine once this is proven stable.
 - Grafana's UI is exposed publicly via the existing CloudFront distribution
   and public ALB (`alb.tf`), behind basic auth. OTLP trace ingestion
-  (`alloy-otlp.internal.<root_domain>`, `tempo-otlp.internal.<root_domain>`)
-  and Mimir access (`mimir.internal.<root_domain>`) are internal-ALB-only,
-  using OTLP/HTTP (port 4318)/plain HTTP (ports 9009/12345) rather than gRPC
-  so all of them can use the existing plain-HTTP internal listener, the same
-  as every other internal app-to-app route in this repo - a gRPC target
-  group would need the internal HTTPS listener plus SNI certificate
-  coverage, which isn't worth it here.
+  (`alloy-otlp.internal.<root_domain>`, `tempo-otlp.internal.<root_domain>`),
+  Mimir access (`mimir.internal.<root_domain>`), and Tempo's own server
+  port/self-metrics (`tempo-metrics.internal.<root_domain>`) are
+  internal-ALB-only, using OTLP/HTTP (port 4318)/plain HTTP (ports
+  9009/12345/3200) rather than gRPC so all of them can use the existing
+  plain-HTTP internal listener, the same as every other internal
+  app-to-app route in this repo - a gRPC target group would need the
+  internal HTTPS listener plus SNI certificate coverage, which isn't worth
+  it here.
 - Alloy (`alloy.tf`, `docker/alloy/`) sits in front of Tempo as the OTLP
   entry point for all three apps (forms-admin, forms-runner, and its queue
   worker - see `infra/deployments/forms/tfvars/dev.tfvars`), rather than
@@ -116,11 +118,13 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   before they reach Tempo at all (`docker/alloy/config.alloy`'s
   `otelcol.processor.filter` - the same noise this module's dashboards
   otherwise have to filter out at query time), and scrapes its own metrics
-  plus Mimir's (reachable over the existing `mimir.internal` endpoint - no
-  extra infrastructure needed) into Mimir, giving the tracing pipeline
-  itself some observability where previously there was none. Its own config
-  needs no gomplate/templating (unlike Tempo's and Mimir's images) - Alloy's
-  config language has native environment-variable support (`sys.env(...)`).
+  plus Mimir's and Tempo's (all reachable over their existing internal ALB
+  endpoints - `tempo-metrics.internal.<root_domain>` was added specifically
+  for this, since Tempo's server port wasn't otherwise exposed via any
+  stable hostname) into Mimir, giving the tracing pipeline itself some
+  observability where previously there was none. Its own config needs no
+  gomplate/templating (unlike Tempo's and Mimir's images) - Alloy's config
+  language has native environment-variable support (`sys.env(...)`).
   Beyla (eBPF zero-code instrumentation, considered for the still-uninstrumented
   forms-product-page) isn't used anywhere in this stack - AWS Fargate doesn't
   support eBPF at all, so it isn't an option regardless of how it's
