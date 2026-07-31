@@ -244,3 +244,15 @@ variable "opentelemetry_head_sampler_ratio" {
   description = "Sampling ratio configuration in OpenTelemetry. This tells the Ruby SDK to sample spans such that only this ratio of traces gets exported. This assumes we are using a `TraceIdRatioBased` sampler. By default all spans are sampled"
   default     = "1"
 }
+
+variable "otel_exporter_otlp_endpoint" {
+  type        = string
+  description = "Where the application should send OTLP traces to. Defaults to the ADOT sidecar, which forwards to X-Ray; can be overridden to send traces elsewhere instead (e.g. a Tempo POC), bypassing ADOT/X-Ray."
+  default     = "http://localhost:4318"
+}
+
+variable "otel_propagators" {
+  type        = string
+  description = "OTEL_PROPAGATORS value. Defaults to 'xray'; override to 'tracecontext,baggage' when sending traces to a non-X-Ray backend such as Tempo."
+  default     = "xray"
+}

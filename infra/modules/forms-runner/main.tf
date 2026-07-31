@@ -94,6 +94,8 @@ module "ecs_service" {
   application                      = "forms-runner"
   enable_opentelemetry             = var.enable_opentelemetry
   opentelemetry_head_sampler_ratio = var.opentelemetry_head_sampler_ratio
+  otel_exporter_otlp_endpoint      = var.otel_exporter_otlp_endpoint
+  otel_propagators                 = var.otel_propagators
   root_domain                      = var.root_domain
   sub_domain                       = "submit.${var.root_domain}"
   internal_sub_domain              = "submit.internal.${var.root_domain}"

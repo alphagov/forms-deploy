@@ -103,16 +103,21 @@ forms_product_page_settings = {
   max_capacity = 3
 }
 forms_runner_settings = {
-  cpu                                                             = 512
-  memory                                                          = 1024
-  min_capacity                                                    = 3
-  max_capacity                                                    = 3
-  enable_maintenance_mode                                         = false
-  cloudwatch_metrics_enabled                                      = true
-  analytics_enabled                                               = true
-  copy_of_answers_enabled                                         = true
-  enable_opentelemetry                                            = true
-  opentelemetry_head_sampler_ratio                                = "0.1"
+  cpu                              = 512
+  memory                           = 1024
+  min_capacity                     = 3
+  max_capacity                     = 3
+  enable_maintenance_mode          = false
+  cloudwatch_metrics_enabled       = true
+  analytics_enabled                = true
+  copy_of_answers_enabled          = true
+  enable_opentelemetry             = true
+  opentelemetry_head_sampler_ratio = "0.1"
+  # Tempo POC (infra/modules/tempo) - sends forms-runner's traces there
+  # instead of the ADOT sidecar/X-Ray, dev only. Revert both to their
+  # defaults ("http://localhost:4318" / "xray") to go back to X-Ray.
+  otel_exporter_otlp_endpoint                                     = "http://tempo-otlp.internal.dev.forms.service.gov.uk"
+  otel_propagators                                                = "tracecontext,baggage"
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = true
   allow_human_readonly_roles_to_assume_submissions_to_runner_role = true
   ses_submission_email_from_email_address                         = "no-reply@dev.forms.service.gov.uk"
