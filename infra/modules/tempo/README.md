@@ -127,16 +127,21 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   check (`list_datasources`/the Grafana UI) whether Grafana updated the
   existing "Tempo" datasource in place or left the old one orphaned
   alongside a new one; delete the orphan and re-push the dashboards if so.
-- `docker/grafana/dashboards/*.json` are a manual snapshot export (via the
-  Grafana API) of the POC dashboards built in the running instance, taken
-  because Grafana's own state (`grafana.db`, where dashboards created
-  through the API/UI actually live) is on the same ephemeral container
-  filesystem as everything else here - it is **not** persisted, so it's lost
-  on every task restart just like the Prometheus data above. These files are
-  not yet wired into Grafana's dashboard provisioning (no
-  `provisioning/dashboards/*.yaml` pointing at this directory, and it isn't
-  `COPY`'d into the image) - re-importing after a restart currently means
-  re-uploading each JSON file via `mcp__grafana__update_dashboard` or the
-  `/api/dashboards/db` endpoint by hand. Wiring this directory into file-based
-  provisioning (matching how `datasources.yaml` already works) is a natural
-  next step once the dashboards stabilise.
+- `docker/grafana/dashboards/*.json` are provisioned from file (like
+  `datasources.yaml`), via `docker/grafana/dashboards-provisioning.yaml`
+  (`COPY`'d to `/etc/grafana/provisioning/dashboards/forms-tracing-poc.yaml`)
+  pointing at `/etc/grafana/dashboards`, which the whole `dashboards/`
+  directory is `COPY`'d into. This is why the dashboards needed baking into
+  the image at all: Grafana's own state (`grafana.db`) is on the same
+  ephemeral container filesystem as everything else here and does **not**
+  survive a task restart, so dashboards created only through the API/UI
+  would otherwise be lost just like the Prometheus data above. The provider
+  targets the existing `forms-tracing-poc` folder by uid, and each JSON's own
+  `uid` matches what's already live, so redeploying updates these dashboards
+  in place rather than duplicating them.
+  - `allowUiUpdates: true` for now, since the dashboard set is still being
+    iterated on - you can still tweak panels live in Grafana, but those edits
+    only last until the next reconcile/restart, which resets to whatever's
+    committed here. Re-export (`get_dashboard_by_uid`) and commit anything
+    worth keeping. Switch to `false` once the set stabilises, or before any
+    production use, to make the committed JSON the sole source of truth.

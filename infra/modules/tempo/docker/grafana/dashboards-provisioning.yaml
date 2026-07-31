@@ -1,0 +1,20 @@
+apiVersion: 1
+
+providers:
+  - name: forms-tracing-poc
+    orgId: 1
+    folder: "GOV.UK Forms - Tracing POC"
+    folderUid: forms-tracing-poc
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    # Live edits in the Grafana UI are allowed for now, since the dashboard
+    # set is still being iterated on - but they only last until the next
+    # reconcile/restart, which resets to whatever's in the dashboards/
+    # directory. Re-export and commit anything worth keeping. Set to false
+    # once the dashboards stabilise (or before any production use), to make
+    # the committed JSON the sole source of truth.
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false
