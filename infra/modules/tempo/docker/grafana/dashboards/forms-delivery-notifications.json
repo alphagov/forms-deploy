@@ -1,0 +1,592 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "**Submission delivery and notification emails** - confirmation emails to the person submitting, submission emails/S3 delivery to the receiving organisation, batch (daily/weekly) digests, and the background jobs that poll for SES bounce/complaint/delivery-confirmation events. All three job queues (`submissions`, `confirmation_emails`, `background`) are shared by more than one job class each, and Tempo isn't configured with custom span-metrics dimensions to split by job class - so the rate/latency/error panels below show queue-level totals, while the *recent traces* tables show the actual job class (`code.namespace`) and, for emails, the real subject line per send.",
+        "mode": "markdown"
+      },
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_name=\"deliver.action_mailer\"}[1h]))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Emails sent (1h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 3
+      },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_name=\"deliver.action_mailer\", status_code=\"STATUS_CODE_ERROR\"}[1h]) or vector(0))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Email send errors (1h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 3
+      },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_name=\"submissions publish\"}[1h]))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Submissions enqueued (1h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 3
+      },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum(increase(traces_spanmetrics_calls_total{span_name=\"confirmation_emails publish\"}[1h]))",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Confirmation emails enqueued (1h)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Rate of deliver.action_mailer spans - every email actually handed to the delivery backend, across all mailers (confirmation, submission, batch).",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 7
+      },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=\"deliver.action_mailer\"}[5m]))",
+          "legendFormat": "emails/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Email send rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 7
+      },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"deliver.action_mailer\"}[15m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"deliver.action_mailer\"}[15m])) by (le))",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"deliver.action_mailer\"}[15m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "title": "Email send latency (p50/p90/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 7
+      },
+      "id": 8,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=\"deliver.action_mailer\", status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+          "legendFormat": "errors/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Email send error rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Real subject lines from actual sends in this environment - confirmation emails to the submitter, submission emails to the receiving organisation, and batch digests all appear here.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 9,
+      "targets": [
+        {
+          "query": "{name=\"deliver.action_mailer\"} | select(.email.subject, .email.message_id)",
+          "queryType": "traceql",
+          "refId": "A"
+        }
+      ],
+      "title": "Recent emails sent",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Covers immediate email delivery (SendSubmissionJob), S3 delivery (SendS3SubmissionJob) and daily/weekly batch delivery (SendSubmissionBatchJob) combined - all share the submissions queue and can't be split at the metrics level (see the recent-traces table below for that breakdown).",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 24
+      },
+      "id": 10,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=~\"submissions (process|publish)\"}[5m])) by (span_name)",
+          "legendFormat": "{{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Submission delivery rate (enqueue vs process)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 24
+      },
+      "id": 11,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"submissions process\"}[15m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"submissions process\"}[15m])) by (le))",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"submissions process\"}[15m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "title": "Submission delivery latency (p50/p90/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 24
+      },
+      "id": 12,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=\"submissions process\", status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+          "legendFormat": "errors/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Submission delivery error rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "code.namespace column shows which job actually ran (SendSubmissionJob=email, SendS3SubmissionJob=S3, SendSubmissionBatchJob=daily/weekly digest) - the one thing the metrics panels above can't split out.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 13,
+      "targets": [
+        {
+          "query": "{resource.service.name=\"forms-runner-queue-worker\" && kind=consumer && name=\"submissions process\"} | select(.code.namespace)",
+          "queryType": "traceql",
+          "refId": "A"
+        }
+      ],
+      "title": "Recent submission-delivery traces",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 41
+      },
+      "id": 14,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=~\"confirmation_emails (process|publish)\"}[5m])) by (span_name)",
+          "legendFormat": "{{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Confirmation email job rate (enqueue vs process)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 41
+      },
+      "id": 15,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"confirmation_emails process\"}[15m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"confirmation_emails process\"}[15m])) by (le))",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{span_name=\"confirmation_emails process\"}[15m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "title": "Confirmation email job latency (p50/p90/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 41
+      },
+      "id": 16,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=\"confirmation_emails process\", status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+          "legendFormat": "errors/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Confirmation email job error rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Shared by ReceiveSubmissionBouncesAndComplaintsJob, ReceiveSubmissionDeliveriesJob and DeleteSubmissionsJob - see the recent-traces table below to tell them apart.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 49
+      },
+      "id": 17,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=~\"background (process|publish)\"}[5m])) by (span_name)",
+          "legendFormat": "{{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Background job rate (bounce/complaint + delivery-confirmation polling, cleanup)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 49
+      },
+      "id": 18,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{span_name=\"background process\", status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+          "legendFormat": "errors/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Background job error rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "code.namespace column shows which job actually ran.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 57
+      },
+      "id": 19,
+      "targets": [
+        {
+          "query": "{resource.service.name=\"forms-runner-queue-worker\" && kind=consumer && name=\"background process\"} | select(.code.namespace)",
+          "queryType": "traceql",
+          "refId": "A"
+        }
+      ],
+      "title": "Recent background-job traces (bounce/complaint polling, delivery confirmations, cleanup)",
+      "type": "table"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": [
+    "forms",
+    "tracing-poc",
+    "delivery",
+    "notifications"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Forms - Submission Delivery & Notifications",
+  "uid": "forms-delivery-notifications",
+  "weekStart": ""
+}
