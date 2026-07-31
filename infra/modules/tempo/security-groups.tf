@@ -110,3 +110,60 @@ resource "aws_security_group_rule" "mimir_egress_to_vpc_https" {
   cidr_blocks       = [var.vpc_cidr_block]
   security_group_id = aws_security_group.mimir.id
 }
+
+resource "aws_security_group" "alloy" {
+  #checkov:skip=CKV2_AWS_5:The security group is attached in alloy.tf
+  name        = "tempo-${var.env_name}-alloy"
+  description = "Ingress from VPC to Alloy, egress to Tempo/Mimir and VPC"
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_security_group_rule" "alloy_ingress_otlp" {
+  description       = "permit inbound from the VPC to the Alloy OTLP receiver port"
+  type              = "ingress"
+  from_port         = 4318
+  to_port           = 4318
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.alloy.id
+}
+
+resource "aws_security_group_rule" "alloy_ingress_ui" {
+  description       = "permit inbound from the VPC to Alloy own UI/API port, used for the internal ALB health check"
+  type              = "ingress"
+  from_port         = 12345
+  to_port           = 12345
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.alloy.id
+}
+
+resource "aws_security_group_rule" "alloy_egress_to_s3_endpoint" {
+  description       = "permit outbound to the AWS S3 ip addresses (ECR image layers)"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = flatten(data.aws_prefix_list.private_s3.cidr_blocks)
+  security_group_id = aws_security_group.alloy.id
+}
+
+resource "aws_security_group_rule" "alloy_egress_to_vpc_https" {
+  description       = "permit outbound to the VPC CIDR on 443 (ECR, CloudWatch logs and SSM interface endpoints)"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.alloy.id
+}
+
+resource "aws_security_group_rule" "alloy_egress_to_internal_alb" {
+  description       = "permit outbound to the VPC CIDR on 80 (forwarding traces to tempo and remote-writing/scraping metrics via mimir, both over the internal ALB)"
+  type              = "egress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = [var.vpc_cidr_block]
+  security_group_id = aws_security_group.alloy.id
+}

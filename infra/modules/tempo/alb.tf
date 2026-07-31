@@ -137,3 +137,50 @@ resource "aws_lb_listener_rule" "mimir" {
     }
   }
 }
+
+# Internal: alloy is the OTLP entry point for all three apps (forms-admin,
+# forms-runner and its queue worker), forwarding on to tempo after dropping
+# SolidQueue polling noise - see alloy.tf/docker/alloy/config.alloy.
+resource "aws_lb_target_group" "alloy" {
+  #checkov:skip=CKV_AWS_378: We're happy that this is internal traffic within our vpc and we do not want the complexity cost of setting up TLS between the load balancer and application
+  name        = "tempo-alloy-${var.env_name}"
+  port        = 4318
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  deregistration_delay = "60"
+
+  health_check {
+    # The OTLP/HTTP receiver on 4318 only serves trace ingestion, not a
+    # health endpoint, so health-check alloy's own UI/API server instead
+    # while still routing real traffic to the OTLP port above.
+    port     = "12345"
+    path     = "/-/ready"
+    matcher  = "200"
+    protocol = "HTTP"
+
+    interval            = 11
+    timeout             = 10
+    unhealthy_threshold = 3
+    healthy_threshold   = 2
+  }
+}
+
+resource "aws_lb_listener_rule" "alloy" {
+  listener_arn = var.internal_alb_listener_arn
+  # +2 offset from var.internal_listener_priority, continuing the same
+  # sequence as tempo_otlp (base) and mimir (+1) above.
+  priority = var.internal_listener_priority + 2
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alloy.arn
+  }
+
+  condition {
+    host_header {
+      values = ["alloy-otlp.internal.${var.root_domain}"]
+    }
+  }
+}

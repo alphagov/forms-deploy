@@ -91,9 +91,12 @@ forms_admin_settings = {
   enable_opentelemetry             = true
   opentelemetry_head_sampler_ratio = "0.1"
   # Tempo POC (infra/modules/tempo) - sends forms-admin's traces there
-  # instead of the ADOT sidecar/X-Ray, dev only. Revert both to their
-  # defaults ("http://localhost:4318" / "xray") to go back to X-Ray.
-  otel_exporter_otlp_endpoint = "http://tempo-otlp.internal.dev.forms.service.gov.uk"
+  # instead of the ADOT sidecar/X-Ray, dev only. Routed via alloy (drops
+  # SolidQueue polling noise for forms-runner's queue worker; passes
+  # forms-admin's own traces straight through) rather than tempo directly.
+  # Revert both to their defaults ("http://localhost:4318" / "xray") to go
+  # back to X-Ray.
+  otel_exporter_otlp_endpoint = "http://alloy-otlp.internal.dev.forms.service.gov.uk"
   otel_propagators            = "tracecontext,baggage"
 }
 forms_product_page_settings = {
@@ -114,9 +117,11 @@ forms_runner_settings = {
   enable_opentelemetry             = true
   opentelemetry_head_sampler_ratio = "0.1"
   # Tempo POC (infra/modules/tempo) - sends forms-runner's traces there
-  # instead of the ADOT sidecar/X-Ray, dev only. Revert both to their
+  # instead of the ADOT sidecar/X-Ray, dev only. Routed via alloy, which
+  # drops SolidQueue polling noise for the queue worker below and passes
+  # forms-runner's own web traces straight through. Revert both to their
   # defaults ("http://localhost:4318" / "xray") to go back to X-Ray.
-  otel_exporter_otlp_endpoint = "http://tempo-otlp.internal.dev.forms.service.gov.uk"
+  otel_exporter_otlp_endpoint = "http://alloy-otlp.internal.dev.forms.service.gov.uk"
   otel_propagators            = "tracecontext,baggage"
   # Tempo POC only. Traces appear under service name "forms-runner-queue-worker", separate from forms-runner's web traces.
   enable_opentelemetry_for_queue_worker                           = true

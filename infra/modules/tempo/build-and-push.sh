@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-valid_image_names=("grafana" "tempo" "mimir")
+valid_image_names=("grafana" "tempo" "mimir" "alloy")
 
 image_to_build="${1:-}"
 if [[ ! " ${valid_image_names[*]} " =~ .*\ ${image_to_build}\ .* ]]; then

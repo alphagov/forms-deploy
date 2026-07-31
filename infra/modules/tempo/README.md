@@ -1,15 +1,15 @@
 # tempo
 
-A throwaway proof-of-concept deployment of Grafana Tempo + Grafana + Mimir on
-ECS Fargate, used to evaluate Tempo as an alternative to X-Ray for
+A throwaway proof-of-concept deployment of Grafana Tempo + Grafana + Mimir +
+Alloy on ECS Fargate, used to evaluate Tempo as an alternative to X-Ray for
 application tracing. Deployed only via `infra/deployments/forms/tempo`, dev
 environment only. Not intended to be productionised as-is.
 
 This module does not build or push its own images through a pipeline - the
-three custom images (`docker/tempo`, `docker/grafana`, `docker/mimir`) are
-built and pushed by hand (`build-and-push.sh <image>`). This is deliberate:
-it's a POC, and setting up a CodeBuild/CodePipeline for it isn't worth the
-extra infrastructure.
+four custom images (`docker/tempo`, `docker/grafana`, `docker/mimir`,
+`docker/alloy`) are built and pushed by hand (`build-and-push.sh <image>`).
+This is deliberate: it's a POC, and setting up a CodeBuild/CodePipeline for
+it isn't worth the extra infrastructure.
 
 ## One-time setup
 
@@ -27,7 +27,7 @@ make dev forms/tempo apply
 (the ECS service's tasks will fail to pull an image until step 2 - that's
 expected).
 
-### 2. Build and push all three images
+### 2. Build and push all four images
 
 Requires Docker with `buildx` and to be authenticated to ECR in the dev
 account. `build-and-push.sh` handles both:
@@ -36,6 +36,7 @@ account. `build-and-push.sh` handles both:
 ./build-and-push.sh tempo
 ./build-and-push.sh grafana
 ./build-and-push.sh mimir
+./build-and-push.sh alloy
 ```
 
 Re-run the relevant one whenever that image's `docker/<name>` directory
@@ -100,20 +101,43 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   200/100 convention) is likely fine once this is proven stable.
 - Grafana's UI is exposed publicly via the existing CloudFront distribution
   and public ALB (`alb.tf`), behind basic auth. OTLP trace ingestion
-  (`tempo-otlp.internal.<root_domain>`) and Mimir access
-  (`mimir.internal.<root_domain>`) are internal-ALB-only, using OTLP/HTTP
-  (port 4318)/plain HTTP (port 9009) rather than gRPC so both can use the
-  existing plain-HTTP internal listener, the same as every other internal
-  app-to-app route in this repo - a gRPC target group would need the
-  internal HTTPS listener plus SNI certificate coverage, which isn't worth
-  it here.
-- Neither the tempo/grafana task nor the mimir task has internet egress (see
-  `security-groups.tf`), so all three images are pulled from our own ECR
-  rather than Docker Hub directly - see the one-time setup above. This is
-  also why several Grafana update-check / telemetry background jobs are
-  explicitly disabled in `ecs.tf` (they'd otherwise just time out repeatedly
-  against grafana.com), and why Mimir's `usage_stats.enabled` is set to
-  `false` (`docker/mimir/mimir.yaml.tmpl`).
+  (`alloy-otlp.internal.<root_domain>`, `tempo-otlp.internal.<root_domain>`)
+  and Mimir access (`mimir.internal.<root_domain>`) are internal-ALB-only,
+  using OTLP/HTTP (port 4318)/plain HTTP (ports 9009/12345) rather than gRPC
+  so all of them can use the existing plain-HTTP internal listener, the same
+  as every other internal app-to-app route in this repo - a gRPC target
+  group would need the internal HTTPS listener plus SNI certificate
+  coverage, which isn't worth it here.
+- Alloy (`alloy.tf`, `docker/alloy/`) sits in front of Tempo as the OTLP
+  entry point for all three apps (forms-admin, forms-runner, and its queue
+  worker - see `infra/deployments/forms/tfvars/dev.tfvars`), rather than
+  them sending to Tempo directly. It does two things: drops
+  forms-runner-queue-worker's internal SolidQueue dispatch/polling spans
+  before they reach Tempo at all (`docker/alloy/config.alloy`'s
+  `otelcol.processor.filter` - the same noise this module's dashboards
+  otherwise have to filter out at query time), and scrapes its own metrics
+  plus Mimir's (reachable over the existing `mimir.internal` endpoint - no
+  extra infrastructure needed) into Mimir, giving the tracing pipeline
+  itself some observability where previously there was none. Its own config
+  needs no gomplate/templating (unlike Tempo's and Mimir's images) - Alloy's
+  config language has native environment-variable support (`sys.env(...)`).
+  Beyla (eBPF zero-code instrumentation, considered for the still-uninstrumented
+  forms-product-page) isn't used anywhere in this stack - AWS Fargate doesn't
+  support eBPF at all, so it isn't an option regardless of how it's
+  configured. Replacing the ADOT sidecar with Alloy as a single unified
+  collector was also considered and left out of scope - that lives in the
+  shared `infra/modules/ecs-service` module used by every app, a much bigger
+  blast radius than anything else in this module, and it isn't broken today
+  (traces already bypass it via direct OTLP, only the CloudWatch metrics path
+  still uses it).
+- Neither the tempo/grafana task, the mimir task, nor the alloy task has
+  internet egress (see `security-groups.tf`), so all four images are pulled
+  from our own ECR rather than Docker Hub directly - see the one-time setup
+  above. This is also why several Grafana update-check / telemetry
+  background jobs are explicitly disabled in `ecs.tf` (they'd otherwise just
+  time out repeatedly against grafana.com), and why Mimir's
+  `usage_stats.enabled` is set to `false`
+  (`docker/mimir/mimir.yaml.tmpl`).
 - `docker/grafana/datasources.yaml` pins the Tempo datasource to `uid: tempo`
   and the metrics datasource to `uid: prometheus` rather than letting
   Grafana auto-generate one, so dashboard JSON can reference a stable

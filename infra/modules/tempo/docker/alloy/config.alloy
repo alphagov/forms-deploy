@@ -1,0 +1,63 @@
+// Rendered as-is - Alloy's own config language handles anything
+// environment-specific natively via sys.env(), so unlike tempo/mimir this
+// image needs no templating step at container startup.
+
+// OTLP pipeline for all three apps (forms-admin, forms-runner, and its
+// queue worker): receive, drop SolidQueue's internal dispatch/polling
+// noise (only ever matches queue-worker-originated spans - forms-admin/
+// forms-runner web traces pass straight through unaffected), forward the
+// rest to Tempo.
+otelcol.receiver.otlp "apps" {
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+  output {
+    traces = [otelcol.processor.filter.drop_polling_noise.input]
+  }
+}
+
+otelcol.processor.filter "drop_polling_noise" {
+  error_mode = "ignore"
+  traces {
+    span = [
+      "IsMatch(span.name, \"SolidQueue::.*\")",
+      "span.name == \"ActiveRecord.transaction\"",
+      "IsMatch(span.name, \"(BEGIN|COMMIT|SELECT|INSERT|UPDATE|DELETE) forms-runner-queue\")",
+    ]
+  }
+  output {
+    traces = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  output {
+    traces = [otelcol.exporter.otlphttp.tempo.input]
+  }
+}
+
+otelcol.exporter.otlphttp "tempo" {
+  client {
+    endpoint = sys.env("TEMPO_OTLP_ENDPOINT")
+  }
+}
+
+// Meta-monitoring: alloy's own metrics plus mimir's (reachable via the
+// existing mimir.internal ALB endpoint already, no extra infra needed),
+// remote_written into mimir alongside everything else it stores.
+// __address__ takes a bare host:port, not a URL - MIMIR_HOST is the same
+// hostname as MIMIR_URL below, without the scheme.
+prometheus.scrape "self" {
+  targets = [
+    { "__address__" = "localhost:12345", "job" = "alloy" },
+    { "__address__" = sys.env("MIMIR_HOST"), "job" = "mimir" },
+  ]
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+  scrape_interval = "30s"
+}
+
+prometheus.remote_write "mimir" {
+  endpoint {
+    url = sys.env("MIMIR_URL") + "/api/v1/push"
+  }
+}

@@ -18,3 +18,10 @@ resource "aws_cloudwatch_log_group" "mimir" {
   name              = "/aws/ecs/tempo-${var.env_name}/mimir"
   retention_in_days = 30
 }
+
+resource "aws_cloudwatch_log_group" "alloy" {
+  #checkov:skip=CKV_AWS_338:We're happy with 30 days retention for now
+  #checkov:skip=CKV_AWS_158:Default AWS SSE is sufficient, no need for CM KMS.
+  name              = "/aws/ecs/tempo-${var.env_name}/alloy"
+  retention_in_days = 30
+}

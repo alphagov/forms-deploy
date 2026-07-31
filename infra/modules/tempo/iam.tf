@@ -79,3 +79,23 @@ resource "aws_iam_role_policy_attachment" "mimir_task_exec_standard_policy" {
 }
 # No additional execution-role policy needed - unlike grafana, mimir reads
 # no SSM secrets. mimir_task's S3 access policy is attached in s3.tf.
+
+resource "aws_iam_role" "alloy_task" {
+  name               = "${var.env_name}-tempo-alloy-ecs-task"
+  description        = "Used by the alloy task when running"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_role.json
+}
+
+resource "aws_iam_role" "alloy_task_exec" {
+  name               = "${var.env_name}-tempo-alloy-ecs-task-execution"
+  description        = "Used by ECS to create the alloy task"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "alloy_task_exec_standard_policy" {
+  role       = aws_iam_role.alloy_task_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+# No additional task or execution-role policy needed - alloy touches no
+# AWS APIs directly in this design (S3/Mimir/Tempo access are all plain
+# network calls over the internal ALB, not AWS API calls).
