@@ -146,6 +146,7 @@ forms_admin_settings = {
   synchronize_to_mailchimp         = true
   synchronize_orgs_from_govuk      = true
   send_filler_answers              = true
+  show_relevant_organisations      = false
 }
 forms_product_page_settings = {
   cpu          = 256
