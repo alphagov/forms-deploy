@@ -259,6 +259,6 @@ variable "otel_propagators" {
 
 variable "enable_opentelemetry_for_queue_worker" {
   type        = bool
-  description = "Enable OpenTelemetry tracing for the SolidQueue queue-worker ECS service too, separate from enable_opentelemetry (which only affects the main app). Off by default: background job traces have historically displayed poorly in X-Ray. No ADOT sidecar is ever run for the queue worker, so this only produces usable traces when otel_exporter_otlp_endpoint points somewhere reachable directly (e.g. a Tempo POC), not the default localhost ADOT address."
+  description = "Enable OpenTelemetry tracing for the SolidQueue queue-worker ECS service too, separate from enable_opentelemetry (which only affects the main app). Off by default. No ADOT sidecar is ever run for the queue worker, so this only produces usable traces when otel_exporter_otlp_endpoint points somewhere reachable directly (e.g. a Tempo POC), not the default localhost ADOT address."
   default     = false
 }

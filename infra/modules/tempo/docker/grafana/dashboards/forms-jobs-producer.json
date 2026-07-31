@@ -21,7 +21,7 @@
       "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
       "id": 1,
       "options": {
-        "content": "**Producer/enqueue side only.** This dashboard covers forms-runner's *enqueue* step (`submissions publish` PRODUCER span). Job **processing** now has full trace visibility too - see the **Forms - Queue Worker** dashboard (OpenTelemetry was re-enabled for the queue-worker ECS service, which previously displayed poorly in X-Ray). Note there is still no direct trace link between enqueue and processing: SolidQueue hands jobs off by polling a shared database table (`forms-runner-queue`), not by propagating trace context, so the two sides can only be correlated by job name and rough timing, not a single connected trace.",
+        "content": "**Producer/enqueue side only.** This dashboard covers forms-runner's *enqueue* step (`submissions publish` PRODUCER span). See the **Forms - Queue Worker** dashboard for the processing side. There is no direct trace link between enqueue and processing: SolidQueue hands jobs off by polling a shared database table (`forms-runner-queue`), not by propagating trace context, so the two sides can only be correlated by job name and rough timing, not a single connected trace.",
         "mode": "markdown"
       },
       "type": "text"

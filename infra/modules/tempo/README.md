@@ -118,15 +118,9 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
 - `docker/grafana/datasources.yaml` pins the Tempo datasource to `uid: tempo`
   (matching Prometheus's `uid: prometheus`) rather than letting Grafana
   auto-generate one, so dashboard JSON can reference a stable datasource uid
-  instead of an opaque generated string. **This is an image-level change** -
-  it only takes effect after the Grafana image is rebuilt, pushed, and the
-  ECS service redeployed (see one-time setup above); it won't apply to an
-  already-running task. The currently-live instance was provisioned before
-  this change, so its Tempo datasource still has an auto-generated uid - the
-  dashboard JSON files below already reference `tempo`, so after redeploying,
-  check (`list_datasources`/the Grafana UI) whether Grafana updated the
-  existing "Tempo" datasource in place or left the old one orphaned
-  alongside a new one; delete the orphan and re-push the dashboards if so.
+  instead of an opaque generated string. This is baked in at image build
+  time, so it takes effect on the next deploy like everything else here (see
+  one-time setup above).
 - `docker/grafana/dashboards/*.json` are provisioned from file (like
   `datasources.yaml`), via `docker/grafana/dashboards-provisioning.yaml`
   (`COPY`'d to `/etc/grafana/provisioning/dashboards/forms-tracing-poc.yaml`)
@@ -141,14 +135,11 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   in place rather than duplicating them.
   - `allowUiUpdates: true`, though it doesn't do what its name suggests:
     Grafana's periodic reconcile reverts any UI/API edit back to the
-    committed JSON on its next tick regardless of this setting - confirmed
-    directly (a dashboard patched via the API showed the change, then
-    reverted to the file's content moments later at the previous default
-    `updateIntervalSeconds: 30`). `updateIntervalSeconds` is now `43200`
-    (12h), so a live edit has a real window to test in before it reverts -
-    still not a permanent fix, just long enough to iterate in a session.
-    Re-export (`get_dashboard_by_uid`) and commit anything worth keeping
-    before the next reconcile or redeploy. New dashboards not yet present in
-    this directory aren't affected at all (nothing to revert to), so those
-    can be iterated on live indefinitely before being exported here for the
-    first time.
+    committed JSON on its next tick regardless of this setting.
+    `updateIntervalSeconds` is set to `43200` (12h), so a live edit has a
+    real window to test in before it reverts - not a permanent fix, just
+    long enough to iterate in a session. Re-export (`get_dashboard_by_uid`)
+    and commit anything worth keeping before the next reconcile or redeploy.
+    New dashboards not yet present in this directory aren't affected at all
+    (nothing to revert to), so those can be iterated on live indefinitely
+    before being exported here for the first time.

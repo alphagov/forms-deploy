@@ -21,14 +21,14 @@
       "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
       "id": 1,
       "options": {
-        "content": "**Job processing (consumer) side.** OpenTelemetry was re-enabled for forms-runner's SolidQueue queue-worker ECS service - it previously displayed poorly in X-Ray. Most traces from this service are SolidQueue's own internal dispatch/polling loop (querying its `forms-runner-queue` database continuously, whether or not there's a job to run), not real work - the panels below separate that polling overhead from actual job execution (`SPAN_KIND_CONSUMER` spans, e.g. `confirmation_emails process`). There is no direct trace link back to the enqueue side (see **Forms - Submission Job Producer**) - SolidQueue hands jobs off by polling a shared DB table, not propagated trace context.",
+        "content": "**Job processing (consumer) side.** Most traces from this service are SolidQueue's own internal dispatch/polling loop (querying its `forms-runner-queue` database continuously, whether or not there's a job to run), not real work - the panels below separate that polling overhead from actual job execution (`SPAN_KIND_CONSUMER` spans, e.g. `confirmation_emails process`). There is no direct trace link back to the enqueue side (see **Forms - Submission Job Producer**) - SolidQueue hands jobs off by polling a shared DB table, not propagated trace context.",
         "mode": "markdown"
       },
       "type": "text"
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "description": "Demonstrates the polling-noise-vs-signal ratio directly - this is the shape that made X-Ray hard to read for this service.",
+      "description": "Demonstrates the polling-noise-vs-signal ratio directly.",
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
       "id": 2,
@@ -89,7 +89,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "description": "Filters on status_code=\"STATUS_CODE_ERROR\" specifically (not !=OK - most spans sit at the OTel-default UNSET status, which is not an error). No errors seen as of 2026-07-31 - flat/no-data is expected until a real job failure occurs.",
+      "description": "Filters on status_code=\"STATUS_CODE_ERROR\" specifically (not !=OK - most spans sit at the OTel-default UNSET status, which is not an error); flat/no-data is expected while there are no real job failures.",
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
       "id": 5,

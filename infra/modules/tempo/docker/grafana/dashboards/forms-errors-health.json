@@ -19,7 +19,7 @@
   "panels": [
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "description": "Watching for status_code=\"STATUS_CODE_ERROR\" (the OTel-spec value for explicit errors). No errors seen in this POC as of 2026-07-31 — flat/no-data here is expected until a real error occurs; verify the exact label value in Explore once one does.",
+      "description": "Filters on status_code=\"STATUS_CODE_ERROR\" (the OTel-spec value for explicit errors); flat/no-data is expected while there are no real errors.",
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
       "id": 1,
@@ -35,7 +35,7 @@
     },
     {
       "datasource": { "type": "tempo", "uid": "tempo" },
-      "description": "TraceQL {status=error}. Empty is normal for this POC as of 2026-07-31 — confirms error-path tracing plumbing once a real error occurs.",
+      "description": "TraceQL {status=error}. Empty is normal for this POC while there are no real errors.",
       "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
       "id": 2,
       "targets": [{ "query": "{status=error}", "queryType": "traceql", "refId": "A" }],
@@ -44,7 +44,7 @@
     },
     {
       "datasource": { "type": "tempo", "uid": "tempo" },
-      "description": "Span-attribute filter (http.response.status_code is not a span-metrics label, so this must be a TraceQL panel against Tempo, not a Prometheus table). Includes forms-runner-queue-worker's outbound calls now that it has trace coverage too.",
+      "description": "Span-attribute filter (http.response.status_code is not a span-metrics label, so this must be a TraceQL panel against Tempo, not a Prometheus table). Includes forms-runner-queue-worker's outbound calls.",
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
       "id": 3,
       "targets": [
@@ -75,7 +75,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "description": "traces_service_graph_request_failed_total does not exist in this Tempo/Prometheus setup (verified) — using CLIENT-span-kind spanmetrics errors as the substitute signal for failed outbound dependency calls.",
+      "description": "traces_service_graph_request_failed_total does not exist in this Tempo/Prometheus setup — using CLIENT-span-kind spanmetrics errors as the substitute signal for failed outbound dependency calls.",
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 26 },
       "id": 5,

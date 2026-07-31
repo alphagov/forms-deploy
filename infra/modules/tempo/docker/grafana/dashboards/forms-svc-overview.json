@@ -35,7 +35,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "description": "Non-OK SERVER-span status from span-metrics. No STATUS_CODE_ERROR seen in the POC yet (0 error traces at design time) — expect this panel to be flat at zero until a real error occurs.",
+      "description": "SERVER-span error rate from span-metrics (status_code=ERROR); expect this panel to be flat at zero while there are no real errors.",
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
       "id": 2,

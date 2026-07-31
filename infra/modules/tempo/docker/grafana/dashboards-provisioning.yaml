@@ -11,14 +11,13 @@ providers:
     # allowUiUpdates only controls whether Grafana's UI *lets you* edit a
     # provisioned dashboard - it does NOT stop the periodic reconcile below
     # from reverting any such edit back to the committed JSON on its next
-    # tick (confirmed in practice: at the previous 30s interval, edits got
-    # silently wiped within ~30s regardless of this setting). Bumped to
-    # 43200s (12h) so a live edit actually has a usable window to test in
-    # before it's reverted - still not permanent, just long enough to
-    # iterate in a session. Re-export (`get_dashboard_by_uid`) and commit
-    # anything worth keeping before the next reconcile or redeploy. Set to
-    # false (and drop this back down) before any production use, to make
-    # the committed JSON the sole source of truth.
+    # tick. updateIntervalSeconds is set long enough (12h) to give a live
+    # edit a usable window to test in before it reverts - not permanent,
+    # just long enough to iterate in a session. Re-export
+    # (`get_dashboard_by_uid`) and commit anything worth keeping before the
+    # next reconcile or redeploy. Set to false (and drop this back down)
+    # before any production use, to make the committed JSON the sole source
+    # of truth.
     allowUiUpdates: true
     options:
       path: /etc/grafana/dashboards
