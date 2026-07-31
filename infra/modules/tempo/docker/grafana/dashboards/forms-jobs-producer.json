@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -18,7 +21,12 @@
   "links": [],
   "panels": [
     {
-      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 1,
       "options": {
         "content": "**Producer/enqueue side only.** This dashboard covers forms-runner's *enqueue* step (`submissions publish` PRODUCER span). See the **Forms - Queue Worker** dashboard for the processing side. There is no direct trace link between enqueue and processing: SolidQueue hands jobs off by polling a shared database table (`forms-runner-queue`), not by propagating trace context, so the two sides can only be correlated by job name and rough timing, not a single connected trace.",
@@ -27,9 +35,22 @@
       "type": "text"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 3 },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 3
+      },
       "id": 2,
       "targets": [
         {
@@ -41,9 +62,22 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 3 },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 3
+      },
       "id": 3,
       "targets": [
         {
@@ -66,8 +100,44 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "tempo", "uid": "tempo" },
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 11 },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Filters on status_code=\"STATUS_CODE_ERROR\" specifically (not !=OK - most spans sit at the OTel-default UNSET status, which is not an error); flat/no-data is expected while enqueue writes are succeeding.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "sum(rate(traces_spanmetrics_calls_total{service=\"forms-runner\", span_kind=\"SPAN_KIND_PRODUCER\", span_name=\"submissions publish\", status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Submission publish error rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
       "id": 4,
       "targets": [
         {
@@ -80,10 +150,23 @@
       "type": "table"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "description": "SolidQueue enqueue-side DB writes (job insertion into forms-runner-queue), not job execution.",
-      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
       "id": 5,
       "targets": [
         {
@@ -97,9 +180,18 @@
   ],
   "refresh": "5m",
   "schemaVersion": 42,
-  "tags": ["forms", "tracing-poc", "jobs"],
-  "templating": { "list": [] },
-  "time": { "from": "now-24h", "to": "now" },
+  "tags": [
+    "forms",
+    "tracing-poc",
+    "jobs"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "",
   "title": "Forms - Submission Job Producer",

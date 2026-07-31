@@ -1,0 +1,824 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "**Tracing pipeline infrastructure health** - Alloy, Mimir and Tempo themselves, not app traces (see the other dashboards for those). Alloy sits in front of Tempo as the OTLP entry point for all three apps and scrapes its own + Mimir's + Tempo's metrics into Mimir - see `infra/modules/tempo/alloy.tf`/`docker/alloy/config.alloy`.",
+        "mode": "markdown"
+      },
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "Down"
+                },
+                "1": {
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 3
+      },
+      "id": 17,
+      "targets": [
+        {
+          "expr": "up{job=\"alloy\"}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Alloy up",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "Down"
+                },
+                "1": {
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 8,
+        "y": 3
+      },
+      "id": 18,
+      "targets": [
+        {
+          "expr": "up{job=\"mimir\"}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir up",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "Down"
+                },
+                "1": {
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 3
+      },
+      "id": 19,
+      "targets": [
+        {
+          "expr": "up{job=\"tempo\"}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tempo up",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "Failed"
+                },
+                "1": {
+                  "text": "OK"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 7
+      },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "alloy_config_last_load_successful",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Alloy config valid",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Alloy has a dedicated 256 CPU-unit (0.25 vCPU) task (alloy.tf) - normalized against that allocation, so 100% means fully using its own quota, not one whole core.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 7
+      },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "100 * rate(alloy_resources_process_cpu_seconds_total[5m]) / 0.25",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Alloy CPU",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Alloy has a dedicated 512MB task (alloy.tf). Thresholds at 70%/90% of that.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 375809638
+              },
+              {
+                "color": "red",
+                "value": 483183820
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 7
+      },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "alloy_resources_process_resident_memory_bytes",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Alloy memory",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Mimir has a dedicated 512 CPU-unit (0.5 vCPU) task (mimir.tf) - normalized against that allocation, so 100% means fully using its own quota, not one whole core.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 7
+      },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "100 * rate(process_cpu_seconds_total{job=\"mimir\"}[5m]) / 0.5",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir CPU",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Mimir has a dedicated 1024MB task (mimir.tf). Thresholds at 70%/90% of that.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 751619277
+              },
+              {
+                "color": "red",
+                "value": 966367641
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 7
+      },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"mimir\"}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir memory",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "POC-scale cardinality guardrail, not a hard limit - bands chosen loosely above current actual usage.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 10000
+              },
+              {
+                "color": "red",
+                "value": 25000
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 15,
+        "y": 7
+      },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "cortex_ingester_active_series",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir active series",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Tempo shares a 2048 CPU-unit (2 vCPU) task with grafana (ecs.tf, no per-container split), so this is raw % of one core, not normalized to a clean per-container limit - same caveat as Tempo memory below.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 18,
+        "y": 7
+      },
+      "id": 8,
+      "targets": [
+        {
+          "expr": "100 * rate(process_cpu_seconds_total{job=\"tempo\"}[5m])",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tempo CPU",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Tempo shares a 4096MB task with grafana (ecs.tf, no per-container split), so thresholds here are conservative - set to leave grafana headroom, not tempo's own hard ceiling.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 1610612736
+              },
+              {
+                "color": "red",
+                "value": 2684354560
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 21,
+        "y": 7
+      },
+      "id": 9,
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"tempo\"}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tempo memory",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 11
+      },
+      "id": 10,
+      "targets": [
+        {
+          "expr": "sum(tempo_live_store_live_traces)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tempo live traces (in-memory, not yet flushed)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "POC-scale cardinality guardrail, not a hard limit - bands chosen loosely above current actual usage.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 2000
+              },
+              {
+                "color": "red",
+                "value": 5000
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 12,
+        "y": 11
+      },
+      "id": 11,
+      "targets": [
+        {
+          "expr": "sum(tempo_metrics_generator_registry_active_series)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tempo service-graph/span-metrics active series",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "The gap between \"accepted by alloy\" and \"received at tempo\"/\"sent to tempo\" is expected and is the point of alloy's filter: SolidQueue's internal dispatch/polling spans get dropped before they ever reach Tempo. A large, steady gap here is the filter working correctly, not a fault.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 12,
+      "targets": [
+        {
+          "expr": "sum(rate(otelcol_receiver_accepted_spans_total[5m]))",
+          "legendFormat": "accepted by alloy",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(otelcol_receiver_refused_spans_total[5m]))",
+          "legendFormat": "refused by alloy",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(otelcol_receiver_failed_spans_total[5m]))",
+          "legendFormat": "failed at alloy",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(rate(otelcol_exporter_sent_spans_total[5m]))",
+          "legendFormat": "sent to tempo",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(rate(tempo_distributor_spans_received_total[5m]))",
+          "legendFormat": "received at tempo",
+          "refId": "E"
+        }
+      ],
+      "title": "OTLP span flow: alloy → tempo",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 23
+      },
+      "id": 13,
+      "targets": [
+        {
+          "expr": "sum(rate(cortex_distributor_received_samples_total[5m]))",
+          "legendFormat": "samples/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir ingestion rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
+      "id": 14,
+      "targets": [
+        {
+          "expr": "sum(rate(cortex_query_frontend_queries_total[5m]))",
+          "legendFormat": "queries/s",
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir query rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 15,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(cortex_querier_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "A"
+        }
+      ],
+      "title": "Mimir query p99 latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Ingester uploads completed TSDB blocks to S3 (see the 2h block-range caveat in README.md) - this is that upload succeeding vs failing, not general S3 connectivity.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 16,
+      "targets": [
+        {
+          "expr": "sum(rate(cortex_ingester_shipper_uploads_total[15m]))",
+          "legendFormat": "succeeded",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(cortex_ingester_shipper_upload_failures_total[15m]))",
+          "legendFormat": "failed",
+          "refId": "B"
+        }
+      ],
+      "title": "Mimir block shipper (S3 upload) success/failure",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": [
+    "forms",
+    "tracing-poc",
+    "infra"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Forms - Tracing Pipeline Health",
+  "uid": "forms-pipeline-health",
+  "weekStart": ""
+}
