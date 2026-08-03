@@ -40,6 +40,12 @@ resource "aws_ecs_task_definition" "alloy" {
           name  = "MIMIR_HOST"
           value = "mimir.internal.${var.root_domain}"
         },
+        {
+          # Where import.http polls for the tail-sampling declare module -
+          # see config.alloy and alloy-remote-config.tf.
+          name  = "ALLOY_REMOTE_CONFIG_URL"
+          value = local.alloy_remote_config_url
+        },
       ],
       portMappings = [
         {

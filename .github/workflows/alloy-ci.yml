@@ -1,0 +1,21 @@
+name: "Alloy config CI"
+on:
+  pull_request:
+  merge_group:
+    types: [checks_requested]
+jobs:
+  alloy-validate:
+    runs-on: ubuntu-24.04-arm
+    name: alloy validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Initialise mise
+        uses: jdx/mise-action@dad1bfd3df957f44999b559dd69dc1671cb4e9ea # v4.2.1
+        with:
+          github_token: ${{ secrets.MISE_PAT }} # As this is a private repo, we can get API rate limit issues. Use a PAT to avoid this. (The token needs no special permissions.)
+          install_args: "aqua:grafana/alloy"
+
+      - name: Validate alloy configs
+        run: make alloy_validate

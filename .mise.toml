@@ -11,6 +11,7 @@ hcl2json = "0.6.8"
 tflint = "0.59.1"
 checkov = "3.2.470"
 tfupdate = "latest"
+"aqua:grafana/alloy" = "v1.18.0"
 
 [settings]
 idiomatic_version_file_enable_tools = ["terraform", "ruby"]

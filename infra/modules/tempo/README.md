@@ -134,6 +134,33 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   blast radius than anything else in this module, and it isn't broken today
   (traces already bypass it via direct OTLP, only the CloudWatch metrics path
   still uses it).
+- Alloy also runs a `tail_sampling` processor (keep every error, keep every
+  slow trace against the same 1000ms threshold as the
+  `admin`/`runner_http_latency_1000ms` SLOs, ratio-sample everything else)
+  rather than relying purely on the SDK's head-based sampler
+  (`opentelemetry_head_sampler_ratio` in the app tfvars). This means the
+  head sampler needs to stay near 1.0 wherever tail sampling is in front of
+  it - sampling before Alloy sees the trace defeats the point, since Alloy
+  can only judge a trace it actually received in full. The policy itself
+  isn't baked into the image: `docker/alloy/config.alloy`'s `import.http`
+  block polls an S3 object (`alloy-remote-config.tf`'s
+  `aws_s3_object.tail_sampling_config`, tracked source of truth in
+  `alloy-remote-config/tail-sampling.alloy`) every 30s and hot-reloads on
+  change, so tuning the sampling ratio/latency threshold is a case of
+  editing that file and running `terraform apply` (etag-triggered re-upload
+  - shows up in `plan` like any other change) rather than rebuilding the
+  alloy image and redeploying the ECS service.
+  `remotecfg` was considered and ruled out for this - it needs a server
+  implementing the separate "alloy-remote-config" Fleet Management API, not
+  a static file, which is overkill for a POC. The S3 object is fetched over
+  a plain, unauthenticated HTTPS GET rather than the signed S3 API -
+  `import.http` has no SigV4 support - so access is scoped instead by a
+  bucket policy condition on `aws:SourceVpc` (allows anonymous `GetObject`,
+  but only from requests originating inside this VPC). `alloy validate` runs
+  in pre-commit and CI (`alloy-ci.yml`, mise-pinned in `.mise.toml`) against
+  every `.alloy` file, including the one pushed to S3, as the main guard
+  against a bad push breaking the pipeline - what actually happens on a
+  malformed-but-successfully-fetched config hasn't been tested yet.
 - Neither the tempo/grafana task, the mimir task, nor the alloy task has
   internet egress (see `security-groups.tf`), so all four images are pulled
   from our own ECR rather than Docker Hub directly - see the one-time setup

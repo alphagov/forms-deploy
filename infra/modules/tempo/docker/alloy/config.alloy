@@ -26,8 +26,26 @@ otelcol.processor.filter "drop_polling_noise" {
     ]
   }
   output {
-    traces = [otelcol.processor.batch.default.input]
+    traces = [tail_sampling_config.tail_sampling.default.input]
   }
+}
+
+// The tail-sampling policy (keep errors, keep slow traces, ratio-sample the
+// rest) lives outside this image entirely - see
+// infra/modules/tempo/alloy-remote-config.tf and
+// alloy-remote-config/tail-sampling.alloy (a sibling of this docker/
+// directory, not part of it) for the tracked source of what's pushed
+// there. import.http polls it and hot-reloads on change, so tuning the
+// ratio/threshold doesn't need an image rebuild or a service redeploy -
+// only pushing a new object to S3 (validated by `alloy validate` in
+// pre-commit/CI first).
+import.http "tail_sampling_config" {
+  url            = sys.env("ALLOY_REMOTE_CONFIG_URL")
+  poll_frequency = "30s"
+}
+
+tail_sampling_config.tail_sampling "default" {
+  output = [otelcol.processor.batch.default.input]
 }
 
 otelcol.processor.batch "default" {

@@ -58,6 +58,14 @@ repos:
         language: system
         entry: make lint_ruby
 
+      - id: alloy-validate
+        name: alloy validate
+        require_serial: true
+        files: \.alloy$
+        language: system
+        pass_filenames: true
+        entry: ./pre-commit-alloy-validate.sh
+
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.10
     hooks:

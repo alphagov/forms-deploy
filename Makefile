@@ -200,7 +200,7 @@ fmt:
 	terraform fmt $(CHANGED_FILES_ARGS)
 
 .PHONY: lint
-lint: checkov tflint spec lint_ruby
+lint: checkov tflint spec lint_ruby alloy_validate
 
 .PHONY: lint_ruby
 lint_ruby:
@@ -211,6 +211,14 @@ lint_ruby:
 checkov:
 	$(if ${CHANGED_FILES}, $(eval CHANGED_FILES_ARGS := --file $(foreach f,$(CHANGED_FILES),$(f))), $(eval CHANGED_FILES_ARGS := --directory infra/))
 	checkov --external-checks-dir infra/checkov/ --framework terraform --quiet --download-external-modules false $(CHANGED_FILES_ARGS)
+
+.PHONY: alloy_validate
+alloy_validate:
+	@files='$(if ${CHANGED_FILES},$(CHANGED_FILES),$(shell find infra -name "*.alloy"))'; \
+	for f in $$files; do \
+		echo "Validating $$f"; \
+		alloy validate "$$f" || exit 1; \
+	done
 
 .PHONY: spec
 spec:

@@ -1,0 +1,60 @@
+// Not part of the Docker image (see ../docker/alloy) - this is the tracked
+// source of truth for the S3 object in ../alloy-remote-config.tf
+// (aws_s3_object.tail_sampling_config), which docker/alloy/config.alloy's
+// import.http block polls at runtime. Edit this file and run
+// `terraform apply` (just this module - no image rebuild or ECS redeploy
+// needed) to push a change; Alloy picks it up on its next poll. Run
+// "alloy validate" locally first (also enforced by pre-commit/CI) - a bad
+// push here is fetched by every environment pointed at this bucket.
+
+declare "tail_sampling" {
+  argument "output" {
+    optional = false
+  }
+
+  otelcol.processor.tail_sampling "smart_sampling" {
+    // Must comfortably exceed the "keep-slow" latency threshold below, so a
+    // genuinely slow trace has time to finish before the decision is made.
+    decision_wait = "10s"
+
+    // Policies are OR-ed - a trace matching any one of these is kept
+    // regardless of the others. Only traces matching none of them fall
+    // through to the probabilistic ratio.
+    policy {
+      name = "keep-errors"
+      type = "status_code"
+      status_code {
+        status_codes = ["ERROR"]
+      }
+    }
+
+    policy {
+      name = "keep-slow"
+      type = "latency"
+      latency {
+        // Matches admin_http_latency_1000ms/runner_http_latency_1000ms in
+        // infra/deployments/forms/health/slos.tf, rather than inventing a
+        // separate number.
+        threshold_ms = 1000
+      }
+    }
+
+    policy {
+      name = "sample-the-rest"
+      type = "probabilistic"
+      probabilistic {
+        // The tunable knob - bump this to pull in more/less of the
+        // non-error, non-slow traffic.
+        sampling_percentage = 25
+      }
+    }
+
+    output {
+      traces = argument.output.value
+    }
+  }
+
+  export "input" {
+    value = otelcol.processor.tail_sampling.smart_sampling.input
+  }
+}
