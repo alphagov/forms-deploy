@@ -82,7 +82,7 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   (`docker/grafana/datasources.yaml`). Mimir stores its blocks in S3 (`s3.tf`,
   same `secure-bucket`/IAM-role-auth pattern as Tempo's own trace bucket) -
   **but Mimir's write path is `Distributor → Ingester (in-memory + local
-  WAL) → S3 (periodic block flush)`, not a direct stream to S3.** The
+WAL) → S3 (periodic block flush)`, not a direct stream to S3.** The
   ingester cuts a new TSDB block every 2 hours (`tsdb.block-ranges-period`'s
   default) and only ships a block to S3 once that window closes - so at any
   moment, up to ~2h of the most recent data lives only in the active
@@ -93,7 +93,7 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   everything on every restart.
 - Mimir is deployed with no rolling overlap
   (`deployment_maximum_percent = 100`, `deployment_minimum_healthy_percent =
-  0`) and explicit `availability_zone_rebalancing = "DISABLED"` (`mimir.tf`).
+0`) and explicit `availability_zone_rebalancing = "DISABLED"` (`mimir.tf`).
   Nothing is actually shared-mounted anymore (no EFS), so this is more
   conservative than strictly necessary - kept simple for this first pass
   rather than stacking a deployment-strategy change on top of the
@@ -149,18 +149,18 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   change, so tuning the sampling ratio/latency threshold is a case of
   editing that file and running `terraform apply` (etag-triggered re-upload
   - shows up in `plan` like any other change) rather than rebuilding the
-  alloy image and redeploying the ECS service.
-  `remotecfg` was considered and ruled out for this - it needs a server
-  implementing the separate "alloy-remote-config" Fleet Management API, not
-  a static file, which is overkill for a POC. The S3 object is fetched over
-  a plain, unauthenticated HTTPS GET rather than the signed S3 API -
-  `import.http` has no SigV4 support - so access is scoped instead by a
-  bucket policy condition on `aws:SourceVpc` (allows anonymous `GetObject`,
-  but only from requests originating inside this VPC). `alloy validate` runs
-  in pre-commit and CI (`alloy-ci.yml`, mise-pinned in `.mise.toml`) against
-  every `.alloy` file, including the one pushed to S3, as the main guard
-  against a bad push breaking the pipeline - what actually happens on a
-  malformed-but-successfully-fetched config hasn't been tested yet.
+    alloy image and redeploying the ECS service.
+    `remotecfg` was considered and ruled out for this - it needs a server
+    implementing the separate "alloy-remote-config" Fleet Management API, not
+    a static file, which is overkill for a POC. The S3 object is fetched over
+    a plain, unauthenticated HTTPS GET rather than the signed S3 API -
+    `import.http` has no SigV4 support - so access is scoped instead by a
+    bucket policy condition on `aws:SourceVpc` (allows anonymous `GetObject`,
+    but only from requests originating inside this VPC). `alloy validate` runs
+    in pre-commit and CI (`alloy-ci.yml`, mise-pinned in `.mise.toml`) against
+    every `.alloy` file, including the one pushed to S3, as the main guard
+    against a bad push breaking the pipeline - what actually happens on a
+    malformed-but-successfully-fetched config hasn't been tested yet.
 - Neither the tempo/grafana task, the mimir task, nor the alloy task has
   internet egress (see `security-groups.tf`), so all four images are pulled
   from our own ECR rather than Docker Hub directly - see the one-time setup
@@ -179,6 +179,36 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   every one of them for a purely cosmetic reason. This is baked in at image
   build time, so it takes effect on the next deploy like everything else
   here (see one-time setup above).
+- `docker/grafana/datasources.yaml` also provisions a CloudWatch datasource
+  (`cloudwatch-datasource.tf` grants `aws_iam_role.tempo_task` read-only
+  CloudWatch/Logs Insights/Application Signals/cross-account-observability
+  access, `authType: default` so it just uses that role - no keys).
+  Query-only, no new ingestion cost. **There's no automatic trace-to-logs
+  link** - Grafana's `tracesToLogsV2` feature only supports
+  Loki/Elasticsearch/Splunk/OpenSearch/Falcon LogScale/Google Cloud
+  Logging/VictoriaMetrics Logs as a target; CloudWatch isn't an eligible
+  datasource type for it at all (not a config detail, a hard capability
+  gap - confirmed against Grafana's own docs). Jumping from a trace to its
+  logs today means manually switching to the CloudWatch datasource in
+  Explore and searching by `otel_trace_id` (the real OTel trace ID
+  forms-runner/forms-admin now log via `OtelLoggingContext` - **not** the
+  older `trace_id` field, which is just the raw `X-Amzn-Trace-Id` ALB
+  header and doesn't match Tempo's actual trace ID, since the ALB never
+  sends a `Parent` segment for the xray propagator to extract). Real
+  automatic linking would need Loki (or one of the other supported
+  backends) instead of CloudWatch - a bigger, not-yet-decided piece of
+  work, not something this module does.
+  Two VPC Interface endpoints in `infra/modules/environment/endpoints.tf`
+  are load-bearing for this, since the tempo/grafana task has no internet
+  egress: `monitoring` (`GetMetricData`/`ListMetrics` - metrics queries
+  just hang without it) and `oam` (Grafana resolves account context via
+  `oam:ListSinks` while *building* a Logs Insights query -
+  `GET .../resources/accounts` - not just a background probe; without it,
+  log queries in Explore come back as "no data" rather than a distinct
+  error). Deliberately not adding an endpoint for `ec2` (region discovery)
+  - genuinely optional (only needed for dynamic region discovery, and
+  `defaultRegion` is already fixed), errors harmlessly in the background
+  without it.
 - `docker/grafana/dashboards/*.json` are provisioned from file (like
   `datasources.yaml`), via `docker/grafana/dashboards-provisioning.yaml`
   (`COPY`'d to `/etc/grafana/provisioning/dashboards/forms-tracing-poc.yaml`)

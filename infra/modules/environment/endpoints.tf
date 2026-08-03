@@ -86,6 +86,50 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   }
 }
 
+resource "aws_vpc_endpoint" "monitoring" {
+  # CloudWatch metrics API (GetMetricData/ListMetrics/etc) - needed by
+  # Grafana's CloudWatch datasource (infra/modules/tempo/cloudwatch-datasource.tf)
+  # for its metrics queries, distinct from the "cloudwatch" endpoint above
+  # (that's actually the Logs API).
+  vpc_id              = aws_vpc.forms.id
+  service_name        = "com.amazonaws.eu-west-2.monitoring"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "monitoring-endpoint-${var.env_name}"
+  }
+}
+
+resource "aws_vpc_endpoint" "oam" {
+  # CloudWatch Observability Access Manager - Grafana's CloudWatch
+  # datasource calls oam:ListSinks to resolve account context as part of
+  # building a Logs Insights query (GET .../resources/accounts), not just
+  # as an optional background probe - without this, that call hangs (no
+  # internet egress on the tempo/grafana task) and log queries in Explore
+  # come back as "no data" rather than a distinct error.
+  vpc_id              = aws_vpc.forms.id
+  service_name        = "com.amazonaws.eu-west-2.oam"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  subnet_ids = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
+    aws_subnet.private_c.id,
+  ]
+
+  tags = {
+    Name = "oam-endpoint-${var.env_name}"
+  }
+}
+
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id              = aws_vpc.forms.id
   service_name        = "com.amazonaws.eu-west-2.ssm"

@@ -94,6 +94,13 @@ locals {
           name  = "MIMIR_URL"
           value = local.mimir_internal_url
         },
+        {
+          # Used by datasources.yaml to build environment-specific
+          # CloudWatch log group names, rather than hardcoding "-dev" into
+          # a file that's otherwise environment-agnostic.
+          name  = "ENV_NAME"
+          value = var.env_name
+        },
       ],
       secrets = [
         {

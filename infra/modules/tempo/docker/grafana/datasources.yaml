@@ -24,3 +24,15 @@ datasources:
       httpMethod: GET
       serviceMap:
         datasourceUid: prometheus
+
+  - name: CloudWatch
+    type: cloudwatch
+    access: proxy
+    orgId: 1
+    uid: cloudwatch
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      authType: default
+      defaultRegion: eu-west-2
