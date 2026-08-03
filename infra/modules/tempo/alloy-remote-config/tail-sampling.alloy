@@ -45,7 +45,7 @@ declare "tail_sampling" {
       probabilistic {
         // The tunable knob - bump this to pull in more/less of the
         // non-error, non-slow traffic.
-        sampling_percentage = 25
+        sampling_percentage = 100
       }
     }
 
