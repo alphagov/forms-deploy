@@ -98,10 +98,15 @@ forms_admin_settings = {
   # instead of the ADOT sidecar/X-Ray, dev only. Routed via alloy (drops
   # SolidQueue polling noise for forms-runner's queue worker; passes
   # forms-admin's own traces straight through) rather than tempo directly.
-  # Revert both to their defaults ("http://localhost:4318" / "xray") to go
-  # back to X-Ray.
+  # Revert to the default ("http://localhost:4318") to go back to X-Ray.
   otel_exporter_otlp_endpoint = "http://alloy-otlp.internal.dev.forms.service.gov.uk"
-  otel_propagators            = "tracecontext,baggage"
+  # "xray" (this module's own default - left explicit here for visibility
+  # alongside the endpoint override above) so the ALB's X-Amzn-Trace-Id
+  # header gets continued as the root trace context and OTel's IDs stay
+  # X-Ray-compatible - unrelated to the exporter destination above, which
+  # still goes to Tempo/Alloy, not X-Ray itself. Nothing else in this stack
+  # depends on W3C tracecontext propagation, so there's no downside here.
+  otel_propagators = "xray"
 }
 forms_product_page_settings = {
   cpu          = 256
@@ -124,10 +129,12 @@ forms_runner_settings = {
   # Tempo POC (infra/modules/tempo) - sends forms-runner's traces there
   # instead of the ADOT sidecar/X-Ray, dev only. Routed via alloy, which
   # drops SolidQueue polling noise for the queue worker below and passes
-  # forms-runner's own web traces straight through. Revert both to their
-  # defaults ("http://localhost:4318" / "xray") to go back to X-Ray.
+  # forms-runner's own web traces straight through. Revert to the default
+  # ("http://localhost:4318") to go back to X-Ray.
   otel_exporter_otlp_endpoint = "http://alloy-otlp.internal.dev.forms.service.gov.uk"
-  otel_propagators            = "tracecontext,baggage"
+  # See forms_admin_settings above - "xray" is this module's own default,
+  # kept explicit here for visibility.
+  otel_propagators = "xray"
   # Tempo POC only. Traces appear under service name "forms-runner-queue-worker", separate from forms-runner's web traces.
   enable_opentelemetry_for_queue_worker                           = true
   allow_human_readonly_roles_to_assume_submissions_to_s3_role     = true
