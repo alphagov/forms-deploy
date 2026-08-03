@@ -66,168 +66,70 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
 
 ## Architecture notes
 
-- Tempo + Grafana run as two containers in a single ECS task (`ecs.tf`),
-  sharing the task's network namespace - Grafana reaches Tempo over
-  `localhost:3200`. Mimir runs as its own ECS service (`mimir.tf`), reached
-  by both over the internal ALB at `http://mimir.internal.<root_domain>`
-  rather than `localhost`.
-- Trace storage is S3 (`s3.tf`, via the `secure-bucket` module), so traces
-  survive task restarts, unlike the upstream docker-compose example's local
-  disk. The Tempo task role has the minimal IAM permissions Tempo's docs
-  recommend; no static credentials are used - Tempo picks up the task role
-  via the default AWS SDK credential chain.
-- Service-graph/span-metrics are derived by Tempo's `metrics_generator` and
-  written to Mimir (`docker/tempo/tempo.yaml.tmpl`), which Grafana's Tempo
-  datasource links to via `serviceMap.datasourceUid`
-  (`docker/grafana/datasources.yaml`). Mimir stores its blocks in S3 (`s3.tf`,
-  same `secure-bucket`/IAM-role-auth pattern as Tempo's own trace bucket) -
-  **but Mimir's write path is `Distributor → Ingester (in-memory + local
-WAL) → S3 (periodic block flush)`, not a direct stream to S3.** The
-  ingester cuts a new TSDB block every 2 hours (`tsdb.block-ranges-period`'s
-  default) and only ships a block to S3 once that window closes - so at any
-  moment, up to ~2h of the most recent data lives only in the active
-  in-memory+local-WAL block (on the container's own ephemeral disk - there's
-  deliberately no persistent volume here) and would be lost in a restart.
-  Everything from earlier windows is already durably in S3 - a real
-  improvement over the plain-Prometheus setup this replaced, which lost
-  everything on every restart.
-- Mimir is deployed with no rolling overlap
-  (`deployment_maximum_percent = 100`, `deployment_minimum_healthy_percent =
-0`) and explicit `availability_zone_rebalancing = "DISABLED"` (`mimir.tf`).
-  Nothing is actually shared-mounted anymore (no EFS), so this is more
-  conservative than strictly necessary - kept simple for this first pass
-  rather than stacking a deployment-strategy change on top of the
-  storage-engine swap; a normal rolling deployment (this repo's usual
-  200/100 convention) is likely fine once this is proven stable.
-- Grafana's UI is exposed publicly via the existing CloudFront distribution
-  and public ALB (`alb.tf`), behind basic auth. OTLP trace ingestion
-  (`alloy-otlp.internal.<root_domain>`, `tempo-otlp.internal.<root_domain>`),
-  Mimir access (`mimir.internal.<root_domain>`), and Tempo's own server
-  port/self-metrics (`tempo-metrics.internal.<root_domain>`) are
-  internal-ALB-only, using OTLP/HTTP (port 4318)/plain HTTP (ports
-  9009/12345/3200) rather than gRPC so all of them can use the existing
-  plain-HTTP internal listener, the same as every other internal
-  app-to-app route in this repo - a gRPC target group would need the
-  internal HTTPS listener plus SNI certificate coverage, which isn't worth
-  it here.
-- Alloy (`alloy.tf`, `docker/alloy/`) sits in front of Tempo as the OTLP
-  entry point for all three apps (forms-admin, forms-runner, and its queue
-  worker - see `infra/deployments/forms/tfvars/dev.tfvars`), rather than
-  them sending to Tempo directly. It does two things: drops
-  forms-runner-queue-worker's internal SolidQueue dispatch/polling spans
-  before they reach Tempo at all (`docker/alloy/config.alloy`'s
-  `otelcol.processor.filter` - the same noise this module's dashboards
-  otherwise have to filter out at query time), and scrapes its own metrics
-  plus Mimir's and Tempo's (all reachable over their existing internal ALB
-  endpoints - `tempo-metrics.internal.<root_domain>` was added specifically
-  for this, since Tempo's server port wasn't otherwise exposed via any
-  stable hostname) into Mimir, giving the tracing pipeline itself some
-  observability where previously there was none. Its own config needs no
-  gomplate/templating (unlike Tempo's and Mimir's images) - Alloy's config
-  language has native environment-variable support (`sys.env(...)`).
-  Beyla (eBPF zero-code instrumentation, considered for the still-uninstrumented
-  forms-product-page) isn't used anywhere in this stack - AWS Fargate doesn't
-  support eBPF at all, so it isn't an option regardless of how it's
-  configured. Replacing the ADOT sidecar with Alloy as a single unified
-  collector was also considered and left out of scope - that lives in the
-  shared `infra/modules/ecs-service` module used by every app, a much bigger
-  blast radius than anything else in this module, and it isn't broken today
-  (traces already bypass it via direct OTLP, only the CloudWatch metrics path
-  still uses it).
-- Alloy also runs a `tail_sampling` processor (keep every error, keep every
-  slow trace against the same 1000ms threshold as the
-  `admin`/`runner_http_latency_1000ms` SLOs, ratio-sample everything else)
-  rather than relying purely on the SDK's head-based sampler
-  (`opentelemetry_head_sampler_ratio` in the app tfvars). This means the
-  head sampler needs to stay near 1.0 wherever tail sampling is in front of
-  it - sampling before Alloy sees the trace defeats the point, since Alloy
-  can only judge a trace it actually received in full. The policy itself
-  isn't baked into the image: `docker/alloy/config.alloy`'s `import.http`
-  block polls an S3 object (`alloy-remote-config.tf`'s
-  `aws_s3_object.tail_sampling_config`, tracked source of truth in
-  `alloy-remote-config/tail-sampling.alloy`) every 30s and hot-reloads on
-  change, so tuning the sampling ratio/latency threshold is a case of
-  editing that file and running `terraform apply` (etag-triggered re-upload
-  - shows up in `plan` like any other change) rather than rebuilding the
-    alloy image and redeploying the ECS service.
-    `remotecfg` was considered and ruled out for this - it needs a server
-    implementing the separate "alloy-remote-config" Fleet Management API, not
-    a static file, which is overkill for a POC. The S3 object is fetched over
-    a plain, unauthenticated HTTPS GET rather than the signed S3 API -
-    `import.http` has no SigV4 support - so access is scoped instead by a
-    bucket policy condition on `aws:SourceVpc` (allows anonymous `GetObject`,
-    but only from requests originating inside this VPC). `alloy validate` runs
-    in pre-commit and CI (`alloy-ci.yml`, mise-pinned in `.mise.toml`) against
-    every `.alloy` file, including the one pushed to S3, as the main guard
-    against a bad push breaking the pipeline - what actually happens on a
-    malformed-but-successfully-fetched config hasn't been tested yet.
-- Neither the tempo/grafana task, the mimir task, nor the alloy task has
-  internet egress (see `security-groups.tf`), so all four images are pulled
-  from our own ECR rather than Docker Hub directly - see the one-time setup
-  above. This is also why several Grafana update-check / telemetry
-  background jobs are explicitly disabled in `ecs.tf` (they'd otherwise just
-  time out repeatedly against grafana.com), and why Mimir's
-  `usage_stats.enabled` is set to `false`
+- Tempo + Grafana: one ECS task (`ecs.tf`), Grafana → Tempo over
+  `localhost:3200`. Mimir: separate service (`mimir.tf`), reached over the
+  internal ALB (`mimir.internal.<root_domain>`).
+- Trace storage: S3 via `secure-bucket` (`s3.tf`), task-role IAM, no static
+  credentials.
+- Service-graph/span-metrics: Tempo's `metrics_generator` writes to Mimir
+  (`docker/tempo/tempo.yaml.tmpl`), linked via `serviceMap.datasourceUid`
+  (`datasources.yaml`). Mimir's write path is Distributor → Ingester
+  (in-memory + local WAL) → S3, flushed every 2h
+  (`tsdb.block-ranges-period`). Up to ~2h of recent data lives only on the
+  container's ephemeral disk and is lost on restart; everything older is
+  durable in S3.
+- Mimir deploy: no rolling overlap (`deployment_maximum_percent = 100`,
+  `deployment_minimum_healthy_percent = 0`),
+  `availability_zone_rebalancing = "DISABLED"` (`mimir.tf`). No EFS/shared
+  mount, so a normal 200/100 rolling deploy would likely also work.
+- Grafana UI: public, via CloudFront + ALB (`alb.tf`), basic auth. OTLP
+  ingestion (`alloy-otlp`/`tempo-otlp.internal.<root_domain>`), Mimir
+  (`mimir.internal.<root_domain>`), Tempo self-metrics
+  (`tempo-metrics.internal.<root_domain>`): internal-ALB-only, plain HTTP
+  (ports 4318/9009/12345/3200), not gRPC.
+- Alloy (`alloy.tf`, `docker/alloy/`): OTLP entry point for forms-admin,
+  forms-runner, and its queue worker (`dev.tfvars`). Drops
+  forms-runner-queue-worker's SolidQueue polling spans before Tempo
+  (`config.alloy`'s `otelcol.processor.filter`). Scrapes its own/Mimir's/
+  Tempo's metrics into Mimir. Config uses `sys.env(...)`, no
+  templating step. Beyla not used - Fargate has no eBPF support.
+  ADOT-replacement considered, out of scope - lives in the shared
+  `infra/modules/ecs-service` module, bigger blast radius.
+- Alloy's `tail_sampling`: keep errors, keep traces over 1000ms (matches
+  the `admin`/`runner_http_latency_1000ms` SLOs), ratio-sample the rest.
+  Requires the SDK head sampler (`opentelemetry_head_sampler_ratio`) near
+  1.0 - sampling before Alloy sees the trace defeats the point. Policy is
+  not baked into the image: `config.alloy`'s `import.http` polls an S3
+  object (`alloy-remote-config.tf`, source in
+  `alloy-remote-config/tail-sampling.alloy`) every 30s and hot-reloads -
+  edit + `terraform apply`, no image rebuild/redeploy. `remotecfg` not
+  used (needs a Fleet Management API server, not a static file). S3
+  access: anonymous `GetObject` scoped to `aws:SourceVpc` (`import.http`
+  has no SigV4 support). `alloy validate` runs in pre-commit/CI
+  (`alloy-ci.yml`, mise-pinned) - behaviour on a malformed-but-fetched
+  config is untested.
+- No task here has internet egress (`security-groups.tf`) - all images
+  pulled from ECR. Grafana's update-check/telemetry jobs disabled in
+  `ecs.tf`; Mimir's `usage_stats.enabled = false`
   (`docker/mimir/mimir.yaml.tmpl`).
-- `docker/grafana/datasources.yaml` pins the Tempo datasource to `uid: tempo`
-  and the metrics datasource to `uid: prometheus` rather than letting
-  Grafana auto-generate one, so dashboard JSON can reference a stable
-  datasource uid instead of an opaque generated string. The metrics
-  datasource is named "Mimir" (it's actually Mimir now, not Prometheus) but
-  deliberately keeps `uid: prometheus` - all five dashboard JSON files
-  reference that uid in every panel, and renaming it would mean touching
-  every one of them for a purely cosmetic reason. This is baked in at image
-  build time, so it takes effect on the next deploy like everything else
-  here (see one-time setup above).
-- `docker/grafana/datasources.yaml` also provisions a CloudWatch datasource
-  (`cloudwatch-datasource.tf` grants `aws_iam_role.tempo_task` read-only
-  CloudWatch/Logs Insights/Application Signals/cross-account-observability
-  access, `authType: default` so it just uses that role - no keys).
-  Query-only, no new ingestion cost. **There's no automatic trace-to-logs
-  link** - Grafana's `tracesToLogsV2` feature only supports
+- `datasources.yaml` pins `uid: tempo`/`uid: prometheus` for stable
+  dashboard references. Metrics datasource is named "Mimir" but keeps
+  `uid: prometheus` (renaming would touch every dashboard panel). Baked in
+  at image build time.
+- CloudWatch datasource (`cloudwatch-datasource.tf`): read-only IAM on
+  `aws_iam_role.tempo_task`, `authType: default`, no keys. No
+  trace-to-logs link - `tracesToLogsV2` only supports
   Loki/Elasticsearch/Splunk/OpenSearch/Falcon LogScale/Google Cloud
-  Logging/VictoriaMetrics Logs as a target; CloudWatch isn't an eligible
-  datasource type for it at all (not a config detail, a hard capability
-  gap - confirmed against Grafana's own docs). Jumping from a trace to its
-  logs today means manually switching to the CloudWatch datasource in
-  Explore and searching by `otel_trace_id` (the real OTel trace ID
-  forms-runner/forms-admin now log via `OtelLoggingContext` - **not** the
-  older `trace_id` field, which is just the raw `X-Amzn-Trace-Id` ALB
-  header and doesn't match Tempo's actual trace ID, since the ALB never
-  sends a `Parent` segment for the xray propagator to extract). Real
-  automatic linking would need Loki (or one of the other supported
-  backends) instead of CloudWatch - a bigger, not-yet-decided piece of
-  work, not something this module does.
-  Two VPC Interface endpoints in `infra/modules/environment/endpoints.tf`
-  are load-bearing for this, since the tempo/grafana task has no internet
-  egress: `monitoring` (`GetMetricData`/`ListMetrics` - metrics queries
-  just hang without it) and `oam` (Grafana resolves account context via
-  `oam:ListSinks` while *building* a Logs Insights query -
-  `GET .../resources/accounts` - not just a background probe; without it,
-  log queries in Explore come back as "no data" rather than a distinct
-  error). Deliberately not adding an endpoint for `ec2` (region discovery)
-  - genuinely optional (only needed for dynamic region discovery, and
-  `defaultRegion` is already fixed), errors harmlessly in the background
-  without it.
-- `docker/grafana/dashboards/*.json` are provisioned from file (like
-  `datasources.yaml`), via `docker/grafana/dashboards-provisioning.yaml`
-  (`COPY`'d to `/etc/grafana/provisioning/dashboards/forms-tracing-poc.yaml`)
-  pointing at `/etc/grafana/dashboards`, which the whole `dashboards/`
-  directory is `COPY`'d into. This is why the dashboards needed baking into
-  the image at all: Grafana's own state (`grafana.db`) is on the same
-  ephemeral container filesystem as everything else here and does **not**
-  survive a task restart, so dashboards created only through the API/UI
-  would otherwise be lost entirely. The provider
-  targets the existing `forms-tracing-poc` folder by uid, and each JSON's own
-  `uid` matches what's already live, so redeploying updates these dashboards
-  in place rather than duplicating them.
-  - `allowUiUpdates: true`, though it doesn't do what its name suggests:
-    Grafana's periodic reconcile reverts any UI/API edit back to the
-    committed JSON on its next tick regardless of this setting.
-    `updateIntervalSeconds` is set to `43200` (12h), so a live edit has a
-    real window to test in before it reverts - not a permanent fix, just
-    long enough to iterate in a session. Re-export (`get_dashboard_by_uid`)
-    and commit anything worth keeping before the next reconcile or redeploy.
-    New dashboards not yet present in this directory aren't affected at all
-    (nothing to revert to), so those can be iterated on live indefinitely
-    before being exported here for the first time.
+  Logging/VictoriaMetrics Logs as a target, not CloudWatch. Jump manually:
+  search the CloudWatch datasource by `otel_trace_id` (not `trace_id`,
+  which is the ALB's `X-Amzn-Trace-Id` header and doesn't match Tempo's
+  trace ID). Needs the `monitoring` and `oam` VPC endpoints
+  (`environment/endpoints.tf`) - no internet egress, so those calls hang
+  without them. `ec2` endpoint skipped (region discovery only, optional -
+  `defaultRegion` is fixed).
+- Dashboards (`docker/grafana/dashboards/*.json`): provisioned from file
+  (`dashboards-provisioning.yaml`), baked into the image - Grafana's own
+  DB doesn't survive a task restart. `allowUiUpdates: true` doesn't
+  persist edits: reconcile reverts to the committed JSON every
+  `updateIntervalSeconds` (12h). Export (`get_dashboard_by_uid`) and
+  commit before that, or before a redeploy.
