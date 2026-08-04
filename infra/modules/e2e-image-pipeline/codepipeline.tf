@@ -135,6 +135,11 @@ module "docker_build" {
       type  = "PARAMETER_STORE"
     },
     {
+      name  = "SETTINGS__CONFIRMATION_EMAIL"
+      value = "/staging/automated-tests/e2e/confirmation-email"
+      type  = "PARAMETER_STORE"
+    },
+    {
       name  = "SETTINGS__GOVUK_ONE_LOGIN__USER_EMAIL"
       value = "/staging/automated-tests/e2e/one-login/user-email"
       type  = "PARAMETER_STORE"
