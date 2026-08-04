@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "github_actions" {
     sid     = "WaitForECSStability"
     actions = ["ecs:DescribeServices"]
     resources = [
-      "arn:aws:ecs:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.review.name}/${each.key}-pr-*"
+      "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.review.name}/${each.key}-pr-*"
     ]
   }
 

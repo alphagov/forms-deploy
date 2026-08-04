@@ -41,14 +41,14 @@ data "aws_iam_policy_document" "codebuild" {
     actions = ["ecs:*Service", "ecs:*Services", "ecs:TagResource"]
     resources = [
       var.ecs_cluster_arn,
-      "arn:aws:ecs:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:service/${var.ecs_cluster_name}/${var.application_name}-pr-*"
+      "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:service/${var.ecs_cluster_name}/${var.application_name}-pr-*"
     ]
   }
 
   # ECS Task Definitions
   statement {
     actions   = ["ecs:*TaskDefinition", "ecs:*TaskDefinitions", "ecs:TagResource"]
-    resources = ["arn:aws:ecs:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:task-definition/${var.application_name}-pr-*"]
+    resources = ["arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:task-definition/${var.application_name}-pr-*"]
   }
 
   statement {
@@ -92,7 +92,7 @@ data "aws_iam_policy_document" "codebuild" {
   # ECR - Deploy account (for base images)
   statement {
     actions   = ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"]
-    resources = ["arn:aws:ecr:${data.aws_region.current.id}:${var.deploy_account_id}:repository/*"]
+    resources = ["arn:aws:ecr:${data.aws_region.current.region}:${var.deploy_account_id}:repository/*"]
   }
 
   # IAM PassRole
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "codebuild" {
       "application-autoscaling:TagResource",
       "application-autoscaling:UntagResource"
     ]
-    resources = ["arn:aws:application-autoscaling:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:scalable-target/*"]
+    resources = ["arn:aws:application-autoscaling:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:scalable-target/*"]
   }
 
   statement {
