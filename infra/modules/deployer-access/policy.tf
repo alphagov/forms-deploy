@@ -190,13 +190,29 @@ data "aws_iam_policy_document" "cloudfront" {
 
   statement {
     actions = [
-      "cloudfront:*OriginAccessControl*"
+      "cloudfront:DeleteOriginAccessControl",
+      "cloudfront:GetOriginAccessControl",
+      "cloudfront:GetOriginAccessControlConfig",
+      "cloudfront:UpdateOriginAccessControl"
     ]
     effect = "Allow"
     resources = [
       "arn:aws:cloudfront::${var.account_id}:origin-access-control/*"
     ]
     sid = "ManageCloudfrontOriginAccessControl"
+  }
+
+  # These actions do not support resource-level permissions
+  statement {
+    actions = [
+      "cloudfront:CreateOriginAccessControl",
+      "cloudfront:ListOriginAccessControls"
+    ]
+    effect = "Allow"
+    resources = [
+      "*"
+    ]
+    sid = "CreateCloudfrontOriginAccessControl"
   }
 }
 
