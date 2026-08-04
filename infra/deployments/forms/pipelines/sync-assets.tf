@@ -12,7 +12,9 @@ module "sync_assets" {
   codebuild_service_role_arn = data.aws_iam_role.deployer_role.arn
 
   environment_variables = {
-    ASSETS_BUCKET      = data.terraform_remote_state.forms_environment.outputs.assets_bucket_name
+    # try() so that the first apply succeeds before the environment state
+    # has published the assets_bucket_name output
+    ASSETS_BUCKET      = try(data.terraform_remote_state.forms_environment.outputs.assets_bucket_name, "govuk-forms-${var.environment_name}-assets")
     CONTAINER_REGISTRY = var.container_registry
   }
 }
