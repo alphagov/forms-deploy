@@ -15,26 +15,16 @@ environmental_settings = {
   database_backup_retention_period_days    = 30
   allow_authentication_from_email_domains = [
     ".gov.uk",
-    "@accenture.com",
   ]
-  enable_alert_actions               = true
-  enable_slo_burn_rate_alert_actions = false
-  forms_product_page_support_url     = "https://www.staging.forms.service.gov.uk/support"
-  rds_maintenance_window             = "wed:04:00-wed:04:30"
-  rds_minimum_capacity_acus          = 1
-  rds_maxium_capacity_acus           = 2
-  rds_force_ssl_connections          = true
-  ips_to_block                       = []
-  rate_limit_bypass_cidrs = [
-    "172.167.139.53/32",
-    "172.166.224.184/32",
-    "172.167.51.76/32",
-    "4.234.97.14/32",
-    "20.0.43.178/32",
-    "4.234.140.58/32",
-    "51.142.199.225/32",
-    "20.162.198.121/32"
-  ]
+  enable_alert_actions                     = true
+  enable_slo_burn_rate_alert_actions       = false
+  forms_product_page_support_url           = "https://www.staging.forms.service.gov.uk/support"
+  rds_maintenance_window                   = "wed:04:00-wed:04:30"
+  rds_minimum_capacity_acus                = 1
+  rds_maxium_capacity_acus                 = 2
+  rds_force_ssl_connections                = true
+  ips_to_block                             = []
+  rate_limit_bypass_cidrs                  = []
   enable_shield_advanced_healthchecks      = false
   allow_pagerduty_alerts                   = false
   redis_multi_az_enabled                   = false
