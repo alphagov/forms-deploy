@@ -74,6 +74,18 @@ resource "aws_security_group_rule" "egress_to_mimir_alb" {
   security_group_id = aws_security_group.tempo.id
 }
 
+data "github_ip_ranges" "current" {}
+
+resource "aws_security_group_rule" "egress_to_github_api" {
+  description       = "permit outbound to GitHub published API IP ranges (grafana-github-datasource)"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = data.github_ip_ranges.current.api_ipv4
+  security_group_id = aws_security_group.tempo.id
+}
+
 resource "aws_security_group" "mimir" {
   #checkov:skip=CKV2_AWS_5:The security group is attached in mimir.tf
   name        = "tempo-${var.env_name}-mimir"

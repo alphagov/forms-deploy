@@ -19,3 +19,8 @@ provider "aws" {
     )
   }
 }
+
+# Unauthenticated - only used for the github_ip_ranges data source (see
+# infra/modules/tempo/security-groups.tf), which reads GitHub's public
+# meta API and needs no token.
+provider "github" {}

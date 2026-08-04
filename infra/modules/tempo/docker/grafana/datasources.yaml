@@ -36,3 +36,16 @@ datasources:
     jsonData:
       authType: default
       defaultRegion: eu-west-2
+
+  - name: GitHub
+    type: grafana-github-datasource
+    access: proxy
+    orgId: 1
+    uid: github
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      selectedAuthType: personal-access-token
+    secureJsonData:
+      accessToken: ${GITHUB_DATASOURCE_PAT}

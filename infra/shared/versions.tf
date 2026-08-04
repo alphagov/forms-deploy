@@ -17,6 +17,10 @@ terraform {
       source  = "auth0/auth0"
       version = "1.52.0"
     }
+    github = {
+      source  = "integrations/github"
+      version = "6.13.0"
+    }
     random = {
       source  = "hashicorp/random"
       version = "3.9.0"

@@ -111,6 +111,10 @@ locals {
           name      = "GF_SECURITY_ADMIN_PASSWORD"
           valueFrom = local.basic_auth_password_parameter_arn
         },
+        {
+          name      = "GITHUB_DATASOURCE_PAT"
+          valueFrom = local.github_datasource_pat_parameter_arn
+        },
       ],
       portMappings = [
         {

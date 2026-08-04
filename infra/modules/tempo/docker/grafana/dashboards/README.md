@@ -48,6 +48,17 @@ through to Tempo (showing the SolidQueue noise-filter's effect), and Mimir's
 own ingestion rate, query rate, query latency, and S3 block-shipper
 success/failure.
 
+## GitHub Actions - Workflow health (`gh-actions-health.json`)
+
+CI/deploy workflow failures across forms-runner, forms-admin,
+forms-product-page, forms-deploy, and forms-e2e-tests (`github` datasource,
+`cloudwatch-datasource.tf`'s GitHub counterpart in
+`docker/grafana/datasources.yaml`). One row per repo: a failed-run count
+(7d) per curated workflow (Tests/Terraform/Build image, or the repo's
+equivalent CI workflows), plus a table of recent runs. Curated rather than
+exhaustive - each repo has other workflows (Dependabot, Trello Poster,
+Copilot) not worth tracking here.
+
 ## Forms - Submission Delivery & Notifications (`forms-delivery-notifications.json`)
 
 Confirmation emails, submission delivery (email/S3/batch), and the

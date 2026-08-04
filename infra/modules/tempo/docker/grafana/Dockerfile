@@ -19,6 +19,8 @@ ARG GRAFANA_IMAGE_TAG=13.1.1
 # health check (see alb.tf) is what actually governs routing here.
 FROM grafana/grafana:${GRAFANA_IMAGE_TAG}
 
+RUN grafana cli plugins install grafana-github-datasource
+
 # grafana/grafana already runs as uid 472 ("grafana"); kept explicit (and
 # chowning our added files to it, matching the upstream image's own
 # provisioning directory ownership) so it doesn't depend on the builder

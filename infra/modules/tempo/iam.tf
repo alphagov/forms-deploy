@@ -1,8 +1,9 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  basic_auth_username_parameter_arn = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/tempo-${var.env_name}/basic-auth/username"
-  basic_auth_password_parameter_arn = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/tempo-${var.env_name}/basic-auth/password"
+  basic_auth_username_parameter_arn   = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/tempo-${var.env_name}/basic-auth/username"
+  basic_auth_password_parameter_arn   = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/tempo-${var.env_name}/basic-auth/password"
+  github_datasource_pat_parameter_arn = "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/tempo-${var.env_name}/github-datasource/pat"
 }
 
 resource "aws_iam_role" "tempo_task" {
@@ -46,6 +47,7 @@ data "aws_iam_policy_document" "tempo_task_exec_additional" {
     resources = [
       local.basic_auth_username_parameter_arn,
       local.basic_auth_password_parameter_arn,
+      local.github_datasource_pat_parameter_arn,
     ]
     effect = "Allow"
   }

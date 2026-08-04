@@ -109,9 +109,10 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   (`alloy-ci.yml`, mise-pinned) - behaviour on a malformed-but-fetched
   config is untested.
 - No task here has internet egress (`security-groups.tf`) - all images
-  pulled from ECR. Grafana's update-check/telemetry jobs disabled in
-  `ecs.tf`; Mimir's `usage_stats.enabled = false`
-  (`docker/mimir/mimir.yaml.tmpl`).
+  pulled from ECR - except a 443 rule scoped to GitHub's published API IP
+  ranges (`github_ip_ranges` data source), for the GitHub datasource below.
+  Grafana's update-check/telemetry jobs disabled in `ecs.tf`; Mimir's
+  `usage_stats.enabled = false` (`docker/mimir/mimir.yaml.tmpl`).
 - `datasources.yaml` pins `uid: tempo`/`uid: prometheus` for stable
   dashboard references. Metrics datasource is named "Mimir" but keeps
   `uid: prometheus` (renaming would touch every dashboard panel). Baked in
@@ -127,6 +128,10 @@ aws ssm put-parameter --name /tempo-dev/basic-auth/password --type SecureString 
   (`environment/endpoints.tf`) - no internet egress, so those calls hang
   without them. `ec2` endpoint skipped (region discovery only, optional -
   `defaultRegion` is fixed).
+- GitHub datasource (`docker/grafana/datasources.yaml`, `uid: github`): PAT
+  read from SSM (`tempo-${env}/github-datasource/pat`, populated manually,
+  not Terraform-managed) into `GITHUB_DATASOURCE_PAT` (`ecs.tf`), same
+  secrets-injection pattern as the Grafana admin basic-auth credentials.
 - Dashboards (`docker/grafana/dashboards/*.json`): provisioned from file
   (`dashboards-provisioning.yaml`), baked into the image - Grafana's own
   DB doesn't survive a task restart. `allowUiUpdates: true` doesn't
