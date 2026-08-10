@@ -32,21 +32,6 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
   }
 
   statement {
-    sid = "FileUploadKMS"
-
-    effect = "Allow"
-    actions = [
-      "kms:DescribeKey",
-      "kms:Decrypt",
-      "kms:Encrypt",
-      "kms:GenerateDataKey"
-    ]
-    resources = [
-      "arn:aws:kms:eu-west-2:${data.aws_caller_identity.current.account_id}:alias/file-upload-${var.env_name}",
-    ]
-  }
-
-  statement {
     sid = "SESPermissions"
 
     effect  = "Allow"
