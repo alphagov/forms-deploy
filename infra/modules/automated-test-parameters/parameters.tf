@@ -34,6 +34,18 @@ resource "aws_ssm_parameter" "notify_api_key" {
   }
 }
 
+resource "aws_ssm_parameter" "confirmation_email" {
+  #checkov:skip=CKV_AWS_337:The parameter is already using the default key
+
+  name  = "/${var.environment_name}/automated-tests/e2e/confirmation-email"
+  type  = "SecureString"
+  value = "dummy-value"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
 resource "aws_ssm_parameter" "one_login_user_email" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
