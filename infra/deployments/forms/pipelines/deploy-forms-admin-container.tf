@@ -217,6 +217,7 @@ resource "aws_codepipeline" "deploy_admin_container" {
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
+      run_order        = 1
       input_artifacts  = ["buildspec_source"]
       output_artifacts = ["image-defs-json"]
       configuration = {
