@@ -77,6 +77,11 @@ resource "aws_codebuild_project" "e2e" {
     }
 
     environment_variable {
+      name  = "SETTINGS__CONFIRMATION_EMAIL"
+      value = var.confirmation_email
+    }
+
+    environment_variable {
       name  = "SETTINGS__GOVUK_NOTIFY__API_KEY"
       value = var.notify_api_key_parameter_name
       type  = "PARAMETER_STORE"
