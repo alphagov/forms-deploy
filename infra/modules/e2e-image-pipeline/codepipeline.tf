@@ -136,8 +136,8 @@ module "docker_build" {
     },
     {
       name  = "SETTINGS__CONFIRMATION_EMAIL"
-      value = "/staging/automated-tests/e2e/confirmation-email"
-      type  = "PARAMETER_STORE"
+      value = "confirmation-email-tests@staging.forms.service.gov.uk"
+      type  = "PLAINTEXT"
     },
     {
       name  = "SETTINGS__GOVUK_ONE_LOGIN__USER_EMAIL"

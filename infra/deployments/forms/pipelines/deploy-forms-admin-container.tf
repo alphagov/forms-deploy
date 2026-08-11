@@ -367,6 +367,7 @@ module "deploy_admin_end_to_end_tests" {
   aws_s3_bucket                 = var.end_to_end_test_settings.aws_s3_bucket
   s3_form_id                    = var.end_to_end_test_settings.s3_form_id
   email_receiver_s3_bucket_name = var.end_to_end_test_settings.email_receiver_s3_bucket_name
+  confirmation_email            = "confirmation-email-tests@${var.root_domain}"
 
   auth0_user_name_parameter_name               = module.automated_test_parameters[0].auth0_user_name_parameter_name
   auth0_user_password_parameter_name           = module.automated_test_parameters[0].auth0_user_password_parameter_name

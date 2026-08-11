@@ -103,3 +103,8 @@ variable "email_receiver_s3_bucket_name" {
   type        = string
   description = "The name of the S3 bucket that SES will deliver test submission and confirmation emails to"
 }
+
+variable "confirmation_email" {
+  type        = string
+  description = "The email address used to deliver confirmation emails to"
+}
