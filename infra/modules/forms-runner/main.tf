@@ -139,6 +139,10 @@ module "ecs_service" {
       value = var.product_page_base_url
     },
     {
+      name  = "SETTINGS__FORMS_RUNNER__BASE_URL",
+      value = var.runner_base_url
+    },
+    {
       name  = "RACK_ENV",
       value = "production"
     },
