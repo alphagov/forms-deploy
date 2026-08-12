@@ -41,6 +41,11 @@ variable "api_base_url" {
   description = "The url for connecting to forms-admin"
 }
 
+variable "runner_base_url" {
+  type        = string
+  description = "The public base url of forms-runner"
+}
+
 variable "enable_maintenance_mode" {
   type        = bool
   description = "Controls whether the maintenance page is shown"
