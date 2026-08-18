@@ -42,4 +42,7 @@ module "forms_admin" {
   internal_alb_listener_arn         = data.terraform_remote_state.forms_environment.outputs.internal_alb_listener_arn
   cloudfront_secret                 = data.terraform_remote_state.forms_environment.outputs.cloudfront_secret
   kinesis_subscription_role_arn     = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+  # try() so that the first apply succeeds before the environment state
+  # has published the assets_bucket_name output
+  assets_bucket_name = try(data.terraform_remote_state.forms_environment.outputs.assets_bucket_name, "govuk-forms-${var.environment_name}-assets")
 }
