@@ -51,8 +51,8 @@ variable "kinesis_subscription_role_arn" {
   type        = string
 }
 
-variable "serve_assets_from_s3" {
-  description = "Whether to serve requests for /assets/* from the assets bucket rather than the applications. The deploy pipelines must have synced assets to the bucket before this is enabled."
-  type        = bool
-  default     = false
+variable "serve_assets_from_s3_for_apps" {
+  description = "The apps whose requests for /assets/<app name>/* should be served from the assets bucket rather than the application. An app's deploy pipeline must have synced assets to the bucket before it is added."
+  type        = list(string)
+  default     = []
 }

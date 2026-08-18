@@ -153,19 +153,37 @@ resource "aws_cloudfront_distribution" "main" {
   # errors during deployments: old tasks cannot serve assets for a new
   # release. The assets bucket holds the assets for every release, so
   # prefer it once the deploy pipelines have started populating it.
+  # Each app keeps its assets under its own /assets/<app name>/ prefix,
+  # so apps can be switched over one at a time.
   #
   # The all_viewer origin request policy must not be used with an S3
   # origin because forwarding the viewer Host header breaks the origin
   # access control request signing.
+  dynamic "ordered_cache_behavior" {
+    for_each = var.serve_assets_from_s3_for_apps
+
+    content {
+      path_pattern           = "/assets/${ordered_cache_behavior.value}/*"
+      allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+      cached_methods         = ["GET", "HEAD"]
+      target_origin_id       = "assets_s3"
+      viewer_protocol_policy = "redirect-to-https"
+      compress               = true
+
+      cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
+      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
+    }
+  }
+
   ordered_cache_behavior {
     path_pattern           = "/assets/*"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = var.serve_assets_from_s3 ? "assets_s3" : "application_load_balancer"
+    target_origin_id       = "application_load_balancer"
     viewer_protocol_policy = "redirect-to-https"
     compress               = true
 
     cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
-    origin_request_policy_id = var.serve_assets_from_s3 ? data.aws_cloudfront_origin_request_policy.cors_s3_origin.id : data.aws_cloudfront_origin_request_policy.all_viewer.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer.id
   }
 }

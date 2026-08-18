@@ -206,11 +206,15 @@ variable "environmental_settings" {
     redis_multi_az_enabled                   = bool
     enable_advanced_database_insights        = bool
     rds_enhanced_monitoring_interval_seconds = number # Enables RDS enhanced monitoring if value is 1, 5, 10, 15, 30 or 60. Disabled if 0
-    serve_assets_from_s3                     = optional(bool, false)
+    serve_assets_from_s3_for_apps            = optional(list(string), [])
   })
   validation {
     condition     = contains([0, 1, 5, 10, 15, 30, 60], var.environmental_settings.rds_enhanced_monitoring_interval_seconds)
     error_message = "Valid values for the monitoring interval in RDS Enhanced Monitoring are 0, 1, 5, 10, 15, 30 and 60"
+  }
+  validation {
+    condition     = alltrue([for app in var.environmental_settings.serve_assets_from_s3_for_apps : contains(["forms-admin", "forms-product-page", "forms-runner"], app)])
+    error_message = "Valid values for serve_assets_from_s3_for_apps are forms-admin, forms-product-page and forms-runner"
   }
 }
 
