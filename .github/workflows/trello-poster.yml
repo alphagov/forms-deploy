@@ -12,7 +12,7 @@ jobs:
   trello-poster:
     runs-on: ubuntu-slim
     steps:
-      - uses: lfdebrux/trello-poster-action@8667c700f73347f39c781ebdde8237be67cfdab8 # v1.3.0
+      - uses: lfdebrux/trello-poster-action@b37b5c112f8d22338922dd1e226709de7f9bd5af # v1.4.0
         with:
           comment-body: ${{ github.event.pull_request.body }}
           github-url: ${{ github.event.pull_request.html_url }}
