@@ -51,6 +51,7 @@ environmental_settings = {
   redis_multi_az_enabled                   = true
   enable_advanced_database_insights        = true
   rds_enhanced_monitoring_interval_seconds = 15
+  serve_assets_from_s3_for_apps            = ["forms-product-page"]
 
 }
 root_domain = "forms.service.gov.uk"
