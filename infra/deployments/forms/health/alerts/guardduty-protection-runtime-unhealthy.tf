@@ -32,9 +32,9 @@ resource "aws_cloudwatch_event_target" "guardduty_runtime_protection_to_sns" {
     "Cluster": <cluster_name>},
   "Issues":  <issues>,
   "Next steps": {
-    "1": "Go to the GuardDuty console in AWS --> Runtime coverage --> ECS clusters runtime coverage: has the coverage status changed back to "Healthy"? If so, it is likely the GuardDuty agent was not available and then recovered automatically. You can dismiss this notification. If the status is Unhealthy, continue to the next step."
-    "2" : "Check this notification for the Issues."
-    "3": "Decide if the Issues listed are related to troubleshooting GuardDuty Runtime Coverage by comparing the Issues to the ones listed by AWS: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html . Follow the recommended troublesooting steps"
+    "1": "Go to the GuardDuty console in AWS --> Runtime coverage --> ECS clusters runtime coverage: has the coverage status changed back to Healthy? If so, it is likely the GuardDuty agent was not available and then recovered automatically. You can dismiss this notification. If the status is Unhealthy, continue to the next step.",
+    "2" : "Check this notification for the Issues.",
+    "3": "Decide if the Issues listed are related to troubleshooting GuardDuty Runtime Coverage by comparing the Issues to the ones listed by AWS: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html . Follow the recommended troublesooting steps",
     "4": "If not a troubleshooting issue, explore the GuardDuty Findings for Runtime Monitoring and follow the remediation recommendations: https://docs.aws.amazon.com/guardduty/latest/ug/findings-runtime-monitoring.html"}
 }
 EOF
