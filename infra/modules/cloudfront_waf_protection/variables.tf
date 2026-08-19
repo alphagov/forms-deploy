@@ -64,7 +64,7 @@ variable "admin_extended_post_body_max_size" {
 }
 
 variable "brand_asset_upload_max_size" {
-  description = "The maximum request body size allowed when uploading brand assets in the admin app."
+  description = "The maximum request body size in bytes allowed when uploading brand assets in the admin app."
   type        = number
   default     = 10 * 1024 * 1024 # 10 MB
 }
