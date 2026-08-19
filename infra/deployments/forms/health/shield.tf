@@ -1,11 +1,3 @@
-data "aws_lb" "alb" {
-  name = "forms-${var.environment_name}"
-}
-
-data "aws_s3_bucket" "logs_bucket" {
-  bucket = "govuk-forms-alb-logs-${var.environment_name}"
-}
-
 locals {
   cloudfront_arn = data.terraform_remote_state.forms_environment.outputs.cloudfront_arn
 }
@@ -87,7 +79,7 @@ resource "aws_shield_protection_group" "protected_resources" {
   pattern             = "ARBITRARY"
   members = [
     local.cloudfront_arn,
-    data.aws_lb.alb.arn
+    data.aws_lb.forms_lb.arn
   ]
 }
 
@@ -105,12 +97,6 @@ resource "aws_ssm_parameter" "pagerduty_email" {
   }
 }
 
-data "aws_ssm_parameter" "pagerduty_email" {
-  name = "/account/pagerduty-email"
-
-  depends_on = [aws_ssm_parameter.pagerduty_email]
-}
-
 resource "aws_ssm_parameter" "pagerduty_phone_number" {
   #checkov:skip=CKV_AWS_337:The parameter is already using the default key
 
@@ -125,11 +111,6 @@ resource "aws_ssm_parameter" "pagerduty_phone_number" {
   }
 }
 
-data "aws_ssm_parameter" "pagerduty_phone_number" {
-  name = "/account/pagerduty-phone-number"
-
-  depends_on = [aws_ssm_parameter.pagerduty_phone_number]
-}
 
 resource "aws_shield_proactive_engagement" "escalation_contacts" {
   enabled = true

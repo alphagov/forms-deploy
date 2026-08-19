@@ -34,6 +34,14 @@ locals {
       service           = "forms-runner"
       target_group_name = data.aws_lb_target_group.forms_runner_tg.arn_suffix
     }
+
+    product_page_http_availability = {
+      name              = "product-page-http-availability"
+      description       = "99% of requests as measured from the load balancer metrics are successful. Any HTTP status other than 500-599 is considered successful."
+      attainment_goal   = 99
+      service           = "forms-product-page"
+      target_group_name = data.aws_lb_target_group.forms_product_page_tg.arn_suffix
+    }
   }
 
   # Latency SLO definitions
@@ -68,6 +76,22 @@ locals {
       attainment_goal   = 99
       service           = "forms-runner"
       target_group_name = data.aws_lb_target_group.forms_runner_tg.arn_suffix
+      threshold         = "1"
+    }
+    product_page_http_latency_400ms = {
+      name              = "product-page-http-latency-400ms"
+      description       = "90% of requests as measured from the load balancer metrics are under 400ms."
+      attainment_goal   = 90
+      service           = "forms-product-page"
+      target_group_name = data.aws_lb_target_group.forms_product_page_tg.arn_suffix
+      threshold         = "0.4"
+    }
+    product_page_http_latency_1000ms = {
+      name              = "product-page-http-latency-1000ms"
+      description       = "99% of requests as measured from the load balancer metrics are under 1000ms."
+      attainment_goal   = 99
+      service           = "forms-product-page"
+      target_group_name = data.aws_lb_target_group.forms_product_page_tg.arn_suffix
       threshold         = "1"
     }
   }
