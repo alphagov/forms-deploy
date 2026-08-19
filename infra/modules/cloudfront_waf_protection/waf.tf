@@ -288,6 +288,84 @@ resource "aws_wafv2_rule_group" "public_form_body_size_limits" {
   }
 }
 
+resource "aws_wafv2_rule_group" "admin_file_upload_body_size_limits" {
+  provider = aws.us-east-1
+
+  name        = "${var.environment_name}-admin-file-upload-body-size-limits"
+  description = "Rule group for admin file upload request body size restrictions"
+  scope       = "CLOUDFRONT"
+  capacity    = 50
+
+  rule {
+    # Allow file uploads when uploading brand assets
+    name     = "allow_brand_asset_uploads"
+    priority = 1
+
+    action {
+      allow {}
+      # Stop processing
+    }
+
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            field_to_match {
+              single_header {
+                name = "content-type"
+              }
+            }
+            positional_constraint = "STARTS_WITH"
+            search_string         = "multipart/form-data"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          regex_match_statement {
+            field_to_match {
+              uri_path {}
+            }
+            # POST /brands creates a brand, POST /brands/:id updates one
+            regex_string = "^/brands(?:/\\d+)?$"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          size_constraint_statement {
+            field_to_match {
+              body {}
+            }
+            comparison_operator = "LE"
+            size                = var.brand_asset_upload_max_size
+            text_transformation {
+              priority = 1
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BrandAssetUploads"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "AdminFileUploadBodySizeLimitsRuleGroup"
+    sampled_requests_enabled   = false
+  }
+}
+
 resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -370,6 +448,27 @@ resource "aws_wafv2_web_acl" "this" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "PublicFormBodySizeLimitsRuleGroup"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "AdminFileUploadBodySizeLimitsRuleGroup"
+    priority = 1
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.admin_file_upload_body_size_limits.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AdminFileUploadBodySizeLimitsRuleGroup"
       sampled_requests_enabled   = false
     }
   }
