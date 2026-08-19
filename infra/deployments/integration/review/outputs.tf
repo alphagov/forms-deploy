@@ -49,6 +49,11 @@ output "traefik_basic_auth_credentials" {
   sensitive   = true
 }
 
+output "assets_bucket_name" {
+  description = "The name of the S3 bucket from which CloudFront serves review app assets"
+  value       = module.cloudfront.assets_bucket_name
+}
+
 output "github_actions_role_arns" {
   description = "IAM role ARNs for GitHub Actions review app deployments"
   value = {
