@@ -55,6 +55,29 @@ data "aws_iam_policy_document" "ecs_task_role_permissions" {
     resources = ["*"]
     effect    = "Allow"
   }
+
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject"
+    ]
+    resources = ["arn:aws:s3:::${var.assets_bucket_name}/assets/brands/*"]
+    effect    = "Allow"
+  }
+
+  statement {
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = ["arn:aws:s3:::${var.assets_bucket_name}"]
+    effect    = "Allow"
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values   = ["assets/brands/*"]
+    }
+  }
 }
 
 module "ecs_service" {
@@ -159,6 +182,10 @@ module "ecs_service" {
     {
       name  = "SETTINGS__FEATURES__SHOW_RELEVANT_ORGANISATIONS",
       value = var.show_relevant_organisations
+    },
+    {
+      name  = "SETTINGS__AWS__ASSETS_S3_BUCKET_NAME",
+      value = var.assets_bucket_name
     },
   ]
 

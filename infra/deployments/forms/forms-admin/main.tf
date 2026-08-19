@@ -42,4 +42,5 @@ module "forms_admin" {
   internal_alb_listener_arn         = data.terraform_remote_state.forms_environment.outputs.internal_alb_listener_arn
   cloudfront_secret                 = data.terraform_remote_state.forms_environment.outputs.cloudfront_secret
   kinesis_subscription_role_arn     = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+  assets_bucket_name                = data.terraform_remote_state.forms_environment.outputs.assets_bucket_name
 }
