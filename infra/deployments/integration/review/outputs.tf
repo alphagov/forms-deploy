@@ -54,6 +54,11 @@ output "assets_bucket_name" {
   value       = module.cloudfront.assets_bucket_name
 }
 
+output "forms_admin_task_role_arn" {
+  description = "The ARN of the role that forms-admin review app tasks should use as their task role"
+  value       = aws_iam_role.forms_admin_task.arn
+}
+
 output "github_actions_role_arns" {
   description = "IAM role ARNs for GitHub Actions review app deployments"
   value = {

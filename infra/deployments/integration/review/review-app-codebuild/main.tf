@@ -98,7 +98,7 @@ data "aws_iam_policy_document" "codebuild" {
   # IAM PassRole
   statement {
     actions   = ["iam:PassRole"]
-    resources = [var.task_execution_role_arn, var.autoscaling_role_arn]
+    resources = concat([var.task_execution_role_arn, var.autoscaling_role_arn], var.task_role_arns)
   }
 
   # Application Auto Scaling
