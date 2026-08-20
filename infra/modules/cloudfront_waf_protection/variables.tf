@@ -63,6 +63,12 @@ variable "admin_extended_post_body_max_size" {
   default     = 500 * 1024 # 500 KB
 }
 
+variable "brand_asset_upload_max_size" {
+  description = "The maximum request body size in bytes allowed when uploading brand assets in the admin app."
+  type        = number
+  default     = 10 * 1024 * 1024 # 10 MB
+}
+
 variable "kinesis_subscription_role_arn" {
   description = "The arn of the role that is allowed to subscribe to the kinesis stream"
   type        = string
