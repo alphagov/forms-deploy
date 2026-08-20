@@ -1236,7 +1236,9 @@ data "aws_iam_policy_document" "wafv2" {
       "wafv2:CreateIPSet",
       "wafv2:UpdateIPSet",
       "wafv2:TagResource",
-      "wafv2:UntagResource"
+      "wafv2:UntagResource",
+      "wafv2:CreateWebACL",
+      "wafv2:UpdateWebACL"
     ]
     effect = "Allow"
     resources = [
