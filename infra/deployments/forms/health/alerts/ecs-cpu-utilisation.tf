@@ -13,7 +13,11 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_utilization_alarm" {
   period              = "300"
   statistic           = "Average"
   threshold           = "70"
-  alarm_description   = "This metric checks the CPU utilization of the ECS service: ${each.value} in ${var.environment} environment"
+  alarm_description   = <<EOF
+  The ECS service ${each.value} in ${var.environment} environment is using more than 70% of CPU.
+
+  You can check the ECS service in the AWS Console to understand the cpu usage started increasing: is it gradual (we may have introduced a CPU intensive operation) or sudden (it may a spike in traffic)? does it coincide with any deployments? has it decreased or is it continuing to increase?
+EOF
 
   dimensions = {
     ClusterName = data.aws_ecs_cluster.cluster_name.cluster_name
