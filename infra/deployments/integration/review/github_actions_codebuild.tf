@@ -62,6 +62,7 @@ module "codebuild_deploy" {
   task_execution_role_arn = aws_iam_role.ecs_execution.arn
   autoscaling_role_arn    = aws_iam_service_linked_role.app_autoscaling.arn
   deploy_account_id       = var.deploy_account_id
+  assets_bucket_name      = module.cloudfront.assets_bucket_name
 }
 
 module "codebuild_destroy" {
@@ -79,6 +80,7 @@ module "codebuild_destroy" {
   task_execution_role_arn = aws_iam_role.ecs_execution.arn
   autoscaling_role_arn    = aws_iam_service_linked_role.app_autoscaling.arn
   deploy_account_id       = var.deploy_account_id
+  assets_bucket_name      = module.cloudfront.assets_bucket_name
 }
 
 # OIDC roles with minimal permissions (trigger CodeBuild + push to ECR)

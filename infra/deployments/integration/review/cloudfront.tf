@@ -18,4 +18,5 @@ module "cloudfront" {
   nat_gateway_egress_ips        = module.vpc.nat_gateway_egress_ips
   send_logs_to_cyber            = var.send_logs_to_cyber
   kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
+  serve_assets_from_s3          = true
 }

@@ -56,3 +56,8 @@ variable "deploy_account_id" {
   description = "AWS account ID of the deploy account, used for accessing shared base images in ECR"
   type        = string
 }
+
+variable "assets_bucket_name" {
+  description = "Name of the S3 bucket from which CloudFront serves review app assets"
+  type        = string
+}

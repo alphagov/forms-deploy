@@ -15,6 +15,22 @@ phases:
 
   pre_build:
     commands:
+      # Sync the image's precompiled assets to the shared assets bucket so
+      # CloudFront can serve /assets/* from S3. Filenames are content-hashed
+      # and namespaced per app, so PRs cannot collide. Assets from other
+      # deploys are deliberately left in place.
+      - export CONTAINER_REGISTRY="${CONTAINER_IMAGE%%/*}"
+      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin "${CONTAINER_REGISTRY}"
+      - docker pull "${CONTAINER_IMAGE}"
+      - CONTAINER_ID=$(docker create "${CONTAINER_IMAGE}")
+      - docker cp "${CONTAINER_ID}:/app/public/assets" "${CODEBUILD_SRC_DIR}/synced-assets"
+      - docker rm "${CONTAINER_ID}"
+      - |
+        aws s3 sync "${CODEBUILD_SRC_DIR}/synced-assets" "s3://${ASSETS_BUCKET}/assets/" \
+          --exclude ".vite/*" \
+          --cache-control "public, max-age=60" \
+          --no-progress
+
       - cd .review_apps
       - terraform init -backend-config="key=review-apps/${APPLICATION_NAME}/pr-${PR_NUMBER}.tfstate"
 

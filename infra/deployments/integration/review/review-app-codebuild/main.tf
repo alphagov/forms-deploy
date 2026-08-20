@@ -127,6 +127,23 @@ data "aws_iam_policy_document" "codebuild" {
     actions   = ["s3:PutObject"]
     resources = ["arn:aws:s3:::${var.artifacts_bucket_name}/*/${local.project_name}/outputs.json"]
   }
+
+  # S3 Assets - sync built assets from the container image (deploy only)
+  dynamic "statement" {
+    for_each = var.action == "deploy" ? [1] : []
+    content {
+      actions   = ["s3:ListBucket"]
+      resources = ["arn:aws:s3:::${var.assets_bucket_name}"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.action == "deploy" ? [1] : []
+    content {
+      actions   = ["s3:PutObject"]
+      resources = ["arn:aws:s3:::${var.assets_bucket_name}/assets/*"]
+    }
+  }
 }
 
 resource "aws_codebuild_project" "this" {
@@ -168,6 +185,11 @@ resource "aws_codebuild_project" "this" {
     environment_variable {
       name  = "ACTION"
       value = var.action
+    }
+
+    environment_variable {
+      name  = "ASSETS_BUCKET"
+      value = var.assets_bucket_name
     }
   }
 
