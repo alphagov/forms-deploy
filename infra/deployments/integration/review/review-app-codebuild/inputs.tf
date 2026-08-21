@@ -61,3 +61,9 @@ variable "assets_bucket_name" {
   description = "Name of the S3 bucket from which CloudFront serves review app assets"
   type        = string
 }
+
+variable "task_role_arns" {
+  description = "ARNs of the task roles used by the app's task definitions, which CodeBuild must be able to pass to ECS"
+  type        = list(string)
+  default     = []
+}

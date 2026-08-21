@@ -63,6 +63,7 @@ module "codebuild_deploy" {
   autoscaling_role_arn    = aws_iam_service_linked_role.app_autoscaling.arn
   deploy_account_id       = var.deploy_account_id
   assets_bucket_name      = module.cloudfront.assets_bucket_name
+  task_role_arns          = each.key == "forms-admin" ? [aws_iam_role.forms_admin_task.arn] : []
 }
 
 module "codebuild_destroy" {
