@@ -123,9 +123,10 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_fast_alarms" {
     Environment: ${var.environment_name}
 EOF
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-fast-1hour) AND ALARM(slo-burn-rate-${each.value.slo_name}-fast-5min)"
-  alarm_actions     = local.slo_composite_alarm_actions_enabled ? [module.alerts.alert_severity.eu_west_2.high] : []
-  actions_enabled   = local.slo_composite_alarm_actions_enabled
-  depends_on        = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
+  # Do not set an alarm for product-page latency. We're being over-alerted by this and it is not an incident. This is a stopgap solution to stop high priority alerts from spamming us while we decide what to do
+  alarm_actions   = (local.slo_composite_alarm_actions_enabled && (each.value.alarm_name != "slo-burn-rate-product-page-http-latency-1000ms-fast")) ? [module.alerts.alert_severity.eu_west_2.high] : []
+  actions_enabled = local.slo_composite_alarm_actions_enabled
+  depends_on      = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
   tags = {
     Environment = var.environment_name
