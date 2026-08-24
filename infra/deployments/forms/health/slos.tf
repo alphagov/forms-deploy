@@ -26,6 +26,7 @@ locals {
       attainment_goal   = 99
       service           = "forms-admin"
       target_group_name = data.aws_lb_target_group.forms_admin_tg.arn_suffix
+      severity          = "high" # determines whether to call engineers out-of-hours. "high" severity allows alerting out-of-hours. "low" severity means engineers should not be alerted out-of-hours even if we are burning through our error budget
     }
     runner_http_availability = {
       name              = "runner-http-availability"
@@ -33,6 +34,7 @@ locals {
       attainment_goal   = 99
       service           = "forms-runner"
       target_group_name = data.aws_lb_target_group.forms_runner_tg.arn_suffix
+      severity          = "high"
     }
 
     product_page_http_availability = {
@@ -41,6 +43,7 @@ locals {
       attainment_goal   = 99
       service           = "forms-product-page"
       target_group_name = data.aws_lb_target_group.forms_product_page_tg.arn_suffix
+      severity          = "low" # "low" severity means engineers should not be alerted out-of-hours even if we are burning through our error budget
     }
   }
 
@@ -53,6 +56,7 @@ locals {
       service           = "forms-admin"
       target_group_name = data.aws_lb_target_group.forms_admin_tg.arn_suffix
       threshold         = "0.4"
+      severity          = "high"
     }
     admin_http_latency_1000ms = {
       name              = "admin-http-latency-1000ms"
@@ -61,6 +65,7 @@ locals {
       service           = "forms-admin"
       target_group_name = data.aws_lb_target_group.forms_admin_tg.arn_suffix
       threshold         = "1"
+      severity          = "high"
     }
     runner_http_latency_200ms = {
       name              = "runner-http-latency-200ms"
@@ -69,6 +74,7 @@ locals {
       service           = "forms-runner"
       target_group_name = data.aws_lb_target_group.forms_runner_tg.arn_suffix
       threshold         = "0.2"
+      severity          = "high"
     }
     runner_http_latency_1000ms = {
       name              = "runner-http-latency-1000ms"
@@ -77,6 +83,7 @@ locals {
       service           = "forms-runner"
       target_group_name = data.aws_lb_target_group.forms_runner_tg.arn_suffix
       threshold         = "1"
+      severity          = "high"
     }
     product_page_http_latency_400ms = {
       name              = "product-page-http-latency-400ms"
@@ -85,6 +92,7 @@ locals {
       service           = "forms-product-page"
       target_group_name = data.aws_lb_target_group.forms_product_page_tg.arn_suffix
       threshold         = "0.4"
+      severity          = "low" # "low" severity means engineers should not be alerted out-of-hours even if we are burning through our error budget
     }
     product_page_http_latency_1000ms = {
       name              = "product-page-http-latency-1000ms"
@@ -93,6 +101,7 @@ locals {
       service           = "forms-product-page"
       target_group_name = data.aws_lb_target_group.forms_product_page_tg.arn_suffix
       threshold         = "1"
+      severity          = "low" # "low" severity means engineers should not be alerted out-of-hours even if we are burning through our error budget
     }
   }
 
@@ -104,6 +113,7 @@ locals {
       attainment_goal = 95
       service         = "forms-runner"
       threshold       = "3600000" # 1 hour in milliseconds
+      severity        = "high"
     }
   }
 }
