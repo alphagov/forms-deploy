@@ -7,9 +7,10 @@ locals {
   slo_interval_days    = local.common_goal_config.interval.rolling_interval.duration
   slo_interval_minutes = local.slo_interval_days * 24 * 60
 
+  # TO DO: Remove condition that ignores product-page relate SLOs on 9/9/2026. We need the SLO to collect sufficient data to alert us, otherwise we get false positives
   all_slo_names = concat(
-    [for k, v in local.availability_slos : v.name],
-    [for k, v in local.latency_slos : v.name],
+    [for k, v in local.availability_slos : v.name if !strcontains(v.name, "product-page")],
+    [for k, v in local.latency_slos : v.name if !strcontains(v.name, "product-page")],
     [for k, v in local.submission_delivery_slos : v.name]
   )
 
@@ -17,6 +18,13 @@ locals {
     { for k, v in local.availability_slos : v.name => v.description },
     { for k, v in local.latency_slos : v.name => v.description },
     { for k, v in local.submission_delivery_slos : v.name => v.description }
+  )
+
+  slo_severity = merge(
+    { for k, v in local.availability_slos : v.name => v.severity },
+    { for k, v in local.latency_slos : v.name => v.severity },
+    { for k, v in local.submission_delivery_slos : v.name => v.severity }
+
   )
 
   # Burn rate alarm configurations; thresholds computed inline per alarm
@@ -106,8 +114,9 @@ resource "aws_cloudwatch_metric_alarm" "slo_burn_rate_alarms" {
 resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_fast_alarms" {
   for_each = {
     for slo_name in local.all_slo_names : slo_name => {
-      alarm_name = "slo-burn-rate-${slo_name}-fast"
-      slo_name   = slo_name
+      alarm_name   = "slo-burn-rate-${slo_name}-fast"
+      slo_name     = slo_name
+      slo_severity = local.slo_severity[slo_name]
     }
   }
 
@@ -123,8 +132,8 @@ resource "aws_cloudwatch_composite_alarm" "slo_burn_rate_fast_alarms" {
     Environment: ${var.environment_name}
 EOF
   alarm_rule        = "ALARM(slo-burn-rate-${each.value.slo_name}-fast-1hour) AND ALARM(slo-burn-rate-${each.value.slo_name}-fast-5min)"
-  # Do not set an alarm for product-page latency. We're being over-alerted by this and it is not an incident. This is a stopgap solution to stop high priority alerts from spamming us while we decide what to do
-  alarm_actions   = (local.slo_composite_alarm_actions_enabled && (each.value.alarm_name != "slo-burn-rate-product-page-http-latency-1000ms-fast")) ? [module.alerts.alert_severity.eu_west_2.high] : []
+  # These alerts will notify engineers out-of-hours only for SLOs with "high" severity. Otherwise they will use lower priority notifications
+  alarm_actions   = (local.slo_composite_alarm_actions_enabled ? (each.value.slo_severity == "high" ? [module.alerts.alert_severity.eu_west_2.high] : [module.alerts.alert_severity.eu_west_2.info]) : [])
   actions_enabled = local.slo_composite_alarm_actions_enabled
   depends_on      = [aws_cloudwatch_metric_alarm.slo_burn_rate_alarms]
 
