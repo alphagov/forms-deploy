@@ -54,7 +54,6 @@ forms_admin_settings = {
   govuk_app_domain                 = "staging.publishing.service.gov.uk"
   synchronize_to_mailchimp         = false
   synchronize_orgs_from_govuk      = false
-  show_relevant_organisations      = true
 }
 forms_product_page_settings = {
   cpu          = 256

@@ -144,7 +144,6 @@ variable "forms_admin_settings" {
     govuk_app_domain                 = string
     synchronize_to_mailchimp         = bool
     synchronize_orgs_from_govuk      = bool
-    show_relevant_organisations      = bool
   })
   nullable = false
 }

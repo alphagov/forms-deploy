@@ -180,10 +180,6 @@ module "ecs_service" {
       value = var.act_as_user_enabled
     },
     {
-      name  = "SETTINGS__FEATURES__SHOW_RELEVANT_ORGANISATIONS",
-      value = var.show_relevant_organisations
-    },
-    {
       name  = "SETTINGS__AWS__ASSETS_S3_BUCKET_NAME",
       value = var.assets_bucket_name
     },
