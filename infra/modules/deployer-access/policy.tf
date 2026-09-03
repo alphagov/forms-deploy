@@ -22,6 +22,7 @@ data "aws_iam_policy_document" "forms_infra_1" {
     data.aws_iam_policy_document.ecs.json,
     data.aws_iam_policy_document.elasticache.json,
     data.aws_iam_policy_document.events.json,
+    data.aws_iam_policy_document.grafana.json,
     data.aws_iam_policy_document.guardduty.json,
   ]
 }
@@ -449,6 +450,39 @@ data "aws_iam_policy_document" "events" {
   }
 }
 
+data "aws_iam_policy_document" "grafana" {
+  statement {
+    # CreateWorkspace and the sso/organizations calls do not support resource-level permissions
+    actions = [
+      "grafana:CreateWorkspace",
+      "sso:CreateManagedApplicationInstance",
+      "sso:DeleteManagedApplicationInstance",
+      "sso:GetManagedApplicationInstance",
+      "sso:GetSharedSsoConfiguration",
+      "sso:DescribeRegisteredRegions",
+      "organizations:DescribeOrganization"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+    sid       = "CreateGrafanaWorkspace"
+  }
+
+  statement {
+    actions = [
+      "grafana:DeleteWorkspace",
+      "grafana:UpdateWorkspace",
+      "grafana:UpdateWorkspaceConfiguration",
+      "grafana:TagResource",
+      "grafana:UntagResource"
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:grafana:eu-west-2:${var.account_id}:/workspaces/*"
+    ]
+    sid = "ManageGrafanaWorkspaces"
+  }
+}
+
 data "aws_iam_policy_document" "guardduty" {
   statement {
     actions = [
@@ -525,7 +559,8 @@ data "aws_iam_policy_document" "iam" {
       "arn:aws:iam::${var.account_id}:role/ecs-events-role",
       "arn:aws:iam::${var.account_id}:role/deployer-${var.environment_name}",
       "arn:aws:iam::${var.account_id}:role/malware-protection-for-s3",
-      "arn:aws:iam::${var.account_id}:role/RDSEnhancedMonitoring"
+      "arn:aws:iam::${var.account_id}:role/RDSEnhancedMonitoring",
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-grafana-workspace"
     ]
     sid = "ManageRoles"
   }
