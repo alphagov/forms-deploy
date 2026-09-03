@@ -620,7 +620,7 @@ resource "aws_wafv2_web_acl" "this" {
 
   rule {
     name     = "OriginIPBlock"
-    priority = 110
+    priority = 0
 
     action {
       block {}
