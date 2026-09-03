@@ -29,6 +29,7 @@ environmental_settings = {
   enable_advanced_database_insights        = false
   rds_enhanced_monitoring_interval_seconds = 0 # disabled
   serve_assets_from_s3                     = true
+  enable_managed_grafana                   = true
 }
 root_domain = "dev.forms.service.gov.uk"
 additional_dns_records = [
