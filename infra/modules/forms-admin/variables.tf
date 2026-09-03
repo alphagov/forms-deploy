@@ -181,12 +181,6 @@ variable "opentelemetry_head_sampler_ratio" {
   default     = "1"
 }
 
-variable "show_relevant_organisations" {
-  type        = bool
-  description = "Enables the feature to allow users to only select an organisation that matches their email domain"
-  default     = false
-}
-
 variable "assets_bucket_name" {
   type        = string
   description = "The name of the S3 bucket that serves static assets, used for storing custom branding assets"
