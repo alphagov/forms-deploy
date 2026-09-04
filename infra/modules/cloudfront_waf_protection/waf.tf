@@ -366,6 +366,43 @@ resource "aws_wafv2_rule_group" "admin_file_upload_body_size_limits" {
   }
 }
 
+resource "aws_wafv2_regex_pattern_set" "body_size_limit_exempt_paths" {
+  provider = aws.us-east-1
+
+  name        = "${var.environment_name}-body-size-limit-exempt-paths"
+  description = "Paths that accept request bodies larger than the 8 KB limit in AWSManagedRulesCommonRuleSet. Body size limits for these paths are enforced by the applications."
+  scope       = "CLOUDFRONT"
+
+  # Bulk options upload when creating or editing a selection question in the admin app
+  regular_expression {
+    regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/selection/bulk-options$"
+  }
+
+  # Admin pages that post larger payloads than a standard form
+  regular_expression {
+    regex_string = "^/forms/\\d+/pages/(?:new|\\d+/edit)/guidance-preview$"
+  }
+
+  regular_expression {
+    regex_string = "^/forms/\\d+/welsh-translation$"
+  }
+
+  regular_expression {
+    regex_string = "^/forms/\\d+/routes$"
+  }
+
+  # Brand asset uploads in the admin app: POST /brands creates a brand, POST /brands/:id updates one
+  regular_expression {
+    regex_string = "^/brands(?:/\\d+)?$"
+  }
+
+  # Answers to form questions in the runner, including file uploads
+  # /:mode/:form_id/:form_slug(.locale)/:page_slug(/:answer_index)
+  regular_expression {
+    regex_string = "^/(?:preview-draft|preview-archived|preview-live|form)/\\d+/[\\w-]+(\\.(cy|en))?/[a-zA-Z\\d]+(?:/\\d+)?$"
+  }
+}
+
 resource "aws_wafv2_web_acl" "this" {
   #checkov:skip=CKV_AWS_192:We don't use log4j
   provider = aws.us-east-1
@@ -485,6 +522,15 @@ resource "aws_wafv2_web_acl" "this" {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
+
+        # Counted rather than blocked so that the paths in body_size_limit_exempt_paths
+        # can be excluded; the block is applied by BlockOversizeBody below
+        rule_action_override {
+          name = "SizeRestrictions_BODY"
+          action_to_use {
+            count {}
+          }
+        }
       }
     }
 
@@ -540,6 +586,48 @@ resource "aws_wafv2_web_acl" "this" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "BlockOversizeBody"
+    priority = 7
+
+    action {
+      block {}
+    }
+
+    statement {
+      and_statement {
+        statement {
+          label_match_statement {
+            scope = "LABEL"
+            key   = "awswaf:managed:aws:core-rule-set:SizeRestrictions_Body"
+          }
+        }
+        statement {
+          not_statement {
+            statement {
+              regex_pattern_set_reference_statement {
+                arn = aws_wafv2_regex_pattern_set.body_size_limit_exempt_paths.arn
+                field_to_match {
+                  uri_path {}
+                }
+                text_transformation {
+                  priority = 1
+                  type     = "LOWERCASE"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockOversizeBody"
       sampled_requests_enabled   = true
     }
   }
