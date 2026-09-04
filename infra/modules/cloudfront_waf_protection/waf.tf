@@ -35,7 +35,7 @@ resource "aws_wafv2_regex_pattern_set" "body_size_limit_exempt_paths" {
   provider = aws.us-east-1
 
   name        = "${var.environment_name}-body-size-limit-exempt-paths"
-  description = "Paths that accept request bodies larger than the 8 KB limit in AWSManagedRulesCommonRuleSet. Body size limits for these paths are enforced by the applications."
+  description = "Paths that are exempt from the 8 KB request body limit in AWSManagedRulesCommonRuleSet; request size limits should be enforced at the application layer for these endpoints."
   scope       = "CLOUDFRONT"
 
   # Bulk options upload when creating or editing a selection question in the admin app
