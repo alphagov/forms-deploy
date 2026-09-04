@@ -8,6 +8,7 @@ data "aws_iam_policy_document" "forms_infra" {
     data.aws_iam_policy_document.acm.json,
     data.aws_iam_policy_document.application-autoscaling.json,
     data.aws_iam_policy_document.application-signals.json,
+    data.aws_iam_policy_document.athena.json,
     data.aws_iam_policy_document.cloudformation.json,
     data.aws_iam_policy_document.cloudfront.json,
     data.aws_iam_policy_document.cloudwatch.json,
@@ -142,6 +143,23 @@ data "aws_iam_policy_document" "application-signals" {
       "arn:aws:application-signals:eu-west-2:${var.account_id}:slo/*"
     ]
     sid = "ManageApplicationSignalsSLOs"
+  }
+}
+
+data "aws_iam_policy_document" "athena" {
+  statement {
+    actions = [
+      "athena:CreateWorkGroup",
+      "athena:DeleteWorkGroup",
+      "athena:UpdateWorkGroup",
+      "athena:TagResource",
+      "athena:UntagResource"
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:athena:eu-west-2:${var.account_id}:workgroup/grafana"
+    ]
+    sid = "ManageGrafanaAthenaWorkgroup"
   }
 }
 
@@ -486,7 +504,9 @@ data "aws_iam_policy_document" "iam" {
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-ecs-task-policy",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-runner-adot-collector",
       "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-ecs-task-policy",
-      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-adot-collector"
+      "arn:aws:iam::${var.account_id}:policy/${var.environment_name}-forms-product-page-adot-collector",
+      "arn:aws:iam::${var.account_id}:policy/grafana-ecs-task-policy",
+      "arn:aws:iam::${var.account_id}:policy/grafana-ecs-task-execution-additional"
     ]
     sid = "ManageEcsPolicies"
   }
@@ -550,7 +570,9 @@ data "aws_iam_policy_document" "iam" {
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-admin-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-ecs-task-execution",
       "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-product-page-ecs-task-execution",
-      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-execution"
+      "arn:aws:iam::${var.account_id}:role/${var.environment_name}-forms-runner-queue-worker-ecs-task-execution",
+      "arn:aws:iam::${var.account_id}:role/grafana-ecs-task",
+      "arn:aws:iam::${var.account_id}:role/grafana-ecs-task-execution"
     ]
     sid = "ManageTaskAndTaskExecutionRoles"
   }
@@ -957,7 +979,9 @@ data "aws_iam_policy_document" "s3" {
 
       "arn:aws:s3:::govuk-forms-${var.environment_name}-error-page*",
 
-      "arn:aws:s3:::govuk-forms-${var.environment_name}-assets*"
+      "arn:aws:s3:::govuk-forms-${var.environment_name}-assets*",
+
+      "arn:aws:s3:::govuk-forms-${var.environment_name}-grafana-*"
     ]
     sid = "ManageS3"
   }
