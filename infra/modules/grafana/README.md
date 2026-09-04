@@ -2,9 +2,8 @@
 
 Runs Grafana OSS as a single Fargate task behind its own public ALB at
 `grafana.<root_domain>`, backed by its own Aurora Serverless v2 PostgreSQL
-cluster. The load balancer is not behind CloudFront or a WAF; its security
-group only admits `alb_ingress_cidr_blocks` (the office and VPN addresses
-from the `common-values` module). Data sources for CloudWatch, X-Ray
+cluster. The load balancer is public and is not behind CloudFront or a WAF;
+GitHub sign in is the only access control. Data sources for CloudWatch, X-Ray
 (Application Signals) and, where submission events analytics is enabled,
 Athena are provisioned at start up and authenticate with the task role.
 Grafana alerting is disabled.

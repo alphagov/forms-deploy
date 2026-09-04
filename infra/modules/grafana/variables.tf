@@ -28,11 +28,6 @@ variable "public_subnet_ids" {
   type = list(string)
 }
 
-variable "alb_ingress_cidr_blocks" {
-  description = "CIDR blocks allowed to reach the Grafana load balancer"
-  type        = list(string)
-}
-
 variable "alb_access_logs_bucket_name" {
   description = "The S3 bucket that receives ALB access logs. Its policy must permit the grafana/ prefix."
   type        = string

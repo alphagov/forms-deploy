@@ -12,15 +12,15 @@ module "certificate" {
 
 resource "aws_security_group" "alb" {
   name        = "${local.name}-alb"
-  description = "Allows inbound 443 from trusted networks and outbound to the Grafana container"
+  description = "Allows public inbound on 443 and outbound to the Grafana container"
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "Port 443 from trusted networks"
+    description = "Port 443 from public"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = var.alb_ingress_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -33,7 +33,7 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_lb" "grafana" {
-  #checkov:skip=CKV2_AWS_28:Access is limited to trusted networks by the security group and to GitHub team members by Grafana, so a WAF is not considered necessary
+  #checkov:skip=CKV2_AWS_28:Access is limited to GitHub team members by Grafana, and a WAF is not considered necessary
 
   name                       = local.name
   internal                   = false

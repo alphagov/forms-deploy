@@ -1,7 +1,3 @@
-module "common_values" {
-  source = "../../../modules/common-values"
-}
-
 module "grafana" {
   count  = var.grafana_settings.enabled ? 1 : 0
   source = "../../../modules/grafana"
@@ -21,7 +17,6 @@ module "grafana" {
   public_subnet_ids           = data.terraform_remote_state.forms_environment.outputs.public_subnet_ids
   ecs_cluster_arn             = data.terraform_remote_state.forms_environment.outputs.ecs_cluster_arn
   alb_access_logs_bucket_name = data.terraform_remote_state.forms_environment.outputs.alb_logs_bucket_name
-  alb_ingress_cidr_blocks     = module.common_values.vpn_ip_addresses
 
   kinesis_subscription_role_arn = data.terraform_remote_state.account.outputs.kinesis_subscription_role_arn
 
