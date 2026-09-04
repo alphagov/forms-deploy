@@ -43,9 +43,12 @@ resource "aws_rds_cluster" "grafana" {
   master_password = random_password.database.result
   port            = local.rds_port
 
-  engine         = "aurora-postgresql"
-  engine_mode    = "provisioned"
-  engine_version = "16.6"
+  engine      = "aurora-postgresql"
+  engine_mode = "provisioned"
+  # Only used when the cluster is created; AWS then manages minor upgrades
+  # (see ignore_changes below). Deprecated minor versions cannot be used to
+  # create a cluster, so bump this to a current one if creation fails.
+  engine_version = "18.4"
 
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.grafana.name
